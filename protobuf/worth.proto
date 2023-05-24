@@ -1,0 +1,45 @@
+/*
+  Module for items of worth.
+*/
+
+syntax = "proto3";
+
+import "core.proto";
+import "growth.proto";
+
+package worth;
+
+option java_package="plus_modeled";
+
+/*
+  Represents some positive _asset_ or negative _liability_ worth that may grow (or
+  shrink) in forecast.
+  
+  This is a `BalanceSheet` member and it is almost always an _asset_. We keep the
+  more general term `Worth`, though, because one could model _liabilities_ as
+  *negative* worths.
+*/
+message Worth {
+  /*
+    Identifier of the worth.
+  */
+  string name = 1;
+  
+  /*
+    Defines growth of the `Worth`.
+  */
+  optional growth.ItemGrowth growth = 2;
+  
+  /*
+    Dated value worth in currency.
+    **Note** It is best to value at the start of the year. Most payments and markings
+    are done at the end of the year after having applied the growth.
+  */
+  core.YearCurrencyValue valuation = 3;
+  
+  /*
+    Cost basis of worth. Modeled separate from valuation because when purchased it might have
+    been valued quite differently than any recent *valuation*.
+  */
+  double cost_basis = 4;
+}

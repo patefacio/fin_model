@@ -1,0 +1,272 @@
+/*
+  Core components.
+*/
+
+syntax = "proto3";
+
+import "core_enums.proto";
+
+package core;
+
+option java_package="plus_modeled";
+
+/*
+  A modeled date
+*/
+message Date {
+  /*
+    Year.
+  */
+  uint32 year = 1;
+  
+  /*
+    Month.
+  */
+  uint32 month = 2;
+  
+  /*
+    Day.
+  */
+  uint32 day = 3;
+}
+
+/*
+  Pairs a <em>value</em> with a <em>year</em>, useful for storing _annual_ time series data.
+*/
+message YearValue {
+  /*
+    Year associated with `value`.
+  */
+  uint32 year = 1;
+  
+  /*
+    Value associated with `year`.
+  */
+  double value = 2;
+}
+
+/*
+  Pairs a <em>currency</em> with a <em>value</em>.
+*/
+message CurrencyValue {
+  /*
+    Currency of the value.
+  */
+  core_enums.Currency currency = 1;
+  
+  /*
+    Value in denominated currency.
+  */
+  double value = 2;
+}
+
+/*
+  A dated value in a specified currency.
+*/
+message YearCurrencyValue {
+  /*
+    Year associated with `value`.
+  */
+  uint32 year = 1;
+  
+  /*
+    Currency for the value.
+  */
+  core_enums.Currency currency = 2;
+  
+  /*
+    Value associated with `year`.
+  */
+  double value = 3;
+}
+
+/*
+  Models a range of years [start, end).
+*/
+message YearRange {
+  /*
+    Start year of range.
+  */
+  uint32 start = 1;
+  
+  /*
+    End year of range.
+  */
+  uint32 end = 2;
+}
+
+/*
+  Models a _Normal_ distribution.
+*/
+message NormalSpec {
+  /*
+    Mean of normally distributed random variable.
+  */
+  double mean = 1;
+  
+  /*
+    Standard deviation of normally distributed random variable.
+  */
+  double std_dev = 2;
+}
+
+/*
+  Defines a schedule of rates.
+*/
+message RateCurve {
+  /*
+    The curve data.
+  */
+  repeated YearValue curve = 1;
+}
+
+/*
+  Defines a series of `YearValue` instances - structurally same as `RateCurve` but different intent.
+*/
+message YearValueSeries {
+  /*
+    The curve data.
+  */
+  repeated YearValue curve = 1;
+}
+
+/*
+  A database id combined with an interpretable string value for the item.
+  
+  Used for providing both a numeric id and something a human can understand.
+  The name is optional. The idea is the client will need to pass identifiers to 
+  the server and those are safest when always referring to and relying on 
+  numeric values.
+*/
+message DbId {
+  /*
+    Identifier for the item.
+  */
+  uint32 id = 1;
+  
+  /*
+    Human readable name - *DO NOT TRUST - FOR DEBUG/CONVENIENCE*.
+  */
+  string name = 2;
+}
+
+/*
+  
+  Identifies an account with a specific holding (optionally) by numeric indices.
+                  
+  This can be used to tie a specific set of expenses (e.g. a given child's college expenses)
+  to a specific account and/or holding within it. Similarly it can be used to assign non-reinvested
+  incomes to specific investments. An index where the account is specified but no holding is
+  specified implies *any* holding will suffice. See example usage in [FlowSpec].
+*/
+message DossierHoldingIndex {
+  /*
+    Index of the account.
+  */
+  uint32 account_index = 1;
+  
+  /*
+    Index of the holding.
+  */
+  optional uint32 holding_index = 2;
+}
+
+/*
+  
+  Wraps the [ItemIndex] in a proto _message_.
+  
+  Can be used to identify specific items like `Worth`, `Holding` and `FlowSpec`
+  within a _dossier_.
+      
+*/
+message DossierItemIndex {
+  /*
+    Provides an index into an item in the `Dossier` that may have growth characteristics.
+    The item may be a `Worth`, `Holding` or `FlowSpec`.
+    This definition is kept in _core_ because, while it is specific to a specific `dossier`
+    it is simply an index. The dossier itself may store these indexes in some places to
+    associate items with accounts and/or specific holdings.
+  */
+  oneof item_index {
+    /*
+      Index into the `worths` of a `dossier`.
+    */
+    uint32 worth_index = 1;
+    
+    /*
+      Index into `accounts`/`holdings` of a `dossier`.
+    */
+    DossierHoldingIndex holding_index = 2;
+    
+    /*
+      Index into the `FlowSpecs` of a `dossier`.
+    */
+    uint32 flow_index = 3;
+  };
+}
+
+/*
+  An index into a 2D matrix of correlations
+*/
+message DossierCorrelationEntry {
+  /*
+    Row index of correlation
+  */
+  DossierItemIndex row_index = 1;
+  
+  /*
+    Column index of correlation
+  */
+  DossierItemIndex column_index = 2;
+  
+  /*
+    Correlation for pair of dossier items
+  */
+  double correlation = 3;
+}
+
+/*
+  A 2D matrix indexed by a pair of [ItemIndex] pointing at the corresponding correlation.
+*/
+message DossierCorrelationMatrix {
+  /*
+    A correlation between i,j.
+  */
+  repeated DossierCorrelationEntry mappings = 1;
+}
+
+/*
+  
+  A conceptually single value presented twice, first as a present value and
+  second as a future value. Both present and future values are `YearValue`
+  objects. A `ValueOverRange` where the present and future values are the
+  same may indicate a present valuing of a future value where the interest
+  rate of the PV is a 0 rate curve. Alternatively, it might mean the actual 
+  growth in the value exactly offsets the effects of inflation.  
+*/
+message ValueOverRange {
+  /*
+    The present (e.g.start) year value.
+  */
+  core.YearValue present_year_value = 1;
+  
+  /*
+    The future (e.g. end) year value.
+  */
+  core.YearValue future_year_value = 2;
+}
+
+/*
+  Balance change over a period
+*/
+message PeriodBalance {
+  /*
+    Balance at start of period.
+  */
+  double start_balance = 1;
+  
+  /*
+    Balance at end of period.
+  */
+  double end_balance = 2;
+}

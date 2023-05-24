@@ -1,0 +1,227 @@
+/*
+  Various messages cash flow specifications.
+*/
+
+syntax = "proto3";
+
+import "core.proto";
+
+package growth;
+
+option java_package="plus_modeled";
+
+/*
+  
+  Supplies growth assumptions for various items.
+  
+  `GrowthAssumption` is used when forecasting values for items such as:
+  
+  - Holdings
+  - Worths
+  - Inflation
+  - Incomes
+  - Expenses
+  
+  Provides the characteristics of growth in the form of the distribution and also
+  allows for a specific realization of a growth curve, usually randomly generated
+  from the `NormalSpec`. The forecaster will use the `pinned_growth` curve
+  if provided or generate one from the `normal_spec`.
+  
+  The presence of a non-null `pinned_growth` in the context of an M.C. simulation
+  is to freeze the growth of the particular item.
+              
+*/
+message GrowthAssumption {
+  /*
+    Defines the characteristics of growth in terms of normal distribution.
+  */
+  optional core.NormalSpec normal_spec = 1;
+  
+  /*
+    A fixed growth curve
+  */
+  optional core.RateCurve pinned_growth = 2;
+}
+
+/*
+  Characterizes growth of the item. Items include specific concepts
+  with an associated `growth_item_type`(`Worth`, `Holding`, or `GrowingFlowSpec`).
+  
+  Examples include:
+   
+   - `residential_real_estate` growth item with a `growth_item_type`
+  of `worth`.
+  
+   - `us_equity` a sample US security with a `growth_item_type` of 
+  `instrument`.
+  
+   - `us_equity_market` Well diversified instrument representing US equities, 
+   including large, small, mid caps. An example instrument would be `SPY`.
+  
+  The idea here is the user can leave the `growth_assumption` blank and the
+  corresponding lookups will resolve to an appropriate growth. Alternatively
+  the user may specify a specific growth. If no growth is specified the
+  process of resolving an assumption will go through a hierarchical search
+  for the best assumption (e.g. first look at the users overrides, then look
+  at the `primary_user` overrides, then the system defaults).     
+*/
+message ItemGrowth {
+  /*
+    Identifies the item that is growing.
+  */
+  optional SystemGrowthId system_growth_id = 1;
+  
+  /*
+    
+    User specified `GrowthAssumption`.
+    
+    A forecast may be configured with `use_item_assumption` set to true,
+    in which case any growth assumption here will be honored. Otherwise,
+    the resolving process will provide a suitable growth based on the 
+    identified growth item.
+  */
+  optional GrowthAssumption growth_assumption = 2;
+}
+
+/*
+  Uniquely identifies either an instrument or a `growth_item` as known
+  by the system. This sum type allows using instances of this type as
+  keys in associative arrays.
+*/
+message SystemGrowthId {
+  /*
+    `system_id` supports _one_of_:
+    - InstrumentId
+    - HoldingItemId
+    - WorthItemId
+    - FlowItemId
+  */
+  oneof system_id {
+    /*
+      Identifies the instrument that is growing.
+    */
+    uint32 instrument_id = 1;
+    
+    /*
+      Identifies the holding classification growth item (e.g. `US Equity Market`, `US Large Equity`, ...)
+    */
+    uint32 holding_item_id = 2;
+    
+    /*
+      Identifies the worth growth item (e.g. `Real Estate`, `Yacht`, ...)
+    */
+    uint32 worth_item_id = 3;
+    
+    /*
+      Identifies the growing flow spec item (e.g. `Labor Income`, `College Expenses`, `Living Expenses`, ...)
+    */
+    uint32 flow_item_id = 4;
+  };
+}
+
+/*
+  Mappings of `growth_item_id` to its `GrowthAssumption`.    
+*/
+message GrowthItemMappings {
+  /*
+    Assigns a growth assumption to each `WorthItem` identified by its database id.
+  */
+  map<uint32, GrowthAssumption> worth_item_mappings = 1;
+  
+  /*
+    Assigns a growth assumption to each `HoldingItem` identified by its database id.
+  */
+  map<uint32, GrowthAssumption> holding_item_mappings = 2;
+  
+  /*
+    Assigns a growth assumption to each `FlowItem` identified by its database id.
+  */
+  map<uint32, GrowthAssumption> flow_item_mappings = 3;
+  
+  /*
+    Assigns a growth assumption to each `Instrument` identified by its database id.
+  */
+  map<uint32, GrowthAssumption> instrument_mappings = 4;
+  
+  /*
+    Inflation that should be used in summary reporting of a forecast
+    that can pull future values to today's terms. Expenses are often
+    modeled with individual inflation curves because different
+    expenses may have differing inflation. For example, college
+    expenses are notoriously more expensive than say overall living
+    expense inflation. Any forecast may have loads of types of
+    inflation impacting the final values - but it is still useful to
+    see final numbers in today's terms.
+  */
+  core.RateCurve report_inflation = 5;
+  
+  /*
+    Growth associated with charges on borrowing required to keep a
+    forecast afloat. Forecasts can run out of money so something
+    needs to be done about it. One option is to bail early on the
+    forecast and call it a failure. Another is to carry it through
+    with lots of negative net worths. Negative net worth is not free
+    - there is a cost and this is a rate curve for that purpose.
+  */
+  core.RateCurve cost_of_capital = 6;
+}
+
+/*
+  A single entry in a correlation matrix
+*/
+message SystemCorrelationEntry {
+  /*
+    Row index.
+  */
+  SystemGrowthId row_index = 1;
+  
+  /*
+    Column index.
+  */
+  SystemGrowthId column_index = 2;
+  
+  /*
+    Correlation for pair of growth items.
+  */
+  double correlation = 3;
+}
+
+/*
+  A 2D matrix indexed by growth item ids pointing at the corresponding correlation.
+  
+  *Note*: This is stored as a list but represents a 2D matrix. So duplicate
+  entries should not exist in the map (and get folded if they do).
+*/
+message SystemCorrelationMatrix {
+  /*
+    A correlation between i,j
+  */
+  repeated SystemCorrelationEntry mappings = 1;
+}
+
+/*
+  Combines the growth assumptions with correlations that characterize the market.
+*/
+message MarketAssumptions {
+  /*
+    How the items grow.
+  */
+  GrowthItemMappings growth_item_mappings = 1;
+  
+  /*
+    How the items are correlated.
+  */
+  SystemCorrelationMatrix system_correlation_matrix = 2;
+}
+
+/*
+  Mapping of an outlook to corresponding `GrowthMappings`.
+  Note: Here the outlook id only appears in the key since it is not hard to remember id's of
+  4 or so pre-defined outlooks.
+*/
+message OutlookMarketAssumptions {
+  /*
+    Maps the outlook to the assumptions by growth item type.
+  */
+  map<uint32, MarketAssumptions> outlook_mappings = 1;
+}

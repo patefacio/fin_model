@@ -1,0 +1,33 @@
+/*
+  Module containing `BalanceSheet` definition.
+*/
+
+syntax = "proto3";
+
+import "worth.proto";
+import "account.proto";
+import "growth.proto";
+
+package balance_sheet;
+
+option java_package="plus_modeled";
+
+/*
+  Models the assets and liabilities (ie the balance sheet) of a dossier.
+*/
+message BalanceSheet {
+  /*
+    Assets and liabilities for the balance sheet.
+  */
+  repeated worth.Worth worths = 1;
+  
+  /*
+    Accounts for the balance sheet.
+  */
+  repeated account.Account accounts = 2;
+  
+  /*
+    Associates an instrument name (as defined by the user) with an `ItemGrowth`.
+  */
+  map<string, growth.ItemGrowth> instrument_growth_mappings = 3;
+}

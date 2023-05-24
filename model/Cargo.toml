@@ -1,0 +1,19 @@
+[package]
+edition = "2021"
+name = "fin_model"
+version = "0.0.1"
+description = """TODO: Describe cargo project(fin_model)"""
+license = "MIT"
+keywords = []
+
+[dependencies]
+prost = "0.11"
+serde = "^1.0.27"
+serde_derive = "^1.0.27" 
+# α <dependencies>
+# ω <dependencies>
+
+[build-dependencies]
+tonic-build = "0.8" 
+# α <build-dependencies>
+# ω <build-dependencies>
