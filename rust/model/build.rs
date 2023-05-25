@@ -75,7 +75,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
           "distributions.proto",
           "core_enums.proto",
           "worth.proto"
-        ], &["../protobuf"])?;
+        ], &["../../protobuf"])?;
     Ok(())
     
 }

@@ -7,15 +7,29 @@ pub fn App(cx: Scope) -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context(cx);
 
+    use crate::component::multi_column_select::{MultiColumnSelect, MultiColumnSelectProps, SelectOption, InitialValue};
+
+    let options: Vec<_> = (0..50).map(|i| SelectOption::Label(format!("Selection {i}"))).collect();
+    let on_select = move |sel| {
+        leptos_dom::console_log(&format!("Selection -> {sel}"));
+    };
+
     view! {
         cx,
 
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
-        <Stylesheet id="leptos" href="/pkg/leptos_start.css"/>
+        <Stylesheet id="leptos" href="/pkg/fin_model_gui.css"/>
 
         // sets the document title
         <Title text="Welcome to Leptos"/>
+
+        <MultiColumnSelect 
+            options = options
+            on_select = on_select
+            initial_value = Some(InitialValue::SelectionIndex(5))
+        />
+
 
         // content for this welcome page
         <Router>

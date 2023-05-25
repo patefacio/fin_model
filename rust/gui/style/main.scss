@@ -1,0 +1,235 @@
+//@import url("https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css");
+//@import url("https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css");
+
+:root {
+	box-sizing: border-box;
+	--mcs-btn-color: cyan;
+	--mcs-tbl-color: white;
+	--plus-btn-color: hsl(120, 50%, 90%);
+	--plus-btn-padding: 0.4rem;
+	--plus-btn-margin: 0.25rem;
+	--plus-background: white;
+	--plus-label-bg: white;
+	--plus-label-margin: 0 0.5rem 0.5rem 0;
+	--plus-form-bg: white;
+	--plus-sm-fnt: 0.75rem;
+  }
+  
+  *,
+  ::before,
+  ::after {
+	box-sizing: inherit;
+  }
+  
+  body {
+	// background-color: #709b90;
+	 font-family: Helvetica, Arial, sans-serif;
+	 font-family: sans-serif;
+	 font-size: 14px;
+   }
+  
+  
+  button {
+	background-color: var(--plus-btn-color);
+	border-radius: 0.25em;
+	border: 1px solid;
+	font-size: var(--plus-sm-fnt);
+  }
+  
+  .form {
+	background: #fff;
+  }
+  
+  form {
+	//display: grid;
+	//grid-template-columns: 1fr 1fr;
+	//grid-gap: 20px;
+	//width: 300px;
+	display: inline-block;
+  }
+  
+  
+  form label {
+	// This pushes the entries onto separate line
+	display: block;
+  }
+  form p {
+	margin: 0;
+  }
+  
+  //////////////////////////////
+  
+  div.mcs-grid {
+	position: relative;
+	//float: left;
+	//overflow-x: hidden;
+	// overflow-y: visible;
+  }
+  .mcs-grid .main-button {
+	background-color: var(--plus-btn-color);
+	width: fit-content;
+	width: -moz-fit-content;
+	border: 1px solid;
+	border-radius: 0.3rem;
+	padding: var(--plus-btn-padding);
+	margin-top: var(--plus-btn-margin);
+  }
+  
+  .mcs-grid .container {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	display: grid;
+	border: 1px solid;
+	border-radius: 0.5em;
+	z-index: 1;
+	background-color: white;
+	overflow-x: scroll;
+  }
+  
+  .mcs-grid .select-button {
+	background-color: hsl(120, 50%, 98%);
+	white-space: nowrap;
+	font-size: 0.8em;
+	border: none;
+	margin: 3px;
+	padding: var(--plus-btn-padding);
+  }
+  
+  .mcs-grid .select-button.using-mouse:hover {
+	background-color: hsl(120, 50%, 90%);
+  }
+  
+  .mcs-grid .select-button:focus {
+	background-color: hsl(120, 50%, 90%);
+  }
+  
+  .mcs-grid .container.hidden {
+	visibility: hidden;
+  }
+  
+  .mcs-grid .icon-label {
+	display: grid;
+	grid-template-columns: 2.5em 1fr;
+	padding: 2px;
+  }
+  
+  .mcs-grid .icon {
+   // background-color: lightcyan;
+	text-align: left;
+  }
+  
+  .mcs-grid .select-button:not(.using-mouse) {
+	//background-color: lightyellow;
+	cursor: none;
+  }
+  
+  .mcs-label {
+	text-align: left;
+	padding: 2px;
+  }
+  
+  //// Holding
+  
+  .holding {
+	border-radius: 5px;
+  }
+  
+  .holding input {
+	display: flex;
+	font-size: var(--plus-sm-fnt);
+	width: 8em;
+	// has no effect since input is not an inline element: vertical-align: middle;
+	align-items: center;
+	margin-top: 3px;
+  }
+  
+  .holding .form {
+	background-color: var(--plus-form-bg);
+  }
+  
+  .holding .form-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin-top: 1rem;
+	margin-left: 1rem;
+	margin-bottom: 1rem;
+  }
+  
+  .holding .currency-button {
+	margin-top: -0.5rem;
+	vertical-align: top;
+  }
+  
+  .holding .cost-basis-wrapper {
+	// Using flex keeps the _cost basis_ and _as of_ together.
+	display: flex;
+  }
+  
+  .holding .cost-basis {
+	font-size: var(--plus-sm-fnt);
+	display: flex;
+	// This aligns the currency symbol text with the input
+	align-items: baseline;
+  }
+  
+  .holding .button-and-price {
+	display: flex;
+  }
+  
+  .holding .input-share-price {
+	width: 5rem;
+  }
+  
+  .holding .input-share-count {
+	width: 6rem;
+  }
+  
+  .holding .currency-symbol {
+	padding-right: 2px;
+  }
+  
+  .holding input.as-of {
+	width: 4rem;
+  }
+  
+  .holding .as-of-group {
+	margin-left: 1rem;
+  }
+  
+  .holding label {
+	text-align: left;
+	white-space: nowrap;
+	background-color: var(--plus-label-bg);
+	margin: var(--plus-label-margin);
+	display: block;
+	//font-weight: 550;
+  }
+  
+  .holding .mcs-grid {
+	// Allows the price input associated with currency to appear next to it, instead of below it
+	float: left;
+	// Adds a bit of space beside right of the currency button, left of its input
+	margin-right: 3px;
+  }
+  
+  /////// Normal Spec
+  
+  .nsg .form {
+	background-color: var(--plus-form-bg);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: rem;
+  }
+  
+  .nsg input { 
+	//font-size: 0.75em;
+	width: 6.8em;
+  }
+  
+  .nsg label {
+	text-align: left;
+	white-space: nowrap;
+	background-color: var(--plus-label-bg);
+	display: block;
+  }

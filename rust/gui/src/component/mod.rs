@@ -4,6 +4,7 @@
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod multi_column_select;
+pub mod numeric_input;
 
 // α <mod-def component>
 // ω <mod-def component>

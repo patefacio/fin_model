@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "model",
+    "gui",
+]
+
+[profile.release]
+debug = true
+
+# [[workspace.metadata.leptos]]
+# name = "plus-leptos"
+# lib-package = "plus_client"

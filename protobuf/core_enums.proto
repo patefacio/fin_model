@@ -103,7 +103,7 @@ enum AccountType {
   TRADITIONAL_IRS_401_K = 2;
   
   /*
-    A tax sheltered account for qualified education expenses
+    A tax sheltered account for qualified education expenses.
   */
   COLLEGE_IRS_529 = 3;
   
