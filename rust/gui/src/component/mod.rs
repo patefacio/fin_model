@@ -5,6 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod multi_column_select;
 pub mod numeric_input;
+pub mod percent_input;
+pub mod year_input;
 
 // α <mod-def component>
 // ω <mod-def component>

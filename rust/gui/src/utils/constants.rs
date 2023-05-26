@@ -16,7 +16,7 @@ pub const LEFT_KEY: u32 = 37;
 /// Move left
 pub const RIGHT_KEY: u32 = 39;
 /// Move left
-pub const UP_KEY: u32 = 39;
+pub const UP_KEY: u32 = 38;
 /// Move left
 pub const DOWN_KEY: u32 = 40;
 
