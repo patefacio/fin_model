@@ -13,6 +13,7 @@ pub mod constants;
 pub mod element_sugar;
 pub mod html_tag;
 pub mod numeric_text;
+pub mod updatable;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

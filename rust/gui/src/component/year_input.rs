@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::utils::updatable::Updatable;
 use fin_model::core::YearRange;
 use leptos::{component, create_node_ref, tracing, view, IntoView, Scope};
 use leptos_dom::{console_log, html::Input};
@@ -13,21 +14,21 @@ use leptos_dom::{console_log, html::Input};
 /// A component for specifying a year
 ///
 ///   * **cx** - Context
-///   * **on_update** - Called when year is updated.
 ///   * **year_range** - Range of valid years.
+///   * **updatable** - Value and callback
 ///   * _return_ - View for year_input
 #[component]
 pub fn YearInput<F>(
     /// Context
     cx: Scope,
-    /// Called when year is updated.
-    on_update: F,
     /// Range of valid years.
     #[prop(default=YearRange{ start: 1900, end: 2300 })]
     year_range: YearRange,
+    /// Value and callback
+    updatable: Updatable<u32, F>,
 ) -> impl IntoView
 where
-    F: Fn(u32) + 'static,
+    F: Fn(&u32) + 'static,
 {
     // α <fn year_input>
 
@@ -54,20 +55,17 @@ where
             .collect();
         if value.len() == 4 {
             let i = value.parse::<u32>().expect("Valid int");
-            on_update(i);
+            updatable.update(i);
         }
         input_ref.set_value(&value);
     };
 
     view! { cx,
-
         <input
             node_ref=node_ref
             on:input = move |_| update_value()
             type="text"
         />
-
-
     }
 
     // ω <fn year_input>

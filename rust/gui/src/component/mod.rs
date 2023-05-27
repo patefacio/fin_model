@@ -4,6 +4,7 @@
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod multi_column_select;
+pub mod normal_spec_growth;
 pub mod numeric_input;
 pub mod percent_input;
 pub mod year_input;
