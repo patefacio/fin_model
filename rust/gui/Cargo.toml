@@ -34,7 +34,7 @@ log = "0.4"
 test-log = "0.2.11"
 env_logger = "0.9.1"
 console_log = "1"
-
+strum = "0.24.1"
 
 
 # ω <dependencies>

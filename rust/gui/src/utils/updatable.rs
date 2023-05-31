@@ -1,16 +1,17 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use std::cell::RefCell;
 use std::fmt::Debug;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// Owns a piece of data and supports updating it and calling a function when updated.
+/// Owns a piece of data and supports in-place modification and signalling the update
+/// by calling provided `on_update`. Parameterized by `T`, the type for the data to
+/// store and `F` the signalling update function.
 pub struct Updatable<T, F> {
     /// The current value.
-    pub value: RefCell<T>,
+    pub value: T,
     /// Indicates value has been modified
     pub on_update: F,
 }
@@ -21,27 +22,31 @@ pub struct Updatable<T, F> {
 impl<T, F> Updatable<T, F>
 where
     T: Debug,
-    F: Fn(&T) + 'static,
+    F: FnMut(&T),
 {
     /// Create new [Updatable].
     ///
-    ///   * **initial_value** - The initial value.
+    ///   * **value** - The initial value.
     ///   * **on_update** - The update callback.
     ///   * _return_ - The new [Updatable].
-    pub fn new(initial_value: T, on_update: F) -> Self {
+    pub fn new(value: T, on_update: F) -> Self {
         // α <fn Updatable[T, F]::new>
-        Updatable { value: RefCell::new(initial_value), on_update }
+        Updatable { value, on_update }
         // ω <fn Updatable[T, F]::new>
     }
 
-    /// Update with new value.
+    /// Update the value in-place by invoking `updater` and then signal the update
+    /// by calling `on_update`.
     ///
-    ///   * **value** - New value.
-    pub fn update(&self, value: T) {
+    ///   * **updater** - Function responsible for making the update.
+    pub fn update<U>(&mut self, updater: U)
+    where
+        U: Fn(&mut T),
+    {
         // α <fn Updatable[T, F]::update>
-        leptos_dom::console_log(&format!("Updating to {value:?}"));
-        (self.on_update)(&value);
-        self.value.replace(value);
+        leptos_dom::console_log(&format!("Updating to {:?}", self.value));
+        updater(&mut self.value);
+        (self.on_update)(&self.value);
         // ω <fn Updatable[T, F]::update>
     }
 }

@@ -1,4 +1,4 @@
-//! TODO: Document Module(normal_spec_growth)
+//! Module for normal_spec_growth leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
@@ -7,43 +7,39 @@ use crate::component::numeric_input::{Modification, NumericInput};
 use crate::utils::updatable::Updatable;
 use fin_model::core::NormalSpec;
 use leptos::{component, tracing, view, IntoView, Scope};
-use std::borrow::BorrowMut;
-use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// Models a normal distribution -> N(mu, sigma).
+/// Models a normal specification -> N(mu, sigma).
 ///
 ///   * **cx** - Context
-///   * **updatable** - Value and callback
+///   * **updatable** - Value and signalling callback
 ///   * _return_ - View for normal_spec_growth
 #[component]
 pub fn NormalSpecGrowth<F>(
     /// Context
     cx: Scope,
-    /// Value and callback
+    /// Value and signalling callback
     updatable: Updatable<NormalSpec, F>,
 ) -> impl IntoView
 where
-    F: Fn(&NormalSpec) + 'static,
+    F: FnMut(&NormalSpec) + 'static,
 {
     // α <fn normal_spec_growth>
 
-    let updatable = Rc::new(updatable);
+    use std::rc::Rc;
+    use std::cell::RefCell;
+    let updatable = Rc::new(RefCell::new(updatable));
+    let mean_updatable = updatable.clone();
     let on_mean_updated = move |mean| {
-        // TODO update updateable
-
-        let current = updatable.value.borrow();
-        let mut new_value = current.clone();
-        new_value.mean = mean;
-        updatable.update(new_value);
-        // let mut new_value = updatable.value.clone();
-        // new_value.mean = mean;
+        let mut current = mean_updatable.borrow_mut();
+        current.update(|v| { v.mean = mean; });
     };
 
     let on_std_dev_updated = move |std_dev| {
-        // TODO update updatable
+        let mut current = updatable.borrow_mut();
+        current.update(|v| { v.std_dev = std_dev; });
     };
 
     view! {

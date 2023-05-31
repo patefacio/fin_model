@@ -1,4 +1,4 @@
-//! TODO: Document Module(year_input)
+//! Module for year_input leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
@@ -11,7 +11,7 @@ use leptos_dom::{console_log, html::Input};
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// A component for specifying a year
+/// A component for specifying a year, constrained by a year range.
 ///
 ///   * **cx** - Context
 ///   * **year_range** - Range of valid years.
@@ -28,13 +28,14 @@ pub fn YearInput<F>(
     updatable: Updatable<u32, F>,
 ) -> impl IntoView
 where
-    F: Fn(&u32) + 'static,
+    F: FnMut(&u32) + 'static,
 {
     // α <fn year_input>
 
     let node_ref = create_node_ref::<Input>(cx);
+    let mut updatable = updatable;
 
-    let update_value = move || {
+    let mut update_value = move || {
         let input_ref = node_ref.get().expect("Year input node");
         let mut value = input_ref.value();
         let first_char_in_start = first_digit(year_range.start);
@@ -55,7 +56,7 @@ where
             .collect();
         if value.len() == 4 {
             let i = value.parse::<u32>().expect("Valid int");
-            updatable.update(i);
+            updatable.update(|value| *value = i);
         }
         input_ref.set_value(&value);
     };

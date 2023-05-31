@@ -41,8 +41,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::component::numeric_input::NumericInput;
     use crate::component::percent_input::PercentInput;
     use crate::component::year_input::YearInput;
+    use crate::component::holding_component::HoldingComponent;
     use crate::utils::updatable::Updatable;
-    use fin_model::core::NormalSpec;
+    use fin_model::{ account::Holding, core::NormalSpec} ;
 
     let options: Vec<_> = (0..50)
         .map(|i| SelectOption::Label(format!("Selection {i}")))
@@ -73,6 +74,15 @@ fn HomePage(cx: Scope) -> impl IntoView {
         },
     );
 
+    let holding_updatable = Updatable::new(
+        Holding {
+            ..Default::default()
+        },
+        |holding: &Holding| {
+            leptos_dom::console_log(&format!("Normal Spec -> {holding:?}"));
+        }
+    );
+
     view! { cx,
         <h1>"Welcome to Leptos!"</h1>
         <button on:click=on_click>"Click Me: " {count}</button>
@@ -101,6 +111,11 @@ fn HomePage(cx: Scope) -> impl IntoView {
         <div>"Normal Spec"</div>
         <NormalSpecGrowth
             updatable = normal_spec_updatable
+        />
+
+        <div>"Holding"</div>
+        <HoldingComponent
+            updatable = holding_updatable
         />
 
     }

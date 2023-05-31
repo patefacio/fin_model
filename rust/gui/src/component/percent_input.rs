@@ -1,4 +1,4 @@
-//! TODO: Document Module(percent_input)
+//! Module for percent_input leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---

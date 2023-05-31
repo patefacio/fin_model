@@ -1,4 +1,4 @@
-//! TODO: Document Module(multi_column_select)
+//! Module for multi_column_select leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---

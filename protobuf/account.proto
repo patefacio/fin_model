@@ -43,7 +43,8 @@ message BondSpec {
 /*
   
   The holding of a given financial asset held in an account with enough relevant
-  data to model its growth and dividends in a forecast. 
+  data to model its growth and dividends in a forecast. The tax nature of the holding
+  depends on the account holding it.
   
   `valuation` is the most recent value of the holding on a `Date`.        
 */

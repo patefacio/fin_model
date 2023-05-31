@@ -1,4 +1,4 @@
-//! TODO: Document Module(numeric_input)
+//! Module for numeric_input leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
@@ -40,7 +40,7 @@ pub enum Modification {
 ///   * **on_update** - Called when input is updated.
 ///   * **input_class** - Class to decorate input element for styling
 ///   * **modification** - Optional modification (e.g. suffix/prefix)
-///   * **non_negative** - If set negative values are disallowed.
+///   * **non_negative** - If set, negative values are disallowed.
 ///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * _return_ - View for numeric_input
 #[component]
@@ -55,7 +55,7 @@ pub fn NumericInput<F>(
     /// Optional modification (e.g. suffix/prefix)
     #[prop(default=None)]
     modification: Option<Modification>,
-    /// If set negative values are disallowed.
+    /// If set, negative values are disallowed.
     #[prop(default = false)]
     non_negative: bool,
     /// Placeholder shown if entry is empty.
