@@ -9,10 +9,9 @@ use crate::utils::constants::{
 };
 use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::utils::html_tag::HtmlTag;
-use leptos::{component, create_node_ref, create_rw_signal, store_value, tracing, view};
-use leptos::{
-    IntoAttribute, IntoClass, IntoView, Scope, SignalGet, SignalSet, SignalUpdate, WriteSignal,
-};
+use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{create_node_ref, create_rw_signal, store_value};
+use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet, SignalUpdate, WriteSignal};
 use leptos_dom::console_log;
 use leptos_dom::helpers::window_event_listener_untyped;
 use leptos_dom::html::{Button, Div};
@@ -120,10 +119,13 @@ pub fn MultiColumnSelect<F>(
     column_count: usize,
 ) -> impl IntoView
 where
-    F: Fn(String) + 'static,
+    F: FnMut(String) + 'static,
 {
     // α <fn multi_column_select>
+
+    use std::cell::RefCell;
     let block_time = BlockTime::new("Creation of element");
+    let mut on_select = on_select;
 
     let indexer = Indexer::new(options.len(), column_count, direction);
     let mcs_grid_ref = create_node_ref::<Div>(cx);
@@ -211,14 +213,14 @@ where
         })
     }
 
-    let set_selection = Rc::new(move |element: Element| {
+    let set_selection = Rc::new(RefCell::new(move |element: Element| {
         if let Some((flat_index, selected)) = get_selection(element) {
             console_log(&format!("Selected {flat_index} {selected}"));
             current_selected_index.set(flat_index);
             main_button_label.set(selected.clone());
             on_select(selected);
         }
-    });
+    }));
 
     let key_down_set_selection = set_selection.clone();
     let handle_key_down = Rc::new(move |ev: KeyboardEvent| {
@@ -232,7 +234,8 @@ where
             ENTER_KEY | SPACE_KEY | ESCAPE_KEY => {
                 console_log("Enter|Space|Escape Key");
                 if key_code != ESCAPE_KEY {
-                    key_down_set_selection(element_from_event(&ev));
+                    let mut current = key_down_set_selection.borrow_mut();
+                    current(element_from_event(&ev));
                 }
                 hide_menu();
                 set_focus_main_button();
@@ -254,7 +257,8 @@ where
     let handle_click = Rc::new(move |ev: MouseEvent| {
         console_log("Select button handle click");
         let _timing = BlockTime::new("click");
-        click_set_selection(element_from_event(&ev));
+        let mut current = click_set_selection.borrow_mut();
+        current(element_from_event(&ev));
         hide_menu();
         set_focus_main_button();
     });

@@ -5,7 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::utils::updatable::Updatable;
 use fin_model::core::YearRange;
-use leptos::{component, create_node_ref, tracing, view, IntoView, Scope};
+use leptos::create_node_ref;
+use leptos::{component, tracing, view, IntoView, Scope};
 use leptos_dom::{console_log, html::Input};
 
 ////////////////////////////////////////////////////////////////////////////////////

@@ -33,8 +33,6 @@ pub fn App(cx: Scope) -> impl IntoView {
 #[component]
 fn HomePage(cx: Scope) -> impl IntoView {
     // Creates a reactive value to update the button
-    let (count, set_count) = create_signal(cx, 0);
-    let on_click = move |_| set_count.update(|count| *count += 1);
 
     use crate::component::multi_column_select::{InitialValue, MultiColumnSelect, SelectOption};
     use crate::component::normal_spec_growth::NormalSpecGrowth;
@@ -42,8 +40,12 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::component::percent_input::PercentInput;
     use crate::component::year_input::YearInput;
     use crate::component::holding_component::HoldingComponent;
+    use crate::component::worth_component::WorthComponent;
+    use crate::component::balance_sheet_component::BalanceSheetComponent;
+    use crate::component::InstrumentGrowthMappings;
+
     use crate::utils::updatable::Updatable;
-    use fin_model::{ account::Holding, core::NormalSpec} ;
+    use fin_model::{ account::Holding, core::NormalSpec, balance_sheet::BalanceSheet} ;
 
     let options: Vec<_> = (0..50)
         .map(|i| SelectOption::Label(format!("Selection {i}")))
@@ -83,9 +85,15 @@ fn HomePage(cx: Scope) -> impl IntoView {
         }
     );
 
+    let balance_sheet = BalanceSheet::default();
+    let instrument_growth_mappings_updatable = Updatable::new(
+        balance_sheet.instrument_growth_mappings.clone(),
+        |mappings: &InstrumentGrowthMappings| {
+            leptos_dom::console_log(&format!("Mappings -> {mappings:?}"));
+        }
+    );
+
     view! { cx,
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
         <MultiColumnSelect
             options = options
             on_select = on_select
@@ -116,6 +124,15 @@ fn HomePage(cx: Scope) -> impl IntoView {
         <div>"Holding"</div>
         <HoldingComponent
             updatable = holding_updatable
+            updatable_mappings = instrument_growth_mappings_updatable
+        />
+
+        <div>"Worth"</div>
+        <WorthComponent
+        />
+
+        <div>"Balance Sheet"</div>
+        <BalanceSheetComponent
         />
 
     }
