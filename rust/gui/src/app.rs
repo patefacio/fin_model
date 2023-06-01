@@ -35,7 +35,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
     // Creates a reactive value to update the button
 
     use crate::component::multi_column_select::{InitialValue, MultiColumnSelect, SelectOption};
-    use crate::component::normal_spec_growth::NormalSpecGrowth;
+    use crate::component::normal_spec_component::NormalSpecComponent;
     use crate::component::numeric_input::NumericInput;
     use crate::component::percent_input::PercentInput;
     use crate::component::year_input::YearInput;
@@ -117,7 +117,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
         />
 
         <div>"Normal Spec"</div>
-        <NormalSpecGrowth
+        <NormalSpecComponent
             updatable = normal_spec_updatable
         />
 

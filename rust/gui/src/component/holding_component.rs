@@ -37,7 +37,7 @@ where
 
     use crate::component::numeric_input::{NumericInput, Modification};
     use crate::component::enum_select::EnumSelect;
-    use crate::component::normal_spec_growth::NormalSpecGrowth;
+    use crate::component::normal_spec_component::NormalSpecComponent;
     use fin_model::core_enums::HoldingType;
     use std::rc::Rc;
     use std::cell::RefCell;

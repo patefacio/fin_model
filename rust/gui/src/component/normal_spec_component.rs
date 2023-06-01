@@ -1,4 +1,4 @@
-//! Module for normal_spec_growth leptos function/component
+//! Module for normal_spec_component leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
@@ -15,9 +15,9 @@ use leptos::{component, tracing, view, IntoView, Scope};
 ///
 ///   * **cx** - Context
 ///   * **updatable** - Value and signalling callback
-///   * _return_ - View for normal_spec_growth
+///   * _return_ - View for normal_spec_component
 #[component]
-pub fn NormalSpecGrowth<F>(
+pub fn NormalSpecComponent<F>(
     /// Context
     cx: Scope,
     /// Value and signalling callback
@@ -26,7 +26,7 @@ pub fn NormalSpecGrowth<F>(
 where
     F: FnMut(&NormalSpec) + 'static,
 {
-    // α <fn normal_spec_growth>
+    // α <fn normal_spec_component>
 
     use std::rc::Rc;
     use std::cell::RefCell;
@@ -71,8 +71,9 @@ where
         </div>
         </fieldset>
     }
-    // ω <fn normal_spec_growth>
+
+    // ω <fn normal_spec_component>
 }
 
-// α <mod-def normal_spec_growth>
-// ω <mod-def normal_spec_growth>
+// α <mod-def normal_spec_component>
+// ω <mod-def normal_spec_component>

@@ -13,7 +13,7 @@ pub mod balance_sheet_component;
 pub mod enum_select;
 pub mod holding_component;
 pub mod multi_column_select;
-pub mod normal_spec_growth;
+pub mod normal_spec_component;
 pub mod numeric_input;
 pub mod percent_input;
 pub mod worth_component;
