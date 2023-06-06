@@ -75,7 +75,7 @@ pub struct ItemGrowth {
 /// Uniquely identifies either an instrument or a `growth_item` as known
 /// by the system. This sum type allows using instances of this type as
 /// keys in associative arrays.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SystemGrowthId {
@@ -96,7 +96,7 @@ pub mod system_growth_id {
     /// - HoldingItemId
     /// - WorthItemId
     /// - FlowItemId
-    #[derive(Serialize, Deserialize)]
+    #[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum SystemId {

@@ -21,17 +21,13 @@ pub fn BalanceSheetComponent(
 ) -> impl IntoView {
     // α <fn balance_sheet_component>
 
-
     view! {
         cx,
         <fieldset class="balance_sheet">
-        <legend>"Balance Sheet"</legend>        
+        <legend>"Balance Sheet"</legend>
 
         </fieldset>
     }
-
-
-
 
     // ω <fn balance_sheet_component>
 }

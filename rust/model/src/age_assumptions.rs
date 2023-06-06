@@ -1,6 +1,6 @@
 ///
 /// Assumptions regarding the ages of a person _at retirement_, _at death_, etc.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AgeAssumptions {

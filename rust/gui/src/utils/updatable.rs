@@ -1,38 +1,41 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use std::boxed::Box;
 use std::fmt::Debug;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// Owns a piece of data and supports in-place modification and signalling the update
-/// by calling provided `on_update`. Parameterized by `T`, the type for the data to
-/// store and `F` the signalling update function.
-pub struct Updatable<T, F> {
+/// by calling provided `on_update`.
+pub struct Updatable<T> {
     /// The current value.
     pub value: T,
-    /// Indicates value has been modified
-    pub on_update: F,
+    /// Function called to signal value has been updated.
+    on_update: Box<dyn FnMut(&T)>,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- type impls ---
 ////////////////////////////////////////////////////////////////////////////////////
-impl<T, F> Updatable<T, F>
+impl<T> Updatable<T>
 where
     T: Debug,
-    F: FnMut(&T),
 {
     /// Create new [Updatable].
     ///
     ///   * **value** - The initial value.
     ///   * **on_update** - The update callback.
     ///   * _return_ - The new [Updatable].
-    pub fn new(value: T, on_update: F) -> Self {
-        // α <fn Updatable[T, F]::new>
+    pub fn new(value: T, on_update: Box<dyn FnMut(&T)>) -> Self {
+        // α <fn Updatable[T]::new>
+        leptos_dom::console_log(&format!(
+            "Creating Updatable<`{}`>",
+            std::any::type_name::<T>()
+        ));
         Updatable { value, on_update }
-        // ω <fn Updatable[T, F]::new>
+        // ω <fn Updatable[T]::new>
     }
 
     /// Update the value in-place by invoking `updater` and then signal the update
@@ -43,11 +46,26 @@ where
     where
         U: Fn(&mut T),
     {
-        // α <fn Updatable[T, F]::update>
+        // α <fn Updatable[T]::update>
         leptos_dom::console_log(&format!("Updating to {:?}", self.value));
         updater(&mut self.value);
         (self.on_update)(&self.value);
-        // ω <fn Updatable[T, F]::update>
+        // ω <fn Updatable[T]::update>
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// --- trait impls ---
+////////////////////////////////////////////////////////////////////////////////////
+impl<T> Drop for Updatable<T> {
+    /// Custom code within the destructor
+    fn drop(&mut self) {
+        // α <fn Drop::drop for Updatable<T>>
+        leptos_dom::console_log(&format!(
+            "Dropping Updatable<`{}`>",
+            std::any::type_name::<T>()
+        ));
+        // ω <fn Drop::drop for Updatable<T>>
     }
 }
 
@@ -55,8 +73,8 @@ where
 #[cfg(test)]
 pub mod unit_tests {
 
-    /// Test type Updatable<T, F>
-    mod test_updatable_tf {
+    /// Test type Updatable<T>
+    mod test_updatable_t {
         ////////////////////////////////////////////////////////////////////////////////////
         // --- module uses ---
         ////////////////////////////////////////////////////////////////////////////////////
@@ -67,20 +85,20 @@ pub mod unit_tests {
         ////////////////////////////////////////////////////////////////////////////////////
         #[test]
         fn new() {
-            // α <fn test Updatable[T, F]::new>
+            // α <fn test Updatable[T]::new>
             todo!("Test new")
-            // ω <fn test Updatable[T, F]::new>
+            // ω <fn test Updatable[T]::new>
         }
 
         #[test]
         fn update() {
-            // α <fn test Updatable[T, F]::update>
+            // α <fn test Updatable[T]::update>
             todo!("Test update")
-            // ω <fn test Updatable[T, F]::update>
+            // ω <fn test Updatable[T]::update>
         }
 
-        // α <mod-def test_updatable_tf>
-        // ω <mod-def test_updatable_tf>
+        // α <mod-def test_updatable_t>
+        // ω <mod-def test_updatable_t>
     }
 
     // α <mod-def unit_tests>

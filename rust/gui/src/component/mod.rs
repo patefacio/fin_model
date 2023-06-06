@@ -10,19 +10,17 @@ use std::collections::HashMap;
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod balance_sheet_component;
+pub mod dispose_test;
 pub mod enum_select;
 pub mod holding_component;
 pub mod multi_column_select;
 pub mod normal_spec_component;
 pub mod numeric_input;
+pub mod ok_cancel_component;
 pub mod percent_input;
+pub mod symbol_input;
 pub mod worth_component;
 pub mod year_input;
-
-////////////////////////////////////////////////////////////////////////////////////
-// --- type aliases ---
-////////////////////////////////////////////////////////////////////////////////////
-pub(crate) type InstrumentGrowthMappings = HashMap<String, ItemGrowth>;
 
 // α <mod-def component>
 // ω <mod-def component>

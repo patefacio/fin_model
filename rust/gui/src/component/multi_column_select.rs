@@ -311,7 +311,10 @@ where
                 let button_ref =
                     selection_vec.with_value(|selection_vec| selection_vec[flat_index]);
                 let (value, button_content) = match select_option {
-                    SelectOption::Label(label) => (label, view! {cx, <div class="mcs-label">{label}</div> }.into_view(cx)),
+                    SelectOption::Label(label) => (
+                        label,
+                        view! {cx, <div class="mcs-label">{label}</div> }.into_view(cx),
+                    ),
                     SelectOption::KeyLabel { key, label } => (
                         key,
                         view! {cx,
@@ -602,11 +605,11 @@ pub mod unit_tests {
         fn flat_index_to_two_d() {
             // α <fn test Indexer::flat_index_to_two_d>
 
-            let ltr_indexer = Indexer::new(6*16, 16, Direction::LeftToRight); 
+            let ltr_indexer = Indexer::new(6 * 16, 16, Direction::LeftToRight);
             assert_eq!((0, 15), ltr_indexer.flat_index_to_two_d(15));
             assert_eq!((1, 0), ltr_indexer.flat_index_to_two_d(16));
 
-            let ttb_indexer = Indexer::new(6*16, 16, Direction::TopToBottom);
+            let ttb_indexer = Indexer::new(6 * 16, 16, Direction::TopToBottom);
             assert_eq!((5, 0), ttb_indexer.flat_index_to_two_d(5));
             assert_eq!((0, 1), ttb_indexer.flat_index_to_two_d(6));
 
@@ -617,11 +620,11 @@ pub mod unit_tests {
         fn two_d_to_flat_index() {
             // α <fn test Indexer::two_d_to_flat_index>
 
-            let ltr_indexer = Indexer::new(6*16, 16, Direction::LeftToRight);
+            let ltr_indexer = Indexer::new(6 * 16, 16, Direction::LeftToRight);
             assert_eq!(15, ltr_indexer.two_d_to_flat_index(0, 15));
             assert_eq!(16, ltr_indexer.two_d_to_flat_index(1, 0));
 
-            let ttb_indexer = Indexer::new(6*16, 16, Direction::TopToBottom);
+            let ttb_indexer = Indexer::new(6 * 16, 16, Direction::TopToBottom);
             assert_eq!(5, ttb_indexer.two_d_to_flat_index(5, 0));
             assert_eq!(6, ttb_indexer.two_d_to_flat_index(0, 1));
 
@@ -667,6 +670,5 @@ pub mod unit_tests {
 }
 
 // α <mod-def multi_column_select>
-
 
 // ω <mod-def multi_column_select>

@@ -25,7 +25,7 @@ pub fn WorthComponent(
     view! {
         cx,
         <fieldset class="worth">
-        <legend>"Worth"</legend>        
+        <legend>"Worth"</legend>
 
         </fieldset>
     }

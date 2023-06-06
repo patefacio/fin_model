@@ -19,7 +19,7 @@ pub struct Date {
 }
 ///
 /// Pairs a <em>value</em> with a <em>year</em>, useful for storing _annual_ time series data.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, PartialOrd)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct YearValue {
@@ -49,7 +49,7 @@ pub struct CurrencyValue {
 }
 ///
 /// A dated value in a specified currency.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, PartialOrd)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct YearCurrencyValue {
@@ -68,7 +68,7 @@ pub struct YearCurrencyValue {
 }
 ///
 /// Models a range of years [start, end).
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Ord, PartialOrd, Eq)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct YearRange {
@@ -83,7 +83,7 @@ pub struct YearRange {
 }
 ///
 /// Models a _Normal_ distribution.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, PartialOrd)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NormalSpec {
@@ -125,7 +125,7 @@ pub struct YearValueSeries {
 /// The name is optional. The idea is the client will need to pass identifiers to
 /// the server and those are safest when always referring to and relying on
 /// numeric values.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialOrd, Ord, Eq)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DbId {
@@ -146,7 +146,7 @@ pub struct DbId {
 /// to a specific account and/or holding within it. Similarly it can be used to assign non-reinvested
 /// incomes to specific investments. An index where the account is specified but no holding is
 /// specified implies *any* holding will suffice. See example usage in \[FlowSpec\].
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DossierHoldingIndex {
@@ -166,7 +166,7 @@ pub struct DossierHoldingIndex {
 /// Can be used to identify specific items like `Worth`, `Holding` and `FlowSpec`
 /// within a _dossier_.
 ///
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Ord, PartialOrd, Eq)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DossierItemIndex {
@@ -187,7 +187,7 @@ pub mod dossier_item_index {
     /// This definition is kept in _core_ because, while it is specific to a specific `dossier`
     /// it is simply an index. The dossier itself may store these indexes in some places to
     /// associate items with accounts and/or specific holdings.
-    #[derive(Serialize, Deserialize)]
+    #[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum ItemIndex {
@@ -258,7 +258,7 @@ pub struct ValueOverRange {
 }
 ///
 /// Balance change over a period
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, PartialOrd)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PeriodBalance {

@@ -12,8 +12,10 @@ pub mod block_time;
 pub mod constants;
 pub mod element_sugar;
 pub mod html_tag;
+pub mod log_dispose;
 pub mod numeric_text;
 pub mod updatable;
+pub mod year_clamp;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -30,7 +32,7 @@ where
     // α <fn commify_number>
     use num_format::{Locale, ToFormattedString};
     number.to_formatted_string(&Locale::en)
-  // ω <fn commify_number>
+    // ω <fn commify_number>
 }
 
 // α <mod-def utils>

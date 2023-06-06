@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::utils::constants::{LEFT_KEY, RIGHT_KEY};
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
+use crate::utils::updatable::Updatable;
 use leptos::{component, tracing, view, IntoView, Scope};
 use leptos::{
     create_effect, create_node_ref, create_signal, store_value, IntoAttribute, ReadSignal,
@@ -38,18 +39,18 @@ pub enum Modification {
 /// Only valid numeric characters (ascii) are allowed. Numbers are automatically formatted.
 ///
 ///   * **cx** - Context
-///   * **on_update** - Called when input is updated.
+///   * **updatable** - Signal updated as numeric input is updated.
 ///   * **input_class** - Class to decorate input element for styling
 ///   * **modification** - Optional modification (e.g. suffix/prefix)
 ///   * **non_negative** - If set, negative values are disallowed.
 ///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * _return_ - View for numeric_input
 #[component]
-pub fn NumericInput<F>(
+pub fn NumericInput(
     /// Context
     cx: Scope,
-    /// Called when input is updated.
-    on_update: F,
+    /// Signal updated as numeric input is updated.
+    updatable: Updatable<Option<f64>>,
     /// Class to decorate input element for styling
     #[prop(default=None)]
     input_class: Option<String>,
@@ -62,16 +63,24 @@ pub fn NumericInput<F>(
     /// Placeholder shown if entry is empty.
     #[prop(default=None)]
     placeholder: Option<String>,
-) -> impl IntoView
-where
-    F: Fn(f64) + 'static,
-{
+) -> impl IntoView {
     // α <fn numeric_input>
-    use std::rc::Rc;
+
+    use leptos::IntoAttribute;
+
+    // Get the initial value for the year if provided. Set to empty string if
+    // not provided.
+    let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
+        initial_value.to_string()
+    } else {
+        String::default()
+    };
+
     let node_ref = create_node_ref::<Input>(cx);
     let modification = store_value(cx, modification);
+    let mut updatable = updatable;
 
-    let update_value = Rc::new(move || {
+    let update_value = move || {
         modification.with_value(|modification| {
             let input_ref = node_ref.get().expect("Input node");
             let mut selection_start = input_ref
@@ -112,12 +121,11 @@ where
                 input_ref.set_value(&new_value);
             }
 
-            if let Some(value) = value {
-                //via_key(value)
-                on_update(value)
-            }
+            updatable.update(|number| *number = value);
         });
-    });
+    };
+
+    let update_value = leptos::store_value(cx, update_value);
 
     let key_movement = move |ev: KeyboardEvent| {
         let key_code = ev.key_code();
@@ -145,13 +153,12 @@ where
         }
     };
 
-    let effect_update = update_value.clone();
     create_effect(cx, move |_| {
         modification.with_value(|modification| {
             if let Some(Modification::ReactivePrefix(reactive)) = modification {
                 reactive.with(|_| {
                     if let Some(_) = node_ref.get() {
-                        effect_update()
+                        update_value.update_value(|update_value| update_value())
                     }
                 })
             }
@@ -165,9 +172,11 @@ where
             class=input_class
             node_ref=node_ref
             on:keydown=key_movement
-            on:input = move |_| update_value()
+            on:input = move |_| update_value.update_value(|update_value| update_value())
             placeholder=placeholder.unwrap_or_default()
-            type="text" />
+            value=initial_value
+            type="text"
+        />
 
 
     }

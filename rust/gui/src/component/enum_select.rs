@@ -17,21 +17,20 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * **updatable** - Value of enum that will be changed on selection.
 ///   * _return_ - View for enum_select
 #[component]
-pub fn EnumSelect<E, F>(
+pub fn EnumSelect<E>(
     /// Context
     cx: Scope,
     /// Value of enum that will be changed on selection.
-    updatable: Updatable<E, F>,
+    updatable: Updatable<E>,
 ) -> impl IntoView
 where
     E: Debug + VariantNames + IntoEnumIterator + 'static,
-    F: FnMut(&E) + 'static,
 {
     // α <fn enum_select>
 
-    use crate::component::multi_column_select::{InitialValue, SelectOption, MultiColumnSelect};
+    use crate::component::multi_column_select::{InitialValue, MultiColumnSelect, SelectOption};
 
-    let mut updatable = updatable;
+    let updatable = leptos::store_value(cx, updatable);
 
     let options: Vec<_> = E::VARIANTS
         .iter()
@@ -39,13 +38,15 @@ where
         .collect();
 
     let menu_select = move |value: String| {
-        updatable.update(|selection| {
-            for (i, e) in E::iter().enumerate() {
-                if E::VARIANTS[i] == value {
-                    *selection = e;
-                    break;
+        updatable.update_value(|updatable| {
+            updatable.update(|selection| {
+                for (i, e) in E::iter().enumerate() {
+                    if E::VARIANTS[i] == value {
+                        *selection = e;
+                        break;
+                    }
                 }
-            }
+            })
         });
     };
 
@@ -57,7 +58,6 @@ where
             on_select=menu_select
         />
     }
-
 
     // ω <fn enum_select>
 }
