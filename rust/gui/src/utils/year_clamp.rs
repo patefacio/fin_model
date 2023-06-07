@@ -106,15 +106,27 @@ pub mod unit_tests {
         #[test]
         fn clamp() {
             // α <fn test YearClamp::clamp>
-            todo!("Test clamp")
+
+            let year_clamp = YearClamp::new(YearRange{ start: 1990, end: 2300 });
+
+            println!("Clamping 2023 -> {}", year_clamp.clamp("2023"));
+
+            assert_eq!(1, year_clamp.clamp("1"));
+            assert_eq!(2, year_clamp.clamp("2"));
+            assert_eq!(2, year_clamp.clamp("3"));
+            assert_eq!(0, year_clamp.clamp("0"));
+            assert_eq!(18, year_clamp.clamp("19"));
+
             // ω <fn test YearClamp::clamp>
         }
 
         // α <mod-def test_year_clamp>
+        use super::*;
         // ω <mod-def test_year_clamp>
     }
 
     // α <mod-def unit_tests>
+    use super::*;
     // ω <mod-def unit_tests>
 }
 
