@@ -54,13 +54,14 @@ impl YearClamp {
         leptos_dom::console_log(&format!("Attempting to clamp({value})"));
 
         // We know all characters in the string must be digits
-        debug_assert!(value
-            .bytes()
-            .all(|b| (b as char).is_ascii_digit()));
+        debug_assert!(value.bytes().all(|b| (b as char).is_ascii_digit()));
 
-        // Index into the proper ranges_by_digit, do the clamp and return the number
-        // TODO:
-        
+        let num_digits = value.len();
+
+        if let Some(year_range) = self.ranges_by_digit.get(num_digits - 1) {
+            // Index into the proper ranges_by_digit, do the clamp and return the number
+            // TODO:
+        }
 
         // For now, just return the input
         value.parse::<u32>().expect("Should be valid year")
@@ -76,14 +77,23 @@ impl YearClamp {
     ///   * _return_ - The new instance
     pub fn new(year_range: YearRange) -> YearClamp {
         // α <fn YearClamp::new>
-        
+
+        debug_assert!(year_range.start <= year_range.end, "Start <= end");
+
         let ranges_by_digit = Vec::new();
+        //////////////////////////
+        let num_digits_start = (year_range.start as f64).log10() as usize - 1;
+        let num_digits_end = (year_range.end as f64).log10() as usize - 1;
+        let vec_size = num_digits_start.max(num_digits_end);
         
+        // iterate from 0 to vec_size and for each number of digits create a new
+        // range of that size and push into vec.
+
         // TODO: Push the ranges here
 
         YearClamp {
             year_range,
-            ranges_by_digit
+            ranges_by_digit,
         }
         // ω <fn YearClamp::new>
     }
@@ -107,7 +117,10 @@ pub mod unit_tests {
         fn clamp() {
             // α <fn test YearClamp::clamp>
 
-            let year_clamp = YearClamp::new(YearRange{ start: 1990, end: 2300 });
+            let year_clamp = YearClamp::new(YearRange {
+                start: 1990,
+                end: 2300,
+            });
 
             println!("Clamping 2023 -> {}", year_clamp.clamp("2023"));
 
