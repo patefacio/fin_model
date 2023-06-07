@@ -29,4 +29,13 @@ tonic-build = "0.8"
 # α <features>
 # ω <features>
 # α <additional>
+
+[dev-dependencies]
+criterion = "0.4.0"
+
+
+[[bench]]
+name = "clamp_bench"
+harness = false
+
 # ω <additional>

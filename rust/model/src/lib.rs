@@ -23,4 +23,8 @@ pub mod growth;
 pub mod worth;
 
 // α <mod-def lib>
+
+pub mod clamp;
+pub mod get_digit_power;
+
 // ω <mod-def lib>
