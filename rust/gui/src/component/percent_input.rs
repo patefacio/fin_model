@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput, NumericInputProps};
 use crate::utils::updatable::Updatable;
-use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{component, view, IntoView, Scope};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

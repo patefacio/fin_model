@@ -6,7 +6,7 @@
 use crate::component::numeric_input::{Modification, NumericInput};
 use crate::utils::updatable::Updatable;
 use fin_model::core::NormalSpec;
-use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{component, view, IntoView, Scope};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

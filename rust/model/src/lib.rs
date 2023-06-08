@@ -25,6 +25,7 @@ pub mod worth;
 // α <mod-def lib>
 
 pub mod clamp;
+pub mod clamp_ext;
 pub mod get_digit_power;
 
 // ω <mod-def lib>

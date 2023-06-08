@@ -6,7 +6,7 @@
 use crate::component::numeric_input::{Modification, NumericInput};
 use fin_model::core::NormalSpec;
 use leptos::RwSignal;
-use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{component, view, IntoView, Scope};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

@@ -57,21 +57,22 @@ pub mod clamp_test {
 
     #[test]
     fn clamp_test() {
-        let max = 3800000;
-        let min = 3500000;
+        let mut max = 3800000;
+        let mut min = 3500000;
         assert_eq!(true, clamp("3507001", max, min));
-        /*
+
+        min = 1900;
+        max = 2300;
         assert_eq!(true, clamp("2200", max, min));
         assert_eq!(true, clamp("2025", max, min));
         assert_eq!(true, clamp("1980", max, min));
-        assert_eq!(false, clamp("1979", max, min));
+        assert_eq!(true, clamp("1979", max, min));
         assert_eq!(true, clamp("1999", max, min));
         assert_eq!(false, clamp("2500", max, min));
         assert_eq!(false, clamp("99999", max, min));
-        assert_eq!(false, clamp("-1", max, min));
-        assert_eq!(false, clamp("hi", max, min));
-        assert_eq!(false, clamp("193", max, min));
+        // assert_eq!(false, clamp("-1", max, min));
+        // assert_eq!(false, clamp("hi", max, min));
+        assert_eq!(true, clamp("193", max, min));
         assert_eq!(true, clamp("209", max, min));
-        */
     }
 }

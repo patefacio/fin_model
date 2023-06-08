@@ -8,7 +8,7 @@ use fin_model::account::Holding;
 use fin_model::balance_sheet::BalanceSheet;
 use fin_model::core::DossierHoldingIndex;
 use fin_model::growth::ItemGrowth;
-use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{component, view, IntoView, Scope};
 use std::collections::HashMap;
 
 ////////////////////////////////////////////////////////////////////////////////////

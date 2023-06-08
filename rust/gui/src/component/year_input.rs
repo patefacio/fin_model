@@ -7,7 +7,7 @@ use crate::utils::updatable::Updatable;
 use crate::utils::year_clamp::YearClamp;
 use fin_model::core::YearRange;
 use leptos::create_node_ref;
-use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{component, view, IntoView, Scope};
 use leptos_dom::{console_log, html::Input};
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +36,7 @@ pub fn YearInput(
     // α <fn year_input>
 
     use leptos::IntoAttribute;
+
     // Get the initial value for the year if provided. Set to empty string if
     // not provided.
     let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
@@ -67,7 +68,7 @@ pub fn YearInput(
         // no negative or decimal allowed. (Could this be faster?)
         value = value.chars().filter(|c| c.is_ascii_digit()).collect();
 
-        leptos_dom::console_log(&format!("YearInput: filtered -> {value}"));
+        leptos_dom::console_log(&format!("YearInput: filtered -> {value:?}"));
 
         if value.is_empty() {
             // No characters in the input are valid digits - the value is now None
@@ -80,11 +81,10 @@ pub fn YearInput(
             // be off-putting and we should discuss. Imagine typing "2303" and on
             // entering that last 3 what gets displayed is "2300". It will certainly
             // ensure the value is in range but maybe the approach is heavy handed.
-            let clamped_value = year_clamp.clamp(&value);
-            let clamped_year = clamped_value.to_string();
-            updatable.update(|year| *year = Some(clamped_value));
-            input_ref.set_value(&clamped_year);
-            leptos_dom::console_log(&format!("YearInput: setting value to -> {clamped_year}"));
+            let clamped  = year_clamp.clamp(&value);
+            updatable.update(|year| *year = Some(clamped.as_u32));
+            input_ref.set_value(&clamped.as_string);
+            leptos_dom::console_log(&format!("YearInput: setting value to -> {clamped:?}"));
         }
     };
 

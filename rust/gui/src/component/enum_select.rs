@@ -4,7 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::utils::updatable::Updatable;
-use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{component, view, IntoView, Scope};
 use std::fmt::Debug;
 use strum::{IntoEnumIterator, VariantNames};
 

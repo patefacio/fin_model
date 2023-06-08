@@ -9,7 +9,7 @@ use crate::utils::constants::{
 };
 use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::utils::html_tag::HtmlTag;
-use leptos::{component, tracing, view, IntoView, Scope};
+use leptos::{component, view, IntoView, Scope};
 use leptos::{create_node_ref, create_rw_signal, store_value};
 use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet, SignalUpdate, WriteSignal};
 use leptos_dom::console_log;
