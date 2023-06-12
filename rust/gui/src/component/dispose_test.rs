@@ -19,7 +19,6 @@ pub fn DisposeTest(
 ) -> impl IntoView {
     // α <fn dispose_test>
 
-    use std::cell::RefCell;
     use std::rc::Rc;
 
     let sz = std::mem::size_of_val(&cx);

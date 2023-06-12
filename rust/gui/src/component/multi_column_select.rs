@@ -11,7 +11,7 @@ use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::utils::html_tag::HtmlTag;
 use leptos::{component, view, IntoView, Scope};
 use leptos::{create_node_ref, create_rw_signal, store_value};
-use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet, SignalUpdate, WriteSignal};
+use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet};
 use leptos_dom::console_log;
 use leptos_dom::helpers::window_event_listener_untyped;
 use leptos_dom::html::{Button, Div};
@@ -594,13 +594,6 @@ pub mod unit_tests {
         ////////////////////////////////////////////////////////////////////////////////////
         // --- functions ---
         ////////////////////////////////////////////////////////////////////////////////////
-        #[test]
-        fn new() {
-            // α <fn test Indexer::new>
-            todo!("Test new")
-            // ω <fn test Indexer::new>
-        }
-
         #[test]
         fn flat_index_to_two_d() {
             // α <fn test Indexer::flat_index_to_two_d>

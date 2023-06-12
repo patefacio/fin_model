@@ -31,13 +31,6 @@ pub mod worth;
 
 pub mod clamp;
 pub mod clamp_ext;
-
-/* Add back 
-pub mod clamp_sm;
-pub mod clamp_sm_chars;
-pub mod clamp_sm_chars_no_alloc;
-*/
-
 pub mod get_digit_power;
 
 // ω <mod-def lib>

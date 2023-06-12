@@ -44,7 +44,6 @@ pub fn bench_clamp_string(c: &mut Criterion) {
     });
 }
 
-/* TODO: Add back
 pub fn bench_clamp_sm(c: &mut Criterion) {
     use fin_model::clamp_sm::clamp;
     let start = 1900;
@@ -67,11 +66,11 @@ pub fn bench_clamp_sm(c: &mut Criterion) {
     });
 }
 
-pub fn bench_clamp_sm_chars(c: &mut Criterion) {
-    use fin_model::clamp_sm_chars::clamp;
+pub fn bench_clamp_parse(c: &mut Criterion) {
+    use fin_model::clamp_sm::clamp_parse as clamp;
     let start = 1900;
     let end = 2300;
-    c.bench_function("clamp_sm_chars(1984, 1900, 2300)", |b| {
+    c.bench_function("clamp_sm(1984, 1900, 2300)", |b| {
         b.iter(|| {
             clamp("1984", start, end);
 
@@ -88,17 +87,12 @@ pub fn bench_clamp_sm_chars(c: &mut Criterion) {
         })
     });
 }
-*/
-
 
 criterion_group!(
     benches,
     bench_clamp_bool,
     bench_clamp_string,
-    // TODO: Add back
-    /* 
     bench_clamp_sm,
-    bench_clamp_sm_chars
-    */
+    bench_clamp_parse
 );
 criterion_main!(benches);
