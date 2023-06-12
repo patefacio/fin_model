@@ -4,7 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
-use crate::utils::updatable::Updatable;
+use crate::Updatable;
 use fin_model::core::NormalSpec;
 use leptos::{component, view, IntoView, Scope};
 

@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::utils::updatable::Updatable;
+use crate::Updatable;
 use fin_model::account::Holding;
 use fin_model::balance_sheet::BalanceSheet;
 use fin_model::core::DossierHoldingIndex;
@@ -72,11 +72,11 @@ pub fn HoldingComponent(
 ) -> impl IntoView {
     // α <fn holding_component>
 
-    use crate::component::enum_select::EnumSelect;
-    use crate::component::normal_spec_component::NormalSpecComponent;
-    use crate::component::numeric_input::{Modification, NumericInput};
-    use crate::component::symbol_input::SymbolInput;
-    use crate::component::year_input::YearInput;
+    use crate::EnumSelect;
+    use crate::NormalSpecComponent;
+    use crate::{Modification, NumericInput};
+    use crate::SymbolInput;
+    use crate::YearInput;
     use fin_model::{
         core_enums::HoldingType,
         growth::{system_growth_id::SystemId, SystemGrowthId},
@@ -88,12 +88,11 @@ pub fn HoldingComponent(
 
     let unit_valuation = holding_updatable.value.unit_valuation;
     let instrument_name = holding_updatable.value.instrument_name.clone();
-
     let holding_updatable = Rc::new(RefCell::new(holding_updatable));
 
-    let symbol_updatable = Updatable::new(instrument_name.clone(), Box::new(|symbol| {
+    let symbol_updatable = Updatable::new(instrument_name.clone(), |symbol| {
         console_log(&format!("Symbol is now {symbol:?}"));
-    }));
+    });
 
     let (currency_symbol, set_currency_symbol) = create_signal(cx, String::from("$"));
     let share_price_placeholder = Some(format!("e.g. {}50.00", currency_symbol()));
@@ -104,9 +103,9 @@ pub fn HoldingComponent(
         unit_valuation
             // Map the YearValueCurrency to just the value part
             .map(|year_value_currency| year_value_currency.value),
-        Box::new(move |price: &Option<f64>| {
+        move |price: &Option<f64>| {
             // No need to use it until ok/cancel
-        }),
+        },
     );
 
     let holding_updatable_for_quantity = holding_updatable.clone();
@@ -117,13 +116,13 @@ pub fn HoldingComponent(
         });
     };
 
-    let cost_basis_updatable = Updatable::new(0.0, Box::new(|year| {
+    let cost_basis_updatable = Updatable::new(0.0, |year| {
         leptos_dom::console_log(&format!("Cost basis updated to {year}"));
-    }));
+    });
 
-    let year_updatable = Updatable::new(1929, Box::new(|year| {
+    let year_updatable = Updatable::new(1929, |year| {
         leptos_dom::console_log(&format!("Year updated to {year}"));
-    }));
+    });
 
     /*
 
@@ -144,33 +143,13 @@ pub fn HoldingComponent(
                 });
         })
     };
-    let initial_holding_type = mappings_updatable
-        .borrow()
-        .value
-        .instrument_growth_map
-        .get(&instrument_name)
-        .and_then(|instrument_growth| {
-            instrument_growth
-                .item_growth
-                .system_growth_id
-                .as_ref()
-                .and_then(|system_growth_id| {
-                    if let Some(SystemId::HoldingItemId(holding_type)) = system_growth_id.system_id
-                    {
-                        Some(
-                            HoldingType::from_i32(holding_type as i32)
-                                .expect("Valid holding type id"),
-                        )
-                    } else {
-                        None
-                    }
-                })
-        })
-        .unwrap_or_default();
     */
 
+    let initial_holding_type = HoldingType::UsEquityMarket;
+    
+
     let holding_type_updatable =
-        Updatable::new(HoldingType::UsEquityMarket, Box::new(|_| println!("Updated!")));
+        Updatable::new(initial_holding_type, |_| println!("Updated!"));
 
     view! { cx,
         <fieldset class="holding">

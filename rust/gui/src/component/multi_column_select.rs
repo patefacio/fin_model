@@ -34,7 +34,7 @@ pub enum InitialValue {
 
 /// SelectOptions can be displayed left-to-right or top-to-bottom.
 #[derive(Debug, Copy, Clone)]
-pub enum Direction {
+pub enum SelectDirection {
     /// SelectOptions fill in values row by row.
     LeftToRight,
     /// SelectOptions fill in values column by column.
@@ -72,10 +72,10 @@ pub struct Indexer {
     pub row_count: usize,
     /// Number of columns.
     pub column_count: usize,
-    /// Direction of option placement. Since options are stored in a vector but
+    /// SelectDirection of option placement. Since options are stored in a vector but
     /// displayed in a 2D grid, the translation between scalar index into vector
     /// and 2D index of grid will differ and the functions account for that.
-    pub direction: Direction,
+    pub direction: SelectDirection,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -112,8 +112,8 @@ pub fn MultiColumnSelect<F>(
     #[prop(default=None)]
     initial_value: Option<InitialValue>,
     /// Specifies whether items flows from top to bottom or left to right.
-    #[prop(default=Direction::LeftToRight)]
-    direction: Direction,
+    #[prop(default=SelectDirection::LeftToRight)]
+    direction: SelectDirection,
     /// Number of columns to display in the grid of options.
     #[prop(default = 3)]
     column_count: usize,
@@ -431,7 +431,7 @@ impl Indexer {
     ///   * **column_count** - Number of columns.
     ///   * **direction** - Selections go across or down.
     ///   * _return_ - New Indexer
-    pub fn new(item_count: usize, column_count: usize, direction: Direction) -> Self {
+    pub fn new(item_count: usize, column_count: usize, direction: SelectDirection) -> Self {
         // α <fn Indexer::new>
 
         let mut row_count = item_count / column_count;
@@ -458,11 +458,11 @@ impl Indexer {
     pub fn flat_index_to_two_d(&self, flat_index: usize) -> (usize, usize) {
         // α <fn Indexer::flat_index_to_two_d>
         match self.direction {
-            Direction::LeftToRight => (
+            SelectDirection::LeftToRight => (
                 flat_index / self.column_count,
                 flat_index % self.column_count,
             ),
-            Direction::TopToBottom => (flat_index % self.row_count, flat_index / self.row_count),
+            SelectDirection::TopToBottom => (flat_index % self.row_count, flat_index / self.row_count),
         }
         // ω <fn Indexer::flat_index_to_two_d>
     }
@@ -476,8 +476,8 @@ impl Indexer {
     pub fn two_d_to_flat_index(&self, row: usize, column: usize) -> usize {
         // α <fn Indexer::two_d_to_flat_index>
         match self.direction {
-            Direction::LeftToRight => row * self.column_count + column,
-            Direction::TopToBottom => column * self.row_count + row,
+            SelectDirection::LeftToRight => row * self.column_count + column,
+            SelectDirection::TopToBottom => column * self.row_count + row,
         }
         // ω <fn Indexer::two_d_to_flat_index>
     }
@@ -605,11 +605,11 @@ pub mod unit_tests {
         fn flat_index_to_two_d() {
             // α <fn test Indexer::flat_index_to_two_d>
 
-            let ltr_indexer = Indexer::new(6 * 16, 16, Direction::LeftToRight);
+            let ltr_indexer = Indexer::new(6 * 16, 16, SelectDirection::LeftToRight);
             assert_eq!((0, 15), ltr_indexer.flat_index_to_two_d(15));
             assert_eq!((1, 0), ltr_indexer.flat_index_to_two_d(16));
 
-            let ttb_indexer = Indexer::new(6 * 16, 16, Direction::TopToBottom);
+            let ttb_indexer = Indexer::new(6 * 16, 16, SelectDirection::TopToBottom);
             assert_eq!((5, 0), ttb_indexer.flat_index_to_two_d(5));
             assert_eq!((0, 1), ttb_indexer.flat_index_to_two_d(6));
 
@@ -620,11 +620,11 @@ pub mod unit_tests {
         fn two_d_to_flat_index() {
             // α <fn test Indexer::two_d_to_flat_index>
 
-            let ltr_indexer = Indexer::new(6 * 16, 16, Direction::LeftToRight);
+            let ltr_indexer = Indexer::new(6 * 16, 16, SelectDirection::LeftToRight);
             assert_eq!(15, ltr_indexer.two_d_to_flat_index(0, 15));
             assert_eq!(16, ltr_indexer.two_d_to_flat_index(1, 0));
 
-            let ttb_indexer = Indexer::new(6 * 16, 16, Direction::TopToBottom);
+            let ttb_indexer = Indexer::new(6 * 16, 16, SelectDirection::TopToBottom);
             assert_eq!(5, ttb_indexer.two_d_to_flat_index(5, 0));
             assert_eq!(6, ttb_indexer.two_d_to_flat_index(0, 1));
 

@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::utils::constants::{LEFT_KEY, RIGHT_KEY};
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
-use crate::utils::updatable::Updatable;
+use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 use leptos::{
     create_effect, create_node_ref, create_signal, store_value, IntoAttribute, ReadSignal,

@@ -34,33 +34,34 @@ pub fn App(cx: Scope) -> impl IntoView {
 fn HomePage(cx: Scope) -> impl IntoView {
     // Creates a reactive value to update the button
 
-    use crate::component::balance_sheet_component::BalanceSheetComponent;
     use crate::component::dispose_test::DisposeTest;
     use crate::component::holding_component::InstrumentGrowthMappings;
     use crate::component::holding_component::{HoldingComponent, InstrumentGrowthSync};
-    use crate::component::multi_column_select::{InitialValue, MultiColumnSelect, SelectOption};
-    use crate::component::normal_spec_component::NormalSpecComponent;
-    use crate::component::numeric_input::NumericInput;
-    use crate::component::percent_input::PercentInput;
-    use crate::component::worth_component::WorthComponent;
-    use crate::component::symbol_input::SymbolInput;
-    use crate::component::year_input::YearInput;
+    use crate::BalanceSheetComponent;
+    use crate::CurrencySelect;
+    use crate::NormalSpecComponent;
+    use crate::NumericInput;
+    use crate::PercentInput;
+    use crate::SymbolInput;
+    use crate::WorthComponent;
+    use crate::YearCurrencyValueInput;
+    use crate::YearInput;
+    use crate::{InitialValue, MultiColumnSelect, SelectOption};
     use leptos_dom::console_log;
 
     use crate::utils::updatable::Updatable;
     use fin_model::{
         account::Holding,
         balance_sheet::BalanceSheet,
-        core::{DossierHoldingIndex, NormalSpec},
+        core::{DossierHoldingIndex, NormalSpec, YearCurrencyValue},
+        Currency,
     };
 
     let symbol_updatable = Updatable::new(
         "foobar".to_string(),
-        Box::new(
-            move |s| {
-                console_log(&format!("Got symbol update -> {s:?}"));
-            }
-        )
+        move |s| {
+            console_log(&format!("Got symbol update -> {s:?}"));
+        },
     );
 
     let options: Vec<_> = (0..50)
@@ -72,23 +73,23 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
     let on_number_update = Updatable::new(
         Some(32.3),
-        Box::new(move |n| {
+        move |n| {
             leptos_dom::console_log(&format!("Number updated -> {n:?}"));
-        }),
+        },
     );
 
     let on_percent_update = Updatable::new(
         Some(43.23),
-        Box::new(move |n| {
+        move |n| {
             leptos_dom::console_log(&format!("Percent updated -> {n:?}"));
-        }),
+        },
     );
 
     let year_updateable = Updatable::new(
         Some(1999),
-        Box::new(|y| {
+        |y| {
             leptos_dom::console_log(&format!("Year updated -> {y:?}"));
-        }),
+        },
     );
 
     let normal_spec_updatable = Updatable::new(
@@ -96,18 +97,25 @@ fn HomePage(cx: Scope) -> impl IntoView {
             mean: 10.0,
             std_dev: 20.0,
         },
-        Box::new(|ns: &NormalSpec| {
+        |ns: &NormalSpec| {
             leptos_dom::console_log(&format!("Normal Spec -> {ns:?}"));
-        }),
+        },
     );
 
     let holding_updatable = Updatable::new(
         Holding {
             ..Default::default()
         },
-        Box::new(|holding: &Holding| {
+        |holding: &Holding| {
             leptos_dom::console_log(&format!("Normal Spec -> {holding:?}"));
-        }),
+        },
+    );
+
+    let currency_updatable = Updatable::new(
+        Currency::Eur,
+        |currency: &Currency| {
+            leptos_dom::console_log(&format!("Currency set to {currency:?}"));
+        },
     );
 
     // let balance_sheet = BalanceSheet::default();
@@ -122,68 +130,88 @@ fn HomePage(cx: Scope) -> impl IntoView {
     leptos_dom::console_log(&format!("App cx({cx:?}"));
 
     view! { cx,
-        <MultiColumnSelect
-            options = options
-            on_select = on_select
-            initial_value = Some(InitialValue::SelectionIndex(5))
-        />
-        <br/>
 
-        <div>"Symbol"</div>
-        <SymbolInput symbol_updatable=symbol_updatable />
+            <div>"Sample MultiColumnSelect (50 Options)"</div>
+            <MultiColumnSelect
+                options = options
+                on_select = on_select
+                initial_value = Some(InitialValue::SelectionIndex(5))
+            />
+            <br/>
 
-        <div>"Number"</div>
-        <NumericInput updatable=on_number_update />
+            <div>"SymbolInput"</div>
+            <SymbolInput symbol_updatable=symbol_updatable />
+            <br/>
 
-        <br/>
+            <div>"Number"</div>
+            <NumericInput updatable=on_number_update />
+            <br/>
 
-        <div>"Percent"</div>
-        <PercentInput updatable=on_percent_update />
+            <div>"CurrencySelect"</div>
+            <CurrencySelect updatable=currency_updatable />
+            <br/>
 
-        <br/>
+            <div>"PercentInput"</div>
+            <PercentInput updatable=on_percent_update />
+            <br/>
 
-        <div>"Year"</div>
-        <YearInput
-            updatable = year_updateable
-        />
-/* 
-        <div>"Normal Spec"</div>
-        <NormalSpecComponent
-            updatable = normal_spec_updatable
-        />
-*/
-        <div>"Holding"</div>
-        <HoldingComponent
-            holding_updatable = holding_updatable
-        />
+            <div>"YearInput"</div>
+            <YearInput
+                updatable = year_updateable
+            />
+            <br/>
 
-        <div>"Worth"</div>
-        <WorthComponent
-        />
+            <div>"YearCurrencyValueInput"</div>
+            <YearCurrencyValueInput
+                updatable = Updatable::new(
+                    YearCurrencyValue{ year: 1998, currency: Currency::Eur as i32, value: 25.55},
+                    |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
+                )
 
-        <div>"Balance Sheet"</div>
-        <BalanceSheetComponent
-        />
+            />
 
-        <div>"Dispose Test"</div>
-            <Show when=move || (read_count() % 2) == 0
-                fallback=|_| "Nothing"
-            >
-                <DisposeTest/>
-            </Show>
-        <p>
-        /*
-        { move || if (read_count() % 2) == 0 {
-            view! { cx, <DisposeTest/> }.into_view(cx)
-        } else {
-            view! { cx, "Nothing" }.into_view(cx)
+    /*
+            <div>"Normal Spec"</div>
+            <NormalSpecComponent
+                updatable = normal_spec_updatable
+            />
+    */
+            <div>"Holding"</div>
+            <HoldingComponent
+                holding_updatable = holding_updatable
+            />
+            <br/>
+
+            <div>"Worth"</div>
+            <WorthComponent
+            />
+            <br/>
+
+            <div>"Balance Sheet"</div>
+            <BalanceSheetComponent
+            />
+            <br/>
+
+            <div>"Dispose Test"</div>
+                <Show when=move || (read_count() % 2) == 0
+                    fallback=|_| "Nothing"
+                >
+                    <DisposeTest/>
+                </Show>
+            <p>
+            <br/>
+            /*
+            { move || if (read_count() % 2) == 0 {
+                view! { cx, <DisposeTest/> }.into_view(cx)
+            } else {
+                view! { cx, "Nothing" }.into_view(cx)
+            }
+            }
+            */
+            </p>
+
+            <button on:click=move |_| {
+                write_count.update(|c| *c = *c + 1);
+            }>"INC"</button>
         }
-        }
-        */
-        </p>
-
-        <button on:click=move |_| {
-            write_count.update(|c| *c = *c + 1);
-        }>"INC"</button>
-    }
 }

@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::utils::updatable::Updatable;
-use crate::utils::year_clamp::YearClamp;
+use crate::Updatable;
+use crate::YearClamp;
 use fin_model::core::YearRange;
 use leptos::create_node_ref;
 use leptos::{component, view, IntoView, Scope};
