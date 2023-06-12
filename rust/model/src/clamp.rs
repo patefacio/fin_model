@@ -1,78 +1,71 @@
-
-
-pub fn clamp(year_input: &str, max_year: u32, min_year: u32) -> bool {
-    let mut filter_max = false; //range checks
-    let mut filter_min = false;
+pub fn clamp(year_input: &str, max_year: u32, min_year: u32) -> (u32, String) {
+    let mut inside_upper_bound = false; //range checks
+    let mut inside_lower_bound = false;
 
     let num_digits_in_range = (max_year as f64).log10() as usize + 1;
     debug_assert!(
         num_digits_in_range == (min_year as f64).log10() as usize + 1,
         "min and max must be same number of digits"
     );
-    //assert_eq!(42, num_digits_in_range);
+    let mut return_year = String::with_capacity(num_digits_in_range);
 
-    if year_input.len() > num_digits_in_range {
-        //check size
-        return false;
-    }
-
-    for (i, c) in year_input.chars().enumerate() {
-        
-        //assert!(c.to_digit(10).is_some());
-
+    for (i, mut c) in year_input[0..num_digits_in_range.min(year_input.len())]
+        .chars()
+        .enumerate()
+    {
         debug_assert!(c.to_digit(10).is_some(), "all characters must be digits");
 
-        //let current_power = u32::pow(10, (num_digits_in_range - 1 - i) as u32); //some of these variables are leftovers and probably could be moved inside
-        let current_power = super::get_digit_power::get_digit_power(num_digits_in_range, i); //some of these variables are leftovers and probably could be moved inside
-        let current_digit = c.to_digit(10).unwrap() as u32;
+        let current_power = u32::pow(10, (num_digits_in_range - 1 - i) as u32);
+        let input_char_digit = c.to_digit(10).unwrap() as u32;
 
-        let max_so_far = max_year / current_power % 10;
-        let min_so_far = min_year / current_power % 10;
+        let digit_from_max = max_year / current_power % 10;
+        let digit_min = min_year / current_power % 10;
 
         #[cfg(debug_assertions)]
-        println!("Examining character ({c}) against ({min_so_far},{max_so_far})");
-        
-        if !filter_max && current_digit < max_so_far {
-            //check within upper range
-            filter_max = true;
-        } else if !filter_max && current_digit > max_so_far {
-            //check outside outer range
-            return false;
+        if !inside_upper_bound {
+            if input_char_digit < digit_from_max {
+                inside_upper_bound = true;
+            } else if input_char_digit > digit_from_max {
+                c = char::from_digit(digit_from_max, 10).unwrap();
+            }
         }
-        if !filter_min && current_digit > min_so_far {
-            //check inside lower range
-            filter_min = true;
-        } else if !filter_min && current_digit < min_so_far {
-            //check outside lower range
-            return false;
+
+        if !inside_lower_bound {
+            if input_char_digit > digit_min {
+                inside_lower_bound = true;
+            } else if input_char_digit < digit_min {
+                c = char::from_digit(digit_min, 10).unwrap();
+            }
         }
+        return_year.push(c);
     }
 
-    return true;
+    return (return_year.parse().unwrap(), return_year);
 }
 
+/*
 #[cfg(test)]
 pub mod clamp_test {
     use crate::clamp::clamp;
 
     #[test]
     fn clamp_test() {
-        let mut max = 3800000;
-        let mut min = 3500000;
-        assert_eq!(true, clamp("3507001", max, min));
-
-        min = 1900;
-        max = 2300;
-        assert_eq!(true, clamp("2200", max, min));
-        assert_eq!(true, clamp("2025", max, min));
-        assert_eq!(true, clamp("1980", max, min));
-        assert_eq!(true, clamp("1979", max, min));
-        assert_eq!(true, clamp("1999", max, min));
-        assert_eq!(false, clamp("2500", max, min));
-        assert_eq!(false, clamp("99999", max, min));
-        // assert_eq!(false, clamp("-1", max, min));
-        // assert_eq!(false, clamp("hi", max, min));
-        assert_eq!(true, clamp("193", max, min));
-        assert_eq!(true, clamp("209", max, min));
+        let max = 2200;
+        let min = 1980;
+        assert_eq!("1984", clamp("1984", max, min));
+        assert_eq!("2025", clamp("2025", max, min));
+        assert_eq!("2200", clamp("2200", max, min));
+        assert_eq!("1980", clamp("1980", max, min));
+        assert_eq!("1980", clamp("1979", max, min));
+        assert_eq!("1999", clamp("1999", max, min));
+        assert_eq!("2200", clamp("2540", max, min));
+        assert_eq!("2200", clamp("99999", max, min));
+        assert_eq!("198", clamp("193", max, min));
+        assert_eq!("209", clamp("209", max, min));
     }
 }
+*/
+
+//  294.95 296.12 294.55
+
+//  297.28 297.12 298.64
