@@ -111,7 +111,7 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
             }
             TrackingState::BreachedBottom => {
                 result_as_u32 = push_digit_to_result(result_as_u32, current_bottom_digit);
-                TrackingState::BreachedBottom //not quite sure if this is right -- could be this or back to tracking bottom
+                TrackingState::BreachedBottom 
             }
 
             TrackingState::BreachedTop => {
