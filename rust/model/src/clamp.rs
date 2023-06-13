@@ -30,7 +30,7 @@ pub fn clamp(year_input: &str, max_year: u32, min_year: u32) -> (u32, String) {
         let input_char_digit = c.to_digit(10).unwrap() as u32;
 
         let digit_from_max = max_year / current_power % 10;
-        let digit_min = min_year / current_power % 10;
+        let digit_from_min = min_year / current_power % 10;
 
         #[cfg(debug_assertions)]    //checks if the number is within the upper bound, skips if so
         if !inside_upper_bound {    // clamps to the upper bound value if not
@@ -42,10 +42,10 @@ pub fn clamp(year_input: &str, max_year: u32, min_year: u32) -> (u32, String) {
         }
 
         if !inside_lower_bound {    //Same as above but for the lower bound
-            if input_char_digit > digit_min {
+            if input_char_digit > digit_from_min {
                 inside_lower_bound = true;
-            } else if input_char_digit < digit_min {
-                c = char::from_digit(digit_min, 10).unwrap();
+            } else if input_char_digit < digit_from_min {
+                c = char::from_digit(digit_from_min, 10).unwrap();
             }
         }
         return_year.push(c);
