@@ -54,15 +54,23 @@ pub fn clamp(year_input: &str, max_year: u32, min_year: u32) -> (u32, String) {
     return (return_year.parse().unwrap(), return_year);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 81e98e99479558af042d8a7e4564ee708dbc6a99
 #[cfg(test)]
 pub mod clamp_test {
     use crate::clamp::clamp;
+
+    fn parsed_num(n: u32) -> (u32, String) {
+        (n, n.to_string())
+    }
 
     #[test]
     fn clamp_test() {
         let max = 2200;
         let min = 1980;
+<<<<<<< HEAD
         assert_eq!((1984, String::from("1984")), clamp("1984", max, min));
         assert_eq!((2025, String::from("2025")), clamp("2025", max, min));
         assert_eq!((2200, String::from("2200")), clamp("2200", max, min));
@@ -76,6 +84,20 @@ pub mod clamp_test {
     }
 }
 
+=======
+        assert_eq!(parsed_num(1984), clamp("1984", max, min));
+        assert_eq!(parsed_num(2025), clamp("2025", max, min));
+        assert_eq!(parsed_num(2200), clamp("2200", max, min));
+        assert_eq!(parsed_num(1980), clamp("1980", max, min));
+        assert_eq!(parsed_num(1980), clamp("1979", max, min));
+        assert_eq!(parsed_num(1999), clamp("1999", max, min));
+        assert_eq!(parsed_num(2200), clamp("2540", max, min));
+        assert_eq!(parsed_num(2200), clamp("99999", max, min));
+        assert_eq!(parsed_num(198), clamp("193", max, min));
+        assert_eq!(parsed_num(209), clamp("209", max, min));
+    }
+}
+>>>>>>> 81e98e99479558af042d8a7e4564ee708dbc6a99
 
 //  294.95 296.12 294.55
 
