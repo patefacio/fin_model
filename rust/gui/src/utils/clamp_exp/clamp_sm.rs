@@ -23,7 +23,9 @@ fn push_digit_to_result(n: u32, digit: u32) -> u32 {
     n * 10 + digit
     
 }
-
+////////////////////////////////////////////////////////////////////////////////////
+/// TODO: Comment this function.
+/// 
 pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
     //initial state is tracking the top and bottom values, as if 00001980 & 00002300
     let mut state = TrackingState::TrackingTopAndBottom;

@@ -16,6 +16,8 @@ pub mod log_dispose;
 pub mod numeric_text;
 pub mod updatable;
 pub mod year_clamp;
+pub mod clamp_exp;
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

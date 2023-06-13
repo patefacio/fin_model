@@ -24,7 +24,6 @@ pub mod symbol_input;
 pub mod worth_component;
 pub mod year_currency_value_input;
 pub mod year_input;
-pub mod clamp_sm;
 
 // α <mod-def component>
 // ω <mod-def component>

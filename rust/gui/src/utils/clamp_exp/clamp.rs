@@ -60,7 +60,7 @@ pub fn clamp(year_input: &str, max_year: u32, min_year: u32) -> (u32, String) {
 }
 #[cfg(test)]
 pub mod clamp_test {
-    use crate::clamp::clamp;
+    use super::*;
 
     fn parsed_num(n: u32) -> (u32, String) {
         (n, n.to_string())
