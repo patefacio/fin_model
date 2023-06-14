@@ -36,8 +36,8 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
     let digits_considered = year_input.len().min(min_year_digit_count);
     let mut digit_divisor = u32::pow(10, min_year_digit_count as u32 - 1);
 
-    println!("Starting year_input:`{year_input}`, min_year: `{min_year}`, max_year: `{max_year}` ");
-    println!("Min_year_digit_count: {min_year_digit_count}, digits_considered: {digits_considered}, digit_divisor: {digit_divisor}");
+    log::info!("Starting year_input:`{year_input}`, min_year: `{min_year}`, max_year: `{max_year}` ");
+    log::info!("Min_year_digit_count: {min_year_digit_count}, digits_considered: {digits_considered}, digit_divisor: {digit_divisor}");
 
     for c in year_input.chars() {
         let c_as_u32 = c.to_digit(10).expect("Input chars converted to digits");
@@ -52,7 +52,7 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
         let compared_to_bottom = c_as_u32.cmp(&current_bottom_digit);
         let compared_to_top = c_as_u32.cmp(&current_top_digit);
         //tracing::info!...
-        println!("The current state is: {state:?}, c is {c:?}, {c_as_u32}, current_top_digit is: {current_top_digit}, 
+        log::info!("The current state is: {state:?}, c is {c:?}, {c_as_u32}, current_top_digit is: {current_top_digit}, 
         current_bottom_digit: {current_bottom_digit}");
 
         state = match state {
