@@ -41,6 +41,9 @@ pub fn YearCurrencyValueInput(
     use leptos::IntoAttribute;
 
     view! { cx,
+
+        <fieldset class="year-currency-value">
+        <legend>"Currency/Value/Year"</legend>
         
         <input 
             type="text"
@@ -53,6 +56,8 @@ pub fn YearCurrencyValueInput(
             type="text"
             placeholder=date_placeholder
         />
+
+        </fieldset>
         
     }
 
