@@ -5,8 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
 use crate::Updatable;
-use fin_model::core::NormalSpec;
 use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+use plus_modeled::core::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

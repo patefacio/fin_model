@@ -2,7 +2,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Year;
-use fin_model::core::YearRange;
+use plus_modeled::core::YearRange;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
@@ -81,12 +81,8 @@ impl YearClamp {
     pub fn clamp(&self, value: &str) -> ParsedNum {
         // α <fn YearClamp::clamp>
 
-        use std::cmp::Ordering;
-
         // We know all characters in the string must be digits
-        debug_assert!(value
-            .bytes()
-            .all(|b| (b as char).is_ascii_digit()));
+        debug_assert!(value.bytes().all(|b| (b as char).is_ascii_digit()));
 
         let num_digits = value.len();
         let value_as_u32 = value.parse::<u32>().expect("valid number");
@@ -212,9 +208,9 @@ impl ParsedNum {
     #[inline]
     pub fn from_str(number: &str) -> ParsedNum {
         // α <fn ParsedNum::from_str>
-       
-       ParsedNum::from_string(number.to_string())
-       
+
+        ParsedNum::from_string(number.to_string())
+
         // ω <fn ParsedNum::from_str>
     }
 
@@ -382,18 +378,33 @@ pub mod unit_tests {
         #[test]
         fn from_string() {
             // α <fn test ParsedNum::from_string>
-            todo!("Test from_string")
+            let num = "432".to_string();
+            assert_eq!(
+                ParsedNum {
+                    as_u32: 432,
+                    as_string: num.clone()
+                },
+                ParsedNum::from_string(num)
+            )
             // ω <fn test ParsedNum::from_string>
         }
 
         #[test]
         fn from_str() {
             // α <fn test ParsedNum::from_str>
-            todo!("Test from_str")
+            let num = "432";
+            assert_eq!(
+                ParsedNum {
+                    as_u32: 432,
+                    as_string: num.to_string()
+                },
+                ParsedNum::from_str(num)
+            );
             // ω <fn test ParsedNum::from_str>
         }
 
         // α <mod-def test_parsed_num>
+        use super::*;
         // ω <mod-def test_parsed_num>
     }
 

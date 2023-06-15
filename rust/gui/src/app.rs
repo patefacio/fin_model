@@ -41,6 +41,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::CurrencySelect;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
+    use crate::OkCancelComponent;
     use crate::PercentInput;
     use crate::SymbolInput;
     use crate::WorthComponent;
@@ -50,55 +51,43 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use leptos_dom::console_log;
 
     use crate::utils::updatable::Updatable;
-    use fin_model::{
+    use plus_modeled::{
         account::Holding,
         balance_sheet::BalanceSheet,
         core::{DossierHoldingIndex, NormalSpec, YearCurrencyValue},
         Currency,
     };
 
-    let symbol_updatable = Updatable::new(
-        "foobar".to_string(),
-        move |s| {
-            console_log(&format!("Got symbol update -> {s:?}"));
-        },
-    );
+    let symbol_updatable = Updatable::new("foobar".to_string(), move |s| {
+        console_log(&format!("Got symbol update -> {s:?}"));
+    });
 
     let options: Vec<_> = (0..50)
         .map(|i| SelectOption::Label(format!("Selection {i}")))
         .collect();
     let on_select = move |sel| {
-        leptos_dom::console_log(&format!("Selection -> {sel}"));
+        console_log(&format!("Selection -> {sel}"));
     };
 
-    let on_number_update = Updatable::new(
-        Some(32.3),
-        move |n| {
-            leptos_dom::console_log(&format!("Number updated -> {n:?}"));
-        },
-    );
+    let on_number_update = Updatable::new(Some(32.3), move |n| {
+        console_log(&format!("Number updated -> {n:?}"));
+    });
 
-    let on_percent_update = Updatable::new(
-        Some(43.23),
-        move |n| {
-            leptos_dom::console_log(&format!("Percent updated -> {n:?}"));
-        },
-    );
+    let on_percent_update = Updatable::new(Some(43.23), move |n| {
+        console_log(&format!("Percent updated -> {n:?}"));
+    });
 
-    let year_updateable = Updatable::new(
-        Some(1999),
-        |y| {
-            leptos_dom::console_log(&format!("Year updated -> {y:?}"));
-        },
-    );
+    let year_updateable = Updatable::new(Some(1999), |y| {
+        console_log(&format!("Year updated -> {y:?}"));
+    });
 
     let normal_spec_updatable = Updatable::new(
-        NormalSpec {
+        Some(NormalSpec {
             mean: 10.0,
             std_dev: 20.0,
-        },
-        |ns: &NormalSpec| {
-            leptos_dom::console_log(&format!("Normal Spec -> {ns:?}"));
+        }),
+        |ns: &Option<NormalSpec>| {
+            console_log(&format!("Normal Spec -> {ns:?}"));
         },
     );
 
@@ -107,16 +96,13 @@ fn HomePage(cx: Scope) -> impl IntoView {
             ..Default::default()
         },
         |holding: &Holding| {
-            leptos_dom::console_log(&format!("Normal Spec -> {holding:?}"));
+            console_log(&format!("Normal Spec -> {holding:?}"));
         },
     );
 
-    let currency_updatable = Updatable::new(
-        Currency::Eur,
-        |currency: &Currency| {
-            leptos_dom::console_log(&format!("Currency set to {currency:?}"));
-        },
-    );
+    let currency_updatable = Updatable::new(Currency::Eur, |currency: &Currency| {
+        console_log(&format!("Currency set to {currency:?}"));
+    });
 
     // let balance_sheet = BalanceSheet::default();
     // let instrument_growth_mappings_updatable = Updatable::new(
@@ -170,12 +156,11 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
             />
 
-    /*
             <div>"Normal Spec"</div>
             <NormalSpecComponent
                 updatable = normal_spec_updatable
             />
-    */
+
             <div>"Holding"</div>
             <HoldingComponent
                 holding_updatable = holding_updatable
@@ -189,8 +174,20 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
             <div>"Balance Sheet"</div>
             <BalanceSheetComponent
+                updatable=Updatable::new(BalanceSheet::default(), |bs| console_log(&format!("BS -> {bs:?}")))
             />
             <br/>
+
+            <div>"Ok/Cancel"</div>
+            <OkCancelComponent
+                on_ok=|| {
+                    console_log("Ok pressed")
+                }
+                on_cancel=|| {
+                    console_log("Cancel pressed")
+                }
+            />
+
 
             <div>"Dispose Test"</div>
                 <Show when=move || (read_count() % 2) == 0

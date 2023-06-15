@@ -4,10 +4,12 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-use fin_model::core::CurrencyValue;
 use leptos::create_node_ref;
 use leptos::{component, view, IntoView, Scope};
-use leptos_dom::{console_log, html::Input};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+use leptos_dom::html::Input;
+use plus_modeled::core::CurrencyValue;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

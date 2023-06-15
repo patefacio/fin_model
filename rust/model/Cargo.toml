@@ -1,8 +1,8 @@
 [package]
 edition = "2021"
-name = "fin_model"
+name = "plus_modeled"
 version = "0.0.1"
-description = """TODO: Describe cargo project(fin_model)"""
+description = """TODO: Describe cargo project(plus_modeled)"""
 license = "MIT"
 keywords = []
 
@@ -36,10 +36,5 @@ tonic-build = "0.8"
 
 [dev-dependencies]
 criterion = "0.4.0"
-
-
-[[bench]]
-name = "clamp_bench"
-harness = false
 
 # ω <additional>

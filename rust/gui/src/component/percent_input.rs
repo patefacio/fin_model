@@ -6,6 +6,8 @@
 use crate::component::numeric_input::{Modification, NumericInput, NumericInputProps};
 use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

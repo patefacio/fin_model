@@ -36,4 +36,6 @@ where
 }
 
 // α <mod-def utils>
+pub mod clamp_exp;
+
 // ω <mod-def utils>

@@ -3,8 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use fin_model::balance_sheet::BalanceSheet;
+use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+use plus_modeled::BalanceSheet;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -13,11 +16,14 @@ use leptos::{component, view, IntoView, Scope};
 /// growth objects.
 ///
 ///   * **cx** - Context
+///   * **updatable** - The edited model
 ///   * _return_ - View for balance_sheet_component
 #[component]
 pub fn BalanceSheetComponent(
     /// Context
     cx: Scope,
+    /// The edited model
+    updatable: Updatable<BalanceSheet>,
 ) -> impl IntoView {
     // α <fn balance_sheet_component>
 
