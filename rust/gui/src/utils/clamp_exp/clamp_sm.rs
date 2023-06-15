@@ -24,7 +24,11 @@ fn push_digit_to_result(n: u32, digit: u32) -> u32 {
     
 }
 ////////////////////////////////////////////////////////////////////////////////////
-/// TODO: Comment this function.
+/// This program is designed to monitor/track the input of a user who enters a year to project monetary growth to.
+/// The year input field has a minimum and maximum bound. If the user enters a number within 
+/// these parameters, their input is okay and can be used. However, if they enter a value above or below the
+/// boundaries, the according min/max digit will be clamped to their input instead, thereby correcting it. 
+/// This would ideally be accompanied by some sort of warning flag.
 /// 
 pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
     //initial state is tracking the top and bottom values, as if 00001980 & 00002300
@@ -81,8 +85,41 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
                     panic!("Missed something!")
                 }
             }
+            /////////////
+            /// else{
+            /// TrackingState::TrackingTopAndBottom => match compared_to_bottom{
+            /// Ordering::Less =>{
+            /// result_as_u32 = push_digit_to_result(result_as_u32, current_bottom_digit);
+            /// TrackingState:BreachedBottom}
+            /// Ordering::Greater =>{
+            /// result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
+            /// TrackingState::TrackingTop}
+            /// 
+            /// TrackingState::TrackingTopAndBottom => match compared_to_top{
+            /// Ordering::Less =>{
+            /// result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
+            ///TrackingState::TrackingBottom}
+            /// Ordering::Greater =>{
+            /// result_as_u32 = push_digit_to_result(result_as_u32, current_top_digit);
+            /// TrackingState::BreachedTop}
+            /// }}
 
-            TrackingState::TrackingBottom => {
+            TrackingState::TrackingBottom => match compared_to_bottom {
+                Ordering::Equal => {
+                    result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
+                    TrackingState::TrackingBottom
+                }
+                Ordering::Less => {
+                    result_as_u32 = push_digit_to_result(result_as_u32, current_bottom_digit);
+                    TrackingState::BreachedBottom
+                }
+                Ordering::Greater => {
+                    result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
+                    TrackingState::UsingInput
+                }
+            }
+
+            /*TrackingState::TrackingBottom => {
                 if compared_to_bottom == Ordering::Equal {
                     result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
                     TrackingState::TrackingBottom
@@ -95,9 +132,24 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
                 } else {
                     panic!("Missed something!")
                 }
-            }
+            }*/
 
-            TrackingState::TrackingTop => {
+            TrackingState::TrackingTop => match compared_to_top {
+                Ordering::Equal => {
+                    result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
+                    TrackingState::TrackingTop
+                }
+                Ordering::Less => {
+                    result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
+                    TrackingState::UsingInput
+                }
+                Ordering::Greater => {
+                    result_as_u32 = push_digit_to_result(result_as_u32, current_top_digit);
+                    TrackingState::BreachedTop
+                }
+            }
+            /*
+            {
                 if compared_to_top == Ordering::Equal {
                     result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
                     TrackingState::TrackingTop
@@ -110,10 +162,11 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> (u32, String) {
                 } else {
                     panic!("Missed something!")
                 }
-            }
+            }*/
             TrackingState::BreachedBottom => {
                 result_as_u32 = push_digit_to_result(result_as_u32, current_bottom_digit);
                 TrackingState::BreachedBottom 
+                
             }
 
             TrackingState::BreachedTop => {
