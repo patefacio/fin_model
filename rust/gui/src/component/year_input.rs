@@ -5,10 +5,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
 use crate::YearClamp;
-use fin_model::core::YearRange;
 use leptos::create_node_ref;
 use leptos::{component, view, IntoView, Scope};
-use leptos_dom::{console_log, html::Input};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+use leptos_dom::html::Input;
+use plus_modeled::core::YearRange;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

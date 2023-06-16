@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use fin_model::core::YearRange;
+use plus_modeled::core::YearRange;
 use fin_model_gui::utils::clamp_exp::{clamp, clamp2};
 use fin_model_gui::utils::year_clamp::{YearClamp, YearClampStrings};
 /*
@@ -83,7 +83,7 @@ pub fn clamp2_benchmark(c: &mut Criterion) {
     let max = 2200;
     let min = 1980;
 
-    c.bench_function("YearClampStrings on (1900, 2300)", |b| {
+    c.bench_function("clamp2 on (1900, 2300)", |b| {
         b.iter(|| {
             let _ = clamp2::clamp2("1", max, min);
             let _ = clamp2::clamp2("19", max, min);

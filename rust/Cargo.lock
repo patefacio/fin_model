@@ -919,21 +919,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fin_model"
-version = "0.0.1"
-dependencies = [
- "criterion",
- "prost",
- "serde",
- "serde_derive",
- "strum",
- "strum_macros",
- "tonic-build",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "fin_model_gui"
 version = "0.0.1"
 dependencies = [
@@ -944,7 +929,6 @@ dependencies = [
  "console_log",
  "criterion",
  "env_logger",
- "fin_model",
  "leptos",
  "leptos_actix",
  "leptos_dom",
@@ -952,6 +936,7 @@ dependencies = [
  "leptos_router",
  "log",
  "num-format",
+ "plus_modeled",
  "strum",
  "test-log",
  "tracing",
@@ -2043,6 +2028,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9a81d2759aae1dae668f783c308bc5c8ebd191ff4184aaa1b37f65a6ae5a56f"
 dependencies = [
  "plotters-backend",
+]
+
+[[package]]
+name = "plus_modeled"
+version = "0.0.1"
+dependencies = [
+ "criterion",
+ "prost",
+ "serde",
+ "serde_derive",
+ "strum",
+ "strum_macros",
+ "tonic-build",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

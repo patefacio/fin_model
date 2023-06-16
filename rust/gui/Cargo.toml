@@ -15,7 +15,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 # α <dependencies>
 
-fin_model = { path = "../model" }
+plus_modeled = { path = "../model" }
 actix-files = { version = "0.6", optional = true }
 actix-web = { version = "4", optional = true, features = ["macros"] }
 console_error_panic_hook = "0.1"
@@ -108,6 +108,7 @@ lib-features = ["hydrate"]
 # Optional. Defaults to false.
 lib-default-features = false
 
+bin-target = "fin_model_gui"
 
 
 [dev-dependencies]

@@ -12,9 +12,10 @@ use crate::utils::html_tag::HtmlTag;
 use leptos::{component, view, IntoView, Scope};
 use leptos::{create_node_ref, create_rw_signal, store_value};
 use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet};
+#[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::helpers::window_event_listener_untyped;
-use leptos_dom::html::{Button, Div};
+use leptos_dom::html::{col, Button, Div};
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, Event, KeyboardEvent, MouseEvent};
@@ -462,7 +463,9 @@ impl Indexer {
                 flat_index / self.column_count,
                 flat_index % self.column_count,
             ),
-            SelectDirection::TopToBottom => (flat_index % self.row_count, flat_index / self.row_count),
+            SelectDirection::TopToBottom => {
+                (flat_index % self.row_count, flat_index / self.row_count)
+            }
         }
         // ω <fn Indexer::flat_index_to_two_d>
     }
@@ -509,6 +512,8 @@ impl Indexer {
     ///   * _return_ - The _flat index_ of the nearby cell.
     pub fn nearby_row(&self, mut row: usize, column: usize, offset: isize) -> usize {
         // α <fn Indexer::nearby_row>
+
+        debug_assert!(column < self.column_count);
 
         loop {
             row = Self::wrap(row as isize + offset, self.row_count);
@@ -645,12 +650,15 @@ pub mod unit_tests {
             assert_eq!(19, ltr_indexer.nearby_row(2, 3, -1));
 
             assert_eq!(0, ltr_indexer.nearby_row(6, 0, 0));
-            assert_eq!(16, ltr_indexer.nearby_row(0, 16, 0));
+            //assert_eq!(16, ltr_indexer.nearby_row(0, 16, 0));
             assert_eq!(80, ltr_indexer.nearby_row(6, 0, -1));
             assert_eq!(1, ltr_indexer.nearby_row(6, 1, -6));
             assert_eq!(80, ltr_indexer.nearby_row(6, 0, -7));
 
-            //assert_eq!(0, ltr_indexer.nearby_row(5, 16, 0));    //These cause infinite loops
+            let result = std::panic::catch_unwind(|| ltr_indexer.nearby_row(5, 16, 0));
+            assert!(result.is_err());
+
+            //assert_eq!(0, ltr_indexer.nearby_row(5, 16, 0)); //These cause infinite loops
             //assert_eq!(0, ltr_indexer.nearby_row(0, 96, 0));
 
             // ω <fn test Indexer::nearby_row>
@@ -669,17 +677,16 @@ pub mod unit_tests {
             assert_eq!(34, ltr_indexer.nearby_column(2, 3, -1));
 
             assert_eq!(81, ltr_indexer.nearby_column(5, 1, 0));
-            assert_eq!(0, ltr_indexer.nearby_column(0, 16, 0));     //Correct behavior? 16 instead of 0?
+            assert_eq!(0, ltr_indexer.nearby_column(0, 16, 0)); //Correct behavior? 16 instead of 0?
             assert_eq!(80, ltr_indexer.nearby_column(5, 1, -1));
             assert_eq!(91, ltr_indexer.nearby_column(5, 1, -6));
             assert_eq!(80, ltr_indexer.nearby_column(5, 1, -17));
 
             assert_eq!(31, ltr_indexer.nearby_column(1, 15, 0));
-            assert_eq!(16, ltr_indexer.nearby_column(1, 15, 1));    //32?
+            assert_eq!(16, ltr_indexer.nearby_column(1, 15, 1)); //32?
             assert_eq!(16, ltr_indexer.nearby_column(1, 15, -15));
-            assert_eq!(31, ltr_indexer.nearby_column(1, 15, -16));  //15?
+            assert_eq!(31, ltr_indexer.nearby_column(1, 15, -16)); //15?
             assert_eq!(30, ltr_indexer.nearby_column(1, 15, -17));
-            
 
             //assert_eq!(0, ltr_indexer.nearby_column(6, 0, 0));    //These cause infinite loops
 
@@ -701,22 +708,21 @@ pub mod unit_tests {
             assert_eq!(79, ltr_indexer.key_move(current, UP_KEY));
             assert_eq!(15, ltr_indexer.key_move(current, DOWN_KEY));
             assert_eq!(94, ltr_indexer.key_move(current, LEFT_KEY));
-            assert_eq!(80, ltr_indexer.key_move(current, RIGHT_KEY));   //0?
+            assert_eq!(80, ltr_indexer.key_move(current, RIGHT_KEY)); //0?
             assert_eq!(95, ltr_indexer.key_move(current, 100));
-            
+
             let current = 0;
             assert_eq!(80, ltr_indexer.key_move(current, UP_KEY));
             assert_eq!(16, ltr_indexer.key_move(current, DOWN_KEY));
-            assert_eq!(15, ltr_indexer.key_move(current, LEFT_KEY));    //95?
+            assert_eq!(15, ltr_indexer.key_move(current, LEFT_KEY)); //95?
             assert_eq!(1, ltr_indexer.key_move(current, RIGHT_KEY));
             assert_eq!(0, ltr_indexer.key_move(current, 100));
 
-            let current = 100;  //No idea if these are useful
+            let current = 100; //No idea if these are useful
             assert_eq!(84, ltr_indexer.key_move(current, UP_KEY));
             assert_eq!(20, ltr_indexer.key_move(current, DOWN_KEY));
             assert_eq!(100, ltr_indexer.key_move(current, 100));
-            
-            
+
             /*  Infinite Loops
             let current = 96;
             assert_eq!(95, ltr_indexer.key_move(current, LEFT_KEY));
@@ -726,7 +732,6 @@ pub mod unit_tests {
             assert_eq!(3, ltr_indexer.key_move(current, LEFT_KEY));
             assert_eq!(5, ltr_indexer.key_move(current, RIGHT_KEY));
              */
-
 
             // ω <fn test Indexer::key_move>
         }

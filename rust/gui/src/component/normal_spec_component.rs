@@ -4,9 +4,11 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
-use fin_model::core::NormalSpec;
-use leptos::RwSignal;
+use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+use plus_modeled::core::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -14,14 +16,14 @@ use leptos::{component, view, IntoView, Scope};
 /// Models a normal specification -> N(mu, sigma).
 ///
 ///   * **cx** - Context
-///   * **rw_signal** - The normal spec being edited
+///   * **updatable** - The normal spec being edited
 ///   * _return_ - View for normal_spec_component
 #[component]
 pub fn NormalSpecComponent(
     /// Context
     cx: Scope,
     /// The normal spec being edited
-    rw_signal: RwSignal<Option<NormalSpec>>,
+    updatable: Updatable<Option<NormalSpec>>,
 ) -> impl IntoView {
     // α <fn normal_spec_component>
 

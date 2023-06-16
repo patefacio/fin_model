@@ -4,11 +4,13 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-use fin_model::account::Holding;
-use fin_model::balance_sheet::BalanceSheet;
-use fin_model::core::DossierHoldingIndex;
-use fin_model::growth::ItemGrowth;
 use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+use plus_modeled::BalanceSheet;
+use plus_modeled::DossierHoldingIndex;
+use plus_modeled::Holding;
+use plus_modeled::ItemGrowth;
 use std::collections::HashMap;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +79,7 @@ pub fn HoldingComponent(
     use crate::{Modification, NumericInput};
     use crate::SymbolInput;
     use crate::YearInput;
-    use fin_model::{
+    use plus_modeled::{
         core_enums::HoldingType,
         growth::{system_growth_id::SystemId, SystemGrowthId},
     };

@@ -4,6 +4,8 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -15,19 +17,31 @@ use leptos::{component, view, IntoView, Scope};
 ///   * **on_cancel** - Function to call when canceled
 ///   * _return_ - View for ok_cancel_component
 #[component]
-pub fn OkCancelComponent<F>(
+pub fn OkCancelComponent<O, C>(
     /// Context
     cx: Scope,
     /// Function to call when ok
-    on_ok: F,
+    on_ok: O,
     /// Function to call when canceled
-    on_cancel: F,
+    on_cancel: C,
 ) -> impl IntoView
 where
-    F: FnMut(&String) + 'static,
+    O: FnMut() + 'static,
+    C: FnMut() + 'static,
 {
     // α <fn ok_cancel_component>
-    todo!("Implement `ok_cancel_component`")
+
+    let mut on_ok = on_ok;
+    let mut on_cancel = on_cancel;
+
+    view! {
+        cx,
+
+        <button on:click= move |_| { on_ok() }>"Ok"</button>
+        <button on:click= move |_| {on_cancel()}>"Cancel"</button>
+
+    }
+
     // ω <fn ok_cancel_component>
 }
 

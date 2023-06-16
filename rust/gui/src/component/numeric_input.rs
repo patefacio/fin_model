@@ -8,7 +8,9 @@ use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 use leptos::{create_effect, create_node_ref, store_value, ReadSignal, SignalWith};
-use leptos_dom::{console_log, html::Input};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+use leptos_dom::html::Input;
 use web_sys::KeyboardEvent;
 
 ////////////////////////////////////////////////////////////////////////////////////

@@ -4,6 +4,8 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -20,9 +22,7 @@ pub fn DisposeTest(
     // α <fn dispose_test>
 
     use std::rc::Rc;
-
     let sz = std::mem::size_of_val(&cx);
-
     let (some_data, some_data_write) = leptos::create_signal(
         cx,
         Rc::new(SomeData::new(&format!("DisposeTest Badabing:{cx:?}"))),
@@ -41,9 +41,7 @@ pub fn DisposeTest(
     ));
 
     leptos_dom::console_log(&format!("DisposeTest cx({cx:?}"));
-
     let cloned = Rc::downgrade(&some_data());
-
     let d = crate::utils::log_dispose::LogDispose::new("dIsPoSe".into());
 
     let on_click = leptos::store_value(cx, move |_| {
