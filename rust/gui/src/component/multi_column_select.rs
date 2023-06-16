@@ -586,6 +586,7 @@ pub mod unit_tests {
 
     /// Test type Indexer
     mod test_indexer {
+        use leptos_dom::html::A;
         ////////////////////////////////////////////////////////////////////////////////////
         // --- module uses ---
         ////////////////////////////////////////////////////////////////////////////////////
@@ -634,21 +635,99 @@ pub mod unit_tests {
         #[test]
         fn nearby_row() {
             // α <fn test Indexer::nearby_row>
-            todo!("Test nearby_row")
+            let ltr_indexer = Indexer::new(6 * 16, 16, SelectDirection::LeftToRight);
+
+            assert_eq!(0, ltr_indexer.nearby_row(0, 0, 0));
+            assert_eq!(16, ltr_indexer.nearby_row(0, 0, 1));
+            assert_eq!(32, ltr_indexer.nearby_row(0, 0, 2));
+            assert_eq!(32, ltr_indexer.nearby_row(1, 0, 1));
+            assert_eq!(17, ltr_indexer.nearby_row(0, 1, 1));
+            assert_eq!(19, ltr_indexer.nearby_row(2, 3, -1));
+
+            assert_eq!(0, ltr_indexer.nearby_row(6, 0, 0));
+            assert_eq!(16, ltr_indexer.nearby_row(0, 16, 0));
+            assert_eq!(80, ltr_indexer.nearby_row(6, 0, -1));
+            assert_eq!(1, ltr_indexer.nearby_row(6, 1, -6));
+            assert_eq!(80, ltr_indexer.nearby_row(6, 0, -7));
+
+            //assert_eq!(0, ltr_indexer.nearby_row(5, 16, 0));    //These cause infinite loops
+            //assert_eq!(0, ltr_indexer.nearby_row(0, 96, 0));
+
             // ω <fn test Indexer::nearby_row>
         }
 
         #[test]
         fn nearby_column() {
             // α <fn test Indexer::nearby_column>
-            todo!("Test nearby_column")
+            let ltr_indexer = Indexer::new(6 * 16, 16, SelectDirection::LeftToRight);
+
+            assert_eq!(0, ltr_indexer.nearby_column(0, 0, 0));
+            assert_eq!(1, ltr_indexer.nearby_column(0, 0, 1));
+            assert_eq!(2, ltr_indexer.nearby_column(0, 0, 2));
+            assert_eq!(17, ltr_indexer.nearby_column(1, 0, 1));
+            assert_eq!(2, ltr_indexer.nearby_column(0, 1, 1));
+            assert_eq!(34, ltr_indexer.nearby_column(2, 3, -1));
+
+            assert_eq!(81, ltr_indexer.nearby_column(5, 1, 0));
+            assert_eq!(0, ltr_indexer.nearby_column(0, 16, 0));     //Correct behavior? 16 instead of 0?
+            assert_eq!(80, ltr_indexer.nearby_column(5, 1, -1));
+            assert_eq!(91, ltr_indexer.nearby_column(5, 1, -6));
+            assert_eq!(80, ltr_indexer.nearby_column(5, 1, -17));
+
+            assert_eq!(31, ltr_indexer.nearby_column(1, 15, 0));
+            assert_eq!(16, ltr_indexer.nearby_column(1, 15, 1));    //32?
+            assert_eq!(16, ltr_indexer.nearby_column(1, 15, -15));
+            assert_eq!(31, ltr_indexer.nearby_column(1, 15, -16));  //15?
+            assert_eq!(30, ltr_indexer.nearby_column(1, 15, -17));
+            
+
+            //assert_eq!(0, ltr_indexer.nearby_column(6, 0, 0));    //These cause infinite loops
+
             // ω <fn test Indexer::nearby_column>
         }
 
         #[test]
         fn key_move() {
             // α <fn test Indexer::key_move>
-            todo!("Test key_move")
+            let ltr_indexer = Indexer::new(6 * 16, 16, SelectDirection::LeftToRight);
+            let current = 45;
+            assert_eq!(29, ltr_indexer.key_move(current, UP_KEY));
+            assert_eq!(61, ltr_indexer.key_move(current, DOWN_KEY));
+            assert_eq!(44, ltr_indexer.key_move(current, LEFT_KEY));
+            assert_eq!(46, ltr_indexer.key_move(current, RIGHT_KEY));
+            assert_eq!(45, ltr_indexer.key_move(current, 100));
+
+            let current = 95;
+            assert_eq!(79, ltr_indexer.key_move(current, UP_KEY));
+            assert_eq!(15, ltr_indexer.key_move(current, DOWN_KEY));
+            assert_eq!(94, ltr_indexer.key_move(current, LEFT_KEY));
+            assert_eq!(80, ltr_indexer.key_move(current, RIGHT_KEY));   //0?
+            assert_eq!(95, ltr_indexer.key_move(current, 100));
+            
+            let current = 0;
+            assert_eq!(80, ltr_indexer.key_move(current, UP_KEY));
+            assert_eq!(16, ltr_indexer.key_move(current, DOWN_KEY));
+            assert_eq!(15, ltr_indexer.key_move(current, LEFT_KEY));    //95?
+            assert_eq!(1, ltr_indexer.key_move(current, RIGHT_KEY));
+            assert_eq!(0, ltr_indexer.key_move(current, 100));
+
+            let current = 100;  //No idea if these are useful
+            assert_eq!(84, ltr_indexer.key_move(current, UP_KEY));
+            assert_eq!(20, ltr_indexer.key_move(current, DOWN_KEY));
+            assert_eq!(100, ltr_indexer.key_move(current, 100));
+            
+            
+            /*  Infinite Loops
+            let current = 96;
+            assert_eq!(95, ltr_indexer.key_move(current, LEFT_KEY));
+            assert_eq!(0, ltr_indexer.key_move(current, RIGHT_KEY));
+
+            let current = 100
+            assert_eq!(3, ltr_indexer.key_move(current, LEFT_KEY));
+            assert_eq!(5, ltr_indexer.key_move(current, RIGHT_KEY));
+             */
+
+
             // ω <fn test Indexer::key_move>
         }
 

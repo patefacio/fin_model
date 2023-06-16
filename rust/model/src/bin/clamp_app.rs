@@ -1,5 +1,5 @@
 
-use fin_model::clamp::clamp;
+use fin_model::clamp_ext::clamp;
 
 fn main() {
     println!("{}", 1.min(2));

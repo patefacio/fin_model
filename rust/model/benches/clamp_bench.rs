@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use fin_model::clamp::clamp;
+use fin_model::clamp_ext::clamp;
 
 pub fn bench_clamp_bool(c: &mut Criterion) {
     let start = 1900;
