@@ -117,8 +117,10 @@ pub fn NumericInput(
                 _ = input_ref.set_selection_range(new_position, new_position);
             } else {
                 input_ref.set_value(&new_value);
+                //TODO like input in 117
+                
             }
-
+            console_log("About to update");
             updatable.update(|number| *number = value);
         });
     };
@@ -202,6 +204,7 @@ impl Modification {
         };
         console_log(&format!("Constrained {position} to {constrained}"));
         constrained
+
         // ω <fn Modification::position_in_number>
     }
 
@@ -253,22 +256,44 @@ pub mod unit_tests {
         #[test]
         fn position_in_number() {
             // α <fn test Modification::position_in_number>
-            todo!("Test position_in_number")
+
+            let prefix_modification = Modification::Prefix("USD:".to_string());
+            assert_eq!(5, prefix_modification.position_in_number(8, 5));
+            assert_eq!(4, prefix_modification.position_in_number(8, 1));
+
+            let suffix_modification = Modification::Suffix("%".to_string());
+            assert_eq!(4, suffix_modification.position_in_number(5, 5));
+            assert_eq!(3, suffix_modification.position_in_number(7, 3));
+
             // ω <fn test Modification::position_in_number>
         }
 
         #[test]
         fn modify() {
             // α <fn test Modification::modify>
-            todo!("Test modify")
+            let prefix_modification = Modification::Prefix("$".to_string());
+            assert_eq!(
+                "$123,456".to_string(),
+                prefix_modification.modify("123,456")
+            );
+            assert_eq!("$145".to_string(), prefix_modification.modify("145"));
+            assert_eq!("$123456".to_string(), prefix_modification.modify("123456"));
+
+            let suffix_modification = Modification::Suffix("%".to_string());
+            assert_eq!("3.5%".to_string(), suffix_modification.modify("3.5"));
+            assert_eq!("26%".to_string(), suffix_modification.modify("26"));
+            
             // ω <fn test Modification::modify>
         }
-
         // α <mod-def test_modification>
+        use super::*;
+        use crate::Modification;
+
         // ω <mod-def test_modification>
     }
 
     // α <mod-def unit_tests>
+
     // ω <mod-def unit_tests>
 }
 
