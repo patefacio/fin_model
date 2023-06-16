@@ -10,7 +10,6 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 use plus_modeled::core::NormalSpec;
 
-
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +27,7 @@ pub fn NormalSpecComponent(
 ) -> impl IntoView {
     // α <fn normal_spec_component>
 
-    /* 
+    /*
         use crate::utils::updatable::Updatable;
         use leptos::{create_rw_signal, SignalUpdate, SignalGet};
         let initial_normal_spec = rw_signal.read_only()();
@@ -53,47 +52,47 @@ pub fn NormalSpecComponent(
             },
         );
     */
-    
-    
+
     view! {
-        cx,
+    cx,
 
-            <fieldset class="nsg">
-            <legend>"Normal Growth"</legend>
-            <div class="form">
-    
-    
-                <div>
-                
-                    "N("
-                    <div>
-                        <NumericInput placeholder=Some("mean".to_string()) 
-                        modification=Some(Modification::Suffix("%".into()))
+        <fieldset class="nsg">
+        <legend>"Normal Growth"</legend>
+        <div class="form">
+
+
+            <div style="display: inline-flex" >
+
+                "N("
+                    <NumericInput
+                        placeholder=Some("mean".to_string())
+                        modification=Some(Modification::PrefixAndSuffix{
+                            prefix: "μ=".into(), 
+                            suffix: "%".into()
+                        })
                         non_negative=true
                         updatable=Updatable::new(Some(42.0), |n| console_log(&format!("Number changed to {n:?}")))
-                     />   
-                        
-                    </div>
-                    ", "
-                    <div>
-                        <NumericInput placeholder=Some("std. dev".to_string())
-                        modification=Some(Modification::Suffix("%".into()))
+                    />
+                ", "
+                    <NumericInput
+                        placeholder=Some("std. dev".to_string())
+                        modification=Some(Modification::PrefixAndSuffix{
+                            prefix: "σ=".into(),
+                            suffix: "%".into()
+                        })
                         non_negative=true
                         updatable=Updatable::new(Some(42.0), |n| console_log(&format!("Number changed to {n:?}")))
-                        />
-                        
-                    </div>
-                    ")"
-                </div>
-
+                    />
+                ")"
             </div>
-            </fieldset>
-        }
+
+        </div>
+        </fieldset>
+    }
 
     // ω <fn normal_spec_component>
 }
 
 // α <mod-def normal_spec_component>
-
 
 // ω <mod-def normal_spec_component>

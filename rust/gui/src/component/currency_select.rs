@@ -41,7 +41,7 @@ pub fn CurrencySelect(
 
     let menu_selection = move |value: String| {
         let selected_currency = currency_from_symbol(&value).unwrap_or_default();
-        updatable.update(|currency| *currency = selected_currency);
+        updatable.update_and_then_signal(|currency| *currency = selected_currency);
     };
 
     view! {

@@ -39,7 +39,7 @@ pub fn SymbolInput(
     let on_input = move |_| {
         console_log("Got keydown for symbol!");
         let input_ref = input_ref.get().expect("Input node exists");
-        symbol_updatable.update(move |symbol_name| *symbol_name = input_ref.value());
+        symbol_updatable.update_and_then_signal(move |symbol_name| *symbol_name = input_ref.value());
     };
 
     let on_keydown = move |_| {

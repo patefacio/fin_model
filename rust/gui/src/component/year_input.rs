@@ -74,7 +74,7 @@ pub fn YearInput(
 
         if value.is_empty() {
             // No characters in the input are valid digits - the value is now None
-            updatable.update(|year| *year = None);
+            updatable.update_and_then_signal(|year| *year = None);
             leptos_dom::console_log(&format!("YearInput: setting value to -> None"));
             input_ref.set_value("");
         } else {
@@ -84,7 +84,7 @@ pub fn YearInput(
             // entering that last 3 what gets displayed is "2300". It will certainly
             // ensure the value is in range but maybe the approach is heavy handed.
             let clamped  = year_clamp.clamp(&value);
-            updatable.update(|year| *year = Some(clamped.as_u32));
+            updatable.update_and_then_signal(|year| *year = Some(clamped.as_u32));
             input_ref.set_value(&clamped.as_string);
             leptos_dom::console_log(&format!("YearInput: setting value to -> {clamped:?}"));
         }
@@ -97,6 +97,7 @@ pub fn YearInput(
             // This sets the value in a static manner: 
             // https://leptos-rs.github.io/leptos/view/05_forms.html?highlight=prop%3Avalue#uncontrolled-inputs:~:text=%22%20%7Bname%7D%3C/p%3E%0A%7D-,Uncontrolled%20Inputs,-In%20an%20%22uncontrolled
             value=initial_value
+            size=5
             type="text"
         />
     }

@@ -7,7 +7,7 @@
 pub const ESCAPE_KEY: u32 = 27;
 /// Enter - finalize some action
 pub const ENTER_KEY: u32 = 13;
-/// Space character and in some contexts the same as <Enter>
+/// Space character and in some contexts the same as `Enter`
 pub const SPACE_KEY: u32 = 32;
 /// Move to next tab item
 pub const TAB_KEY: u32 = 9;

@@ -15,7 +15,7 @@ use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::helpers::window_event_listener_untyped;
-use leptos_dom::html::{col, Button, Div};
+use leptos_dom::html::{Button, Div};
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, Event, KeyboardEvent, MouseEvent};
@@ -591,7 +591,6 @@ pub mod unit_tests {
 
     /// Test type Indexer
     mod test_indexer {
-        use leptos_dom::html::A;
         ////////////////////////////////////////////////////////////////////////////////////
         // --- module uses ---
         ////////////////////////////////////////////////////////////////////////////////////

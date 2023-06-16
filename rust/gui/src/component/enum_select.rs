@@ -41,7 +41,7 @@ where
 
     let menu_select = move |value: String| {
         updatable.update_value(|updatable| {
-            updatable.update(|selection| {
+            updatable.update_and_then_signal(|selection| {
                 for (i, e) in E::iter().enumerate() {
                     if E::VARIANTS[i] == value {
                         *selection = e;
