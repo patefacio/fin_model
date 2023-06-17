@@ -1,6 +1,6 @@
 ///
 /// Enumerate the currencies supported.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum Currency {
@@ -93,7 +93,7 @@ impl Currency {
 }
 ///
 /// Used to determine treatment of gains and in some cases (e.g. 529) how funds should be used.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum AccountType {
@@ -156,7 +156,7 @@ impl AccountType {
 }
 ///
 /// To identify holdings as one of the basic allocaiton types.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum BasicAllocationType {
@@ -201,7 +201,7 @@ impl BasicAllocationType {
 }
 ///
 /// Identifies holding as capable of generating distributions.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum DistributionInstrument {
@@ -239,7 +239,7 @@ impl DistributionInstrument {
 }
 ///
 /// Specifies the type of distribution
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum DistributionInstrumentType {
@@ -291,7 +291,7 @@ impl DistributionInstrumentType {
 /// accounts as taxable and `as_tax_exempt` treats all accounts as tax exempt.
 /// The purpose of these is to get a quick view of how taxes are impacting
 /// the forecast.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum ForecastTaxTreatment {
@@ -334,7 +334,7 @@ impl ForecastTaxTreatment {
 }
 ///
 /// Direction of flow from perspective of balance sheet.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum FlowDirection {
@@ -377,7 +377,7 @@ impl FlowDirection {
 }
 ///
 /// Used to categorize people covered by `Dossier`.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum PersonType {
@@ -415,7 +415,7 @@ impl PersonType {
 }
 ///
 /// Identifies type of year market.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum ForecastYearMarkerType {
@@ -453,7 +453,7 @@ impl ForecastYearMarkerType {
 }
 ///
 /// Filing status for taxes.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum TaxUsFilingStatus {
@@ -496,7 +496,7 @@ impl TaxUsFilingStatus {
 }
 ///
 /// Categorizes taxes according to the schedules that might be used.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum TaxUsCategory {
@@ -554,7 +554,7 @@ impl TaxUsCategory {
 }
 ///
 /// Classification of account with respect to taxation.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum TaxTreatment {
@@ -592,7 +592,7 @@ impl TaxTreatment {
 }
 ///
 /// Enumerate the sort criteria for forecasts in a simulation.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum ForecastSortCriteria {
@@ -620,7 +620,7 @@ impl ForecastSortCriteria {
 }
 ///
 /// Country supported by the system.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum Country {
@@ -658,7 +658,7 @@ impl Country {
 }
 ///
 /// State of residence
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum StateOfResidence {
@@ -936,7 +936,7 @@ impl StateOfResidence {
 }
 ///
 /// A small set of commonly identifiable rate curves
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum NamedRateCurve {
@@ -988,7 +988,7 @@ impl NamedRateCurve {
 }
 ///
 /// List of plusauri worth types.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum WorthType {
@@ -1051,7 +1051,7 @@ impl WorthType {
 }
 ///
 /// List of plusauri holding types.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum HoldingType {
@@ -1213,7 +1213,7 @@ impl HoldingType {
 }
 ///
 /// List of plusauri flow types.
-#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Serialize, Deserialize, EnumVariantNames, FromRepr, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum FlowType {

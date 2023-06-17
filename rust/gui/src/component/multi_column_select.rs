@@ -33,12 +33,12 @@ pub enum InitialValue {
     SelectionIndex(usize),
 }
 
-/// SelectOptions can be displayed left-to-right or top-to-bottom.
+/// Indicates direction to flow the select items: can be displayed left-to-right or top-to-bottom.
 #[derive(Debug, Copy, Clone)]
 pub enum SelectDirection {
-    /// SelectOptions fill in values row by row.
+    /// Fill in values row by row.
     LeftToRight,
-    /// SelectOptions fill in values column by column.
+    /// Fill in values column by column.
     TopToBottom,
 }
 
