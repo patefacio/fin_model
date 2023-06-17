@@ -47,9 +47,10 @@ where
 
     use crate::component::multi_column_select::{InitialValue, MultiColumnSelect, SelectOption};
 
+    // Iterate over enum variants to find the index of the initial value
     let (initial_index, _) = E::iter()
         .enumerate()
-        .find(|(i, variant)| *variant == updatable.value)
+        .find(|(_, variant)| *variant == updatable.value)
         .unwrap();
 
     let stored_updatable = leptos::store_value(cx, updatable);

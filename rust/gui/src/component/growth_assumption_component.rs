@@ -37,7 +37,38 @@ pub fn GrowthAssumptionComponent(
     updatable: Updatable<GrowthAssumption>,
 ) -> impl IntoView {
     // α <fn growth_assumption_component>
-    todo!("Implement `growth_assumption_component`")
+
+    use crate::NormalSpecComponent;
+    use crate::RateCurveComponent;
+
+    use plus_modeled::NormalSpec;
+
+    let normal_spec_updatable = Updatable::new(
+        Some(NormalSpec::default()),
+        |ns| {
+            console_log(&format!("NormalSpec updated to {ns:?}"))
+        }
+    );
+
+    let rate_curve_updatable = Updatable::new(
+        updatable.value.pinned_growth.unwrap_or_default(),
+        |rc| {
+            console_log(&format!("Growth item's rate curve updated -> {rc:?}"))
+        }
+    );
+
+    view! {
+        cx,
+        <div>"Growth Assumption Component Stuff"</div>
+        <NormalSpecComponent
+            updatable=normal_spec_updatable
+        />
+        <RateCurveComponent
+            updatable=rate_curve_updatable
+        />
+    }
+
+
     // ω <fn growth_assumption_component>
 }
 

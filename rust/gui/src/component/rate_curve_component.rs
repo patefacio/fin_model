@@ -28,7 +28,13 @@ pub fn RateCurveComponent(
     updatable: Updatable<RateCurve>,
 ) -> impl IntoView {
     // α <fn rate_curve_component>
-    todo!("Implement `rate_curve_component`")
+
+    view! {
+        cx,
+
+        <div>"Rate Curve TODO"</div>
+    }
+
     // ω <fn rate_curve_component>
 }
 
