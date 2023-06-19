@@ -24,11 +24,17 @@ pub fn WorthComponent(
 ) -> impl IntoView {
     // α <fn worth_component>
 
+    use leptos::IntoAttribute;
+
     view! {
         cx,
         <fieldset class="worth">
         <legend>"Worth"</legend>
 
+        <input
+            type="text"
+            placeholder="Worth-".to_string()
+        />
         </fieldset>
     }
 
