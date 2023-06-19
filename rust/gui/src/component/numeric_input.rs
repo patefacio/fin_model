@@ -124,7 +124,12 @@ pub fn NumericInput(
             ));
 
             if let Some(modification) = modification.as_ref() {
-                new_value = modification.modify(&new_value);
+                // TODO: Fix this
+                new_value = if !new_value.is_empty() {
+                    modification.modify(&new_value)
+                } else {
+                    new_value
+                };
 
                 input_ref.set_value(&new_value);
                 let new_position = modification.position_in_number(

@@ -81,15 +81,6 @@ fn HomePage(cx: Scope) -> impl IntoView {
         console_log(&format!("Year updated -> {y:?}"));
     });
 
-    let normal_spec_updatable = Updatable::new(
-        Some(NormalSpec {
-            mean: 10.0,
-            std_dev: 20.0,
-        }),
-        |ns: &Option<NormalSpec>| {
-            console_log(&format!("Normal Spec -> {ns:?}"));
-        },
-    );
 
     let holding_updatable = Updatable::new(
         Holding {
@@ -158,9 +149,23 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
         />
 
-        <div>"Normal Spec"</div>
+        <div>"Normal Spec With Values"</div>
         <NormalSpecComponent
-            updatable = normal_spec_updatable
+            updatable = Updatable::new(
+                Some(NormalSpec {
+                    mean: 10.0,
+                    std_dev: 20.0,
+                }),
+                |ns: &Option<NormalSpec>| {
+                    console_log(&format!("Normal Spec -> {ns:?}"));
+                },
+            )
+        />
+
+        <NormalSpecComponent
+            updatable = Updatable::new(None, |ns| { 
+                console_log(&format!("NS Updated to -> {ns:?}"));
+            } )
         />
 
         <div>"Holding"</div>

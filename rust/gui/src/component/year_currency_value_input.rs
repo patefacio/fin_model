@@ -39,13 +39,24 @@ pub fn YearCurrencyValueInput(
     // α <fn year_currency_value_input>
 
     use leptos_dom::{html::Input};
-
     use leptos::IntoAttribute;
+    use crate::CurrencySelect;
+    use crate::Updatable;
+    use plus_modeled::Currency;
 
     view! { cx,
 
         <fieldset class="year-currency-value">
         <legend>"Currency/Value/Year"</legend>
+        
+        <CurrencySelect
+            updatable = Updatable::new(
+                Currency::Eur,
+                |currency| {
+                    console_log(&format!("Currency updated to {currency:?}"))
+                }
+            )
+        />
         
         <input 
             type="text"
