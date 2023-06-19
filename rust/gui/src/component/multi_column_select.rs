@@ -515,6 +515,8 @@ impl Indexer {
 
         debug_assert!(column < self.column_count);
 
+
+        // Note that this will wrap around the boundary instead of incrementing the column
         loop {
             row = Self::wrap(row as isize + offset, self.row_count);
             if self.two_d_to_flat_index(row, column) < self.item_count {
@@ -538,6 +540,7 @@ impl Indexer {
     pub fn nearby_column(&self, row: usize, mut column: usize, offset: isize) -> usize {
         // α <fn Indexer::nearby_column>
 
+        // Note that this will wrap around the boundary instead of incrementing the row
         loop {
             column = Self::wrap(column as isize + offset, self.column_count);
             if self.two_d_to_flat_index(row, column) < self.item_count {
