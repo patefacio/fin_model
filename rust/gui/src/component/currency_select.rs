@@ -29,6 +29,7 @@ pub fn CurrencySelect(
     use crate::{InitialValue, MultiColumnSelect, SelectOption};
 
     let mut updatable = updatable;
+    let initial_currency = updatable.value;
 
     let options: Vec<_> = (0..std::mem::variant_count::<Currency>())
         .map(|i| {
@@ -48,7 +49,7 @@ pub fn CurrencySelect(
         cx,
         <MultiColumnSelect
             options=options
-            initial_value=Some(InitialValue::SelectionIndex(3))
+            initial_value=Some(InitialValue::SelectionIndex(initial_currency as i32 as usize))
             on_select=menu_selection
         />
     }

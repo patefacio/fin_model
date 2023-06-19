@@ -25,7 +25,7 @@ pub fn YearCurrencyValueInput(
     /// Context
     cx: Scope,
     /// Initial value and callback
-    updatable: Updatable<YearCurrencyValue>,
+    updatable: Updatable<Option<YearCurrencyValue>>,
     /// Range of valid years.
     #[prop(default=YearRange{ start: 1900, end: 2300 })]
     year_range: YearRange,
@@ -38,40 +38,139 @@ pub fn YearCurrencyValueInput(
 ) -> impl IntoView {
     // α <fn year_currency_value_input>
 
-    use leptos_dom::{html::Input};
-    use leptos::IntoAttribute;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    let updatable = Rc::new(RefCell::new(updatable));
+
     use crate::CurrencySelect;
+    use crate::NumericInput;
     use crate::Updatable;
+    use crate::YearInput;
     use plus_modeled::Currency;
+
+    let initial_year = updatable
+        .as_ref()
+        .borrow()
+        .value
+        .as_ref()
+        .map(|ycv| ycv.year);
+
+    let initial_value = updatable
+        .as_ref()
+        .borrow()
+        .value
+        .as_ref()
+        .map(|ycv| ycv.value);
+
+    let initial_currency = updatable
+        .as_ref()
+        .borrow()
+        .value
+        .as_ref()
+        .and_then(|ycv| Currency::from_i32(ycv.currency))
+        .unwrap_or_default();
+
+    let updatable_for_currency = Rc::clone(&updatable);
+    let currency_select_updatable = Updatable::new(initial_currency, move |new_currency| {
+        console_log(&format!("Currency updated to {new_currency:?}"));
+        updatable_for_currency
+            .as_ref()
+            .borrow_mut()
+            .update_and_then_signal(|yvc| {
+                if let Some(yvc) = yvc {
+                    console_log(&format!("Setting year on YVC -> {new_currency:?}"));
+                    yvc.currency = *new_currency as i32;
+                } else {
+                    console_log(&format!(
+                        "Setting empty YVC on first change of currency -> {new_currency:?}"
+                    ));
+                    *yvc = Some(YearCurrencyValue {
+                        year: year_range.start,
+                        value: 0.0,
+                        currency: *new_currency as i32,
+                    })
+                }
+
+            })
+    });
+
+    let updatable_for_year = Rc::clone(&updatable);
+    let year_updatable = Updatable::new(initial_year, move |new_year| {
+        let new_year = new_year.expect("Only signal for actual year.");
+        console_log(&format!("The year is -> {new_year:?}"));
+        updatable_for_year
+            .as_ref()
+            .borrow_mut()
+            .update_and_then_signal(|yvc| {
+                if let Some(yvc) = yvc {
+                    console_log(&format!("Setting year on YVC -> {new_year:?}"));
+                    yvc.year = new_year
+                } else {
+                    console_log(&format!(
+                        "Setting empty YVC on first change of value -> {new_year:?}"
+                    ));
+
+                    *yvc = Some(YearCurrencyValue {
+                        year: new_year,
+                        value: 0.0,
+                        currency: Currency::Usd as i32,
+                    })
+                }
+            });
+    });
+
+    let updatable_for_value = Rc::clone(&updatable);
+    let value_updatable = Updatable::new(initial_value, move |new_input| {
+        console_log(&format!("New value -> {new_input:?}"));
+        updatable_for_value
+            .as_ref()
+            .borrow_mut()
+            .update_and_then_signal(|yvc| {
+                if let Some(yvc) = yvc {
+                    console_log(&format!("Setting value on YVC -> {new_input:?}"));
+                    yvc.value = new_input.unwrap()
+                } else {
+                    console_log(&format!(
+                        "Setting empty YVC on first change of value -> {new_input:?}"
+                    ));
+
+                    *yvc = Some(YearCurrencyValue {
+                        year: 1900,
+                        value: new_input.unwrap(),
+                        currency: Currency::Usd as i32,
+                    })
+                }
+            });
+    });
 
     view! { cx,
 
         <fieldset class="year-currency-value">
         <legend>"Currency/Value/Year"</legend>
-        
-        <CurrencySelect
-            updatable = Updatable::new(
-                Currency::Eur,
-                |currency| {
-                    console_log(&format!("Currency updated to {currency:?}"))
-                }
-            )
-        />
-        
-        <input 
-            type="text"
-            placeholder=value_placeholder
-        />
 
-        <div>"As Of"</div>
+        <div style="display: inline-flex" >
 
-        <input
-            type="text"
-            placeholder=date_placeholder
-        />
+            <CurrencySelect
+                updatable = currency_select_updatable
+            />
+
+            <NumericInput
+                updatable=value_updatable
+                placeholder=Some("value".to_string())
+            />
+
+            <div>"As Of"</div>
+
+            <YearInput
+                updatable=year_updatable
+                year_range=year_range
+            />
+
+        </div>
 
         </fieldset>
-        
+
     }
 
     // ω <fn year_currency_value_input>

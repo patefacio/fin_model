@@ -143,7 +143,17 @@ fn HomePage(cx: Scope) -> impl IntoView {
         <div>"YearCurrencyValueInput"</div>
         <YearCurrencyValueInput
             updatable = Updatable::new(
-                YearCurrencyValue{ year: 1998, currency: Currency::Eur as i32, value: 25.55},
+                Some(YearCurrencyValue{ year: 1998, currency: Currency::Jpy as i32, value: 25.55}),
+                |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
+            )
+
+        />
+
+
+        <div>"YearCurrencyValueInput with None"</div>
+        <YearCurrencyValueInput
+            updatable = Updatable::new(
+                None,
                 |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
             )
 
