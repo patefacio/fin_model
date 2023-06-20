@@ -59,7 +59,6 @@ pub fn GrowthAssumptionComponent(
 
     view! {
         cx,
-        <div>"Growth Assumption Component Stuff"</div>
         <NormalSpecComponent
             updatable=normal_spec_updatable
         />

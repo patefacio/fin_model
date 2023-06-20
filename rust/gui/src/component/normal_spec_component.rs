@@ -48,44 +48,39 @@ pub fn NormalSpecComponent(
 
     let updatable_for_mean = Rc::clone(&updatable);
     let mean_updatable = Updatable::new(initial_mean, move |mean| {
-        let mean = *mean.as_ref().expect("Only real numbers");
-        updatable_for_mean
-            .as_ref()
-            .borrow_mut()
-            .update_and_then_signal(|normal_spec| {
-                let inner_value = if let Some(normal_spec) = normal_spec {
-                    normal_spec.mean = mean;
-                    *normal_spec
-                } else {
-                    NormalSpec {
-                        mean: mean,
-                        std_dev: 0.0,
-                    }
-                };
+        if let Some(mean) = mean.clone() {
+            updatable_for_mean
+                .as_ref()
+                .borrow_mut()
+                .update_and_then_signal(|normal_spec| {
+                    let inner_value = if let Some(normal_spec) = normal_spec {
+                        normal_spec.mean = mean;
+                        *normal_spec
+                    } else {
+                        NormalSpec { mean, std_dev: 0.0 }
+                    };
 
-                *normal_spec = Some(inner_value)
-            });
-        console_log(&format!("nothing up my sleeve: Number changed to {mean:?}"))
+                    *normal_spec = Some(inner_value)
+                });
+        }
     });
 
     let std_dev_updatable = Updatable::new(initial_std_dev, move |std_dev| {
-        let std_dev = std_dev.expect("Only real numbers");
-        updatable
-            .as_ref()
-            .borrow_mut()
-            .update_and_then_signal(|normal_spec| {
-                let inner_value = if let Some(normal_spec) = normal_spec {
-                    normal_spec.std_dev = std_dev;
-                    *normal_spec
-                } else {
-                    NormalSpec { mean: 0.0, std_dev }
-                };
+        if let Some(std_dev) = std_dev.clone() {
+            updatable
+                .as_ref()
+                .borrow_mut()
+                .update_and_then_signal(|normal_spec| {
+                    let inner_value = if let Some(normal_spec) = normal_spec {
+                        normal_spec.std_dev = std_dev;
+                        *normal_spec
+                    } else {
+                        NormalSpec { mean: 0.0, std_dev }
+                    };
 
-                *normal_spec = Some(inner_value)
-            });
-        console_log(&format!(
-            "nothing up my sleeve: Number changed to {std_dev:?}"
-        ))
+                    *normal_spec = Some(inner_value)
+                });
+        }
     });
 
     view! {

@@ -21,6 +21,7 @@ use plus_modeled::core::YearRange;
 ///   * **input_class** - Class to decorate input element for styling
 ///   * **year_range** - Range of valid years.
 ///   * **updatable** - Value and callback
+///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * _return_ - View for year_input
 #[component]
 pub fn YearInput(
@@ -34,6 +35,9 @@ pub fn YearInput(
     year_range: YearRange,
     /// Value and callback
     updatable: Updatable<Option<u32>>,
+    /// Placeholder shown if entry is empty.
+    #[prop(default=None)]
+    placeholder: Option<String>,
 ) -> impl IntoView {
     // α <fn year_input>
 
@@ -98,6 +102,7 @@ pub fn YearInput(
             // https://leptos-rs.github.io/leptos/view/05_forms.html?highlight=prop%3Avalue#uncontrolled-inputs:~:text=%22%20%7Bname%7D%3C/p%3E%0A%7D-,Uncontrolled%20Inputs,-In%20an%20%22uncontrolled
             value=initial_value
             size=5
+            placeholder=placeholder
             type="text"
         />
     }

@@ -62,12 +62,6 @@ fn HomePage(cx: Scope) -> impl IntoView {
         console_log(&format!("Got symbol update -> {s:?}"));
     });
 
-    let options: Vec<_> = (0..50)
-        .map(|i| SelectOption::Label(format!("Selection {i}")))
-        .collect();
-    let on_select = move |sel| {
-        console_log(&format!("Selection -> {sel}"));
-    };
 
     let on_number_update = Updatable::new(Some(32.3), move |n| {
         console_log(&format!("Number updated -> {n:?}"));
@@ -110,37 +104,33 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
     view! { cx,
 
-        <div>"Sample MultiColumnSelect (50 Options)"</div>
-        <MultiColumnSelect
-            options = options
-            on_select = on_select
-            initial_value = Some(InitialValue::SelectionIndex(5))
-        />
-        <br/>
-
-        <div>"SymbolInput"</div>
+        <h4>"SymbolInput"</h4>
         <SymbolInput symbol_updatable=symbol_updatable />
-        <br/>
+        <hr/>
 
-        <div>"Number"</div>
+        <h4>"Number"</h4>
         <NumericInput updatable=on_number_update />
-        <br/>
+        <hr/>
 
-        <div>"CurrencySelect"</div>
+        <h4>"CurrencySelect"</h4>
         <CurrencySelect updatable=currency_updatable />
-        <br/>
+        <hr/>
 
-        <div>"PercentInput"</div>
-        <PercentInput updatable=on_percent_update />
-        <br/>
+        <h4>"PercentInput"</h4>
+        <PercentInput 
+            updatable=on_percent_update 
+            placeholder=Some("pct complete".to_string())
+        />
+        <hr/>
 
-        <div>"YearInput"</div>
+        <h4>"YearInput"</h4>
         <YearInput
             updatable = year_updateable
+            placeholder = Some("year".to_string())
         />
-        <br/>
+        <hr/>
 
-        <div>"YearCurrencyValueInput"</div>
+        <h4>"YearCurrencyValueInput With Values"</h4>
         <YearCurrencyValueInput
             updatable = Updatable::new(
                 Some(YearCurrencyValue{ year: 1998, currency: Currency::Jpy as i32, value: 25.55}),
@@ -149,8 +139,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
         />
 
-
-        <div>"YearCurrencyValueInput with None"</div>
+        <h4>"YearCurrencyValueInput Without Values"</h4>
         <YearCurrencyValueInput
             updatable = Updatable::new(
                 None,
@@ -158,8 +147,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
             )
 
         />
+        <hr/>
 
-        <div>"Normal Spec With Values"</div>
+        <h4>"Normal Spec With Values"</h4>
         <NormalSpecComponent
             updatable = Updatable::new(
                 Some(NormalSpec {
@@ -172,30 +162,31 @@ fn HomePage(cx: Scope) -> impl IntoView {
             )
         />
 
+        <h4>"Normal Spec Without Values"</h4>
         <NormalSpecComponent
             updatable = Updatable::new(None, |ns| { 
                 console_log(&format!("NS Updated to -> {ns:?}"));
             } )
         />
+        <hr/>
 
-        <div>"Holding"</div>
         <HoldingComponent
             holding_updatable = holding_updatable
         />
-        <br/>
+        <hr/>
 
-        <div>"Worth"</div>
+        <h4>"Worth"</h4>
         <WorthComponent
         />
-        <br/>
+        <hr/>
 
-        <div>"Balance Sheet"</div>
+        <h4>"Balance Sheet"</h4>
         <BalanceSheetComponent
             updatable=Updatable::new(BalanceSheet::default(), |bs| console_log(&format!("BS -> {bs:?}")))
         />
-        <br/>
+        <hr/>
 
-        <div>"Ok/Cancel"</div>
+        <h4>"Ok/Cancel"</h4>
         <OkCancelComponent
             on_ok=|| {
                 console_log("Ok pressed")
@@ -204,15 +195,17 @@ fn HomePage(cx: Scope) -> impl IntoView {
                 console_log("Cancel pressed")
             }
         />
+        <hr/>
 
-        <div>"Rate Curve Component"</div>
+        <h4>"Rate Curve"</h4>
         <RateCurveComponent
             updatable=Updatable::new(RateCurve::default(), |rc| {
                 console_log(&format!("RateCurve updated -> {rc:?}"));
             })
         />
+        <hr/>
 
-        <div>"Holding Growth Component"</div>
+        <h4>"Growth Component (Holding)"</h4>
         <ItemGrowthComponent
             updatable=Updatable::new(
                 ItemGrowth::default(),
@@ -223,8 +216,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
             dossier_item_type=DossierItemType::Holding
             growth_item_mappings=growth_item_mappings
         />
+        <hr/>
 
-        <div>"Worth Growth Component"</div>
+        <h4>"Growth Component (Worth)"</h4>
         <ItemGrowthComponent
             updatable=Updatable::new(
                 ItemGrowth::default(),
@@ -235,6 +229,21 @@ fn HomePage(cx: Scope) -> impl IntoView {
             dossier_item_type=DossierItemType::Worth
             growth_item_mappings=growth_item_mappings
         />
+        <hr/>
+
+
+        <h4>"Growth Component (Flow)"</h4>
+        <ItemGrowthComponent
+            updatable=Updatable::new(
+                ItemGrowth::default(),
+                |ig| {
+                    console_log(&format!("ItemGrowth updated -> {ig:?}"));
+                }
+            )
+            dossier_item_type=DossierItemType::Flow
+            growth_item_mappings=growth_item_mappings
+        />
+        <hr/>
 
         <div>"Dispose Test"</div>
             <Show when=move || (read_count() % 2) == 0
@@ -243,6 +252,8 @@ fn HomePage(cx: Scope) -> impl IntoView {
                 <DisposeTest/>
             </Show>
         <p>
+        <hr/>
+
         <br/>
         /*
         { move || if (read_count() % 2) == 0 {

@@ -101,7 +101,7 @@ pub fn ItemGrowthComponent<'a>(
         <fieldset class="igc">
         <legend>"Item Growth"</legend>
 
-        <div>
+        <div class="icg-select">
         {category_select}
         </div>
 

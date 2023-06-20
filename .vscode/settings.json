@@ -2,5 +2,8 @@
     "editor.inlayHints.enabled": "offUnlessPressed",
     "rust-analyzer.linkedProjects": [
         "./rust/gui/Cargo.toml"
+    ],
+    "cSpell.words": [
+        "impls"
     ]
 }

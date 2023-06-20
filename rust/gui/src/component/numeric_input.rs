@@ -115,6 +115,10 @@ pub fn NumericInput(
                 }
             }
 
+            // `format_number_lenient` will return the input with all non-digit
+            // characters stripped in `new_value` excluding separator (',').
+            // The value passed in will likely have a prefix or suffix which
+            // is now *not present* in `new_value`
             let (value, mut new_value, numeric_to_caret) =
                 format_number_lenient(&value, selection_start);
 
@@ -124,25 +128,28 @@ pub fn NumericInput(
             ));
 
             if let Some(modification) = modification.as_ref() {
-                // TODO: Fix this
-                new_value = if !new_value.is_empty() {
-                    modification.modify(&new_value)
+                if new_value.is_empty() {
+                    // User has possibly deleted all text except prefix or suffix
+                    // so set input to empty string (i.e. no prefix or suffix)
+                    // which will allow display of placeholder
+                    _ = input_ref.set_value(&String::default());
                 } else {
-                    new_value
-                };
-
-                input_ref.set_value(&new_value);
-                let new_position = modification.position_in_number(
-                    new_value.len(),
-                    digit_position(&new_value, numeric_to_caret) as usize,
-                ) as u32;
-
-                _ = input_ref.set_selection_range(new_position, new_position);
+                    // `new_value` has any requisite separator chars (i.e. ',')
+                    // but does not have prefix/suffix - so fix that
+                    new_value = modification.modify(&new_value);
+                    // Update the input with the improved value
+                    _ = input_ref.set_value(&new_value);
+                    // find out where the cursor should go
+                    let new_position = modification.position_in_number(
+                        new_value.len(),
+                        digit_position(&new_value, numeric_to_caret) as usize,
+                    ) as u32;
+                    _ = input_ref.set_selection_range(new_position, new_position);
+                }
             } else {
                 input_ref.set_value(&new_value);
                 //TODO like input in 117
             }
-            console_log("About to update");
             updatable.update_and_then_signal(|number| *number = value);
         });
     };
@@ -318,7 +325,10 @@ pub mod unit_tests {
                 prefix: "σ=".into(),
                 suffix: "%".into(),
             };
-            assert_eq!("σ=3.5%".to_string(), prefix_suffix_modification.modify("3.5"));
+            assert_eq!(
+                "σ=3.5%".to_string(),
+                prefix_suffix_modification.modify("3.5")
+            );
             assert_eq!("σ=26%".to_string(), prefix_suffix_modification.modify("26"));
 
             // ω <fn test Modification::modify>

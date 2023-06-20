@@ -18,7 +18,7 @@ use plus_modeled::core::{YearCurrencyValue, YearRange};
 ///   * **updatable** - Initial value and callback
 ///   * **year_range** - Range of valid years.
 ///   * **value_placeholder** - Placeholder for the value field
-///   * **date_placeholder** - Placeholder for the asOf field
+///   * **year_placeholder** - Placeholder for the year field
 ///   * _return_ - View for year_currency_value_input
 #[component]
 pub fn YearCurrencyValueInput(
@@ -30,11 +30,11 @@ pub fn YearCurrencyValueInput(
     #[prop(default=YearRange{ start: 1900, end: 2300 })]
     year_range: YearRange,
     /// Placeholder for the value field
-    #[prop(default="Value".to_string())]
+    #[prop(default="value".to_string())]
     value_placeholder: String,
-    /// Placeholder for the asOf field
-    #[prop(default="AsOf".to_string())]
-    date_placeholder: String,
+    /// Placeholder for the year field
+    #[prop(default="year".to_string())]
+    year_placeholder: String,
 ) -> impl IntoView {
     // α <fn year_currency_value_input>
 
@@ -97,39 +97,41 @@ pub fn YearCurrencyValueInput(
 
     let updatable_for_year = Rc::clone(&updatable);
     let year_updatable = Updatable::new(initial_year, move |new_year| {
-        let new_year = new_year.expect("Only signal for actual year.");
-        console_log(&format!("The year is -> {new_year:?}"));
-        updatable_for_year
-            .as_ref()
-            .borrow_mut()
-            .update_and_then_signal(|yvc| {
-                if let Some(yvc) = yvc {
-                    console_log(&format!("Setting year on YVC -> {new_year:?}"));
-                    yvc.year = new_year
-                } else {
-                    console_log(&format!(
-                        "Setting empty YVC on first change of value -> {new_year:?}"
-                    ));
-
-                    *yvc = Some(YearCurrencyValue {
-                        year: new_year,
-                        value: 0.0,
-                        currency: Currency::Usd as i32,
-                    })
-                }
-            });
+        if let Some(new_year) = new_year.clone() {
+            console_log(&format!("The year is -> {new_year:?}"));
+            updatable_for_year
+                .as_ref()
+                .borrow_mut()
+                .update_and_then_signal(|yvc| {
+                    if let Some(yvc) = yvc {
+                        console_log(&format!("Setting year on YVC -> {new_year:?}"));
+                        yvc.year = new_year
+                    } else {
+                        console_log(&format!(
+                            "Setting empty YVC on first change of value -> {new_year:?}"
+                        ));
+    
+                        *yvc = Some(YearCurrencyValue {
+                            year: new_year,
+                            value: 0.0,
+                            currency: Currency::Usd as i32,
+                        })
+                    }
+                });
+        }
+        console_log(&format!("New value -> {new_year:?}"));
     });
 
     let updatable_for_value = Rc::clone(&updatable);
     let value_updatable = Updatable::new(initial_value, move |new_input| {
-        console_log(&format!("New value -> {new_input:?}"));
-        updatable_for_value
+        if let Some(new_input) = new_input.clone() {
+            updatable_for_value
             .as_ref()
             .borrow_mut()
             .update_and_then_signal(|yvc| {
                 if let Some(yvc) = yvc {
                     console_log(&format!("Setting value on YVC -> {new_input:?}"));
-                    yvc.value = new_input.unwrap()
+                    yvc.value = new_input
                 } else {
                     console_log(&format!(
                         "Setting empty YVC on first change of value -> {new_input:?}"
@@ -137,11 +139,13 @@ pub fn YearCurrencyValueInput(
 
                     *yvc = Some(YearCurrencyValue {
                         year: 1900,
-                        value: new_input.unwrap(),
+                        value: new_input,
                         currency: Currency::Usd as i32,
                     })
                 }
             });
+        }
+        console_log(&format!("New value -> {new_input:?}"));
     });
 
     view! { cx,
@@ -157,14 +161,15 @@ pub fn YearCurrencyValueInput(
 
             <NumericInput
                 updatable=value_updatable
-                placeholder=Some("value".to_string())
+                placeholder=Some(value_placeholder)
             />
 
-            <div>"As Of"</div>
+            <div style="vertical-align: bottom;">"As Of"</div>
 
             <YearInput
                 updatable=year_updatable
                 year_range=year_range
+                placeholder=Some(year_placeholder)
             />
 
         </div>
