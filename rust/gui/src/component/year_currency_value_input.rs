@@ -4,13 +4,10 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-use crate::component::numeric_input::{Modification, NumericInput};
 use leptos::{component, view, IntoView, Scope};
-use crate::YearClamp;
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
-use plus_modeled::Currency;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

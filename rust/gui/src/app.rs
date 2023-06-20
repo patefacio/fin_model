@@ -39,6 +39,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::component::holding_component::{HoldingComponent, InstrumentGrowthSync};
     use crate::BalanceSheetComponent;
     use crate::CurrencySelect;
+    use crate::DossierCorrelationEntryComponent;
+    use crate::DossierHoldingIndexInput;
+    use crate::DossierItemIndexComponent;
     use crate::ItemGrowthComponent;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
@@ -49,14 +52,26 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::WorthComponent;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
+    use crate::YearRangeInput;
+    use crate::YearValueInput;
     use crate::{InitialValue, MultiColumnSelect, SelectOption};
     use leptos_dom::console_log;
 
     use crate::utils::updatable::Updatable;
-    use plus_modeled::{
-        BalanceSheet, Currency, DossierHoldingIndex, DossierItemType, GrowthItemMappings, Holding,
-        ItemGrowth, NormalSpec, RateCurve, YearCurrencyValue,
-    };
+    use plus_modeled::BalanceSheet;
+    use plus_modeled::Currency;
+    use plus_modeled::DossierCorrelationEntry;
+    use plus_modeled::DossierHoldingIndex;
+    use plus_modeled::DossierItemIndex;
+    use plus_modeled::DossierItemType;
+    use plus_modeled::GrowthItemMappings;
+    use plus_modeled::Holding;
+    use plus_modeled::ItemGrowth;
+    use plus_modeled::NormalSpec; 
+    use plus_modeled::RateCurve;
+    use plus_modeled::YearCurrencyValue;
+    use plus_modeled::YearRange;
+    use plus_modeled::YearValue;
 
     let symbol_updatable = Updatable::new("foobar".to_string(), move |s| {
         console_log(&format!("Got symbol update -> {s:?}"));
@@ -196,6 +211,42 @@ fn HomePage(cx: Scope) -> impl IntoView {
             }
         />
         <hr/>
+
+        <h4>"Year Range Input"</h4>
+        <YearRangeInput
+            updatable = Updatable::new(None, |yr| {
+                console_log(&format!("Year Range updated -> {yr:?}"));
+            })
+        />
+
+        <h4>"Year Value Input"</h4>
+        <YearValueInput
+            updatable = Updatable::new(None, |yv| {
+                console_log(&format!("Year Value updated -> {yv:?}"));
+            })
+        />
+
+        <h4>"Dossier Holding Index"</h4>
+        <DossierHoldingIndexInput
+            updatable = Updatable::new(None, |dhi| {
+                console_log(&format!("Dossier Holding Index updated -> {dhi:?}"));
+            })
+        />
+
+        <h4>"Dossier Item Index"</h4>
+        <DossierItemIndexComponent
+            updatable = Updatable::new(None, |dii| {
+                console_log(&format!("Dossier Item Index updated -> {dii:?}"));
+            })
+        />
+
+        <h4>"Dossier Correlation Entry"</h4>
+        <DossierCorrelationEntryComponent
+            updatable = Updatable::new(None, |dce| {
+                console_log(&format!("Dossier Correlation Entry -> {dce:?}"));
+            })
+        />
+
 
         <h4>"Rate Curve"</h4>
         <RateCurveComponent
