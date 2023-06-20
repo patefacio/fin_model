@@ -15,7 +15,7 @@ use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::helpers::window_event_listener_untyped;
-use leptos_dom::html::{col, Button, Div};
+use leptos_dom::html::{Button, Div};
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, Event, KeyboardEvent, MouseEvent};
@@ -33,12 +33,12 @@ pub enum InitialValue {
     SelectionIndex(usize),
 }
 
-/// SelectOptions can be displayed left-to-right or top-to-bottom.
+/// Indicates direction to flow the select items: can be displayed left-to-right or top-to-bottom.
 #[derive(Debug, Copy, Clone)]
 pub enum SelectDirection {
-    /// SelectOptions fill in values row by row.
+    /// Fill in values row by row.
     LeftToRight,
-    /// SelectOptions fill in values column by column.
+    /// Fill in values column by column.
     TopToBottom,
 }
 
@@ -594,7 +594,6 @@ pub mod unit_tests {
 
     /// Test type Indexer
     mod test_indexer {
-        use leptos_dom::html::A;
         ////////////////////////////////////////////////////////////////////////////////////
         // --- module uses ---
         ////////////////////////////////////////////////////////////////////////////////////

@@ -16,6 +16,7 @@ use leptos_dom::console_log;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - Called when input is updated.
+///   * **placeholder** - Placeholder for the year field
 ///   * _return_ - View for percent_input
 #[component]
 pub fn PercentInput(
@@ -23,6 +24,9 @@ pub fn PercentInput(
     cx: Scope,
     /// Called when input is updated.
     updatable: Updatable<Option<f64>>,
+    /// Placeholder for the year field
+    #[prop(default=None)]
+    placeholder: Option<String>,
 ) -> impl IntoView {
     // α <fn percent_input>
 
@@ -31,6 +35,7 @@ pub fn PercentInput(
                     updatable=updatable
                     modification=Some(Modification::Suffix("%".into()))
                     non_negative=true
+                    placeholder=placeholder
                 />
 
     }

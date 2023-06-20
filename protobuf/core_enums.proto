@@ -278,6 +278,31 @@ enum PersonType {
 }
 
 /*
+  Used to discriminate between `worth`, `holding`, `instrument`, and `flow`.
+*/
+enum DossierItemType {
+  /*
+    Indicates a _Worth_.
+  */
+  WORTH = 0;
+  
+  /*
+    Indicates a _Holding_.
+  */
+  HOLDING = 1;
+  
+  /*
+    Indicates an _Instrument_.
+  */
+  INSTRUMENT = 2;
+  
+  /*
+    Indicates a _Flow_.
+  */
+  FLOW = 3;
+}
+
+/*
   Identifies type of year market.
 */
 enum ForecastYearMarkerType {

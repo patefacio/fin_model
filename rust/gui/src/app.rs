@@ -39,10 +39,12 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::component::holding_component::{HoldingComponent, InstrumentGrowthSync};
     use crate::BalanceSheetComponent;
     use crate::CurrencySelect;
+    use crate::ItemGrowthComponent;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
     use crate::OkCancelComponent;
     use crate::PercentInput;
+    use crate::RateCurveComponent;
     use crate::SymbolInput;
     use crate::WorthComponent;
     use crate::YearCurrencyValueInput;
@@ -52,22 +54,14 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
     use crate::utils::updatable::Updatable;
     use plus_modeled::{
-        account::Holding,
-        balance_sheet::BalanceSheet,
-        core::{DossierHoldingIndex, NormalSpec, YearCurrencyValue},
-        Currency,
+        BalanceSheet, Currency, DossierHoldingIndex, DossierItemType, GrowthItemMappings, Holding,
+        ItemGrowth, NormalSpec, RateCurve, YearCurrencyValue,
     };
 
     let symbol_updatable = Updatable::new("foobar".to_string(), move |s| {
         console_log(&format!("Got symbol update -> {s:?}"));
     });
 
-    let options: Vec<_> = (0..50)
-        .map(|i| SelectOption::Label(format!("Selection {i}")))
-        .collect();
-    let on_select = move |sel| {
-        console_log(&format!("Selection -> {sel}"));
-    };
 
     let on_number_update = Updatable::new(Some(32.3), move |n| {
         console_log(&format!("Number updated -> {n:?}"));
@@ -81,15 +75,6 @@ fn HomePage(cx: Scope) -> impl IntoView {
         console_log(&format!("Year updated -> {y:?}"));
     });
 
-    let normal_spec_updatable = Updatable::new(
-        Some(NormalSpec {
-            mean: 10.0,
-            std_dev: 20.0,
-        }),
-        |ns: &Option<NormalSpec>| {
-            console_log(&format!("Normal Spec -> {ns:?}"));
-        },
-    );
 
     let holding_updatable = Updatable::new(
         Holding {
@@ -115,100 +100,173 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let (read_count, write_count) = create_signal(cx, 0);
     leptos_dom::console_log(&format!("App cx({cx:?}"));
 
+    let growth_item_mappings = &GrowthItemMappings::default();
+
     view! { cx,
 
-            <div>"Sample MultiColumnSelect (50 Options)"</div>
-            <MultiColumnSelect
-                options = options
-                on_select = on_select
-                initial_value = Some(InitialValue::SelectionIndex(5))
-            />
-            <br/>
+        <h4>"SymbolInput"</h4>
+        <SymbolInput symbol_updatable=symbol_updatable />
+        <hr/>
 
-            <div>"SymbolInput"</div>
-            <SymbolInput symbol_updatable=symbol_updatable />
-            <br/>
+        <h4>"Number"</h4>
+        <NumericInput updatable=on_number_update />
+        <hr/>
 
-            <div>"Number"</div>
-            <NumericInput updatable=on_number_update />
-            <br/>
+        <h4>"CurrencySelect"</h4>
+        <CurrencySelect updatable=currency_updatable />
+        <hr/>
 
-            <div>"CurrencySelect"</div>
-            <CurrencySelect updatable=currency_updatable />
-            <br/>
+        <h4>"PercentInput"</h4>
+        <PercentInput 
+            updatable=on_percent_update 
+            placeholder=Some("pct complete".to_string())
+        />
+        <hr/>
 
-            <div>"PercentInput"</div>
-            <PercentInput updatable=on_percent_update />
-            <br/>
+        <h4>"YearInput"</h4>
+        <YearInput
+            updatable = year_updateable
+            placeholder = Some("year".to_string())
+        />
+        <hr/>
 
-            <div>"YearInput"</div>
-            <YearInput
-                updatable = year_updateable
-            />
-            <br/>
+        <h4>"YearCurrencyValueInput With Values"</h4>
+        <YearCurrencyValueInput
+            updatable = Updatable::new(
+                Some(YearCurrencyValue{ year: 1998, currency: Currency::Jpy as i32, value: 25.55}),
+                |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
+            )
 
-            <div>"YearCurrencyValueInput"</div>
-            <YearCurrencyValueInput
-                updatable = Updatable::new(
-                    YearCurrencyValue{ year: 1998, currency: Currency::Eur as i32, value: 25.55},
-                    |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
-                )
+        />
 
-            />
+        <h4>"YearCurrencyValueInput Without Values"</h4>
+        <YearCurrencyValueInput
+            updatable = Updatable::new(
+                None,
+                |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
+            )
 
-            <div>"Normal Spec"</div>
-            <NormalSpecComponent
-                updatable = normal_spec_updatable
-            />
+        />
+        <hr/>
 
-            <div>"Holding"</div>
-            <HoldingComponent
-                holding_updatable = holding_updatable
-            />
-            <br/>
+        <h4>"Normal Spec With Values"</h4>
+        <NormalSpecComponent
+            updatable = Updatable::new(
+                Some(NormalSpec {
+                    mean: 10.0,
+                    std_dev: 20.0,
+                }),
+                |ns: &Option<NormalSpec>| {
+                    console_log(&format!("Normal Spec -> {ns:?}"));
+                },
+            )
+        />
 
-            <div>"Worth"</div>
-            <WorthComponent
-            />
-            <br/>
+        <h4>"Normal Spec Without Values"</h4>
+        <NormalSpecComponent
+            updatable = Updatable::new(None, |ns| { 
+                console_log(&format!("NS Updated to -> {ns:?}"));
+            } )
+        />
+        <hr/>
 
-            <div>"Balance Sheet"</div>
-            <BalanceSheetComponent
-                updatable=Updatable::new(BalanceSheet::default(), |bs| console_log(&format!("BS -> {bs:?}")))
-            />
-            <br/>
+        <HoldingComponent
+            holding_updatable = holding_updatable
+        />
+        <hr/>
 
-            <div>"Ok/Cancel"</div>
-            <OkCancelComponent
-                on_ok=|| {
-                    console_log("Ok pressed")
-                }
-                on_cancel=|| {
-                    console_log("Cancel pressed")
-                }
-            />
+        <h4>"Worth"</h4>
+        <WorthComponent
+        />
+        <hr/>
 
+        <h4>"Balance Sheet"</h4>
+        <BalanceSheetComponent
+            updatable=Updatable::new(BalanceSheet::default(), |bs| console_log(&format!("BS -> {bs:?}")))
+        />
+        <hr/>
 
-            <div>"Dispose Test"</div>
-                <Show when=move || (read_count() % 2) == 0
-                    fallback=|_| "Nothing"
-                >
-                    <DisposeTest/>
-                </Show>
-            <p>
-            <br/>
-            /*
-            { move || if (read_count() % 2) == 0 {
-                view! { cx, <DisposeTest/> }.into_view(cx)
-            } else {
-                view! { cx, "Nothing" }.into_view(cx)
+        <h4>"Ok/Cancel"</h4>
+        <OkCancelComponent
+            on_ok=|| {
+                console_log("Ok pressed")
             }
+            on_cancel=|| {
+                console_log("Cancel pressed")
             }
-            */
-            </p>
+        />
+        <hr/>
 
-            <button on:click=move |_| {
-                write_count.update(|c| *c = *c + 1);
-            }>"INC"</button>
+        <h4>"Rate Curve"</h4>
+        <RateCurveComponent
+            updatable=Updatable::new(RateCurve::default(), |rc| {
+                console_log(&format!("RateCurve updated -> {rc:?}"));
+            })
+        />
+        <hr/>
+
+        <h4>"Growth Component (Holding)"</h4>
+        <ItemGrowthComponent
+            updatable=Updatable::new(
+                ItemGrowth::default(),
+                |ig| {
+                    console_log(&format!("ItemGrowth updated -> {ig:?}"));
+                }
+            )
+            dossier_item_type=DossierItemType::Holding
+            growth_item_mappings=growth_item_mappings
+        />
+        <hr/>
+
+        <h4>"Growth Component (Worth)"</h4>
+        <ItemGrowthComponent
+            updatable=Updatable::new(
+                ItemGrowth::default(),
+                |ig| {
+                    console_log(&format!("ItemGrowth updated -> {ig:?}"));
+                }
+            )
+            dossier_item_type=DossierItemType::Worth
+            growth_item_mappings=growth_item_mappings
+        />
+        <hr/>
+
+
+        <h4>"Growth Component (Flow)"</h4>
+        <ItemGrowthComponent
+            updatable=Updatable::new(
+                ItemGrowth::default(),
+                |ig| {
+                    console_log(&format!("ItemGrowth updated -> {ig:?}"));
+                }
+            )
+            dossier_item_type=DossierItemType::Flow
+            growth_item_mappings=growth_item_mappings
+        />
+        <hr/>
+
+        <div>"Dispose Test"</div>
+            <Show when=move || (read_count() % 2) == 0
+                fallback=|_| "Nothing"
+            >
+                <DisposeTest/>
+            </Show>
+        <p>
+        <hr/>
+
+        <br/>
+        /*
+        { move || if (read_count() % 2) == 0 {
+            view! { cx, <DisposeTest/> }.into_view(cx)
+        } else {
+            view! { cx, "Nothing" }.into_view(cx)
         }
+        }
+        */
+        </p>
+
+        <button on:click=move |_| {
+            write_count.update(|c| *c = *c + 1);
+        }>"INC"</button>
+    }
 }

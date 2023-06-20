@@ -51,6 +51,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("ForecastTaxTreatment", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("FlowDirection", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("PersonType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
+        .type_attribute("DossierItemType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("ForecastYearMarkerType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("TaxUsFilingStatus", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("TaxUsCategory", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")

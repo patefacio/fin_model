@@ -414,6 +414,49 @@ impl PersonType {
     }
 }
 ///
+/// Used to discriminate between `worth`, `holding`, `instrument`, and `flow`.
+#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum DossierItemType {
+    ///
+    /// Indicates a _Worth_.
+    Worth = 0,
+    ///
+    /// Indicates a _Holding_.
+    Holding = 1,
+    ///
+    /// Indicates an _Instrument_.
+    Instrument = 2,
+    ///
+    /// Indicates a _Flow_.
+    Flow = 3,
+}
+impl DossierItemType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            DossierItemType::Worth => "WORTH",
+            DossierItemType::Holding => "HOLDING",
+            DossierItemType::Instrument => "INSTRUMENT",
+            DossierItemType::Flow => "FLOW",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "WORTH" => Some(Self::Worth),
+            "HOLDING" => Some(Self::Holding),
+            "INSTRUMENT" => Some(Self::Instrument),
+            "FLOW" => Some(Self::Flow),
+            _ => None,
+        }
+    }
+}
+///
 /// Identifies type of year market.
 #[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

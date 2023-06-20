@@ -28,6 +28,13 @@ pub enum Modification {
     ReactivePrefix(ReadSignal<String>),
     /// A suffix for the number.
     Suffix(String),
+    /// A prefix and suffix for the number.
+    PrefixAndSuffix {
+        /// Prefix for the number
+        prefix: String,
+        /// Suffix for the number
+        suffix: String,
+    },
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +49,9 @@ pub enum Modification {
 ///   * **modification** - Optional modification (e.g. suffix/prefix)
 ///   * **non_negative** - If set, negative values are disallowed.
 ///   * **placeholder** - Placeholder shown if entry is empty.
+///   * **size** - The size attribute, which one hopes would make the size of the
+/// input field roughly that number of characters. But YMMV.
+///
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -61,6 +71,10 @@ pub fn NumericInput(
     /// Placeholder shown if entry is empty.
     #[prop(default=None)]
     placeholder: Option<String>,
+    /// The size attribute, which one hopes would make the size of the
+    /// input field roughly that number of characters. But YMMV.
+    #[prop(default = 7)]
+    size: u32,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
@@ -69,7 +83,11 @@ pub fn NumericInput(
     // Get the initial value for the year if provided. Set to empty string if
     // not provided.
     let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
-        initial_value.to_string()
+        if let Some(modification) = modification.as_ref() {
+            modification.modify(&initial_value.to_string())
+        } else {
+            initial_value.to_string()
+        }
     } else {
         String::default()
     };
@@ -97,6 +115,10 @@ pub fn NumericInput(
                 }
             }
 
+            // `format_number_lenient` will return the input with all non-digit
+            // characters stripped in `new_value` excluding separator (',').
+            // The value passed in will likely have a prefix or suffix which
+            // is now *not present* in `new_value`
             let (value, mut new_value, numeric_to_caret) =
                 format_number_lenient(&value, selection_start);
 
@@ -106,20 +128,29 @@ pub fn NumericInput(
             ));
 
             if let Some(modification) = modification.as_ref() {
-                new_value = modification.modify(&new_value);
-
-                input_ref.set_value(&new_value);
-                let new_position = modification.position_in_number(
-                    new_value.len(),
-                    digit_position(&new_value, numeric_to_caret) as usize,
-                ) as u32;
-
-                _ = input_ref.set_selection_range(new_position, new_position);
+                if new_value.is_empty() {
+                    // User has possibly deleted all text except prefix or suffix
+                    // so set input to empty string (i.e. no prefix or suffix)
+                    // which will allow display of placeholder
+                    _ = input_ref.set_value(&String::default());
+                } else {
+                    // `new_value` has any requisite separator chars (i.e. ',')
+                    // but does not have prefix/suffix - so fix that
+                    new_value = modification.modify(&new_value);
+                    // Update the input with the improved value
+                    _ = input_ref.set_value(&new_value);
+                    // find out where the cursor should go
+                    let new_position = modification.position_in_number(
+                        new_value.len(),
+                        digit_position(&new_value, numeric_to_caret) as usize,
+                    ) as u32;
+                    _ = input_ref.set_selection_range(new_position, new_position);
+                }
             } else {
                 input_ref.set_value(&new_value);
+                //TODO like input in 117
             }
-
-            updatable.update(|number| *number = value);
+            updatable.update_and_then_signal(|number| *number = value);
         });
     };
 
@@ -173,6 +204,7 @@ pub fn NumericInput(
             on:input = move |_| update_value.update_value(|update_value| update_value())
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
+            size=size
             type="text"
         />
 
@@ -199,9 +231,13 @@ impl Modification {
             Modification::ReactivePrefix(p) => p.with(|p| p.len().max(position)),
             Modification::Prefix(p) => p.len().max(position),
             Modification::Suffix(s) => (input_len - s.len()).min(position),
+            Modification::PrefixAndSuffix { prefix, suffix } => {
+                (input_len - suffix.len()).min(position).max(prefix.len())
+            }
         };
         console_log(&format!("Constrained {position} to {constrained}"));
         constrained
+
         // ω <fn Modification::position_in_number>
     }
 
@@ -230,6 +266,11 @@ impl Modification {
                 modified.push_str(s);
                 modified
             }
+            Modification::PrefixAndSuffix { prefix, suffix } => {
+                modified.insert_str(0, prefix);
+                modified.push_str(suffix);
+                modified
+            }
         };
         result
         // ω <fn Modification::modify>
@@ -253,22 +294,55 @@ pub mod unit_tests {
         #[test]
         fn position_in_number() {
             // α <fn test Modification::position_in_number>
-            todo!("Test position_in_number")
+
+            let prefix_modification = Modification::Prefix("USD:".to_string());
+            assert_eq!(5, prefix_modification.position_in_number(8, 5));
+            assert_eq!(4, prefix_modification.position_in_number(8, 1));
+
+            let suffix_modification = Modification::Suffix("%".to_string());
+            assert_eq!(4, suffix_modification.position_in_number(5, 5));
+            assert_eq!(3, suffix_modification.position_in_number(7, 3));
+
             // ω <fn test Modification::position_in_number>
         }
 
         #[test]
         fn modify() {
             // α <fn test Modification::modify>
-            todo!("Test modify")
+            let prefix_modification = Modification::Prefix("$".to_string());
+            assert_eq!(
+                "$123,456".to_string(),
+                prefix_modification.modify("123,456")
+            );
+            assert_eq!("$145".to_string(), prefix_modification.modify("145"));
+            assert_eq!("$123456".to_string(), prefix_modification.modify("123456"));
+
+            let suffix_modification = Modification::Suffix("%".to_string());
+            assert_eq!("3.5%".to_string(), suffix_modification.modify("3.5"));
+            assert_eq!("26%".to_string(), suffix_modification.modify("26"));
+
+            let prefix_suffix_modification = Modification::PrefixAndSuffix {
+                prefix: "σ=".into(),
+                suffix: "%".into(),
+            };
+            assert_eq!(
+                "σ=3.5%".to_string(),
+                prefix_suffix_modification.modify("3.5")
+            );
+            assert_eq!("σ=26%".to_string(), prefix_suffix_modification.modify("26"));
+
             // ω <fn test Modification::modify>
         }
 
         // α <mod-def test_modification>
+        use super::*;
+        use crate::Modification;
+
         // ω <mod-def test_modification>
     }
 
     // α <mod-def unit_tests>
+
     // ω <mod-def unit_tests>
 }
 

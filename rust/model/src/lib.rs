@@ -41,6 +41,7 @@ pub use crate::core_enums::Country;
 pub use crate::core_enums::Currency;
 pub use crate::core_enums::DistributionInstrument;
 pub use crate::core_enums::DistributionInstrumentType;
+pub use crate::core_enums::DossierItemType;
 pub use crate::core_enums::FlowDirection;
 pub use crate::core_enums::FlowType;
 pub use crate::core_enums::ForecastSortCriteria;
