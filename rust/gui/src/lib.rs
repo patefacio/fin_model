@@ -12,6 +12,8 @@ pub use component::dossier_correlation_entry_component::DossierCorrelationEntryC
 pub use component::dossier_holding_index_input::DossierHoldingIndexInput;
 pub use component::dossier_item_index_component::DossierItemIndexComponent;
 pub use component::enum_select::EnumSelect;
+pub use component::flow_spec_component::FlowSpecComponent;
+pub use component::growing_flow_spec_component::GrowingFlowSpecComponent;
 pub use component::growth_assumption_component::GrowthAssumptionComponent;
 pub use component::holding_component::HoldingComponent;
 pub use component::item_growth_component::ItemGrowthComponent;
@@ -26,6 +28,7 @@ pub use component::ok_cancel_component::OkCancelComponent;
 pub use component::percent_input::PercentInput;
 pub use component::rate_curve_component::RateCurveComponent;
 pub use component::symbol_input::SymbolInput;
+pub use component::value_flow_spec_component::ValueFlowSpecComponent;
 pub use component::worth_component::WorthComponent;
 pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;

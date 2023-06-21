@@ -31,7 +31,6 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("DossierItemIndex", "#[derive(Serialize, Deserialize, Copy, Ord, PartialOrd, Eq)]")
         .type_attribute("DossierCorrelationEntry", "#[derive(Serialize, Deserialize)]")
         .type_attribute("DossierCorrelationMatrix", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("ValueOverRange", "#[derive(Serialize, Deserialize)]")
         .type_attribute("PeriodBalance", "#[derive(Serialize, Deserialize, Copy, PartialOrd)]")
         .type_attribute("GrowthAssumption", "#[derive(Serialize, Deserialize)]")
         .type_attribute("ItemGrowth", "#[derive(Serialize, Deserialize)]")
@@ -43,6 +42,10 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("OutlookMarketAssumptions", "#[derive(Serialize, Deserialize)]")
         .type_attribute("DistributionSpec", "#[derive(Serialize, Deserialize)]")
         .type_attribute("Worth", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("ValueFlowSpec", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("GrowingFlowSpec", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("HoldingLinks", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("FlowSpec", "#[derive(Serialize, Deserialize)]")
         .type_attribute("Currency", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("AccountType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("BasicAllocationType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
@@ -66,7 +69,9 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("distribution_policy", "#[derive(Serialize, Deserialize)]")
         .type_attribute("withdrawal_treatment", "#[derive(Serialize, Deserialize)]")
         .type_attribute("item_index", "#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]")
-        .type_attribute("system_id", "#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]") 
+        .type_attribute("system_id", "#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]")
+        .type_attribute("one_of_flow_spec", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("one_of_holding_links", "#[derive(Serialize, Deserialize)]") 
         .compile(&[ 
           "account.proto",
           "age_assumptions.proto",
@@ -75,7 +80,8 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
           "growth.proto",
           "distributions.proto",
           "core_enums.proto",
-          "worth.proto"
+          "worth.proto",
+          "flow_specs.proto"
         ], &["../../protobuf"])?;
     Ok(())
     

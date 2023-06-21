@@ -236,27 +236,6 @@ message DossierCorrelationMatrix {
 }
 
 /*
-  
-  A conceptually single value presented twice, first as a present value and
-  second as a future value. Both present and future values are `YearValue`
-  objects. A `ValueOverRange` where the present and future values are the
-  same may indicate a present valuing of a future value where the interest
-  rate of the PV is a 0 rate curve. Alternatively, it might mean the actual 
-  growth in the value exactly offsets the effects of inflation.  
-*/
-message ValueOverRange {
-  /*
-    The present (e.g.start) year value.
-  */
-  core.YearValue present_year_value = 1;
-  
-  /*
-    The future (e.g. end) year value.
-  */
-  core.YearValue future_year_value = 2;
-}
-
-/*
   Balance change over a period
 */
 message PeriodBalance {

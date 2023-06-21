@@ -37,11 +37,14 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::component::dispose_test::DisposeTest;
     use crate::component::holding_component::InstrumentGrowthMappings;
     use crate::component::holding_component::{HoldingComponent, InstrumentGrowthSync};
+    use crate::{InitialValue, MultiColumnSelect, SelectOption};
     use crate::BalanceSheetComponent;
     use crate::CurrencySelect;
     use crate::DossierCorrelationEntryComponent;
     use crate::DossierHoldingIndexInput;
     use crate::DossierItemIndexComponent;
+    use crate::FlowSpecComponent;
+    use crate::GrowingFlowSpecComponent;
     use crate::ItemGrowthComponent;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
@@ -49,12 +52,12 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::PercentInput;
     use crate::RateCurveComponent;
     use crate::SymbolInput;
+    use crate::ValueFlowSpecComponent;
     use crate::WorthComponent;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
     use crate::YearRangeInput;
     use crate::YearValueInput;
-    use crate::{InitialValue, MultiColumnSelect, SelectOption};
     use leptos_dom::console_log;
 
     use crate::utils::updatable::Updatable;
@@ -65,6 +68,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use plus_modeled::DossierItemIndex;
     use plus_modeled::DossierItemType;
     use plus_modeled::GrowthItemMappings;
+    use plus_modeled::GrowingFlowSpec;
+    use plus_modeled::ValueFlowSpec;
+    use plus_modeled::FlowSpec;
     use plus_modeled::Holding;
     use plus_modeled::ItemGrowth;
     use plus_modeled::NormalSpec; 
@@ -295,6 +301,40 @@ fn HomePage(cx: Scope) -> impl IntoView {
             growth_item_mappings=growth_item_mappings
         />
         <hr/>
+
+        <h4>"Growing Flow Spec"</h4>
+        <GrowingFlowSpecComponent
+            updatable=Updatable::new(
+                None,
+                |gfs| {
+                    console_log(&format!("GrowingFlowSpec updated -> {gfs:?}"));
+                }
+            )
+        />
+        <hr/>
+
+        <h4>"Value Flow Spec"</h4>
+        <ValueFlowSpecComponent
+            updatable=Updatable::new(
+                None,
+                |gfs| {
+                    console_log(&format!("ValueFlowSpec updated -> {gfs:?}"));
+                }
+            )
+        />
+        <hr/>
+
+        <h4>"Flow Spec"</h4>
+        <FlowSpecComponent
+            updatable=Updatable::new(
+                None,
+                |gfs| {
+                    console_log(&format!("FlowSpec updated -> {gfs:?}"));
+                }
+            )
+        />
+        <hr/>
+
 
         <div>"Dispose Test"</div>
             <Show when=move || (read_count() % 2) == 0

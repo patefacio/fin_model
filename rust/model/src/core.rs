@@ -236,27 +236,6 @@ pub struct DossierCorrelationMatrix {
     pub mappings: ::prost::alloc::vec::Vec<DossierCorrelationEntry>,
 }
 ///
-///
-/// A conceptually single value presented twice, first as a present value and
-/// second as a future value. Both present and future values are `YearValue`
-/// objects. A `ValueOverRange` where the present and future values are the
-/// same may indicate a present valuing of a future value where the interest
-/// rate of the PV is a 0 rate curve. Alternatively, it might mean the actual
-/// growth in the value exactly offsets the effects of inflation.
-#[derive(Serialize, Deserialize)]
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ValueOverRange {
-    ///
-    /// The present (e.g.start) year value.
-    #[prost(message, optional, tag = "1")]
-    pub present_year_value: ::core::option::Option<YearValue>,
-    ///
-    /// The future (e.g. end) year value.
-    #[prost(message, optional, tag = "2")]
-    pub future_year_value: ::core::option::Option<YearValue>,
-}
-///
 /// Balance change over a period
 #[derive(Serialize, Deserialize, Copy, PartialOrd)]
 #[allow(clippy::derive_partial_eq_without_eq)]
