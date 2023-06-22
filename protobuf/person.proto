@@ -1,0 +1,41 @@
+/*
+  Person details.
+*/
+
+syntax = "proto3";
+
+import "core_enums.proto";
+import "age_assumptions.proto";
+
+package person;
+
+option java_package="plus_modeled";
+
+/*
+  
+  Captures just enough about the `Person` to forecast.
+  Ability to determine age is important for determining timing of
+  events - like RMD requirements, statistics on costs such as healthcare,
+  etc.
+*/
+message Person {
+  /*
+    Identifier for the person (e.g. name or _nom de guerre_)
+  */
+  string name = 1;
+  
+  /*
+    Type of person.
+  */
+  core_enums.PersonType person_type = 2;
+  
+  /*
+    Year of birth.
+  */
+  uint32 birth_year = 3;
+  
+  /*
+    Important age data for the person.
+  */
+  age_assumptions.AgeAssumptions age_assumptions = 4;
+}
