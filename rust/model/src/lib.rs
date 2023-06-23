@@ -67,6 +67,7 @@ pub use crate::growth::OutlookMarketAssumptions;
 pub use crate::growth::SystemCorrelationEntry;
 pub use crate::growth::SystemCorrelationMatrix;
 pub use crate::growth::SystemGrowthId;
+pub use crate::person::Person;
 pub use crate::worth::Worth;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -80,6 +81,7 @@ pub mod core_enums;
 pub mod distributions;
 pub mod flow_specs;
 pub mod growth;
+pub mod person;
 pub mod worth;
 
 // α <mod-def lib>

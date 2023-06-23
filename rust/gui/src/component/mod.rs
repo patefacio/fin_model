@@ -3,9 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
+pub mod age_assumptions_component;
 pub mod balance_sheet_component;
 pub mod currency_select;
 pub mod currency_value_input;
+pub mod date_input;
 pub mod dispose_test;
 pub mod dossier_correlation_entry_component;
 pub mod dossier_holding_index_input;
@@ -21,6 +23,7 @@ pub mod normal_spec_component;
 pub mod numeric_input;
 pub mod ok_cancel_component;
 pub mod percent_input;
+pub mod person_component;
 pub mod rate_curve_component;
 pub mod symbol_input;
 pub mod value_flow_spec_component;

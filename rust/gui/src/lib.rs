@@ -4,9 +4,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+pub use component::age_assumptions_component::AgeAssumptionsComponent;
 pub use component::balance_sheet_component::BalanceSheetComponent;
 pub use component::currency_select::CurrencySelect;
 pub use component::currency_value_input::CurrencyValueInput;
+pub use component::date_input::DateInput;
 pub use component::dispose_test::DisposeTest;
 pub use component::dossier_correlation_entry_component::DossierCorrelationEntryComponent;
 pub use component::dossier_holding_index_input::DossierHoldingIndexInput;
@@ -26,6 +28,7 @@ pub use component::numeric_input::Modification;
 pub use component::numeric_input::NumericInput;
 pub use component::ok_cancel_component::OkCancelComponent;
 pub use component::percent_input::PercentInput;
+pub use component::person_component::PersonComponent;
 pub use component::rate_curve_component::RateCurveComponent;
 pub use component::symbol_input::SymbolInput;
 pub use component::value_flow_spec_component::ValueFlowSpecComponent;

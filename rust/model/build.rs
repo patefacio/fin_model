@@ -46,6 +46,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("GrowingFlowSpec", "#[derive(Serialize, Deserialize)]")
         .type_attribute("HoldingLinks", "#[derive(Serialize, Deserialize)]")
         .type_attribute("FlowSpec", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("Person", "#[derive(Serialize, Deserialize)]")
         .type_attribute("Currency", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("AccountType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("BasicAllocationType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
@@ -81,7 +82,8 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
           "distributions.proto",
           "core_enums.proto",
           "worth.proto",
-          "flow_specs.proto"
+          "flow_specs.proto",
+          "person.proto"
         ], &["../../protobuf"])?;
     Ok(())
     
