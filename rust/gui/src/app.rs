@@ -37,10 +37,11 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::component::dispose_test::DisposeTest;
     use crate::component::holding_component::InstrumentGrowthMappings;
     use crate::component::holding_component::{HoldingComponent, InstrumentGrowthSync};
-    use crate::{InitialValue, MultiColumnSelect, SelectOption};
+    use crate::AgeAssumptionsComponent;
     use crate::BalanceSheetComponent;
     use crate::CurrencySelect;
     use crate::DossierCorrelationEntryComponent;
+    use crate::DossierCorrelationMatrixComponent;
     use crate::DossierHoldingIndexInput;
     use crate::DossierItemIndexComponent;
     use crate::FlowSpecComponent;
@@ -50,7 +51,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::NumericInput;
     use crate::OkCancelComponent;
     use crate::PercentInput;
+    use crate::PersonComponent;
     use crate::RateCurveComponent;
+    use crate::StringInput;
     use crate::SymbolInput;
     use crate::ValueFlowSpecComponent;
     use crate::WorthComponent;
@@ -58,23 +61,28 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::YearInput;
     use crate::YearRangeInput;
     use crate::YearValueInput;
+    use crate::{InitialValue, MultiColumnSelect, SelectOption};
     use leptos_dom::console_log;
 
     use crate::utils::updatable::Updatable;
+    use plus_modeled::AgeAssumptions;
     use plus_modeled::BalanceSheet;
     use plus_modeled::Currency;
     use plus_modeled::DossierCorrelationEntry;
+    use plus_modeled::DossierCorrelationMatrix;
     use plus_modeled::DossierHoldingIndex;
     use plus_modeled::DossierItemIndex;
     use plus_modeled::DossierItemType;
-    use plus_modeled::GrowthItemMappings;
-    use plus_modeled::GrowingFlowSpec;
-    use plus_modeled::ValueFlowSpec;
     use plus_modeled::FlowSpec;
+    use plus_modeled::GrowingFlowSpec;
+    use plus_modeled::GrowthItemMappings;
     use plus_modeled::Holding;
     use plus_modeled::ItemGrowth;
-    use plus_modeled::NormalSpec; 
+    use plus_modeled::NormalSpec;
+    use plus_modeled::Person;
+    use plus_modeled::PersonType;
     use plus_modeled::RateCurve;
+    use plus_modeled::ValueFlowSpec;
     use plus_modeled::YearCurrencyValue;
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
@@ -82,7 +90,6 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let symbol_updatable = Updatable::new("foobar".to_string(), move |s| {
         console_log(&format!("Got symbol update -> {s:?}"));
     });
-
 
     let on_number_update = Updatable::new(Some(32.3), move |n| {
         console_log(&format!("Number updated -> {n:?}"));
@@ -95,7 +102,6 @@ fn HomePage(cx: Scope) -> impl IntoView {
     let year_updateable = Updatable::new(Some(1999), |y| {
         console_log(&format!("Year updated -> {y:?}"));
     });
-
 
     let holding_updatable = Updatable::new(
         Holding {
@@ -123,7 +129,52 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
     let growth_item_mappings = &GrowthItemMappings::default();
 
+    use plus_modeled::core::dossier_item_index::ItemIndex;
+
+    let make_cor_entry = |row_holding_id, column_holding_id, correlation| DossierCorrelationEntry {
+        row_index: Some(DossierItemIndex {
+            item_index: Some(ItemIndex::HoldingIndex(DossierHoldingIndex {
+                holding_index: Some(row_holding_id),
+                ..Default::default()
+            })),
+        }),
+        column_index: Some(DossierItemIndex {
+            item_index: Some(ItemIndex::HoldingIndex(DossierHoldingIndex {
+                holding_index: Some(column_holding_id),
+                ..Default::default()
+            })),
+        }),
+        correlation: correlation,
+    };
+
+    let sample_dossier_matrix = DossierCorrelationMatrix {
+        mappings: vec![
+            make_cor_entry(0, 1, -0.31),
+            make_cor_entry(1, 1, 0.71),
+            make_cor_entry(1, 2, 0.342),
+        ],
+    };
+
     view! { cx,
+
+        <h4>"Dossier Correlation Matrix"</h4>
+        <DossierCorrelationMatrixComponent
+            updatable=Updatable::new(
+                sample_dossier_matrix,
+                |m| {
+                    console_log(&format!("Matrix updated to -> {m:?}"))
+                }
+            )
+        />
+
+        <h4>"StringInput"</h4>
+        <StringInput updatable=Updatable::new(
+            "Initial Value".to_string(),
+            |s| {
+                console_log(&format!("String Input updated to -> {s}"))
+            })
+        />
+        <hr/>
 
         <h4>"SymbolInput"</h4>
         <SymbolInput symbol_updatable=symbol_updatable />
@@ -138,8 +189,8 @@ fn HomePage(cx: Scope) -> impl IntoView {
         <hr/>
 
         <h4>"PercentInput"</h4>
-        <PercentInput 
-            updatable=on_percent_update 
+        <PercentInput
+            updatable=on_percent_update
             placeholder=Some("pct complete".to_string())
         />
         <hr/>
@@ -185,11 +236,33 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
         <h4>"Normal Spec Without Values"</h4>
         <NormalSpecComponent
-            updatable = Updatable::new(None, |ns| { 
+            updatable = Updatable::new(None, |ns| {
                 console_log(&format!("NS Updated to -> {ns:?}"));
             } )
         />
         <hr/>
+
+        <h4>"Person with None"</h4>
+        <PersonComponent
+            updatable = Updatable::new(None, |person| {
+                console_log(&format!("Person Updated to -> {person:?}"));
+            })
+        />
+
+        <h4>"Person with Some"</h4>
+        <PersonComponent
+            updatable = Updatable::new(Some(Person{
+                name: "John Doe".to_string(),
+                person_type: PersonType::PrimaryOwner as i32,
+                birth_year: 1995,
+                age_assumptions: Some(AgeAssumptions{
+                    retirement_age: 60,
+                    death_age: 88
+                })
+            }), |person| {
+                console_log(&format!("Person Updated to -> {person:?}"));
+            })
+        />
 
         <HoldingComponent
             holding_updatable = holding_updatable

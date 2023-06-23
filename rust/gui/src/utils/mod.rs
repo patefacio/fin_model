@@ -9,11 +9,13 @@ use num_format::ToFormattedStr;
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod block_time;
+pub mod clamp;
 pub mod constants;
 pub mod element_sugar;
 pub mod html_tag;
 pub mod log_dispose;
 pub mod numeric_text;
+pub mod parsed_num;
 pub mod updatable;
 pub mod year_clamp;
 
@@ -36,6 +38,4 @@ where
 }
 
 // α <mod-def utils>
-pub mod clamp_exp;
-
 // ω <mod-def utils>

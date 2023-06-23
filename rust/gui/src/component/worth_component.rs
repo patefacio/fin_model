@@ -33,7 +33,7 @@ pub fn WorthComponent(
 
         <input
             type="text"
-            placeholder="Worth-".to_string()
+            placeholder="worth".to_string()
         />
         </fieldset>
     }
