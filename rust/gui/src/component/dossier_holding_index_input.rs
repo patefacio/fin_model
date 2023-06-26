@@ -100,18 +100,10 @@ pub fn DossierHoldingIndexInput(
         console_log(&format!("New Holding -> {new_input:?}"));
     });
 
-    view! {
-        cx,
+    view! { cx,
         <h3>"TEST DossierHoldingIndex"</h3>
-        <NumericInput
-            updatable=account_updatable
-            placeholder=Some(account_placeholder)
-        />
-
-        <NumericInput
-            updatable=holding_updatable
-            placeholder=Some(holding_placeholder)
-        />
+        <NumericInput updatable=account_updatable placeholder=Some(account_placeholder)/>
+        <NumericInput updatable=holding_updatable placeholder=Some(holding_placeholder)/>
     }
     // ω <fn dossier_holding_index_input>
 }

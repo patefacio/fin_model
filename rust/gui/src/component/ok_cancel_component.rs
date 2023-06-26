@@ -34,12 +34,9 @@ where
     let mut on_ok = on_ok;
     let mut on_cancel = on_cancel;
 
-    view! {
-        cx,
-
-        <button on:click= move |_| { on_ok() }>"Ok"</button>
-        <button on:click= move |_| {on_cancel()}>"Cancel"</button>
-
+    view! { cx,
+        <button on:click=move |_| { on_ok() }>"Ok"</button>
+        <button on:click=move |_| { on_cancel() }>"Cancel"</button>
     }
 
     // ω <fn ok_cancel_component>

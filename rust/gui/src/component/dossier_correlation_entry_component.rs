@@ -68,11 +68,7 @@ pub fn DossierCorrelationEntryComponent(
         console_log(&format!("New value -> {new_input:?}"));
     });
 
-    view! {
-        cx,
-        <h3>"TODO DossierCorrelationEntryComponent"</h3>
-        
-    }
+    view! { cx, <h3>"TODO DossierCorrelationEntryComponent"</h3> }
 
     // ω <fn dossier_correlation_entry_component>
 }

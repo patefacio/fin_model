@@ -155,87 +155,28 @@ pub fn HoldingComponent(
 
     view! { cx,
         <fieldset class="holding">
-        <legend>"Holding"</legend>
-
-        <div class="form">
-
-            <div class="form-row">
-                <div>
-                    <label for="symbol">"Symbol"</label>
-                    <SymbolInput
-                        symbol_updatable=symbol_updatable
-                    />
-                </div>
-                <div>
-                    <label>"Holding Type"</label>
-                    <EnumSelect updatable=holding_type_updatable />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div>
-                    <label>"Growth"</label>
-                    <label>"N(10.31%, 20.32%)"</label>
-                </div>
-                <div>
-                    <label>"Override"</label>
-            // TODO     <NormalSpecGrowth />
-                </div>
-            </div>
-
-        /*
-
-            <div class="form-row">
-                <div class="price">
-                <div class="button-and-price">
-                    <div class="currency-button">
-        //TODO                <CurrencyInput on_selection=on_select_currency/>
-                    </div>
-                    <label>"Price"</label>
-                </div>
-                    <NumericInput
-                        input_class=Some("input-share-price".into())
-                        updatable=price_updatable
-                        placeholder=share_price_placeholder
-                        modification=Some(Modification::ReactivePrefix(currency_symbol))
-                    />
-                </div>
-
-                <div>
-                    <label for="quantity">"Quantity"</label>
-                    <NumericInput
-                        input_class=Some("input-share-count".into())
-                        on_update=on_quantity_updated
-                        placeholder=Some("Share Count".to_string())/>
-                </div>
-            </div>
-
-
-            <div class="form-row">
-                <div class="cost-basis-wrapper">
+            <legend>"Holding"</legend>
+            <div class="form">
+                <div class="form-row">
                     <div>
-                            <label>"Cost Basis"</label>
-                            <NumericInput
-                                input_class=Some("cost-basis".into())
-                                on_update=cost_basis_updatable
-                                placeholder="Total Cost".into()
-                                modification=Some(Modification::ReactivePrefix(currency_symbol))
-                            />
-                            //<div class="cost-basis"><div class="currency-symbol">{currency_symbol}</div><input type="text"/></div>
+                        <label for="symbol">"Symbol"</label>
+                        <SymbolInput symbol_updatable=symbol_updatable/>
                     </div>
-                    <div class="as-of-group">
-                            <label>"As Of"</label>
-                            <YearInput
-                                input_class=Some("as-of".into())
-                                updatable=year_updatable
-                            />
+                    <div>
+                        <label>"Holding Type"</label>
+                        <EnumSelect updatable=holding_type_updatable/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>"Growth"</label>
+                        <label>"N(10.31%, 20.32%)"</label>
+                    </div>
+                    <div>
+                        <label>"Override"</label>
                     </div>
                 </div>
             </div>
-
-        */
-        </div>
-
         </fieldset>
     }
     // ω <fn holding_component>

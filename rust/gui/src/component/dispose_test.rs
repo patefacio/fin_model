@@ -59,7 +59,7 @@ pub fn DisposeTest(
     });
 
     view! { cx,
-        <button on:click=move |e| {on_click.with_value(|on_click| on_click(e))}>"Bam"</button>
+        <button on:click=move |e| { on_click.with_value(|on_click| on_click(e)) }>"Bam"</button>
         <p>{&format!("Scope {cx:?}")}</p>
     }
 

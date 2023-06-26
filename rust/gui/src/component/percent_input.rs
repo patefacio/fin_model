@@ -42,12 +42,11 @@ pub fn PercentInput(
 
     view! { cx,
         <NumericInput
-                    updatable=numeric_updatable
-                    modification=Some(Modification::Suffix("%".into()))
-                    non_negative=true
-                    placeholder=placeholder
-                />
-
+            updatable=numeric_updatable
+            modification=Some(Modification::Suffix("%".into()))
+            non_negative=true
+            placeholder=placeholder
+        />
     }
 
     // ω <fn percent_input>

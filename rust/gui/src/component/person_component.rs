@@ -32,36 +32,34 @@ pub fn PersonComponent(
     use crate::Updatable;
     use plus_modeled::PersonType;
 
-    view! {
-        cx,
+    view! { cx,
         <fieldset>
-
-        <div>"Name"</div>
-
-        <div>
-            <div>"Role"</div>
-
-            <EnumSelect
-                updatable=Updatable::new(updatable.value.as_ref().map(|person| PersonType::from_i32(person.person_type).unwrap_or_default()).unwrap_or_default(), |person_type| {
-                    console_log(&format!("Person type updated to {person_type:?}"));
-                })
-                column_count=1
-            />
+            <div>"Name"</div>
+            <div>
+                <div>"Role"</div>
+                <EnumSelect
+                    updatable=Updatable::new(
+                        updatable
+                            .value
+                            .as_ref()
+                            .map(|person| PersonType::from_i32(person.person_type).unwrap_or_default())
+                            .unwrap_or_default(),
+                        |person_type| {
+                            console_log(&format!("Person type updated to {person_type:?}"));
+                        },
+                    )
+                    column_count=1
+                />
             </div>
-        <div>
-
-        <div>
-            <div>"Birth Year"</div>
-            <YearInput
-                updatable=Updatable::new(
-                    updatable.value.as_ref().map(|person| person.birth_year),
-                    |birth_year| {
-                    console_log(&format!("Birth year updated to {birth_year:?}"))
-                    }
-                )
-            />
+            <div>
+                <div>
+                    <div>"Birth Year"</div>
+                    <YearInput updatable=Updatable::new(
+                        updatable.value.as_ref().map(|person| person.birth_year),
+                        |birth_year| { console_log(&format!("Birth year updated to {birth_year:?}")) },
+                    )/>
+                </div>
             </div>
-        </div>
         </fieldset>
     }
 

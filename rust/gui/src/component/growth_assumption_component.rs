@@ -57,14 +57,9 @@ pub fn GrowthAssumptionComponent(
         }
     );
 
-    view! {
-        cx,
-        <NormalSpecComponent
-            updatable=normal_spec_updatable
-        />
-        <RateCurveComponent
-            updatable=rate_curve_updatable
-        />
+    view! { cx,
+        <NormalSpecComponent updatable=normal_spec_updatable/>
+        <RateCurveComponent updatable=rate_curve_updatable/>
     }
 
 

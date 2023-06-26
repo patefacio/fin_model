@@ -81,19 +81,11 @@ pub fn DossierItemIndexComponent(
         _ => console_log(&format!("Not Worth Index"))
     }
 
-    view! {
-        cx,
+    view! { cx,
         <h3>"TODO DossierItemIndex"</h3>
-        
-        
         <label>
-                <input type="text"
-                />
-            </label>
-        
-        
-
-
+            <input type="text"/>
+        </label>
     }
     // ω <fn dossier_item_index_component>
 }

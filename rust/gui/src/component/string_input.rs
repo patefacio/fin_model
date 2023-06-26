@@ -44,20 +44,16 @@ pub fn StringInput(
     let node_ref = create_node_ref::<Input>(cx);
     let initial_value = updatable.value.clone();
 
-    view! {
-        cx,
-
+    view! { cx,
         <input
             class=input_class
             node_ref=node_ref
-            //on:input = move |_| update_value.update_value(|update_value| update_value())
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
             size=max_len
             maxlength=max_len
             type="text"
         />
-
     }
 
     // ω <fn string_input>

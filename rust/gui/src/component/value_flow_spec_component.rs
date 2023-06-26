@@ -26,10 +26,7 @@ pub fn ValueFlowSpecComponent(
 ) -> impl IntoView {
     // α <fn value_flow_spec_component>
 
-    view! {
-        cx,
-        <h3>"TODO ValueFlowSpecComponent"</h3>
-    }
+    view! { cx, <h3>"TODO ValueFlowSpecComponent"</h3> }
 
     // ω <fn value_flow_spec_component>
 }

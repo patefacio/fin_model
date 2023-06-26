@@ -10,22 +10,18 @@ pub fn App(cx: Scope) -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context(cx);
 
-    view! {
-        cx,
-
-        // injects a stylesheet into the document <head>
-        // id=leptos means cargo-leptos will hot-reload this stylesheet
+    view! { cx,
         <Stylesheet id="leptos" href="/pkg/fin_model_gui.css"/>
-
-        // sets the document title
         <Title text="Welcome to Leptos"/>
-
-
-        // content for this welcome page
         <Router>
             <main>
                 <Routes>
-                    <Route path="" view=|cx| view! { cx, <ComponentDisplayComponent/> }/>
+                    <Route
+                        path=""
+                        view=|cx| {
+                            view! { cx, <ComponentDisplayComponent/> }
+                        }
+                    />
                 </Routes>
             </main>
         </Router>
@@ -171,291 +167,216 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
 
     view! { cx,
-
         <h4>"Dossier Correlation Matrix"</h4>
-        <DossierCorrelationMatrixComponent
-            updatable=Updatable::new(
-                sample_dossier_matrix.clone(),
-                |m| {
-                    console_log(&format!("Matrix updated to -> {m:?}"))
-                }
-            )
-        />
-
-        <DisplayEntireMatrix
-            updatable=Updatable::new(
-                sample_dossier_matrix.clone(),
-                |m| {
-                    console_log(&format!("Matrix displayed -> {m:?}"))
-                }
-            )
-        />
-
-        
-        
-
+        <DossierCorrelationMatrixComponent updatable=Updatable::new(
+            sample_dossier_matrix.clone(),
+            |m| { console_log(&format!("Matrix updated to -> {m:?}")) },
+        )/>
+        <DisplayEntireMatrix updatable=Updatable::new(
+            sample_dossier_matrix.clone(),
+            |m| { console_log(&format!("Matrix displayed -> {m:?}")) },
+        )/>
         <h4>"StringInput"</h4>
         <StringInput updatable=Updatable::new(
             "Initial Value".to_string(),
-            |s| {
-                console_log(&format!("String Input updated to -> {s}"))
-            })
-        />
+            |s| { console_log(&format!("String Input updated to -> {s}")) },
+        )/>
         <hr/>
-
         <h4>"SymbolInput"</h4>
-        <SymbolInput symbol_updatable=symbol_updatable />
+        <SymbolInput symbol_updatable=symbol_updatable/>
         <hr/>
-
         <h4>"Number"</h4>
-        <NumericInput updatable=on_number_update />
+        <NumericInput updatable=on_number_update/>
         <hr/>
-
         <h4>"CurrencySelect"</h4>
-        <CurrencySelect updatable=currency_updatable />
+        <CurrencySelect updatable=currency_updatable/>
         <hr/>
-
         <h4>"PercentInput"</h4>
-        <PercentInput
-            updatable=on_percent_update
-            placeholder=Some("pct complete".to_string())
-        />
+        <PercentInput updatable=on_percent_update placeholder=Some("pct complete".to_string())/>
         <hr/>
-
         <h4>"YearInput"</h4>
-        <YearInput
-            updatable = year_updateable
-            placeholder = Some("year".to_string())
-        />
+        <YearInput updatable=year_updateable placeholder=Some("year".to_string())/>
         <hr/>
-
         <h4>"YearCurrencyValueInput With Values"</h4>
-        <YearCurrencyValueInput
-            updatable = Updatable::new(
-                Some(YearCurrencyValue{ year: 1998, currency: Currency::Jpy as i32, value: 25.55}),
-                |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
-            )
-
-        />
-
+        <YearCurrencyValueInput updatable=Updatable::new(
+            Some(YearCurrencyValue {
+                year: 1998,
+                currency: Currency::Jpy as i32,
+                value: 25.55,
+            }),
+            |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}")),
+        )/>
         <h4>"YearCurrencyValueInput Without Values"</h4>
-        <YearCurrencyValueInput
-            updatable = Updatable::new(
-                None,
-                |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}"))
-            )
-
-        />
+        <YearCurrencyValueInput updatable=Updatable::new(
+            None,
+            |ycv| leptos_dom::console_log(&format!("YearCurrencyValue set to {ycv:?}")),
+        )/>
         <hr/>
-
         <h4>"Normal Spec With Values"</h4>
-        <NormalSpecComponent
-            updatable = Updatable::new(
-                Some(NormalSpec {
-                    mean: 10.0,
-                    std_dev: 20.0,
-                }),
-                |ns: &Option<NormalSpec>| {
-                    console_log(&format!("Normal Spec -> {ns:?}"));
-                },
-            )
-        />
-
+        <NormalSpecComponent updatable=Updatable::new(
+            Some(NormalSpec {
+                mean: 10.0,
+                std_dev: 20.0,
+            }),
+            |ns: &Option<NormalSpec>| {
+                console_log(&format!("Normal Spec -> {ns:?}"));
+            },
+        )/>
         <h4>"Normal Spec Without Values"</h4>
-        <NormalSpecComponent
-            updatable = Updatable::new(None, |ns| {
+        <NormalSpecComponent updatable=Updatable::new(
+            None,
+            |ns| {
                 console_log(&format!("NS Updated to -> {ns:?}"));
-            } )
-        />
+            },
+        )/>
         <hr/>
-
         <h4>"Person with None"</h4>
-        <PersonComponent
-            updatable = Updatable::new(None, |person| {
+        <PersonComponent updatable=Updatable::new(
+            None,
+            |person| {
                 console_log(&format!("Person Updated to -> {person:?}"));
-            })
-        />
-
+            },
+        )/>
         <h4>"Person with Some"</h4>
-        <PersonComponent
-            updatable = Updatable::new(Some(Person{
+        <PersonComponent updatable=Updatable::new(
+            Some(Person {
                 name: "John Doe".to_string(),
                 person_type: PersonType::PrimaryOwner as i32,
                 birth_year: 1995,
-                age_assumptions: Some(AgeAssumptions{
+                age_assumptions: Some(AgeAssumptions {
                     retirement_age: 60,
-                    death_age: 88
-                })
-            }), |person| {
+                    death_age: 88,
+                }),
+            }),
+            |person| {
                 console_log(&format!("Person Updated to -> {person:?}"));
-            })
-        />
-
-        <HoldingComponent
-            holding_updatable = holding_updatable
-        />
+            },
+        )/>
+        <HoldingComponent holding_updatable=holding_updatable/>
         <hr/>
-
         <h4>"Worth"</h4>
-        <WorthComponent
-        />
+        <WorthComponent/>
         <hr/>
-
         <h4>"Balance Sheet"</h4>
-        <BalanceSheetComponent
-            updatable=Updatable::new(BalanceSheet::default(), |bs| console_log(&format!("BS -> {bs:?}")))
-        />
+        <BalanceSheetComponent updatable=Updatable::new(BalanceSheet::default(), |bs| console_log(&format!("BS -> {bs:?}")))/>
         <hr/>
-
         <h4>"Ok/Cancel"</h4>
         <OkCancelComponent
-            on_ok=|| {
-                console_log("Ok pressed")
-            }
-            on_cancel=|| {
-                console_log("Cancel pressed")
-            }
+            on_ok=|| { console_log("Ok pressed") }
+            on_cancel=|| { console_log("Cancel pressed") }
         />
         <hr/>
-
         <h4>"Year Range Input"</h4>
-        <YearRangeInput
-            updatable = Updatable::new(None, |yr| {
+        <YearRangeInput updatable=Updatable::new(
+            None,
+            |yr| {
                 console_log(&format!("Year Range updated -> {yr:?}"));
-            })
-        />
-
+            },
+        )/>
         <h4>"Year Value Input"</h4>
-        <YearValueInput
-            updatable = Updatable::new(None, |yv| {
+        <YearValueInput updatable=Updatable::new(
+            None,
+            |yv| {
                 console_log(&format!("Year Value updated -> {yv:?}"));
-            })
-        />
-
+            },
+        )/>
         <h4>"Dossier Holding Index"</h4>
-        <DossierHoldingIndexInput
-            updatable = Updatable::new(None, |dhi| {
+        <DossierHoldingIndexInput updatable=Updatable::new(
+            None,
+            |dhi| {
                 console_log(&format!("Dossier Holding Index updated -> {dhi:?}"));
-            })
-        />
-
+            },
+        )/>
         <h4>"Dossier Item Index"</h4>
-        <DossierItemIndexComponent
-            updatable = Updatable::new(None, |dii| {
+        <DossierItemIndexComponent updatable=Updatable::new(
+            None,
+            |dii| {
                 console_log(&format!("Dossier Item Index updated -> {dii:?}"));
-            })
-        />
-
+            },
+        )/>
         <h4>"Dossier Correlation Entry"</h4>
-        <DossierCorrelationEntryComponent
-            updatable = Updatable::new(None, |dce| {
+        <DossierCorrelationEntryComponent updatable=Updatable::new(
+            None,
+            |dce| {
                 console_log(&format!("Dossier Correlation Entry -> {dce:?}"));
-            })
-        />
-
-
+            },
+        )/>
         <h4>"Rate Curve"</h4>
-        <RateCurveComponent
-            updatable=Updatable::new(RateCurve::default(), |rc| {
+        <RateCurveComponent updatable=Updatable::new(
+            RateCurve::default(),
+            |rc| {
                 console_log(&format!("RateCurve updated -> {rc:?}"));
-            })
-        />
+            },
+        )/>
         <hr/>
-
         <h4>"Growth Component (Holding)"</h4>
         <ItemGrowthComponent
             updatable=Updatable::new(
                 ItemGrowth::default(),
                 |ig| {
                     console_log(&format!("ItemGrowth updated -> {ig:?}"));
-                }
+                },
             )
             dossier_item_type=DossierItemType::Holding
             growth_item_mappings=growth_item_mappings
         />
         <hr/>
-
         <h4>"Growth Component (Worth)"</h4>
         <ItemGrowthComponent
             updatable=Updatable::new(
                 ItemGrowth::default(),
                 |ig| {
                     console_log(&format!("ItemGrowth updated -> {ig:?}"));
-                }
+                },
             )
             dossier_item_type=DossierItemType::Worth
             growth_item_mappings=growth_item_mappings
         />
         <hr/>
-
-
         <h4>"Growth Component (Flow)"</h4>
         <ItemGrowthComponent
             updatable=Updatable::new(
                 ItemGrowth::default(),
                 |ig| {
                     console_log(&format!("ItemGrowth updated -> {ig:?}"));
-                }
+                },
             )
             dossier_item_type=DossierItemType::Flow
             growth_item_mappings=growth_item_mappings
         />
         <hr/>
-
         <h4>"Growing Flow Spec"</h4>
-        <GrowingFlowSpecComponent
-            updatable=Updatable::new(
-                None,
-                |gfs| {
-                    console_log(&format!("GrowingFlowSpec updated -> {gfs:?}"));
-                }
-            )
-        />
+        <GrowingFlowSpecComponent updatable=Updatable::new(
+            None,
+            |gfs| {
+                console_log(&format!("GrowingFlowSpec updated -> {gfs:?}"));
+            },
+        )/>
         <hr/>
-
         <h4>"Value Flow Spec"</h4>
-        <ValueFlowSpecComponent
-            updatable=Updatable::new(
-                None,
-                |gfs| {
-                    console_log(&format!("ValueFlowSpec updated -> {gfs:?}"));
-                }
-            )
-        />
+        <ValueFlowSpecComponent updatable=Updatable::new(
+            None,
+            |gfs| {
+                console_log(&format!("ValueFlowSpec updated -> {gfs:?}"));
+            },
+        )/>
         <hr/>
-
         <h4>"Flow Spec"</h4>
-        <FlowSpecComponent
-            updatable=Updatable::new(
-                None,
-                |gfs| {
-                    console_log(&format!("FlowSpec updated -> {gfs:?}"));
-                }
-            )
-        />
+        <FlowSpecComponent updatable=Updatable::new(
+            None,
+            |gfs| {
+                console_log(&format!("FlowSpec updated -> {gfs:?}"));
+            },
+        )/>
         <hr/>
-
-
         <div>"Dispose Test"</div>
-            <Show when=move || (read_count() % 2) == 0
-                fallback=|_| "Nothing"
-            >
-                <DisposeTest/>
-            </Show>
+        <Show when=move || (read_count() % 2) == 0 fallback=|_| "Nothing">
+            <DisposeTest/>
+        </Show>
         <p>
-        <hr/>
-
-        <br/>
-        /*
-        { move || if (read_count() % 2) == 0 {
-            view! { cx, <DisposeTest/> }.into_view(cx)
-        } else {
-            view! { cx, "Nothing" }.into_view(cx)
-        }
-        }
-        */
+            <hr/>
+            <br/>
         </p>
-
         <button on:click=move |_| {
             write_count.update(|c| *c = *c + 1);
         }>"INC"</button>

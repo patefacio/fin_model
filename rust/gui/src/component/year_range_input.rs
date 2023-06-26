@@ -75,33 +75,21 @@ pub fn YearRangeInput(
         }
     });
 
-    view! {
-        cx,
+    view! { cx,
         <h3>"TODO Year Range"</h3>
-
         <fieldset class="nsg">
-        <legend>"Year Range"</legend>
-        <div class="form">
-
-
-            <div style="display: inline-flex" >
-
-                "("
+            <legend>"Year Range"</legend>
+            <div class="form">
+                <div style="display: inline-flex">
+                    "("
                     <YearInput
                         placeholder=Some("start".to_string())
                         updatable=start_year_updatable
-                    />
-                ","
-                    <YearInput
-                        placeholder=Some("end".to_string())
-                        updatable=end_year_updatable
-
-                    />
-                ")"
-
+                    /> ","
+                    <YearInput placeholder=Some("end".to_string()) updatable=end_year_updatable/>
+                    ")"
+                </div>
             </div>
-
-        </div>
         </fieldset>
     }
     // ω <fn year_range_input>
