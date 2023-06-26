@@ -95,31 +95,26 @@ pub mod unit_tests {
     fn test_clamp() {
         // α <fn test_clamp>
 
-        let min = 1980;
-        let max = 2200;
-        
-        assert_eq!(ParsedNum::new(1984), clamp("1984", min, max));
-        assert_eq!(ParsedNum::new(2025), clamp("2025", min, max));
-        assert_eq!(ParsedNum::new(2200), clamp("2200", min, max));
-        assert_eq!(ParsedNum::new(1980), clamp("1980", min, max));
-        assert_eq!(ParsedNum::new(1980), clamp("1979", min, max));
-        assert_eq!(ParsedNum::new(1999), clamp("1999", min, max));
-        assert_eq!(ParsedNum::new(2200), clamp("2540", min, max));
-        assert_eq!(ParsedNum::new(2200), clamp("99999", min, max));
-        assert_eq!(ParsedNum::new(198), clamp("193", min, max));
-        assert_eq!(ParsedNum::new(209), clamp("209", min, max));
-        
-        println!("{:?} , {:?}", ParsedNum::new(1984), clamp("1984", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(2025), clamp("2025", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(2200), clamp("2200", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(1980), clamp("1980", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(1980), clamp("1979", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(1999), clamp("1999", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(2200), clamp("2540", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(2200), clamp("99999", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(198), clamp("193", min, max));
-        println!("{:?} , {:?}", ParsedNum::new(209), clamp("209", min, max));
+        let mut min = 3500000;
+        let mut max = 3800000;
+        assert_eq!(ParsedNum::new(3507001), clamp("3507001", min, max));
 
+        min = 1900;
+        max = 2300;
+        assert_eq!(ParsedNum::new(2200), clamp("2200", min, max));
+        assert_eq!(ParsedNum::new(2025), clamp("2025", min, max));
+        assert_eq!(ParsedNum::new(1980), clamp("1980", min, max));
+        assert_eq!(ParsedNum::new(1979), clamp("1979", min, max));
+        assert_eq!(ParsedNum::new(1999), clamp("1999", min, max));
+        assert_eq!(ParsedNum::new(1999), clamp("19999", min, max));
+        assert_eq!(ParsedNum::new(2300), clamp("23092", min, max));
+        assert_eq!(ParsedNum::new(2), clamp("2", min, max));
+        assert_eq!(ParsedNum::new(23), clamp("25", min, max));
+        assert_eq!(ParsedNum::new(205), clamp("205", min, max));
+        assert_eq!(ParsedNum::new(2300), clamp("2500", min, max));
+        assert_eq!(ParsedNum::new(2300), clamp("99999", min, max));
+        assert_eq!(ParsedNum::new(193), clamp("193", min, max));
+        assert_eq!(ParsedNum::new(209), clamp("209", min, max));
 
         // ω <fn test_clamp>
     }

@@ -179,13 +179,15 @@ pub mod unit_tests {
         let mut max = 3800000;
         assert_eq!(ParsedNum::new(3507001), clamp("3507001", min, max));
 
-        let mut min = 1900;
-        let mut max = 2300;
+        min = 1900;
+        max = 2300;
         assert_eq!(ParsedNum::new(2200), clamp("2200", min, max));
         assert_eq!(ParsedNum::new(2025), clamp("2025", min, max));
         assert_eq!(ParsedNum::new(1980), clamp("1980", min, max));
         assert_eq!(ParsedNum::new(1979), clamp("1979", min, max));
         assert_eq!(ParsedNum::new(1999), clamp("1999", min, max));
+        assert_eq!(ParsedNum::new(1999), clamp("19999", min, max));
+        assert_eq!(ParsedNum::new(2300), clamp("23092", min, max));
         assert_eq!(ParsedNum::new(2), clamp("2", min, max));
         assert_eq!(ParsedNum::new(23), clamp("25", min, max));
         assert_eq!(ParsedNum::new(205), clamp("205", min, max));

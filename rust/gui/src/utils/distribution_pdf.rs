@@ -37,8 +37,8 @@ impl DistributionPdf for NormalSpec {
 
         // The more points the larger the number of std_devs to consider
         let (max_sigma, sigma_factor) = match num_points {
-            num_points if num_points >= 1024 => (5, 0.75),
-            _ => (6, 0.75),
+            num_points if num_points >= 1024 => (3.5, 0.75),
+            _ => (3.5, 0.70),
         };
 
         let mut x_vec = vec![0.0; num_points];
@@ -83,7 +83,7 @@ impl DistributionPdf for NormalSpec {
                 .set_label_area_size(LabelAreaPosition::Right, 0)
                 .build_cartesian_2d(
                     (x_vec[0])..(x_vec[num_points - 1]),
-                    0f64..y_vec[num_points / 2],
+                    0f64..y_vec[num_points / 2]*1.1,
                 )
                 .unwrap();
 
@@ -100,7 +100,7 @@ impl DistributionPdf for NormalSpec {
             chart
                 .draw_series(LineSeries::new(
                     x_vec.iter().enumerate().map(|(i, x)| (*x, y_vec[i])), 
-                    &RED))
+                    &RED).point_size(1))
                 .unwrap()
                 .label("PDF");
 
