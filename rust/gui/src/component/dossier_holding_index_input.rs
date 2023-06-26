@@ -7,7 +7,7 @@ use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use plus_modeled::{account::account_treatment, DossierHoldingIndex};
+use plus_modeled::DossierHoldingIndex;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -17,6 +17,8 @@ use plus_modeled::{account::account_treatment, DossierHoldingIndex};
 ///
 ///   * **cx** - Context
 ///   * **updatable** - The [DossierHoldingIndex] being edited
+///   * **account_placeholder** - Placeholder for account input
+///   * **holding_placeholder** - Placeholder for holding input
 ///   * _return_ - View for dossier_holding_index_input
 #[component]
 pub fn DossierHoldingIndexInput(
@@ -24,10 +26,12 @@ pub fn DossierHoldingIndexInput(
     cx: Scope,
     /// The [DossierHoldingIndex] being edited
     updatable: Updatable<Option<DossierHoldingIndex>>,
-
-    #[prop(default="Account".to_string())] account_placeholder: String,
-
-    #[prop(default="Holding".to_string())] holding_placeholder: String,
+    /// Placeholder for account input
+    #[prop(default="account".to_string())]
+    account_placeholder: String,
+    /// Placeholder for holding input
+    #[prop(default="holding".to_string())]
+    holding_placeholder: String,
 ) -> impl IntoView {
     // α <fn dossier_holding_index_input>
 

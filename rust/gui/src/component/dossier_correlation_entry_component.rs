@@ -3,12 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::{Updatable, DossierItemIndexComponent};
+use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use plus_modeled::{DossierCorrelationEntry, core_enums::DossierItemTypeIter, DossierItemIndex};
-
+use plus_modeled::DossierCorrelationEntry;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -25,7 +24,6 @@ pub fn DossierCorrelationEntryComponent(
     /// The [DossierCorrelationEntry] being edited
     updatable: Updatable<Option<DossierCorrelationEntry>>,
 ) -> impl IntoView {
-
     // α <fn dossier_correlation_entry_component>
 
     use std::cell::RefCell;

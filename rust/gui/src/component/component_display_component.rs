@@ -1,44 +1,25 @@
-use leptos::*;
-use leptos_meta::*;
-use leptos_router::*;
+//! Module for component_display_component leptos function/component
 
+////////////////////////////////////////////////////////////////////////////////////
+// --- module uses ---
+////////////////////////////////////////////////////////////////////////////////////
+use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
+
+////////////////////////////////////////////////////////////////////////////////////
+// --- functions ---
+////////////////////////////////////////////////////////////////////////////////////
+/// Displays several of current components
+///
+///   * **cx** - Context
+///   * _return_ - View for component_display_component
 #[component]
-pub fn App(cx: Scope) -> impl IntoView {
-
-    use crate::ComponentDisplayComponent;
-
-    // Provides context that manages stylesheets, titles, meta tags, etc.
-    provide_meta_context(cx);
-
-    view! {
-        cx,
-
-        // injects a stylesheet into the document <head>
-        // id=leptos means cargo-leptos will hot-reload this stylesheet
-        <Stylesheet id="leptos" href="/pkg/fin_model_gui.css"/>
-
-        // sets the document title
-        <Title text="Welcome to Leptos"/>
-
-
-        // content for this welcome page
-        <Router>
-            <main>
-                <Routes>
-                    <Route path="" view=|cx| view! { cx, <ComponentDisplayComponent/> }/>
-                </Routes>
-            </main>
-        </Router>
-    }
-}
-
-
-
-/// Renders the home page of your application.
-#[component]
-fn HomePage(cx: Scope) -> impl IntoView {
-    // Creates a reactive value to update the button
-
+pub fn ComponentDisplayComponent(
+    /// Context
+    cx: Scope,
+) -> impl IntoView {
+    // α <fn component_display_component>
     use crate::component::dispose_test::DisposeTest;
     use crate::component::holding_component::InstrumentGrowthMappings;
     use crate::component::holding_component::{HoldingComponent, InstrumentGrowthSync};
@@ -67,6 +48,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use crate::YearRangeInput;
     use crate::YearValueInput;
     use crate::{InitialValue, MultiColumnSelect, SelectOption};
+    use leptos::*;
     use leptos_dom::console_log;
 
     use crate::utils::updatable::Updatable;
@@ -81,6 +63,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use plus_modeled::FlowSpec;
     use plus_modeled::GrowingFlowSpec;
     use plus_modeled::GrowthItemMappings;
+    use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::Holding;
     use plus_modeled::ItemGrowth;
     use plus_modeled::NormalSpec;
@@ -92,52 +75,10 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
 
-    use crate::component::dossier_correlation_matrix_component::set_matrix_correlation;
-    use crate::component::dossier_correlation_matrix_component::DisplayEntireMatrix;
-
-    let symbol_updatable = Updatable::new("foobar".to_string(), move |s| {
-        console_log(&format!("Got symbol update -> {s:?}"));
-    });
-
-    let on_number_update = Updatable::new(Some(32.3), move |n| {
-        console_log(&format!("Number updated -> {n:?}"));
-    });
-
-    let on_percent_update = Updatable::new(Some(43.23), move |n| {
-        console_log(&format!("Percent updated -> {n:?}"));
-    });
-
-    let year_updateable = Updatable::new(Some(1999), |y| {
-        console_log(&format!("Year updated -> {y:?}"));
-    });
-
-    let holding_updatable = Updatable::new(
-        Holding {
-            ..Default::default()
-        },
-        |holding: &Holding| {
-            console_log(&format!("Normal Spec -> {holding:?}"));
-        },
-    );
-
-    let currency_updatable = Updatable::new(Currency::Eur, |currency: &Currency| {
-        console_log(&format!("Currency set to {currency:?}"));
-    });
-
-    // let balance_sheet = BalanceSheet::default();
-    // let instrument_growth_mappings_updatable = Updatable::new(
-    //     InstrumentGrowthSync::new(&balance_sheet, DossierHoldingIndex::default()),
-    //     |mappings: &InstrumentGrowthSync| {
-    //         leptos_dom::console_log(&format!("Mappings -> {mappings:?}"));
-    //     },
-    // );
-
     let (read_count, write_count) = create_signal(cx, 0);
     leptos_dom::console_log(&format!("App cx({cx:?}"));
 
     let growth_item_mappings = &GrowthItemMappings::default();
-
-    use plus_modeled::core::dossier_item_index::ItemIndex;
 
     let make_cor_entry = |row_holding_id, column_holding_id, correlation| DossierCorrelationEntry {
         row_index: Some(DossierItemIndex {
@@ -155,46 +96,27 @@ fn HomePage(cx: Scope) -> impl IntoView {
         correlation: correlation,
     };
 
-    
-
-    let mut sample_dossier_matrix = DossierCorrelationMatrix {
+    let sample_dossier_matrix = DossierCorrelationMatrix {
         mappings: vec![
             make_cor_entry(0, 1, -0.31),
             make_cor_entry(1, 1, 0.71),
             make_cor_entry(1, 2, 0.342),
-            make_cor_entry(2, 3, 17.0),
         ],
     };
-
-    //sample_dossier_matrix.set_matrix_correlation(0,1,0.22);
-    set_matrix_correlation(&mut sample_dossier_matrix, (1, 1), 0.25);
-
 
     view! { cx,
 
         <h4>"Dossier Correlation Matrix"</h4>
         <DossierCorrelationMatrixComponent
             updatable=Updatable::new(
-                sample_dossier_matrix.clone(),
+                sample_dossier_matrix,
                 |m| {
                     console_log(&format!("Matrix updated to -> {m:?}"))
                 }
             )
         />
 
-        <DisplayEntireMatrix
-            updatable=Updatable::new(
-                sample_dossier_matrix.clone(),
-                |m| {
-                    console_log(&format!("Matrix displayed -> {m:?}"))
-                }
-            )
-        />
-
-        
-        
-
-        <h4>"StringInput"</h4>
+        <h4>"String Input"</h4>
         <StringInput updatable=Updatable::new(
             "Initial Value".to_string(),
             |s| {
@@ -203,33 +125,47 @@ fn HomePage(cx: Scope) -> impl IntoView {
         />
         <hr/>
 
-        <h4>"SymbolInput"</h4>
-        <SymbolInput symbol_updatable=symbol_updatable />
+        <h4>"Symbol Input"</h4>
+        <SymbolInput 
+            symbol_updatable=Updatable::new("foobar".to_string(), move |s| {
+                console_log(&format!("Got symbol update -> {s:?}"));
+            }) />
         <hr/>
 
         <h4>"Number"</h4>
-        <NumericInput updatable=on_number_update />
+        <NumericInput 
+            updatable=Updatable::new(Some(32.3), move |n| {
+                console_log(&format!("Number updated -> {n:?}"));
+            }) />
         <hr/>
 
-        <h4>"CurrencySelect"</h4>
-        <CurrencySelect updatable=currency_updatable />
+        <h4>"Currency Select"</h4>
+        <CurrencySelect 
+            updatable=Updatable::new(Currency::Eur, |currency: &Currency| {
+                console_log(&format!("Currency set to {currency:?}"));
+            }) />
         <hr/>
 
-        <h4>"PercentInput"</h4>
+        <h4>"Percent Input"</h4>
         <PercentInput
-            updatable=on_percent_update
+        // .4323 is a problem
+            updatable=Updatable::new(Some(0.4324), move |n| {
+                console_log(&format!("Percent updated -> {n:?}"));
+            })
             placeholder=Some("pct complete".to_string())
         />
         <hr/>
 
-        <h4>"YearInput"</h4>
+        <h4>"Year Input"</h4>
         <YearInput
-            updatable = year_updateable
+            updatable = Updatable::new(Some(1999), |y| {
+                console_log(&format!("Year updated -> {y:?}"));
+            })
             placeholder = Some("year".to_string())
         />
         <hr/>
 
-        <h4>"YearCurrencyValueInput With Values"</h4>
+        <h4>"Year Currency Value Input With Values"</h4>
         <YearCurrencyValueInput
             updatable = Updatable::new(
                 Some(YearCurrencyValue{ year: 1998, currency: Currency::Jpy as i32, value: 25.55}),
@@ -238,7 +174,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
         />
 
-        <h4>"YearCurrencyValueInput Without Values"</h4>
+        <h4>"Year Currency Value Input Without Values"</h4>
         <YearCurrencyValueInput
             updatable = Updatable::new(
                 None,
@@ -252,8 +188,8 @@ fn HomePage(cx: Scope) -> impl IntoView {
         <NormalSpecComponent
             updatable = Updatable::new(
                 Some(NormalSpec {
-                    mean: 10.0,
-                    std_dev: 20.0,
+                    mean: 0.1,
+                    std_dev: 0.2,
                 }),
                 |ns: &Option<NormalSpec>| {
                     console_log(&format!("Normal Spec -> {ns:?}"));
@@ -292,7 +228,14 @@ fn HomePage(cx: Scope) -> impl IntoView {
         />
 
         <HoldingComponent
-            holding_updatable = holding_updatable
+            holding_updatable = Updatable::new(
+                Holding {
+                    ..Default::default()
+                },
+                |holding: &Holding| {
+                    console_log(&format!("Holding updated -> {holding:?}"));
+                },
+            )
         />
         <hr/>
 
@@ -460,4 +403,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
             write_count.update(|c| *c = *c + 1);
         }>"INC"</button>
     }
+
+    // ω <fn component_display_component>
 }
+
+// α <mod-def component_display_component>
+// ω <mod-def component_display_component>

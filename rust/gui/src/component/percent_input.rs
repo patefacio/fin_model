@@ -30,9 +30,19 @@ pub fn PercentInput(
 ) -> impl IntoView {
     // α <fn percent_input>
 
+    let scaled_value = updatable.value.map(|value| value * 100.0);
+    let mut updatable = updatable;
+
+    let numeric_updatable = Updatable::new(scaled_value, move |new_scaled_value| {
+        let actual_value = new_scaled_value.map(|v| v/100.0);
+        updatable.update_and_then_signal(|new_value| {
+            *new_value = actual_value;
+        });
+    });
+
     view! { cx,
         <NumericInput
-                    updatable=updatable
+                    updatable=numeric_updatable
                     modification=Some(Modification::Suffix("%".into()))
                     non_negative=true
                     placeholder=placeholder

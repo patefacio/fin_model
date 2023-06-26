@@ -5,10 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
-use crate::component::numeric_input::{Modification, NumericInput};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use plus_modeled::YearRange;
 use plus_modeled::YearValue;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -24,12 +22,12 @@ pub fn YearValueInput(
     /// Context
     cx: Scope,
     /// The [YearValue] being edited
-    updatable: Updatable<Option<YearValue>>,//changed this from <YearRange>
+    updatable: Updatable<Option<YearValue>>,
 ) -> impl IntoView {
-
     // α <fn year_value_input>
     use crate::NumericInput;
     use crate::YearInput;
+    use crate::Modification;
 
     use std::cell::RefCell;
     use std::rc::Rc;

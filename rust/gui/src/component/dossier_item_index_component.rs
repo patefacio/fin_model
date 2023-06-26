@@ -26,6 +26,7 @@ use plus_modeled::core::dossier_item_index::ItemIndex;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - TODO Document Param(updatable)
+///   * **item_placeholder** - Placeholder for holding item
 ///   * _return_ - View for dossier_item_index_component
 #[component]
 pub fn DossierItemIndexComponent(
@@ -39,6 +40,7 @@ pub fn DossierItemIndexComponent(
     #[prop(default="Info".to_string())] info_placeholder: String,
 
 ) -> impl IntoView {
+    // α <fn dossier_item_index_component>
 
     use std::cell::RefCell;
     use std::rc::Rc;
@@ -79,7 +81,6 @@ pub fn DossierItemIndexComponent(
         _ => console_log(&format!("Not Worth Index"))
     }
 
-    // α <fn dossier_item_index_component>
     view! {
         cx,
         <h3>"TODO DossierItemIndex"</h3>

@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod age_assumptions_component;
 pub mod balance_sheet_component;
+pub mod component_display_component;
 pub mod currency_select;
 pub mod currency_value_input;
 pub mod date_input;

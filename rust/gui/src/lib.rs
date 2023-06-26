@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub use component::age_assumptions_component::AgeAssumptionsComponent;
 pub use component::balance_sheet_component::BalanceSheetComponent;
+pub use component::component_display_component::ComponentDisplayComponent;
 pub use component::currency_select::CurrencySelect;
 pub use component::currency_value_input::CurrencyValueInput;
 pub use component::date_input::DateInput;
