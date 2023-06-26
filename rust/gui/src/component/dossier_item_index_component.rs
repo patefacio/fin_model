@@ -9,7 +9,9 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 use plus_modeled::DossierHoldingIndex;
 use plus_modeled::DossierItemIndex;
+use plus_modeled::core::dossier_item_index;
 use plus_modeled::core::dossier_item_index::ItemIndex;
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -32,7 +34,9 @@ pub fn DossierItemIndexComponent(
     /// TODO Document Param(updatable)
     updatable: Updatable<Option<DossierItemIndex>>,
 
-    #[prop(default="Item #".to_string())] item_placeholder: String,
+    #[prop(default="Item #".to_string())] index_placeholder: String,
+
+    #[prop(default="Info".to_string())] info_placeholder: String,
 
 ) -> impl IntoView {
 
@@ -41,25 +45,52 @@ pub fn DossierItemIndexComponent(
 
     let updatable = Rc::new(RefCell::new(updatable));
 
-    use crate::NumericInput;
+    //use crate::NumericInput;
     use crate::Updatable;
-
-    let _temp = DossierItemIndex{item_index: Some(ItemIndex::WorthIndex(2)) };
     
-    let index_updatable = Updatable::new(Some(32.0), move |new_input| {
-        //
-        console_log(&format!("New Item Index -> {new_input:?}"));
+
+    let initial_item_index = updatable
+        .as_ref()
+        .borrow()
+        .value
+        .as_ref()
+        .map(|dhi| dhi.item_index);
+
+    let updatable_for_item_index = Rc::clone(&updatable);
+    let item_index_updatable = Updatable::new(initial_item_index, move |new_input| {
+        if let Some(new_input) = new_input.clone() {
+            updatable_for_item_index
+                .as_ref()
+                .borrow_mut()
+                .update_and_then_signal(|ii| {
+                    if let Some(ii) = ii {
+                        console_log(&format!("Setting account for DHI -> {new_input:?}"));
+                        ii.item_index = new_input;
+                    } else {
+                        console_log(&format!("Setting empty DHI for first -> {new_input:?}"));
+                        *ii = Some(DossierItemIndex { item_index: Some(ItemIndex::WorthIndex(32)) })
+                    }
+                });
+        }
+        console_log(&format!("New Account -> {new_input:?}"));
     });
+    match item_index_updatable.value {
+        Some(Some(ItemIndex::WorthIndex(x))) => console_log(&format!("Worth Index")),
+        _ => console_log(&format!("Not Worth Index"))
+    }
 
     // α <fn dossier_item_index_component>
     view! {
         cx,
         <h3>"TODO DossierItemIndex"</h3>
         
-        <NumericInput
-            updatable=index_updatable
-            placeholder=Some(item_placeholder)
-        />
+        
+        <label>
+                <input type="text"
+                />
+            </label>
+        
+        
 
 
     }

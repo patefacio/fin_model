@@ -29,6 +29,8 @@ pub fn App(cx: Scope) -> impl IntoView {
     }
 }
 
+
+
 /// Renders the home page of your application.
 #[component]
 fn HomePage(cx: Scope) -> impl IntoView {
@@ -86,6 +88,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
     use plus_modeled::YearCurrencyValue;
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
+
+    use crate::component::dossier_correlation_matrix_component::set_matrix_correlation;
+    use crate::component::dossier_correlation_matrix_component::DisplayEntireMatrix;
 
     let symbol_updatable = Updatable::new("foobar".to_string(), move |s| {
         console_log(&format!("Got symbol update -> {s:?}"));
@@ -147,25 +152,44 @@ fn HomePage(cx: Scope) -> impl IntoView {
         correlation: correlation,
     };
 
-    let sample_dossier_matrix = DossierCorrelationMatrix {
+    
+
+    let mut sample_dossier_matrix = DossierCorrelationMatrix {
         mappings: vec![
             make_cor_entry(0, 1, -0.31),
             make_cor_entry(1, 1, 0.71),
             make_cor_entry(1, 2, 0.342),
+            make_cor_entry(2, 3, 17.0),
         ],
     };
+
+    //sample_dossier_matrix.set_matrix_correlation(0,1,0.22);
+    set_matrix_correlation(&mut sample_dossier_matrix, (1, 1), 0.25);
+
 
     view! { cx,
 
         <h4>"Dossier Correlation Matrix"</h4>
         <DossierCorrelationMatrixComponent
             updatable=Updatable::new(
-                sample_dossier_matrix,
+                sample_dossier_matrix.clone(),
                 |m| {
                     console_log(&format!("Matrix updated to -> {m:?}"))
                 }
             )
         />
+
+        <DisplayEntireMatrix
+            updatable=Updatable::new(
+                sample_dossier_matrix.clone(),
+                |m| {
+                    console_log(&format!("Matrix displayed -> {m:?}"))
+                }
+            )
+        />
+
+        
+        
 
         <h4>"StringInput"</h4>
         <StringInput updatable=Updatable::new(
