@@ -52,6 +52,7 @@ pub fn ComponentDisplayComponent(
     use leptos_dom::console_log;
 
     use crate::utils::updatable::Updatable;
+    use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::AgeAssumptions;
     use plus_modeled::BalanceSheet;
     use plus_modeled::Currency;
@@ -63,7 +64,6 @@ pub fn ComponentDisplayComponent(
     use plus_modeled::FlowSpec;
     use plus_modeled::GrowingFlowSpec;
     use plus_modeled::GrowthItemMappings;
-    use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::Holding;
     use plus_modeled::ItemGrowth;
     use plus_modeled::NormalSpec;
@@ -126,21 +126,21 @@ pub fn ComponentDisplayComponent(
         <hr/>
 
         <h4>"Symbol Input"</h4>
-        <SymbolInput 
+        <SymbolInput
             symbol_updatable=Updatable::new("foobar".to_string(), move |s| {
                 console_log(&format!("Got symbol update -> {s:?}"));
             }) />
         <hr/>
 
         <h4>"Number"</h4>
-        <NumericInput 
+        <NumericInput
             updatable=Updatable::new(Some(32.3), move |n| {
                 console_log(&format!("Number updated -> {n:?}"));
             }) />
         <hr/>
 
         <h4>"Currency Select"</h4>
-        <CurrencySelect 
+        <CurrencySelect
             updatable=Updatable::new(Currency::Eur, |currency: &Currency| {
                 console_log(&format!("Currency set to {currency:?}"));
             }) />
@@ -304,6 +304,28 @@ pub fn ComponentDisplayComponent(
             })
         />
         <hr/>
+
+        <h4>"Rate Curve with Sample Data"</h4>
+        <RateCurveComponent
+            updatable=Updatable::new(RateCurve{ curve:vec![
+                YearValue{
+                    year:2002,
+                    value:4.5},
+
+                YearValue{
+                    year:2000,
+                    value:0.6},
+
+                YearValue {
+                    year: 1980,
+                    value: 0.025,
+                }
+            ]}, |rc| {
+                console_log(&format!("RateCurve updated -> {rc:?}"));
+            })
+        />
+        <hr/>
+
 
         <h4>"Growth Component (Holding)"</h4>
         <ItemGrowthComponent
