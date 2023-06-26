@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod clamp_ext;
 pub mod clamp_one_pass;
+pub mod clamp_parse_input;
 pub mod clamp_sm;
 
 // α <mod-def clamp>

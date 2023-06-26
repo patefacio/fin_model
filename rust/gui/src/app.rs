@@ -95,10 +95,6 @@ fn HomePage(cx: Scope) -> impl IntoView {
         console_log(&format!("Number updated -> {n:?}"));
     });
 
-    let on_percent_update = Updatable::new(Some(43.23), move |n| {
-        console_log(&format!("Percent updated -> {n:?}"));
-    });
-
     let year_updateable = Updatable::new(Some(1999), |y| {
         console_log(&format!("Year updated -> {y:?}"));
     });
@@ -190,7 +186,9 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
         <h4>"PercentInput"</h4>
         <PercentInput
-            updatable=on_percent_update
+            updatable=Updatable::new(Some(0.4323), move |n| {
+                console_log(&format!("Percent updated -> {n:?}"));
+            })
             placeholder=Some("pct complete".to_string())
         />
         <hr/>
@@ -225,8 +223,8 @@ fn HomePage(cx: Scope) -> impl IntoView {
         <NormalSpecComponent
             updatable = Updatable::new(
                 Some(NormalSpec {
-                    mean: 10.0,
-                    std_dev: 20.0,
+                    mean: 0.1,
+                    std_dev: 0.2,
                 }),
                 |ns: &Option<NormalSpec>| {
                     console_log(&format!("Normal Spec -> {ns:?}"));

@@ -9,7 +9,6 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 use plus_modeled::DossierHoldingIndex;
 use plus_modeled::DossierItemIndex;
-use plus_modeled::core::dossier_item_index::ItemIndex;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -24,6 +23,7 @@ use plus_modeled::core::dossier_item_index::ItemIndex;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - TODO Document Param(updatable)
+///   * **item_placeholder** - Placeholder for holding item
 ///   * _return_ - View for dossier_item_index_component
 #[component]
 pub fn DossierItemIndexComponent(
@@ -31,10 +31,11 @@ pub fn DossierItemIndexComponent(
     cx: Scope,
     /// TODO Document Param(updatable)
     updatable: Updatable<Option<DossierItemIndex>>,
-
-    #[prop(default="Item #".to_string())] item_placeholder: String,
-
+    /// Placeholder for holding item
+    #[prop(default="Item #".to_string())]
+    item_placeholder: String,
 ) -> impl IntoView {
+    // α <fn dossier_item_index_component>
 
     use std::cell::RefCell;
     use std::rc::Rc;
@@ -43,6 +44,7 @@ pub fn DossierItemIndexComponent(
 
     use crate::NumericInput;
     use crate::Updatable;
+    use plus_modeled::core::dossier_item_index::ItemIndex;
 
     let _temp = DossierItemIndex{item_index: Some(ItemIndex::WorthIndex(2)) };
     
@@ -51,7 +53,6 @@ pub fn DossierItemIndexComponent(
         console_log(&format!("New Item Index -> {new_input:?}"));
     });
 
-    // α <fn dossier_item_index_component>
     view! {
         cx,
         <h3>"TODO DossierItemIndex"</h3>

@@ -11,6 +11,7 @@ use num_format::ToFormattedStr;
 pub mod block_time;
 pub mod clamp;
 pub mod constants;
+pub mod distribution_pdf;
 pub mod element_sugar;
 pub mod html_tag;
 pub mod log_dispose;
