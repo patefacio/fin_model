@@ -1,5 +1,7 @@
 //! Module for dossier_correlation_matrix_component leptos function/component
 
+use std::vec;
+
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +62,7 @@ pub fn DossierCorrelationMatrixComponent(
                     }
                 ).unwrap();
                 let correlation = element.correlation;
-                view!{ cx, 
+                view!{ cx,
                     <div style="display: inline-flex">
                     <div
                         inner_html=format!("row: {row_index} [ ")
@@ -86,35 +88,40 @@ pub fn DossierCorrelationMatrixComponent(
 // α <mod-def dossier_correlation_matrix_component>
 // ω <mod-def dossier_correlation_matrix_component>
 
-pub fn set_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32, u32), correlation: f64) -> f64{
+pub fn set_matrix_correlation(
+    matrix: &mut DossierCorrelationMatrix,
+    index: (u32, u32),
+    correlation: f64,
+) -> f64 {
     use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::core::DossierHoldingIndex;
-    use plus_modeled::DossierItemIndex;
     use plus_modeled::DossierCorrelationEntry;
-    
+    use plus_modeled::DossierItemIndex;
+
     for i in matrix.mappings.iter_mut() {
-        let row_index = i.row_index.as_ref().map(
-            |row_index| match row_index.item_index {
+        let row_index = i
+            .row_index
+            .as_ref()
+            .map(|row_index| match row_index.item_index {
                 Some(ItemIndex::WorthIndex(w)) => w,
                 Some(ItemIndex::FlowIndex(f)) => f,
                 Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0
-            }
-        );
-        let column_index = i.column_index.as_ref().map(
-            |column_index| match column_index.item_index {
-                Some(ItemIndex::WorthIndex(w)) => w,
-                Some(ItemIndex::FlowIndex(f)) => f,
-                Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0
-            }
-        );
+                None => 0,
+            });
+        let column_index =
+            i.column_index
+                .as_ref()
+                .map(|column_index| match column_index.item_index {
+                    Some(ItemIndex::WorthIndex(w)) => w,
+                    Some(ItemIndex::FlowIndex(f)) => f,
+                    Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
+                    None => 0,
+                });
 
         if row_index.unwrap() == index.0 && column_index.unwrap() == index.1 {
-            i.correlation=correlation;
+            i.correlation = correlation;
             return i.correlation;
         }
-        
     }
     let make_cor_entry = |row_holding_id, column_holding_id, correlation| DossierCorrelationEntry {
         row_index: Some(DossierItemIndex {
@@ -131,38 +138,41 @@ pub fn set_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32
         }),
         correlation: correlation,
     };
-    matrix.mappings.push(make_cor_entry(index.0, index.1, correlation));
+    matrix
+        .mappings
+        .push(make_cor_entry(index.0, index.1, correlation));
     return correlation;
 }
 
-pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32, u32)) -> f64{
+pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32, u32)) -> f64 {
     use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::core::DossierHoldingIndex;
-    use plus_modeled::DossierItemIndex;
     use plus_modeled::DossierCorrelationEntry;
-    
+    use plus_modeled::DossierItemIndex;
+
     for i in matrix.mappings.iter_mut() {
-        let row_index = i.row_index.as_ref().map(
-            |row_index| match row_index.item_index {
+        let row_index = i
+            .row_index
+            .as_ref()
+            .map(|row_index| match row_index.item_index {
                 Some(ItemIndex::WorthIndex(w)) => w,
                 Some(ItemIndex::FlowIndex(f)) => f,
                 Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0
-            }
-        );
-        let column_index = i.column_index.as_ref().map(
-            |column_index| match column_index.item_index {
-                Some(ItemIndex::WorthIndex(w)) => w,
-                Some(ItemIndex::FlowIndex(f)) => f,
-                Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0
-            }
-        );
+                None => 0,
+            });
+        let column_index =
+            i.column_index
+                .as_ref()
+                .map(|column_index| match column_index.item_index {
+                    Some(ItemIndex::WorthIndex(w)) => w,
+                    Some(ItemIndex::FlowIndex(f)) => f,
+                    Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
+                    None => 0,
+                });
 
         if row_index.unwrap() == index.0 && column_index.unwrap() == index.1 {
             return i.correlation;
         }
-        
     }
     let make_cor_entry = |row_holding_id, column_holding_id, correlation| DossierCorrelationEntry {
         row_index: Some(DossierItemIndex {
@@ -184,11 +194,14 @@ pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32
 }
 
 #[component]
-pub fn DisplayEntireMatrix(cx: Scope, updatable: Updatable<DossierCorrelationMatrix>) -> impl IntoView {
+pub fn DisplayEntireMatrix(
+    cx: Scope,
+    updatable: Updatable<DossierCorrelationMatrix>,
+) -> impl IntoView {
     use plus_modeled::core::dossier_item_index::ItemIndex;
-    use plus_modeled::core::DossierHoldingIndex;
-    use plus_modeled::DossierItemIndex;
-    use plus_modeled::DossierCorrelationEntry;
+    //use plus_modeled::core::DossierHoldingIndex;
+    //use plus_modeled::DossierCorrelationEntry;
+    //use plus_modeled::DossierItemIndex;
 
     use leptos::create_signal;
     use leptos::For;
@@ -197,23 +210,27 @@ pub fn DisplayEntireMatrix(cx: Scope, updatable: Updatable<DossierCorrelationMat
     let mut rows = vec![];
     let mut cols = vec![];
 
-    for i in updatable.value.mappings.iter(){
-        let row_index = i.row_index.as_ref().map(
-            |row_index| match row_index.item_index {
+    for i in updatable.value.mappings.iter() {
+        let row_index = i
+            .row_index
+            .as_ref()
+            .map(|row_index| match row_index.item_index {
                 Some(ItemIndex::WorthIndex(w)) => w,
                 Some(ItemIndex::FlowIndex(f)) => f,
                 Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0
-            }
-        ).unwrap();
-        let column_index = i.column_index.as_ref().map(
-            |column_index| match column_index.item_index {
+                None => 0,
+            })
+            .unwrap();
+        let column_index = i
+            .column_index
+            .as_ref()
+            .map(|column_index| match column_index.item_index {
                 Some(ItemIndex::WorthIndex(w)) => w,
                 Some(ItemIndex::FlowIndex(f)) => f,
                 Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0
-            }
-        ).unwrap();
+                None => 0,
+            })
+            .unwrap();
 
         rows.push(row_index);
         cols.push(column_index);
@@ -223,8 +240,7 @@ pub fn DisplayEntireMatrix(cx: Scope, updatable: Updatable<DossierCorrelationMat
     cols.sort();
     cols.dedup();
 
-    let (row_indices, set_indices) = create_signal(cx, rows.clone());
-
+    let (row_indices, _set_indices) = create_signal(cx, rows.clone());
 
     view! {
         cx,
@@ -235,37 +251,37 @@ pub fn DisplayEntireMatrix(cx: Scope, updatable: Updatable<DossierCorrelationMat
             each=row_indices
             key=|entry| { format!("{entry:?}")}
             view=move |cx, r_element| {
-                let r=rows.get(r_element as usize).unwrap();
+                let row_index=rows.get(r_element as usize).unwrap();
 
-                let (col_indices, set_indices) = create_signal(cx, cols.clone());
+                let (col_indices, _set_indices) = create_signal(cx, cols.clone());
                 view!{
-                    cx, 
+                    cx,
 
                     <div
-                        inner_html=format!("{r:?}")
+                        inner_html=format!("{row_index:?}")
                     />
-                    <For   
+                    <For
                         each=col_indices
                         key=|entry| { format!("{entry:?}")}
                         view=move |cx, c_element| {
-                            //let c=cols.get(c_element as usize).unwrap();
-                            let c = 1;
+                            //let column_index=rows.get(c_element as usize).unwrap();
+                            let column_index = 1;
                             view!{
-                                cx, 
+                                cx,
                                 <div style="display: inline-flex">
                                 <div
-                                    inner_html=format!("{c:?}")
+                                    inner_html=format!("{column_index}")
                                 />
                                 </div>
-                                
+
                             }
                         }
                     />
-                    
+
                 }
-                
+
             }
-        
+
         />
     }
 }
