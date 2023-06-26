@@ -4,19 +4,10 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-use crate::Year;
-use crate::YearClamp;
-use crate::YearValueInput;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use leptos_dom::html::{Button, Div};
 use plus_modeled::RateCurve;
-use plus_modeled::YearValue;
-use std::fmt::Display;
-use std::rc::Rc;
-use wasm_bindgen::JsCast;
-use web_sys::{Element, Event, KeyboardEvent, MouseEvent};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -139,9 +130,9 @@ pub fn RateCurveComponent(
 
              <div>"Rate Curve TODO"</div>
          }
-}
 
 // ω <fn rate_curve_component>
+}
 
 // α <mod-def rate_curve_component>
 // ω <mod-def rate_curve_component>

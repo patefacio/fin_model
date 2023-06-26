@@ -9,9 +9,6 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 use plus_modeled::DossierHoldingIndex;
 use plus_modeled::DossierItemIndex;
-use plus_modeled::core::dossier_item_index;
-use plus_modeled::core::dossier_item_index::ItemIndex;
-
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -34,11 +31,9 @@ pub fn DossierItemIndexComponent(
     cx: Scope,
     /// TODO Document Param(updatable)
     updatable: Updatable<Option<DossierItemIndex>>,
-
-    #[prop(default="Item #".to_string())] index_placeholder: String,
-
-    #[prop(default="Info".to_string())] info_placeholder: String,
-
+    /// Placeholder for holding item
+    #[prop(default="Item #".to_string())]
+    item_placeholder: String,
 ) -> impl IntoView {
     // α <fn dossier_item_index_component>
 
@@ -47,9 +42,8 @@ pub fn DossierItemIndexComponent(
 
     let updatable = Rc::new(RefCell::new(updatable));
 
-    //use crate::NumericInput;
+    use plus_modeled::core::dossier_item_index::ItemIndex;
     use crate::Updatable;
-    
 
     let initial_item_index = updatable
         .as_ref()

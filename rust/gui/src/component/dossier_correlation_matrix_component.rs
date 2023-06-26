@@ -1,7 +1,5 @@
 //! Module for dossier_correlation_matrix_component leptos function/component
 
-use std::vec;
-
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -9,7 +7,6 @@ use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use leptos_dom::svg::view;
 use plus_modeled::DossierCorrelationMatrix;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +83,7 @@ pub fn DossierCorrelationMatrixComponent(
 }
 
 // α <mod-def dossier_correlation_matrix_component>
-// ω <mod-def dossier_correlation_matrix_component>
+
 
 pub fn set_matrix_correlation(
     matrix: &mut DossierCorrelationMatrix,
@@ -144,6 +141,7 @@ pub fn set_matrix_correlation(
     return correlation;
 }
 
+
 pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32, u32)) -> f64 {
     use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::core::DossierHoldingIndex;
@@ -192,6 +190,7 @@ pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32
     matrix.mappings.push(make_cor_entry(index.0, index.1, 0.0));
     return 0.0;
 }
+
 
 #[component]
 pub fn DisplayEntireMatrix(
@@ -285,3 +284,5 @@ pub fn DisplayEntireMatrix(
         />
     }
 }
+
+// ω <mod-def dossier_correlation_matrix_component>
