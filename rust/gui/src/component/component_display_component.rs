@@ -74,6 +74,12 @@ pub fn ComponentDisplayComponent(
     use plus_modeled::YearCurrencyValue;
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
+    
+    use crate::DateInput;
+    use plus_modeled::Date;
+
+    use crate::component::dossier_correlation_matrix_component::set_matrix_correlation;
+    use crate::component::dossier_correlation_matrix_component::DisplayEntireMatrix;
 
     let (read_count, write_count) = create_signal(cx, 0);
     leptos_dom::console_log(&format!("App cx({cx:?}"));
@@ -96,25 +102,46 @@ pub fn ComponentDisplayComponent(
         correlation: correlation,
     };
 
-    let sample_dossier_matrix = DossierCorrelationMatrix {
+    let mut sample_dossier_matrix = DossierCorrelationMatrix {
         mappings: vec![
             make_cor_entry(0, 1, -0.31),
             make_cor_entry(1, 1, 0.71),
             make_cor_entry(1, 2, 0.342),
+            make_cor_entry(2, 3, 2.3),
         ],
     };
-
+    set_matrix_correlation(&mut sample_dossier_matrix, (1, 1), 0.25);
     view! { cx,
 
         <h4>"Dossier Correlation Matrix"</h4>
         <DossierCorrelationMatrixComponent
             updatable=Updatable::new(
-                sample_dossier_matrix,
+                sample_dossier_matrix.clone(),
                 |m| {
                     console_log(&format!("Matrix updated to -> {m:?}"))
                 }
             )
         />
+
+        
+
+        <DisplayEntireMatrix
+            updatable=Updatable::new(
+                sample_dossier_matrix.clone(),
+                |m| {
+                    console_log(&format!("Matrix displayed -> {m:?}"))
+                }
+            )
+        />
+
+        <h4>"Date Input"</h4>
+        <DateInput
+            updatable=Updatable::new(None, move |n| {
+                console_log(&format!("Date updated -> {n:?}"));
+            })
+            placeholder = Some("00/00/00".to_string())
+        />
+        <hr/>
 
         <h4>"String Input"</h4>
         <StringInput updatable=Updatable::new(

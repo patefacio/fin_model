@@ -4,9 +4,11 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+use leptos::create_node_ref;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use leptos_dom::html::Input;
 use plus_modeled::Date;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -17,16 +19,106 @@ use plus_modeled::Date;
 ///   * **cx** - Context
 ///   * **updatable** - The [Date] being edited
 ///   * _return_ - View for date_input
+/// 
+
+use leptos::store_value;
+
 #[component]
 pub fn DateInput(
     /// Context
     cx: Scope,
     /// The [Date] being edited
     updatable: Updatable<Option<Date>>,
+    
+    #[prop(default=None)]
+    placeholder: Option<String>,
 ) -> impl IntoView {
+
+    const YEAR_SIZE: u32 = 4;
+
+    use leptos::IntoAttribute;
+
+    let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
+        initial_value.day.to_string()
+    } else {
+        String::default()
+    };
+    
+    let node_ref = create_node_ref::<Input>(cx);
+
+    //let updatable = store_value(cx, updatable.value.unwrap_or(Date { year: 0, month: 0, day: 0 }));
+    let mut updatable = updatable;
+
+    fn size_clamp(mut s: String, lower_bound: u32, upper_bound: u32, fill: char) -> String {
+        for _i in 0..(s.len() as i32 - upper_bound as i32) {
+            s.pop();
+        }
+        for _i in 0..(lower_bound as i32 - s.len() as i32) {
+            s.push(fill);
+        }
+        return s;
+    }
+    
+    fn date_string(mut s: String) -> String {
+        if s.len()>2 {
+            s.insert(2, '/');
+        }
+        if s.len()>5 {
+            s.insert(5, '/');
+        }
+        return s
+    }
+
+    
+    let mut update_value = move || {
+        let input_ref = node_ref.get().expect("Date input node");
+        let mut value = input_ref.value();
+
+        value = value.chars().filter(|c| c.is_ascii_digit()).collect();
+        value = size_clamp(date_string(value), 0, 6+YEAR_SIZE, '0');
+        let mut full_date = size_clamp(value.clone(), 6+YEAR_SIZE, 6+YEAR_SIZE, '0');
+        
+        if full_date[0..2].parse::<u32>().unwrap() > 31 {
+            full_date.remove(0);
+            full_date.remove(0);
+            full_date.insert_str(0, "31");
+        }
+        if full_date[3..5].parse::<u32>().unwrap() > 12 {
+            full_date.remove(3);
+            full_date.remove(3);
+            full_date.insert_str(3, "12");
+        }
+
+        value = full_date[0..value.len()].to_string();
+
+
+        leptos_dom::console_log(&format!("DateInput: filtered -> {value:?}"));
+
+        if value.is_empty() {
+            updatable.update_and_then_signal(|year| *year = None);
+            leptos_dom::console_log(&format!("DateInput: setting value to -> None"));
+            input_ref.set_value("");
+        } else {
+            updatable.update_and_then_signal(|year| *year = Some(Date { day: full_date[0..2].parse::<u32>().unwrap(), month: full_date[3..5].parse::<u32>().unwrap(), year: full_date[6..(6+YEAR_SIZE as usize)].parse::<u32>().unwrap()} ) );
+            input_ref.set_value(&value);
+            leptos_dom::console_log(&format!("DateInput: setting value to -> {value:?}"));
+        }
+    };
+
     // α <fn date_input>
-    todo!("Implement `date_input`")
+    //todo!("Implement `date_input`")
     // ω <fn date_input>
+    view!{
+        cx,
+        <input
+            node_ref=node_ref
+            on:input = move |_| update_value()
+            value=initial_value
+            size=10
+            placeholder=placeholder
+            type="text"
+        />
+    }
 }
 
 // α <mod-def date_input>

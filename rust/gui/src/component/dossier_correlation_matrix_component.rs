@@ -37,6 +37,7 @@ pub fn DossierCorrelationMatrixComponent(
     let index_pairs = updatable.value.mappings.iter();
 
     let (indices, set_indices) = create_signal(cx, updatable.value.mappings);
+    console_log(&format!("MATRIX WORKING"));
 
     view! {
         cx,
@@ -144,13 +145,13 @@ pub fn set_matrix_correlation(
     return correlation;
 }
 
-pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32, u32)) -> f64 {
+pub fn get_matrix_correlation(matrix: &DossierCorrelationMatrix, index: (u32, u32)) -> f64 {
     use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::core::DossierHoldingIndex;
     use plus_modeled::DossierCorrelationEntry;
     use plus_modeled::DossierItemIndex;
 
-    for i in matrix.mappings.iter_mut() {
+    for i in matrix.mappings.iter() {
         let row_index = i
             .row_index
             .as_ref()
@@ -173,7 +174,7 @@ pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32
         if row_index.unwrap() == index.0 && column_index.unwrap() == index.1 {
             return i.correlation;
         }
-    }
+    }/*
     let make_cor_entry = |row_holding_id, column_holding_id, correlation| DossierCorrelationEntry {
         row_index: Some(DossierItemIndex {
             item_index: Some(ItemIndex::HoldingIndex(DossierHoldingIndex {
@@ -190,6 +191,7 @@ pub fn get_matrix_correlation(matrix: &mut DossierCorrelationMatrix, index: (u32
         correlation: correlation,
     };
     matrix.mappings.push(make_cor_entry(index.0, index.1, 0.0));
+    */
     return 0.0;
 }
 
@@ -199,6 +201,7 @@ pub fn DisplayEntireMatrix(
     updatable: Updatable<DossierCorrelationMatrix>,
 ) -> impl IntoView {
     use plus_modeled::core::dossier_item_index::ItemIndex;
+    use leptos::store_value;
     //use plus_modeled::core::DossierHoldingIndex;
     //use plus_modeled::DossierCorrelationEntry;
     //use plus_modeled::DossierItemIndex;
@@ -210,7 +213,9 @@ pub fn DisplayEntireMatrix(
     let mut rows = vec![];
     let mut cols = vec![];
 
-    for i in updatable.value.mappings.iter() {
+    let updatable = store_value(cx, updatable);
+    updatable.with_value( | updatable | {
+        for i in updatable.value.mappings.iter() {
         let row_index = i
             .row_index
             .as_ref()
@@ -234,13 +239,17 @@ pub fn DisplayEntireMatrix(
 
         rows.push(row_index);
         cols.push(column_index);
-    }
+    }} );
+
+    
     rows.sort();
     rows.dedup();
     cols.sort();
     cols.dedup();
 
     let (row_indices, _set_indices) = create_signal(cx, rows.clone());
+
+    console_log(&format!("DISPLAY WORKING"));
 
     view! {
         cx,
@@ -258,19 +267,20 @@ pub fn DisplayEntireMatrix(
                     cx,
 
                     <div
-                        inner_html=format!("{row_index:?}")
+                        inner_html=format!("R({row_index:?})")
                     />
                     <For
                         each=col_indices
                         key=|entry| { format!("{entry:?}")}
                         view=move |cx, c_element| {
                             //let column_index=rows.get(c_element as usize).unwrap();
-                            let column_index = 1;
+                            //let column_index=get_matrix_correlation(&updatable.with_value( | updatable | { updatable.value }), (r_element, c_element));
+                            let column_index = updatable.with_value(|updatable| { get_matrix_correlation(&updatable.value, (r_element, c_element)) });
                             view!{
                                 cx,
                                 <div style="display: inline-flex">
                                 <div
-                                    inner_html=format!("{column_index}")
+                                    inner_html=format!("C({column_index})")
                                 />
                                 </div>
 

@@ -168,6 +168,8 @@ fn HomePage(cx: Scope) -> impl IntoView {
 
     //sample_dossier_matrix.set_matrix_correlation(0,1,0.22);
     set_matrix_correlation(&mut sample_dossier_matrix, (1, 1), 0.25);
+    console_log(&format!("APP WORKING"));
+    //set_matrix_correlation(&mut sample_dossier_matrix, (1, 17), 0.25);
 
 
     view! { cx,
@@ -353,7 +355,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
             })
         />
 
-
+        
         <h4>"Rate Curve"</h4>
         <RateCurveComponent
             updatable=Updatable::new(RateCurve::default(), |rc| {
@@ -361,6 +363,7 @@ fn HomePage(cx: Scope) -> impl IntoView {
             })
         />
         <hr/>
+        
 
         <h4>"Growth Component (Holding)"</h4>
         <ItemGrowthComponent
