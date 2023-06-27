@@ -4,8 +4,6 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-pub use component::age_assumptions_component::AgeAssumptionsComponent;
-pub use component::balance_sheet_component::BalanceSheetComponent;
 pub use component::component_display_component::ComponentDisplayComponent;
 pub use component::currency_select::CurrencySelect;
 pub use component::currency_value_input::CurrencyValueInput;
@@ -16,12 +14,7 @@ pub use component::dossier_correlation_matrix_component::DossierCorrelationMatri
 pub use component::dossier_holding_index_input::DossierHoldingIndexInput;
 pub use component::dossier_item_index_component::DossierItemIndexComponent;
 pub use component::enum_select::EnumSelect;
-pub use component::flow_spec_component::FlowSpecComponent;
-pub use component::growing_flow_spec_component::GrowingFlowSpecComponent;
-pub use component::growth_assumption_component::GrowthAssumptionComponent;
-pub use component::holding_component::HoldingComponent;
 pub use component::integer_input::IntegerInput;
-pub use component::item_growth_component::ItemGrowthComponent;
 pub use component::multi_column_select::InitialValue;
 pub use component::multi_column_select::MultiColumnSelect;
 pub use component::multi_column_select::SelectDirection;
@@ -31,12 +24,8 @@ pub use component::numeric_input::Modification;
 pub use component::numeric_input::NumericInput;
 pub use component::ok_cancel_component::OkCancelComponent;
 pub use component::percent_input::PercentInput;
-pub use component::person_component::PersonComponent;
 pub use component::rate_curve_component::RateCurveComponent;
-pub use component::string_input::StringInput;
-pub use component::symbol_input::SymbolInput;
 pub use component::value_flow_spec_component::ValueFlowSpecComponent;
-pub use component::worth_component::WorthComponent;
 pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;
 pub use component::year_range_input::YearRangeInput;

@@ -36,47 +36,42 @@ pub fn DossierCorrelationMatrixComponent(
     let (indices, set_indices) = create_signal(cx, updatable.value.mappings);
     console_log(&format!("MATRIX WORKING"));
 
-    view! {
-        cx,
-
+    view! { cx,
         <For
             each=indices
-            key=|entry| { format!("{entry:?}")}
+            key=|entry| { format!("{entry:?}") }
             view=|cx, element| {
-                let row_index = element.row_index.as_ref().map(
-                    |row_index| match row_index.item_index {
+                let row_index = element
+                    .row_index
+                    .as_ref()
+                    .map(|row_index| match row_index.item_index {
                         Some(ItemIndex::WorthIndex(w)) => w.to_string(),
                         Some(ItemIndex::FlowIndex(f)) => f.to_string(),
                         Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap().to_string(),
-                        None => "Oops".to_string()
-                    }
-                ).unwrap();
-                let column_index = element.column_index.as_ref().map(
-                    |column_index| match column_index.item_index {
+                        None => "Oops".to_string(),
+                    })
+                    .unwrap();
+                let column_index = element
+                    .column_index
+                    .as_ref()
+                    .map(|column_index| match column_index.item_index {
                         Some(ItemIndex::WorthIndex(w)) => w.to_string(),
                         Some(ItemIndex::FlowIndex(f)) => f.to_string(),
                         Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap().to_string(),
-                        None => "Oops".to_string()
-                    }
-                ).unwrap();
+                        None => "Oops".to_string(),
+                    })
+                    .unwrap();
                 let correlation = element.correlation;
-                view!{ cx,
+                view! { cx,
                     <div style="display: inline-flex">
-                    <div
-                        inner_html=format!("row: {row_index} [ ")
-                    />
-                    <div
-                        inner_html=format!(" ] column: {column_index}, ")
-                    />
-                    <div
-                        inner_html=format!("{correlation}")
-                    />
+                        <div inner_html=format!("row: {row_index} [ ")></div>
+                        <div inner_html=format!(" ] column: {column_index}, ")></div>
+                        <div inner_html=format!("{correlation}")></div>
                     </div>
                     <hr/>
                 }
             }
         />
-
         <h5>"The matrix"</h5>
     }
 
@@ -256,10 +251,9 @@ pub fn DisplayEntireMatrix(
         />
         <For
             each=row_indices
-            key=|entry| { format!("{entry:?}")}
+            key=|entry| { format!("{entry:?}") }
             view=move |cx, r_element| {
-                let row_index=rows.get(r_element as usize).unwrap();
-
+                let row_index = rows.get(r_element as usize).unwrap();
                 let (col_indices, _set_indices) = create_signal(cx, cols.clone());
                 view!{
                     cx,
@@ -269,7 +263,7 @@ pub fn DisplayEntireMatrix(
                     />
                     <For
                         each=col_indices
-                        key=|entry| { format!("{entry:?}")}
+                        key=|entry| { format!("{entry:?}") }
                         view=move |cx, c_element| {
                             //let column_index=rows.get(c_element as usize).unwrap();
                             //let column_index=get_matrix_correlation(&updatable.with_value( | updatable | { updatable.value }), (r_element, c_element));
@@ -281,15 +275,11 @@ pub fn DisplayEntireMatrix(
                                     inner_html=format!("C({column_index})")
                                 />
                                 </div>
-
                             }
                         }
                     />
-
                 }
-
             }
-
         />
     }
 }
