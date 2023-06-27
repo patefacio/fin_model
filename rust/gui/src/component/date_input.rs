@@ -49,7 +49,7 @@ pub fn DateInput(
     //let updatable = store_value(cx, updatable.value.unwrap_or(Date { year: 0, month: 0, day: 0 }));
     let mut updatable = updatable;
 
-    fn size_clamp(mut s: String, lower_bound: u32, upper_bound: u32, fill: char) -> String {
+    fn size_clamp(mut s: String, lower_bound: u32, upper_bound: u32, fill: char) -> String {    
         for _i in 0..(s.len() as i32 - upper_bound as i32) {
             s.pop();
         }
@@ -74,22 +74,35 @@ pub fn DateInput(
         let input_ref = node_ref.get().expect("Date input node");
         let mut value = input_ref.value();
 
+        console_log(&format!("{} size {}", value, value.len()));
+        let last_letter = value.chars().last().unwrap_or(' ');
+
+        if value.len() == 2 && last_letter == '/' {
+            value.insert(0, '0');
+            
+        }
+        if value.len() == 5 && last_letter == '/' {
+            value.insert(3, '0')
+        }
+        
+
         value = value.chars().filter(|c| c.is_ascii_digit()).collect();
         value = size_clamp(date_string(value), 0, 6+YEAR_SIZE, '0');
-        let mut full_date = size_clamp(value.clone(), 6+YEAR_SIZE, 6+YEAR_SIZE, '0');
-        
-        if full_date[0..2].parse::<u32>().unwrap() > 31 {
-            full_date.remove(0);
-            full_date.remove(0);
-            full_date.insert_str(0, "31");
-        }
-        if full_date[3..5].parse::<u32>().unwrap() > 12 {
-            full_date.remove(3);
-            full_date.remove(3);
-            full_date.insert_str(3, "12");
-        }
 
-        value = full_date[0..value.len()].to_string();
+        if value.len() >= 2 && value[0..2].parse::<u32>().unwrap() > 12 {
+            value.remove(0);
+            value.remove(0);
+            value.insert_str(0, "12")
+        }
+        if value.len() >= 5 && value[3..5].parse::<u32>().unwrap() > 31 {
+            value.remove(3);
+            value.remove(3);
+            value.insert_str(3, "31")
+        }
+        
+
+        let full_date = size_clamp(value.clone(), 6+YEAR_SIZE, 6+YEAR_SIZE, '0');
+        //value = full_date[0..value.len()].to_string();
 
 
         leptos_dom::console_log(&format!("DateInput: filtered -> {value:?}"));
@@ -99,7 +112,7 @@ pub fn DateInput(
             leptos_dom::console_log(&format!("DateInput: setting value to -> None"));
             input_ref.set_value("");
         } else {
-            updatable.update_and_then_signal(|year| *year = Some(Date { day: full_date[0..2].parse::<u32>().unwrap(), month: full_date[3..5].parse::<u32>().unwrap(), year: full_date[6..(6+YEAR_SIZE as usize)].parse::<u32>().unwrap()} ) );
+            updatable.update_and_then_signal(|year| *year = Some(Date { month: full_date[0..2].parse::<u32>().unwrap(), day: full_date[3..5].parse::<u32>().unwrap(), year: full_date[6..(6+YEAR_SIZE as usize)].parse::<u32>().unwrap()} ) );
             input_ref.set_value(&value);
             leptos_dom::console_log(&format!("DateInput: setting value to -> {value:?}"));
         }
