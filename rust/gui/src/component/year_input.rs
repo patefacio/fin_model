@@ -42,6 +42,24 @@ pub fn YearInput(
     // α <fn year_input>
 
     use leptos::IntoAttribute;
+    use leptos::create_signal;
+    use leptos::SignalGet; 
+    use leptos::*;
+
+    // Determine if year is in the provided range
+    let year_is_valid = move |year| {
+        console_log(&format!("Checking {year} against {year_range:?}"));
+        year >= year_range.start && year <= year_range.end
+    };
+
+    // Track whether year is valid to give hint to user - reactive to update class
+    let (is_in_range, set_is_in_range) = create_signal(
+        cx,
+        updatable
+            .value
+            .map(|year| year_is_valid(year))
+            .unwrap_or_default(),
+    );
 
     // Get the initial value for the year if provided. Set to empty string if
     // not provided.
@@ -50,7 +68,7 @@ pub fn YearInput(
     } else {
         String::default()
     };
-    
+
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;
     let year_clamp = YearClamp::new(year_range);
@@ -61,7 +79,6 @@ pub fn YearInput(
     // fields always accept text which maps to Strings) - and then ensures the
     // provided number is within the range.
     let mut update_value = move || {
-
         // First get the HtmlElement<Input>, think of it as a handle that provides
         // access to the input element in the DOM that holds our number.
         let input_ref = node_ref.get().expect("Year input node");
@@ -87,8 +104,9 @@ pub fn YearInput(
             // be off-putting and we should discuss. Imagine typing "2303" and on
             // entering that last 3 what gets displayed is "2300". It will certainly
             // ensure the value is in range but maybe the approach is heavy handed.
-            let clamped  = year_clamp.clamp(&value);
+            let clamped = year_clamp.clamp(&value);
             updatable.update_and_then_signal(|year| *year = Some(clamped.as_u32));
+            set_is_in_range.set(year_is_valid(clamped.as_u32));
             input_ref.set_value(&clamped.as_string);
             leptos_dom::console_log(&format!("YearInput: setting value to -> {clamped:?}"));
         }
@@ -97,6 +115,8 @@ pub fn YearInput(
     view! { cx,
         <input
             node_ref=node_ref
+            class="year-input"
+            class:invalid=move || { !is_in_range.get() }
             on:input=move |_| update_value()
             value=initial_value
             size=5
