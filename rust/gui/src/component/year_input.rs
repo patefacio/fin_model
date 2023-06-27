@@ -97,9 +97,7 @@ pub fn YearInput(
     view! { cx,
         <input
             node_ref=node_ref
-            on:input = move |_| update_value()
-            // This sets the value in a static manner: 
-            // https://leptos-rs.github.io/leptos/view/05_forms.html?highlight=prop%3Avalue#uncontrolled-inputs:~:text=%22%20%7Bname%7D%3C/p%3E%0A%7D-,Uncontrolled%20Inputs,-In%20an%20%22uncontrolled
+            on:input=move |_| update_value()
             value=initial_value
             size=5
             placeholder=placeholder

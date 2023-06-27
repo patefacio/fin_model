@@ -314,11 +314,11 @@ where
                 let (value, button_content) = match select_option {
                     SelectOption::Label(label) => (
                         label,
-                        view! {cx, <div class="mcs-label">{label}</div> }.into_view(cx),
+                        view! { cx, <div class="mcs-label">{label}</div> }.into_view(cx),
                     ),
                     SelectOption::KeyLabel { key, label } => (
                         key,
-                        view! {cx,
+                        view! { cx,
                             <div class="icon-label">
                                 <div class="icon">{key}</div>
                                 <div class="label">{label}</div>
@@ -334,17 +334,20 @@ where
                 let wrapped_handle_keydown = move |ev| wrapped_handle_keydown(ev);
 
                 view! { cx,
-                <button
-                    class="select-button"
-                    on:click=wrapped_handle_click
-                    on:mouseover=handle_mouseover
-                    on:mousemove=handle_mousemove
-                    on:keydown=wrapped_handle_keydown
-                    class:using-mouse=using_mouse
-                    data-flat-index=flat_index
-                    data-value=value
-                    node_ref=button_ref
-                >{button_content}</button> }
+                    <button
+                        class="select-button"
+                        on:click=wrapped_handle_click
+                        on:mouseover=handle_mouseover
+                        on:mousemove=handle_mousemove
+                        on:keydown=wrapped_handle_keydown
+                        class:using-mouse=using_mouse
+                        data-flat-index=flat_index
+                        data-value=value
+                        node_ref=button_ref
+                    >
+                        {button_content}
+                    </button>
+                }
                 .into_view(cx)
             } else {
                 view! { cx, <div></div> }.into_view(cx)
@@ -396,27 +399,22 @@ where
     window_event_listener_untyped("focusin", handle_global_focusin);
 
     view! { cx,
-        <div class="mcs-grid"
-            disabled=move || {!menu_is_hidden()}
-            node_ref=mcs_grid_ref
-        >
+        <div class="mcs-grid" disabled=move || { !menu_is_hidden() } node_ref=mcs_grid_ref>
             <button
                 on:mousedown=handle_main_button_mousedown
                 on:keydown=handle_main_button_key_activate
                 class="main-button"
                 node_ref=main_button_ref
             >
-            {main_button_label}
+                {main_button_label}
             </button>
             <div
                 class="container"
-                class:hidden={menu_is_hidden}
-                // This sets the number of grid columns
+                class:hidden=menu_is_hidden
                 style=format!("grid-template-columns: {}", "1fr ".repeat(column_count))
             >
-
-            {cells.into_view(cx)}
-        </div>
+                {cells.into_view(cx)}
+            </div>
         </div>
     }
     // ω <fn multi_column_select>

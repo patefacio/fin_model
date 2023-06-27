@@ -79,36 +79,23 @@ pub fn YearValueInput(
 
 
 
-    view! {
-        cx,
+    view! { cx,
         <h3>"TODO YearValue"</h3>
-
-        
         <fieldset class="nsg">
-        <legend>"Year Value"</legend>
-        <div class="form">
-
-
-            <div style="display: inline-flex" >
-
-                
-                    <YearInput
-                    placeholder=Some("year".to_string())
-                    updatable=year_updatable
-                    />
-                ","
+            <legend>"Year Value"</legend>
+            <div class="form">
+                <div style="display: inline-flex">
+                    <YearInput placeholder=Some("year".to_string()) updatable=year_updatable/>
+                    ","
                     <NumericInput
                         placeholder=Some("value".to_string())
                         updatable=value_updatable
                         non_negative=true
                         modification=Some(Modification::Prefix(("$".into())))
                     />
-
+                </div>
             </div>
-
-        </div>
         </fieldset>
-
     }
     // ω <fn year_value_input>
 }

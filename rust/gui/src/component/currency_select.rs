@@ -45,8 +45,7 @@ pub fn CurrencySelect(
         updatable.update_and_then_signal(|currency| *currency = selected_currency);
     };
 
-    view! {
-        cx,
+    view! { cx,
         <MultiColumnSelect
             options=options
             initial_value=Some(InitialValue::SelectionIndex(initial_currency as i32 as usize))

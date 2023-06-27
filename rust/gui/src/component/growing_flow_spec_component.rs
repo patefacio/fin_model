@@ -26,10 +26,7 @@ pub fn GrowingFlowSpecComponent(
 ) -> impl IntoView {
     // α <fn growing_flow_spec_component>
 
-    view! {
-        cx,
-        <h3>"TODO GrowingFlowSpecComponent"</h3>
-    }
+    view! { cx, <h3>"TODO GrowingFlowSpecComponent"</h3> }
 
     // ω <fn growing_flow_spec_component>
 }

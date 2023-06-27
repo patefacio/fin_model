@@ -46,9 +46,7 @@ pub fn SymbolInput(
         console_log("Got keydown");
     };
 
-    view! {
-        cx,
-
+    view! { cx,
         <input
             node_ref=input_ref
             on:keydown=on_keydown
@@ -58,7 +56,6 @@ pub fn SymbolInput(
             type="text"
             value=initial_value
         />
-
     }
 
     // ω <fn symbol_input>

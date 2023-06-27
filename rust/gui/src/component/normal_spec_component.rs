@@ -98,40 +98,33 @@ pub fn NormalSpecComponent(
         });
     });
 
-    view! {
-    cx,
-
+    view! { cx,
         <fieldset class="nsg">
-        <legend>"Normal Growth"</legend>
-        <div class="form">
-
-
-            <div style="display: inline-flex" >
-                "N("
+            <legend>"Normal Growth"</legend>
+            <div class="form">
+                <div style="display: inline-flex">
+                    "N("
                     <NumericInput
                         placeholder=Some("mean".to_string())
-                        modification=Some(Modification::PrefixAndSuffix{
+                        modification=Some(Modification::PrefixAndSuffix {
                             prefix: "μ=".into(),
-                            suffix: "%".into()
+                            suffix: "%".into(),
                         })
                         non_negative=true
                         updatable=mean_updatable
-                    />
-                ", "
+                    /> ", "
                     <NumericInput
                         placeholder=Some("std. dev".to_string())
-                        modification=Some(Modification::PrefixAndSuffix{
+                        modification=Some(Modification::PrefixAndSuffix {
                             prefix: "σ=".into(),
-                            suffix: "%".into()
+                            suffix: "%".into(),
                         })
                         non_negative=true
                         updatable=std_dev_updatable
-                    />
-                ")"
+                    /> ")"
+                </div>
             </div>
-        </div>
-        <div inner_html= move || { normal_bits.with(|normal_bits| normal_bits.drawing_svg.clone()) } />
-
+            <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.drawing_svg.clone()) }></div>
         </fieldset>
     }
 

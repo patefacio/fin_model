@@ -64,55 +64,51 @@ pub fn ItemGrowthComponent<'a>(
 
     let category_select = match dossier_item_type {
         DossierItemType::Holding => view! { cx,
-            <EnumSelect
-                updatable = Updatable::new(HoldingType::UsEquityMarket, |e| {
-                    console_log("Holding selection updated -> {e:?}");
-                })
-        />
-        }.into_view(cx),
-        DossierItemType::Flow => view! { cx, 
-            <EnumSelect
-                updatable = Updatable::new(FlowType::CollegeExpense, |e| {
-                    console_log("Flow selection updated -> {e:?}");
-                })
-        />
-        }.into_view(cx),
-        DossierItemType::Worth => view! { cx, 
-            <EnumSelect
-                updatable = Updatable::new(WorthType::FamilyFarm, |e| {
-                    console_log("Worth selection updated -> {e:?}");
-                })
-            />
-        }.into_view(cx),
-        DossierItemType::Instrument => view! { cx, 
-            <EnumSelect
-                updatable = Updatable::new(FlowType::CollegeExpense, |e| {
-                    console_log("Flow selection updated -> {e:?}");
-                })
-            />
-        }.into_view(cx)
+                <EnumSelect updatable=Updatable::new(
+                    HoldingType::UsEquityMarket,
+                    |e| {
+                        console_log("Holding selection updated -> {e:?}");
+                    },
+                )/>
+            }.into_view(cx),
+        DossierItemType::Flow => view! { cx,
+                <EnumSelect updatable=Updatable::new(
+                    FlowType::CollegeExpense,
+                    |e| {
+                        console_log("Flow selection updated -> {e:?}");
+                    },
+                )/>
+            }.into_view(cx),
+        DossierItemType::Worth => view! { cx,
+                <EnumSelect updatable=Updatable::new(
+                    WorthType::FamilyFarm,
+                    |e| {
+                        console_log("Worth selection updated -> {e:?}");
+                    },
+                )/>
+            }.into_view(cx),
+        DossierItemType::Instrument => view! { cx,
+                <EnumSelect updatable=Updatable::new(
+                    FlowType::CollegeExpense,
+                    |e| {
+                        console_log("Flow selection updated -> {e:?}");
+                    },
+                )/>
+            }.into_view(cx)
     };
 
     let growth_assumption = updatable.value.growth_assumption.unwrap_or_default();
 
-    view! {
-        cx,
-
+    view! { cx,
         <fieldset class="igc">
-        <legend>"Item Growth"</legend>
-
-        <div class="icg-select">
-        {category_select}
-        </div>
-
-        <GrowthAssumptionComponent
-            updatable=Updatable::new(
+            <legend>"Item Growth"</legend>
+            <div class="icg-select">{category_select}</div>
+            <GrowthAssumptionComponent updatable=Updatable::new(
                 growth_assumption,
                 |ga| {
                     console_log(&format!("growth_assumption updated -> {ga:?}"));
-                }
-            )
-        />
+                },
+            )/>
         </fieldset>
     }
 

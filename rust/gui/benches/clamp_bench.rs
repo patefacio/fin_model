@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use fin_model_gui::utils::clamp::clamp_one_pass::clamp as clamp_one_pass;
-use fin_model_gui::utils::year_clamp::YearClampStrings;
+use fin_model_gui::utils::year_clamp::{YearClamp, YearClampStrings};
 use plus_modeled::core::YearRange;
 
 pub fn clamp_sm_benchmark(c: &mut Criterion) {
@@ -23,6 +23,31 @@ pub fn clamp_sm_benchmark(c: &mut Criterion) {
             let _ = clamp("23001", min, max);
             let _ = clamp("240000", min, max);
             let _ = clamp("230010000", min, max);
+        })
+    });
+}
+
+pub fn clamp_year_range_benchmark(c: &mut Criterion) {
+    let year_clamp = YearClamp::new(YearRange {
+        start: 1900,
+        end: 2300,
+    });
+
+    c.bench_function("ClampYearRange on (1900, 2300)", |b| {
+        b.iter(|| {
+            let _ = year_clamp.clamp("1");
+            let _ = year_clamp.clamp("19");
+            let _ = year_clamp.clamp("198");
+            let _ = year_clamp.clamp("1984");
+            let _ = year_clamp.clamp("2");
+            let _ = year_clamp.clamp("23");
+            let _ = year_clamp.clamp("230");
+            let _ = year_clamp.clamp("2300");
+
+            let _ = year_clamp.clamp("24");
+            let _ = year_clamp.clamp("23001");
+            let _ = year_clamp.clamp("240000");
+            let _ = year_clamp.clamp("230010000");
         })
     });
 }
@@ -105,6 +130,7 @@ criterion_group!(
     clamp_sm_benchmark,
     clamp_one_pass_benchmark,
     clamp_parse_input_benchmark,
+    clamp_year_range_benchmark,
     clamp_year_range_strings_benchmark,
 );
 

@@ -39,6 +39,8 @@ pub struct YearClamp {
     /// Now to clamp a value, the function can find the length of the string and index
     /// into the appropriate range in the vector to make the check.
     pub ranges_by_digit: Vec<YearRange>,
+    /// Number of digits in the maximum
+    pub max_len: usize,
 }
 
 /// Year clamp where the ranges are stored as strings
@@ -59,6 +61,8 @@ pub struct YearClampStrings {
     /// Now to clamp a value, the function can find the length of the string and index
     /// into the appropriate range in the vector to make the check.
     pub ranges_by_digit: Vec<(ParsedNum, ParsedNum)>,
+    /// Number of digits in the maximum
+    pub max_len: usize,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +83,10 @@ impl YearClamp {
         let num_digits = value.len();
         let value_as_u32 = value.parse::<u32>().expect("valid number");
 
-        if let Some(year_range) = self.ranges_by_digit.get(num_digits - 1) {
+        if num_digits > self.max_len {
+            // If number of digits is greater than max_len allowed, recurse
+            self.clamp(&value[0..self.max_len])
+        } else if let Some(year_range) = self.ranges_by_digit.get(num_digits - 1) {
             // Index into the proper ranges_by_digit, do the clamp and return the number
             let clamped = value_as_u32.clamp(year_range.start, year_range.end);
             ParsedNum::new(clamped)
@@ -104,7 +111,12 @@ impl YearClampStrings {
         debug_assert!(value.bytes().all(|b| (b as char).is_ascii_digit()));
         let num_digits = value.len();
 
-        if let Some((start_parsed_num, end_parsed_num)) = self.ranges_by_digit.get(num_digits - 1) {
+        if num_digits > self.max_len {
+            // If number of digits is greater than max_len allowed, recurse
+            self.clamp(&value[0..self.max_len])
+        } else if let Some((start_parsed_num, end_parsed_num)) =
+            self.ranges_by_digit.get(num_digits - 1)
+        {
             // Index into the proper ranges_by_digit, do the clamp and return the number
             let clamped = value.clamp(&start_parsed_num.as_string, &end_parsed_num.as_string);
             ParsedNum::from_str(clamped)
@@ -167,11 +179,10 @@ impl YearClamp {
             });
         }
 
-        println!("ranges_by_digit -> {ranges_by_digit:?}");
-
         YearClamp {
             year_range,
             ranges_by_digit,
+            max_len: num_digits_end,
         }
         // ω <fn YearClamp::new>
     }
@@ -228,11 +239,10 @@ impl YearClampStrings {
             ));
         }
 
-        println!("ranges_by_digit -> {ranges_by_digit:?}");
-
         YearClampStrings {
             year_range,
             ranges_by_digit,
+            max_len: num_digits_end,
         }
 
         // ω <fn YearClampStrings::new>
@@ -257,18 +267,31 @@ pub mod unit_tests {
         fn clamp() {
             // α <fn test YearClamp::clamp>
 
-            let year_clamp = YearClamp::new(YearRange {
-                start: 1990,
-                end: 23000,
+            let mut year_clamp = YearClamp::new(YearRange {
+                start: 3500000,
+                end: 3800000,
             });
 
-            println!("Clamping 2023 -> {:?}", year_clamp.clamp("2023"));
+            assert_eq!(ParsedNum::new(3507001), year_clamp.clamp("3507001"));
 
-            assert_eq!(ParsedNum::new(1), year_clamp.clamp("1"));
+            year_clamp = YearClamp::new(YearRange {
+                start: 1900,
+                end: 2300,
+            });
+            assert_eq!(ParsedNum::new(2200), year_clamp.clamp("2200"));
+            assert_eq!(ParsedNum::new(2025), year_clamp.clamp("2025"));
+            assert_eq!(ParsedNum::new(1980), year_clamp.clamp("1980"));
+            assert_eq!(ParsedNum::new(1979), year_clamp.clamp("1979"));
+            assert_eq!(ParsedNum::new(1999), year_clamp.clamp("1999"));
+            assert_eq!(ParsedNum::new(1999), year_clamp.clamp("19999"));
+            assert_eq!(ParsedNum::new(2300), year_clamp.clamp("23092"));
             assert_eq!(ParsedNum::new(2), year_clamp.clamp("2"));
-            assert_eq!(ParsedNum::new(2), year_clamp.clamp("3"));
-            assert_eq!(ParsedNum::new(1), year_clamp.clamp("0"));
-            assert_eq!(ParsedNum::new(19), year_clamp.clamp("18"));
+            assert_eq!(ParsedNum::new(23), year_clamp.clamp("25"));
+            assert_eq!(ParsedNum::new(205), year_clamp.clamp("205"));
+            assert_eq!(ParsedNum::new(2300), year_clamp.clamp("2500"));
+            assert_eq!(ParsedNum::new(2300), year_clamp.clamp("99999"));
+            assert_eq!(ParsedNum::new(193), year_clamp.clamp("193"));
+            assert_eq!(ParsedNum::new(209), year_clamp.clamp("209"));
 
             // ω <fn test YearClamp::clamp>
         }
@@ -292,18 +315,32 @@ pub mod unit_tests {
         fn clamp() {
             // α <fn test YearClampStrings::clamp>
 
-            let year_clamp = YearClampStrings::new(YearRange {
-                start: 1990,
-                end: 23000,
+            let mut year_clamp = YearClampStrings::new(YearRange {
+                start: 3500000,
+                end: 3800000,
             });
 
-            println!("Clamping 2023 -> {:?}", year_clamp.clamp("2023"));
+            assert_eq!(ParsedNum::new(3507001), year_clamp.clamp("3507001"));
 
-            assert_eq!(ParsedNum::new(1), year_clamp.clamp("1"));
+            year_clamp = YearClampStrings::new(YearRange {
+                start: 1900,
+                end: 2300,
+            });
+            assert_eq!(ParsedNum::new(2200), year_clamp.clamp("2200"));
+            assert_eq!(ParsedNum::new(2025), year_clamp.clamp("2025"));
+            assert_eq!(ParsedNum::new(1980), year_clamp.clamp("1980"));
+            assert_eq!(ParsedNum::new(1979), year_clamp.clamp("1979"));
+            assert_eq!(ParsedNum::new(1999), year_clamp.clamp("1999"));
+            assert_eq!(ParsedNum::new(1999), year_clamp.clamp("19999"));
+            assert_eq!(ParsedNum::new(2300), year_clamp.clamp("23092"));
+
             assert_eq!(ParsedNum::new(2), year_clamp.clamp("2"));
-            assert_eq!(ParsedNum::new(2), year_clamp.clamp("3"));
-            assert_eq!(ParsedNum::new(1), year_clamp.clamp("0"));
-            assert_eq!(ParsedNum::new(19), year_clamp.clamp("18"));
+            assert_eq!(ParsedNum::new(23), year_clamp.clamp("25"));
+            assert_eq!(ParsedNum::new(205), year_clamp.clamp("205"));
+            assert_eq!(ParsedNum::new(2300), year_clamp.clamp("2500"));
+            assert_eq!(ParsedNum::new(2300), year_clamp.clamp("99999"));
+            assert_eq!(ParsedNum::new(193), year_clamp.clamp("193"));
+            assert_eq!(ParsedNum::new(209), year_clamp.clamp("209"));
 
             // ω <fn test YearClampStrings::clamp>
         }

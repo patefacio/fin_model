@@ -39,25 +39,22 @@ pub fn AgeAssumptionsComponent(
         .as_ref()
         .map(|age_assumption| age_assumption.death_age);
 
-    view! {
-        cx,
-
+    view! { cx,
         <fieldset>
-
-        <div>"Retirement Age"</div>
-        <NumericInput
-            updatable=Updatable::new(retirement_age.map(|ra| ra as f64), |retirement_age| {
-                console_log(&format!("Retirement age updated to {retirement_age:?}"));
-            })
-        />
-
-        <div>"Death Age"</div>
-        <NumericInput
-            updatable=Updatable::new(death_age.map(|da| da as f64), |death_age| {
-                console_log(&format!("Death age updated to {death_age:?}"));
-            })
-        />
-
+            <div>"Retirement Age"</div>
+            <NumericInput updatable=Updatable::new(
+                retirement_age.map(|ra| ra as f64),
+                |retirement_age| {
+                    console_log(&format!("Retirement age updated to {retirement_age:?}"));
+                },
+            )/>
+            <div>"Death Age"</div>
+            <NumericInput updatable=Updatable::new(
+                death_age.map(|da| da as f64),
+                |death_age| {
+                    console_log(&format!("Death age updated to {death_age:?}"));
+                },
+            )/>
         </fieldset>
     }
 

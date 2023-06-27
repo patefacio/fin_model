@@ -153,33 +153,19 @@ pub fn YearCurrencyValueInput(
 
 
     view! { cx,
-
         <fieldset class="year-currency-value">
-        <legend>"Currency/Value/Year"</legend>
-
-        <div style="display: inline-flex" >
-
-            <CurrencySelect
-                updatable = currency_select_updatable
-            />
-
-            <NumericInput
-                updatable=value_updatable
-                placeholder=Some(value_placeholder)
-            />
-
-            <div style="vertical-align: bottom;">"As Of"</div>
-
-            <YearInput
-                updatable=year_updatable
-                year_range=year_range
-                placeholder=Some(year_placeholder)
-            />
-
-        </div>
-
+            <legend>"Currency/Value/Year"</legend>
+            <div style="display: inline-flex">
+                <CurrencySelect updatable=currency_select_updatable/>
+                <NumericInput updatable=value_updatable placeholder=Some(value_placeholder)/>
+                <div style="vertical-align: bottom;">"As Of"</div>
+                <YearInput
+                    updatable=year_updatable
+                    year_range=year_range
+                    placeholder=Some(year_placeholder)
+                />
+            </div>
         </fieldset>
-
     }
 
     // ω <fn year_currency_value_input>

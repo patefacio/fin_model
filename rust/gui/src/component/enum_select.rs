@@ -73,8 +73,7 @@ where
         });
     };
 
-    view! {
-        cx,
+    view! { cx,
         <MultiColumnSelect
             options=options
             column_count=column_count

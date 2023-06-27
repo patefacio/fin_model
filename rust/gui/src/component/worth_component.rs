@@ -26,15 +26,10 @@ pub fn WorthComponent(
 
     use leptos::IntoAttribute;
 
-    view! {
-        cx,
+    view! { cx,
         <fieldset class="worth">
-        <legend>"Worth"</legend>
-
-        <input
-            type="text"
-            placeholder="worth".to_string()
-        />
+            <legend>"Worth"</legend>
+            <input type="text" placeholder="worth".to_string()/>
         </fieldset>
     }
 
