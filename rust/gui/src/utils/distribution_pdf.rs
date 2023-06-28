@@ -65,8 +65,8 @@ impl DistributionPdf for NormalSpec {
             num_sigmas *= sigma_factor;
         }
 
-        println!("X -> {x_vec:?}");
-        println!("Y -> {y_vec:?}");
+        tracing::debug!("X -> {x_vec:?}");
+        tracing::debug!("Y -> {y_vec:?}");
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {

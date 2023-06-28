@@ -1,20 +1,12 @@
 //! Module for integer_input leptos function/component
 
-
-
-use std::fmt::format;
-
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
-use leptos::create_node_ref;
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use leptos_dom::html::Input;
-
-use crate::MultiColumnSelect;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -48,7 +40,10 @@ pub fn IntegerInput(
     include_comma: bool,
 ) -> impl IntoView {
     // α <fn integer_input>
+
     use leptos::IntoAttribute;
+    use leptos::create_node_ref;
+    use leptos::html::Input;
 
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;

@@ -17,6 +17,7 @@ pub mod html_tag;
 pub mod log_dispose;
 pub mod numeric_text;
 pub mod parsed_num;
+pub mod plot_data;
 pub mod updatable;
 pub mod year_clamp;
 

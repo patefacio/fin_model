@@ -66,18 +66,21 @@ pub fn NormalSpecComponent(
         },
     );
 
+    fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec) {
+        normal_bits.drawing_svg = new_normal.get_chart(200);
+        // Before signalling undo the 100x
+        new_normal.mean /= 100.0;
+        new_normal.std_dev /= 100.0;
+        normal_bits
+            .updatable
+            .update_and_then_signal(move |normal_spec| *normal_spec = Some(new_normal));
+    }
+
     let mean_updatable = Updatable::new(initial_mean, move |mean| {
         set_normal_bits.update(|normal_bits| {
             normal_bits.mean = *mean;
             if let (Some(mean), Some(std_dev)) = (normal_bits.mean, normal_bits.std_dev) {
-                let mut new_normal = NormalSpec { mean, std_dev };
-                normal_bits.drawing_svg = new_normal.get_chart(200);
-                // Before signalling undo the 100x
-                new_normal.mean /= 100.0;
-                new_normal.std_dev /= 100.0;
-                normal_bits
-                    .updatable
-                    .update_and_then_signal(move |normal_spec| *normal_spec = Some(new_normal));
+                make_updates(normal_bits, NormalSpec { mean, std_dev });
             }
         });
     });
@@ -86,14 +89,7 @@ pub fn NormalSpecComponent(
         set_normal_bits.update(|normal_bits| {
             normal_bits.std_dev = *std_dev;
             if let (Some(mean), Some(std_dev)) = (normal_bits.mean, normal_bits.std_dev) {
-                let mut new_normal = NormalSpec { mean, std_dev };
-                normal_bits.drawing_svg = new_normal.get_chart(200);
-                // Before signalling undo the 100x
-                new_normal.mean /= 100.0;
-                new_normal.std_dev /= 100.0;
-                normal_bits
-                    .updatable
-                    .update_and_then_signal(|normal_spec| *normal_spec = Some(new_normal));
+                make_updates(normal_bits, NormalSpec { mean, std_dev });
             }
         });
     });
