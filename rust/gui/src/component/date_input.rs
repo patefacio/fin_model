@@ -4,11 +4,9 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-use leptos::create_node_ref;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use leptos_dom::html::Input;
 use plus_modeled::Date;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -18,25 +16,24 @@ use plus_modeled::Date;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - The [Date] being edited
+///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * _return_ - View for date_input
-/// 
-
-use leptos::store_value;
-
 #[component]
 pub fn DateInput(
     /// Context
     cx: Scope,
     /// The [Date] being edited
     updatable: Updatable<Option<Date>>,
-    
+    /// Placeholder shown if entry is empty.
     #[prop(default=None)]
     placeholder: Option<String>,
 ) -> impl IntoView {
-
+    // α <fn date_input>
     const YEAR_SIZE: u32 = 4;
 
     use leptos::IntoAttribute;
+    use leptos::create_node_ref;
+    use leptos_dom::html::Input;
 
     let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
         initial_value.day.to_string()
@@ -117,21 +114,17 @@ pub fn DateInput(
             leptos_dom::console_log(&format!("DateInput: setting value to -> {value:?}"));
         }
     };
-
-    // α <fn date_input>
-    //todo!("Implement `date_input`")
-    // ω <fn date_input>
-    view!{
-        cx,
+    view! { cx,
         <input
             node_ref=node_ref
-            on:input = move |_| update_value()
+            on:input=move |_| update_value()
             value=initial_value
             size=10
             placeholder=placeholder
             type="text"
         />
     }
+    // ω <fn date_input>
 }
 
 // α <mod-def date_input>

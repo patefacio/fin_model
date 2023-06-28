@@ -41,7 +41,7 @@ pub fn EnumSelect<E>(
     column_count: usize,
 ) -> impl IntoView
 where
-    E: Debug + VariantNames + IntoEnumIterator + PartialEq + Clone + 'static,
+    E: Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
 {
     // α <fn enum_select>
 

@@ -80,7 +80,6 @@ pub fn YearValueInput(
 
 
     view! { cx,
-        <h3>"TODO YearValue"</h3>
         <fieldset class="nsg">
             <legend>"Year Value"</legend>
             <div class="form">

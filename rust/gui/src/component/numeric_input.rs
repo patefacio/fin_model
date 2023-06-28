@@ -122,7 +122,7 @@ pub fn NumericInput(
             let (value, mut new_value, numeric_to_caret) =
                 format_number_lenient(&value, selection_start);
 
-            leptos_dom::console_log(&format!(
+            console_log(&format!(
                 "Format result {:?}",
                 (value, &new_value, numeric_to_caret)
             ));
@@ -245,7 +245,7 @@ impl Modification {
         // α <fn Modification::modify>
         let mut modified = input.to_string();
 
-        leptos_dom::console_log(&format!("modifying {input}"));
+        console_log(&format!("modifying {input}"));
         let result = match &self {
             Modification::ReactivePrefix(p) => p.with(|p| {
                 debug_assert!(!modified.contains(p));

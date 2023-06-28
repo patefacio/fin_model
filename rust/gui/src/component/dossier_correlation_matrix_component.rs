@@ -244,36 +244,27 @@ pub fn DisplayEntireMatrix(
 
     console_log(&format!("DISPLAY WORKING"));
 
-    view! {
-        cx,
-        <div
-            inner_html=format!("_ {cols:?}")
-        />
+    view! { cx,
+        <div inner_html=format!("_ {cols:?}")></div>
         <For
             each=row_indices
             key=|entry| { format!("{entry:?}") }
             view=move |cx, r_element| {
                 let row_index = rows.get(r_element as usize).unwrap();
                 let (col_indices, _set_indices) = create_signal(cx, cols.clone());
-                view!{
-                    cx,
-
-                    <div
-                        inner_html=format!("R({row_index:?})")
-                    />
+                view! { cx,
+                    <div inner_html=format!("R({row_index:?})")></div>
                     <For
                         each=col_indices
                         key=|entry| { format!("{entry:?}") }
                         view=move |cx, c_element| {
-                            //let column_index=rows.get(c_element as usize).unwrap();
-                            //let column_index=get_matrix_correlation(&updatable.with_value( | updatable | { updatable.value }), (r_element, c_element));
-                            let column_index = updatable.with_value(|updatable| { get_matrix_correlation(&updatable.value, (r_element, c_element)) });
-                            view!{
-                                cx,
+                            let column_index = updatable
+                                .with_value(|updatable| {
+                                    get_matrix_correlation(&updatable.value, (r_element, c_element))
+                                });
+                            view! { cx,
                                 <div style="display: inline-flex">
-                                <div
-                                    inner_html=format!("C({column_index})")
-                                />
+                                    <div inner_html=format!("C({column_index})")></div>
                                 </div>
                             }
                         }

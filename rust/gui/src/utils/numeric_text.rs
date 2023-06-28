@@ -30,8 +30,6 @@ pub enum FormatConstraint {
 ///   * _return_ - Position **after** _numeric_count_ characters encountered.
 pub fn digit_position(s: &str, mut numeric_count: u32) -> u32 {
     // α <fn digit_position>
-    leptos_dom::console_log(&format!("digit_position(`{s}`, {numeric_count})"));
-
     let mut pos = 0;
     for (i, c) in s.chars().enumerate() {
         if numeric_count == 0 {
@@ -48,8 +46,6 @@ pub fn digit_position(s: &str, mut numeric_count: u32) -> u32 {
 
         pos = i;
     }
-
-    leptos_dom::console_log(&format!("digit_position(...)->{}", pos + 1));
 
     pos as u32 + 1
     // ω <fn digit_position>

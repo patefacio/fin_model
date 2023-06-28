@@ -113,26 +113,14 @@ pub fn ComponentDisplayComponent(
             <p>{last_update}</p>
         </div>
         <h4>"Dossier Correlation Matrix"</h4>
-        <DossierCorrelationMatrixComponent
-            updatable=Updatable::new(
-                sample_dossier_matrix.clone(),
-                |m| {
-                    console_log(&format!("Matrix updated to -> {m:?}"))
-                }
-            )
-        />
-
-        
-
-        <DisplayEntireMatrix
-            updatable=Updatable::new(
-                sample_dossier_matrix.clone(),
-                |m| {
-                    console_log(&format!("Matrix displayed -> {m:?}"))
-                }
-            )
-        />
-
+        <DossierCorrelationMatrixComponent updatable=Updatable::new(
+            sample_dossier_matrix.clone(),
+            |m| { console_log(&format!("Matrix updated to -> {m:?}")) },
+        )/>
+        <DisplayEntireMatrix updatable=Updatable::new(
+            sample_dossier_matrix.clone(),
+            |m| { console_log(&format!("Matrix displayed -> {m:?}")) },
+        )/>
         <h4>"Date Input"</h4>
         <DateInput
             updatable=Updatable::new(None, move |n| {
@@ -150,7 +138,6 @@ pub fn ComponentDisplayComponent(
             placeholder = Some("Integer".to_string())
         />
         <hr/>
-
         <h4>"Numeric Input"</h4>
         <NumericInput updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })/>
         <hr/>
@@ -237,8 +224,9 @@ pub fn ComponentDisplayComponent(
         <RateCurveComponent updatable=Updatable::new(
             RateCurve {
                 curve: vec![
-                    YearValue { year : 2002, value : 4.5 }, YearValue { year : 2000, value : 0.6
-                    }, YearValue { year : 1980, value : 0.025, }
+                    YearValue { year : 2002, value : 0.045 }, YearValue { year : 2000, value :
+                    0.06 }, YearValue { year : 1980, value : 0.025, }, YearValue { year : 2000,
+                    value : - 0.0334 }
                 ],
             },
             |rc| {
