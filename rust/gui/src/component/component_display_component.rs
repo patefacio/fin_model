@@ -53,6 +53,7 @@ pub fn ComponentDisplayComponent(
     
     use crate::DateInput;
     use plus_modeled::Date;
+    use crate::IntegerInput;
 
     use crate::component::dossier_correlation_matrix_component::set_matrix_correlation;
     use crate::component::dossier_correlation_matrix_component::DisplayEntireMatrix;
@@ -137,7 +138,16 @@ pub fn ComponentDisplayComponent(
             updatable=Updatable::new(None, move |n| {
                 console_log(&format!("Date updated -> {n:?}"));
             })
-            placeholder = Some("00/00/00".to_string())
+            placeholder = Some("00/00/0000".to_string())
+        />
+        <hr/>
+
+        <h4>"Integer Input"</h4>
+        <IntegerInput
+            updatable=Updatable::new(None, move |n| {
+                console_log(&format!("Integer updated -> {n:?}"));
+            })
+            placeholder = Some("Integer".to_string())
         />
         <hr/>
 
