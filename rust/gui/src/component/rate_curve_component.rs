@@ -32,8 +32,8 @@ pub fn RateCurveComponent(
     use crate::Updatable;
     use crate::Year;
     use crate::YearInput;
-    use leptos::create_signal;
     use leptos::create_rw_signal;
+    use leptos::create_signal;
     use leptos::For;
     use leptos::*;
     use plus_modeled::YearValue;

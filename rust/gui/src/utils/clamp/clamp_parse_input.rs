@@ -17,13 +17,13 @@ use crate::ParsedNum;
 #[inline]
 pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> ParsedNum {
     // α <fn clamp>
-    let year_num:u32 = year_input.parse().unwrap();
+    let year_num: u32 = year_input.parse().unwrap();
     let mut return_year = String::new();
 
-    if year_num>max_year{
-        return_year= format!("{}", max_year);
-    } else if year_num<min_year{
-        return_year= format!("{}", min_year);
+    if year_num > max_year {
+        return_year = format!("{}", max_year);
+    } else if year_num < min_year {
+        return_year = format!("{}", min_year);
     } else {
         return_year.push_str(year_input)
     }
@@ -61,7 +61,7 @@ pub mod unit_tests {
         assert_eq!(ParsedNum::new(2300), clamp("99999", min, max));
         assert_eq!(ParsedNum::new(193), clamp("193", min, max));
         assert_eq!(ParsedNum::new(209), clamp("209", min, max));
-        
+
         // ω <fn test_clamp>
     }
 

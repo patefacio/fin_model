@@ -160,7 +160,10 @@ pub fn YearInput(
             placeholder=placeholder
             type="text"
             disabled=disabled.map(|disabled| disabled.get()).unwrap_or_default()
-            hat=move || { let _ = clear_requested(); 1 }
+            hat=move || {
+                let _ = clear_requested();
+                1
+            }
         />
     }
 

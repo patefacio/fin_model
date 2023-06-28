@@ -80,7 +80,6 @@ pub fn DossierCorrelationMatrixComponent(
 
 // α <mod-def dossier_correlation_matrix_component>
 
-
 pub fn set_matrix_correlation(
     matrix: &mut DossierCorrelationMatrix,
     index: (u32, u32),
@@ -166,35 +165,34 @@ pub fn get_matrix_correlation(matrix: &DossierCorrelationMatrix, index: (u32, u3
         if row_index.unwrap() == index.0 && column_index.unwrap() == index.1 {
             return i.correlation;
         }
-    }/*
-    let make_cor_entry = |row_holding_id, column_holding_id, correlation| DossierCorrelationEntry {
-        row_index: Some(DossierItemIndex {
-            item_index: Some(ItemIndex::HoldingIndex(DossierHoldingIndex {
-                holding_index: Some(row_holding_id),
-                ..Default::default()
-            })),
-        }),
-        column_index: Some(DossierItemIndex {
-            item_index: Some(ItemIndex::HoldingIndex(DossierHoldingIndex {
-                holding_index: Some(column_holding_id),
-                ..Default::default()
-            })),
-        }),
-        correlation: correlation,
-    };
-    matrix.mappings.push(make_cor_entry(index.0, index.1, 0.0));
-    */
+    } /*
+      let make_cor_entry = |row_holding_id, column_holding_id, correlation| DossierCorrelationEntry {
+          row_index: Some(DossierItemIndex {
+              item_index: Some(ItemIndex::HoldingIndex(DossierHoldingIndex {
+                  holding_index: Some(row_holding_id),
+                  ..Default::default()
+              })),
+          }),
+          column_index: Some(DossierItemIndex {
+              item_index: Some(ItemIndex::HoldingIndex(DossierHoldingIndex {
+                  holding_index: Some(column_holding_id),
+                  ..Default::default()
+              })),
+          }),
+          correlation: correlation,
+      };
+      matrix.mappings.push(make_cor_entry(index.0, index.1, 0.0));
+      */
     return 0.0;
 }
-
 
 #[component]
 pub fn DisplayEntireMatrix(
     cx: Scope,
     updatable: Updatable<DossierCorrelationMatrix>,
 ) -> impl IntoView {
-    use plus_modeled::core::dossier_item_index::ItemIndex;
     use leptos::store_value;
+    use plus_modeled::core::dossier_item_index::ItemIndex;
     //use plus_modeled::core::DossierHoldingIndex;
     //use plus_modeled::DossierCorrelationEntry;
     //use plus_modeled::DossierItemIndex;
@@ -207,34 +205,34 @@ pub fn DisplayEntireMatrix(
     let mut cols = vec![];
 
     let updatable = store_value(cx, updatable);
-    updatable.with_value( | updatable | {
+    updatable.with_value(|updatable| {
         for i in updatable.value.mappings.iter() {
-        let row_index = i
-            .row_index
-            .as_ref()
-            .map(|row_index| match row_index.item_index {
-                Some(ItemIndex::WorthIndex(w)) => w,
-                Some(ItemIndex::FlowIndex(f)) => f,
-                Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0,
-            })
-            .unwrap();
-        let column_index = i
-            .column_index
-            .as_ref()
-            .map(|column_index| match column_index.item_index {
-                Some(ItemIndex::WorthIndex(w)) => w,
-                Some(ItemIndex::FlowIndex(f)) => f,
-                Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
-                None => 0,
-            })
-            .unwrap();
+            let row_index = i
+                .row_index
+                .as_ref()
+                .map(|row_index| match row_index.item_index {
+                    Some(ItemIndex::WorthIndex(w)) => w,
+                    Some(ItemIndex::FlowIndex(f)) => f,
+                    Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
+                    None => 0,
+                })
+                .unwrap();
+            let column_index = i
+                .column_index
+                .as_ref()
+                .map(|column_index| match column_index.item_index {
+                    Some(ItemIndex::WorthIndex(w)) => w,
+                    Some(ItemIndex::FlowIndex(f)) => f,
+                    Some(ItemIndex::HoldingIndex(dhi)) => dhi.holding_index.unwrap(),
+                    None => 0,
+                })
+                .unwrap();
 
-        rows.push(row_index);
-        cols.push(column_index);
-    }} );
+            rows.push(row_index);
+            cols.push(column_index);
+        }
+    });
 
-    
     rows.sort();
     rows.dedup();
     cols.sort();

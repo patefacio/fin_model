@@ -41,14 +41,12 @@ pub fn IntegerInput(
 ) -> impl IntoView {
     // α <fn integer_input>
 
-    use leptos::IntoAttribute;
     use leptos::create_node_ref;
     use leptos::html::Input;
+    use leptos::IntoAttribute;
 
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;
-
-    
 
     let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
         initial_value.to_string()
@@ -74,28 +72,23 @@ pub fn IntegerInput(
             value.pop();
             value.push_str("000000000");
         }
-        
-        if value.len() > max_len as usize {
-            ;//let error = &format!("Input must be {max_len} chars long");
+
+        if value.len() > max_len as usize { //let error = &format!("Input must be {max_len} chars long");
         }
-        
+
         value = value.chars().filter(|c| c.is_ascii_digit()).collect();
-        
 
         value = value[0..std::cmp::min(value.len(), max_len as usize)].to_string();
-
-        
 
         let raw_num = value.parse::<u32>().unwrap_or(0);
 
         if include_comma {
-            for i in (4..value.len() * 5/4 + 1).step_by(4){  //Multiply by 5/4 to account for commas
-                value.insert(value.len()-i+1, ',');
+            for i in (4..value.len() * 5 / 4 + 1).step_by(4) {
+                //Multiply by 5/4 to account for commas
+                value.insert(value.len() - i + 1, ',');
                 console_log(&format!("{}-{}", value.len(), i));
             }
         }
-
-
 
         if value.is_empty() {
             updatable.update_and_then_signal(|int| *int = None);
@@ -107,18 +100,17 @@ pub fn IntegerInput(
             leptos_dom::console_log(&format!("IntegerInput: setting value to -> {value:?}"));
         }
     };
-    
+
     let error = &format!("Input must be {max_len} chars long");
 
-    view!{ cx, 
+    view! { cx,
         <input
             class=input_class
             node_ref=node_ref
-            //on:keydown=key_movement
-            on:input = move |_| update_value()
+            on:input=move |_| update_value()
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
-            size=max_len+2
+            size=max_len + 2
             type="text"
         />
         <div style="
@@ -135,9 +127,6 @@ pub fn IntegerInput(
             <h4>"IntegerInput"</h4>
             <p>{error}</p>
         </div>
-
-        
-
     }
     // ω <fn integer_input>
 }

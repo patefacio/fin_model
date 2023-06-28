@@ -25,58 +25,64 @@ pub fn YearRangeInput(
     updatable: Updatable<Option<YearRange>>,
 ) -> impl IntoView {
     // α <fn year_range_input>
+
+    use crate::Year;
     use crate::YearInput;
-    use std::cell::RefCell;
-    use std::rc::Rc;
+    use leptos::store_value;
 
-    let updatable = Rc::new(RefCell::new(updatable));
-
-    let initial_start_year = updatable
-        .as_ref()
-        .borrow()
+    let start = updatable
         .value
         .as_ref()
         .map(|option_of_year_range| option_of_year_range.start);
 
-    let initial_end_year = updatable
-        .as_ref()
-        .borrow()
+    let end = updatable
         .value
         .as_ref()
         .map(|option_of_year_range| option_of_year_range.end);
 
-    let updatable_for_start_year = Rc::clone(&updatable);
-    let start_year_updatable = Updatable::new(initial_start_year, move |initial_start_year| {
-        if let Some(initial_start_year) = initial_start_year.clone() {
-            updatable_for_start_year
-                .as_ref()
-                .borrow_mut()
+    struct YearRangeData {
+        start: Option<Year>,
+        end: Option<Year>,
+        updatable: Updatable<Option<YearRange>>,
+    }
+
+    let stored_updatable = store_value(
+        cx,
+        YearRangeData {
+            start,
+            end,
+            updatable,
+        },
+    );
+
+    fn signal_pair(year_range_data: &mut YearRangeData) {
+        if year_range_data.start.is_some() && year_range_data.end.is_some() {
+            year_range_data
+                .updatable
                 .update_and_then_signal(|year_range| {
-                    if let Some(year_range) = year_range {
-                        year_range.start = initial_start_year;
-                        
-                    }; 
+                    *year_range = Some(YearRange {
+                        start: year_range_data.start.unwrap(),
+                        end: year_range_data.end.unwrap(),
+                    })
                 });
         }
+    }
+
+    let start_year_updatable = Updatable::new(start, move |new_start| {
+        stored_updatable.update_value(|year_range_data| {
+            year_range_data.start = *new_start;
+            signal_pair(year_range_data);
+        })
     });
 
-    let updatable_for_end_year = Rc::clone(&updatable);
-    let end_year_updatable = Updatable::new(initial_end_year, move |initial_end_year| {
-        if let Some(initial_end_year) = initial_end_year.clone() {
-            updatable_for_end_year
-                .as_ref()
-                .borrow_mut()
-                .update_and_then_signal(|year_range| {
-                    if let Some(year_range) = year_range {
-                        year_range.end = initial_end_year;
-                        
-                    };
-                });
-        }
+    let end_year_updatable = Updatable::new(end, move |new_end| {
+        stored_updatable.update_value(|year_range_data| {
+            year_range_data.end = *new_end;
+            signal_pair(year_range_data);
+        })
     });
 
     view! { cx,
-        <h3>"TODO Year Range"</h3>
         <fieldset class="nsg">
             <legend>"Year Range"</legend>
             <div class="form">

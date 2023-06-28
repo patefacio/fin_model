@@ -30,10 +30,8 @@ pub fn NormalSpecComponent(
     use crate::utils::distribution_pdf::DistributionPdf;
     use leptos::create_signal;
     use leptos::IntoAttribute;
-    use leptos::ReadSignal;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
-    use leptos::WriteSignal;
 
     struct NormalBits {
         mean: Option<f64>,

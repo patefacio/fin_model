@@ -83,7 +83,7 @@ impl DistributionPdf for NormalSpec {
                 .set_label_area_size(LabelAreaPosition::Right, 0)
                 .build_cartesian_2d(
                     (x_vec[0])..(x_vec[num_points - 1]),
-                    0f64..y_vec[num_points / 2]*1.1,
+                    0f64..y_vec[num_points / 2] * 1.1,
                 )
                 .unwrap();
 
@@ -98,9 +98,10 @@ impl DistributionPdf for NormalSpec {
                 .unwrap();
 
             chart
-                .draw_series(LineSeries::new(
-                    x_vec.iter().enumerate().map(|(i, x)| (*x, y_vec[i])), 
-                    &RED).point_size(1))
+                .draw_series(
+                    LineSeries::new(x_vec.iter().enumerate().map(|(i, x)| (*x, y_vec[i])), &RED)
+                        .point_size(1),
+                )
                 .unwrap()
                 .label("PDF");
 

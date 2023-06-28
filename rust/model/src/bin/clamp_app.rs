@@ -1,4 +1,4 @@
-/* 
+/*
 use fin_model::clamp_ext::clamp;
 
 fn main() {
@@ -15,10 +15,8 @@ fn main() {
     println!("99999->{:?}", clamp("99999", max, min));
     println!("250->{:?}", clamp("250", max, min));
     println!("19->{:?}", clamp("19", max, min));
-    
+
 }
 */
 
-fn main(){
-    ;
-}
+fn main() {}

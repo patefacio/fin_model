@@ -30,10 +30,9 @@ pub fn DossierCorrelationEntryComponent(
     use std::rc::Rc;
 
     let updatable = Rc::new(RefCell::new(updatable));
-    
+
     use crate::NumericInput;
     use crate::Updatable;
-    
 
     let initial_row = updatable
         .as_ref()
@@ -42,28 +41,28 @@ pub fn DossierCorrelationEntryComponent(
         .as_ref()
         .map(|DCE| DCE.row_index);
 
-    let updatable_for_row= Rc::clone(&updatable);
-    let row_updatable  = Updatable::new(initial_row, move |new_input| {
+    let updatable_for_row = Rc::clone(&updatable);
+    let row_updatable = Updatable::new(initial_row, move |new_input| {
         if let Some(new_input) = new_input.clone() {
             updatable_for_row
-            .as_ref()
-            .borrow_mut()
-            .update_and_then_signal(|DCE| {
-                if let Some(DCE) = DCE {
-                    console_log(&format!("Setting value on row -> {new_input:?}"));
-                    DCE.row_index = new_input
-                } else {
-                    console_log(&format!(
-                        "Setting empty row on first change of value -> {new_input:?}"
-                    ));
+                .as_ref()
+                .borrow_mut()
+                .update_and_then_signal(|DCE| {
+                    if let Some(DCE) = DCE {
+                        console_log(&format!("Setting value on row -> {new_input:?}"));
+                        DCE.row_index = new_input
+                    } else {
+                        console_log(&format!(
+                            "Setting empty row on first change of value -> {new_input:?}"
+                        ));
 
-                    *DCE = Some(DossierCorrelationEntry {
-                        row_index: new_input,
-                        column_index: new_input,
-                        correlation: 0.0,
-                    })
-                }
-            });
+                        *DCE = Some(DossierCorrelationEntry {
+                            row_index: new_input,
+                            column_index: new_input,
+                            correlation: 0.0,
+                        })
+                    }
+                });
         }
         console_log(&format!("New value -> {new_input:?}"));
     });

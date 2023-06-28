@@ -42,8 +42,8 @@ pub fn DossierItemIndexComponent(
 
     let updatable = Rc::new(RefCell::new(updatable));
 
-    use plus_modeled::core::dossier_item_index::ItemIndex;
     use crate::Updatable;
+    use plus_modeled::core::dossier_item_index::ItemIndex;
 
     let initial_item_index = updatable
         .as_ref()
@@ -64,7 +64,9 @@ pub fn DossierItemIndexComponent(
                         ii.item_index = new_input;
                     } else {
                         console_log(&format!("Setting empty DHI for first -> {new_input:?}"));
-                        *ii = Some(DossierItemIndex { item_index: Some(ItemIndex::WorthIndex(32)) })
+                        *ii = Some(DossierItemIndex {
+                            item_index: Some(ItemIndex::WorthIndex(32)),
+                        })
                     }
                 });
         }
@@ -72,7 +74,7 @@ pub fn DossierItemIndexComponent(
     });
     match item_index_updatable.value {
         Some(Some(ItemIndex::WorthIndex(x))) => console_log(&format!("Worth Index")),
-        _ => console_log(&format!("Not Worth Index"))
+        _ => console_log(&format!("Not Worth Index")),
     }
 
     view! { cx,

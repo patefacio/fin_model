@@ -34,7 +34,7 @@ pub fn PercentInput(
     let mut updatable = updatable;
 
     let numeric_updatable = Updatable::new(scaled_value, move |new_scaled_value| {
-        let actual_value = new_scaled_value.map(|v| v/100.0);
+        let actual_value = new_scaled_value.map(|v| v / 100.0);
         updatable.update_and_then_signal(|new_value| {
             *new_value = actual_value;
         });

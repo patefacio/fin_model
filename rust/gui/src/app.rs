@@ -4,7 +4,6 @@ use leptos_router::*;
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
-
     use crate::ComponentDisplayComponent;
 
     // Provides context that manages stylesheets, titles, meta tags, etc.
@@ -27,8 +26,6 @@ pub fn App(cx: Scope) -> impl IntoView {
         </Router>
     }
 }
-
-
 
 /// Renders the home page of your application.
 #[component]

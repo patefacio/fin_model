@@ -513,7 +513,6 @@ impl Indexer {
 
         debug_assert!(column < self.column_count);
 
-
         // Note that this will wrap around the boundary instead of incrementing the column
         loop {
             row = Self::wrap(row as isize + offset, self.row_count);

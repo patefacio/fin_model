@@ -25,59 +25,57 @@ pub fn YearValueInput(
     updatable: Updatable<Option<YearValue>>,
 ) -> impl IntoView {
     // α <fn year_value_input>
-    use crate::NumericInput;
-    use crate::YearInput;
+
     use crate::Modification;
+    use crate::NumericInput;
+    use crate::Year;
+    use crate::YearInput;
+    use leptos::store_value;
 
-    use std::cell::RefCell;
-    use std::rc::Rc;
+    let year = updatable.value.as_ref().map(|year_value| year_value.year);
+    let value = updatable.value.as_ref().map(|year_value| year_value.value);
 
-    let updatable = Rc::new(RefCell::new(updatable));
+    struct YearValueData {
+        year: Option<Year>,
+        value: Option<f64>,
+        updatable: Updatable<Option<YearValue>>,
+    }
 
-    let initial_year = updatable
-        .as_ref()
-        .borrow()
-        .value
-        .as_ref()
-        .map(|option_of_initial_year| option_of_initial_year.year);
+    let stored_updatable = store_value(
+        cx,
+        YearValueData {
+            year,
+            value,
+            updatable,
+        },
+    );
 
-        let initial_value = updatable
-        .as_ref()
-        .borrow()
-        .value
-        .as_ref()
-        .map(|option_of_initial_value| option_of_initial_value.value);
+    fn signal_pair(year_value_data: &mut YearValueData) {
+        if year_value_data.year.is_some() && year_value_data.value.is_some() {
+            year_value_data
+                .updatable
+                .update_and_then_signal(|year_value| {
+                    *year_value = Some(YearValue {
+                        year: year_value_data.year.unwrap(),
+                        value: year_value_data.value.unwrap(),
+                    })
+                });
+        }
+    }
 
-        let updatable_for_year = Rc::clone(&updatable);
-        let year_updatable = Updatable::new(initial_year, move |initial_year| {
-            if let Some(initial_year) = initial_year.clone() {
-                updatable_for_year
-                    .as_ref()
-                    .borrow_mut()
-                    .update_and_then_signal(|year| {
-                        if let Some(year) = year {
-                            year.year = initial_year;
-                            
-                        }; 
-                    });
-            }
-        });
+    let year_updatable = Updatable::new(year, move |new_year| {
+        stored_updatable.update_value(|year_value_data| {
+            year_value_data.year = *new_year;
+            signal_pair(year_value_data);
+        })
+    });
 
-        let updatable_for_value = Rc::clone(&updatable);
-        let value_updatable = Updatable::new(initial_value, move |initial_value| {
-            if let Some(initial_value) = initial_value.clone() {
-                updatable_for_value
-                .as_ref()
-                .borrow_mut()
-                .update_and_then_signal(|value| {
-                    if let Some(value) = value{
-                        value.value = initial_value;
-                    }
-                })
-            }
-        });
-
-
+    let value_updatable = Updatable::new(value, move |new_value| {
+        stored_updatable.update_value(|year_value_data| {
+            year_value_data.value = *new_value;
+            signal_pair(year_value_data);
+        })
+    });
 
     view! { cx,
         <fieldset class="nsg">
@@ -96,6 +94,7 @@ pub fn YearValueInput(
             </div>
         </fieldset>
     }
+
     // ω <fn year_value_input>
 }
 

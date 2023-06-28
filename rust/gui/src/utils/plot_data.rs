@@ -27,6 +27,18 @@ impl PlotData for RateCurve {
     ///   * _return_ - An svg image of the plot
     fn plot(&self) -> String {
         // α <fn PlotData::plot for RateCurve>
+        use crate::Year;
+        let x_vec = self.curve.iter().map(|yv| yv.year).collect::<Vec<Year>>();
+        // Or Maybe (if the plotter requires f64 for x values)
+        let x_vec = self
+            .curve
+            .iter()
+            .map(|yv| yv.year as f64)
+            .collect::<Vec<f64>>();
+        let x_vec: Vec<f64> = self.curve.iter().map(|yv| yv.year as f64).collect();
+
+        let y_vec = self.curve.iter().map(|yv| yv.value).collect::<Vec<f64>>();
+
         todo!("Implement `plot`")
         // ω <fn PlotData::plot for RateCurve>
     }
@@ -49,6 +61,7 @@ pub mod unit_tests {
         #[test]
         fn plot() {
             // α <fn test PlotData::plot on RateCurve>
+
             todo!("Test plot")
             // ω <fn test PlotData::plot on RateCurve>
         }

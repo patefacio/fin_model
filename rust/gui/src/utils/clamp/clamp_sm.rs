@@ -62,7 +62,9 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> ParsedNum {
     let digits_considered = year_input.len().min(min_year_digit_count);
     let mut digit_divisor = u32::pow(10, min_year_digit_count as u32 - 1);
 
-    log::info!("Starting year_input:`{year_input}`, min_year: `{min_year}`, max_year: `{max_year}` ");
+    log::info!(
+        "Starting year_input:`{year_input}`, min_year: `{min_year}`, max_year: `{max_year}` "
+    );
     log::info!("Min_year_digit_count: {min_year_digit_count}, digits_considered: {digits_considered}, digit_divisor: {digit_divisor}");
 
     for c in year_input.chars() {
@@ -121,7 +123,7 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> ParsedNum {
                     result_as_u32 = push_digit_to_result(result_as_u32, c_as_u32);
                     TrackingState::UsingInput
                 }
-            }
+            },
 
             TrackingState::TrackingTop => match compared_to_top {
                 Ordering::Equal => {
@@ -136,12 +138,11 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> ParsedNum {
                     result_as_u32 = push_digit_to_result(result_as_u32, current_top_digit);
                     TrackingState::BreachedTop
                 }
-            }
+            },
 
             TrackingState::BreachedBottom => {
                 result_as_u32 = push_digit_to_result(result_as_u32, current_bottom_digit);
-                TrackingState::BreachedBottom 
-                
+                TrackingState::BreachedBottom
             }
 
             TrackingState::BreachedTop => {
@@ -155,7 +156,7 @@ pub fn clamp(year_input: &str, min_year: u32, max_year: u32) -> ParsedNum {
             }
         };
 
-        //eliminate a 0 for the next iteration, so divide year input, min, & max by 1000, then 100... 
+        //eliminate a 0 for the next iteration, so divide year input, min, & max by 1000, then 100...
         digit_divisor /= 10;
         if digit_divisor == 0 {
             break;
