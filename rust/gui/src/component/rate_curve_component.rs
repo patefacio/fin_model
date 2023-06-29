@@ -28,6 +28,7 @@ pub fn RateCurveComponent(
     updatable: Updatable<RateCurve>,
 ) -> impl IntoView {
     // α <fn rate_curve_component>
+    use crate::utils::plot_data::PlotData;
     use crate::PercentInput;
     use crate::Updatable;
     use crate::Year;
@@ -69,28 +70,30 @@ pub fn RateCurveComponent(
 
     clean_curve(&mut updatable.value.curve);
     console_log(&format!("Sorted data -> {:?}", updatable.value));
-    let (curve, set_curve) = create_signal(cx, updatable.value.curve);
+    let (updatable, set_updatable) = create_signal(cx, updatable);
     let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
     let (add_enabled, set_add_enabled) = create_signal(cx, false);
     let clear_fields = create_rw_signal(cx, false);
 
     view! { cx,
         <For
-            each=curve
+            each=move || updatable.with(|updatable| updatable.value.curve.clone())
             key=|year_value| { year_value.year }
             view=move |cx, year_value| {
                 let (disabled, _set_disabled) = create_signal(cx, true);
                 let remove_me = move |_event| {
-                    set_curve
-                        .update(|curve| {
+                    set_updatable
+                        .update(|updatable| {
                             if let Some(found_index)
-                                = curve
+                                = updatable
+                                    .value
+                                    .curve
                                     .iter()
                                     .position(|elm_year_value| {
                                         elm_year_value.year == year_value.year
                                     })
                             {
-                                curve.remove(found_index);
+                                updatable.value.curve.remove(found_index);
                             }
                         });
                 };
@@ -141,16 +144,18 @@ pub fn RateCurveComponent(
                 <button
                     disabled=move || !add_enabled.get()
                     on:click=move |_| {
-                        set_curve
-                            .update(move |curve| {
+                        set_updatable
+                            .update(move |updatable| {
                                 entry_complete
                                     .with(|entry_complete| {
-                                        curve
+                                        updatable
+                                            .value
+                                            .curve
                                             .push(YearValue {
                                                 year: entry_complete.0.unwrap(),
                                                 value: entry_complete.1.unwrap(),
                                             });
-                                        clean_curve(curve);
+                                        clean_curve(&mut updatable.value.curve);
                                         console_log("Finished adding curve point, clearing fields!");
                                         clear_fields.set(true);
                                     });
@@ -201,6 +206,7 @@ pub fn RateCurveComponent(
                 />
             </div>
         </div>
+        <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
     }
 
     // ω <fn rate_curve_component>

@@ -135,23 +135,20 @@ pub fn ComponentDisplayComponent(
                 />
             </div>
             <div>
-            <h4>"Numeric Input With Prefix & Suffix)"</h4>
-            <p inner_html="
-            Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
-            "></p>
-            <NumericInput
-                updatable=Updatable::new(
-                    None,
-                    move |n| { show_update(format!("Input updated -> {n:?}")) },
-                )
-                modification=Some(Modification::PrefixAndSuffix {
-                    prefix: "€ ".into(),
-                    suffix: "/yr".into()
-                })
-                placeholder=Some("expense/yr".to_string())
-                size=15
-            />
-        </div>
+                <h4>"Numeric Input With Prefix & Suffix)"</h4>
+                <p inner_html="
+                Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
+                "></p>
+                <NumericInput
+                    updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                    modification=Some(Modification::PrefixAndSuffix {
+                        prefix: "€ ".into(),
+                        suffix: "/yr".into(),
+                    })
+                    placeholder=Some("expense/yr".to_string())
+                    size=15
+                />
+            </div>
             <hr/>
         </div>
         <h4>"Currency Select"</h4>

@@ -27,19 +27,75 @@ impl PlotData for RateCurve {
     ///   * _return_ - An svg image of the plot
     fn plot(&self) -> String {
         // α <fn PlotData::plot for RateCurve>
+
         use crate::Year;
-        let x_vec = self.curve.iter().map(|yv| yv.year).collect::<Vec<Year>>();
-        // Or Maybe (if the plotter requires f64 for x values)
-        let x_vec = self
+        use plotters::prelude::*;
+
+        //Extract the x and y coordinates out of RateCurve and Curve to collect in a vector
+        let mut x_vec = self
             .curve
             .iter()
             .map(|yv| yv.year as f64)
             .collect::<Vec<f64>>();
-        let x_vec: Vec<f64> = self.curve.iter().map(|yv| yv.year as f64).collect();
+        let mut y_vec = self.curve.iter().map(|yv| yv.value).collect::<Vec<f64>>();
 
-        let y_vec = self.curve.iter().map(|yv| yv.value).collect::<Vec<f64>>();
+        //check curve to see if it is empty
+        let mut check_empty_curve = || {
+            if self.curve.is_empty() {
+                x_vec.push(0.0);
+                y_vec.push(0.0);
+                //console_log(&format!("Curve is empty. Wait for the user to enter data"));
+            }
+        };
 
-        todo!("Implement `plot`")
+        check_empty_curve();
+
+        let mut plot_buff = String::with_capacity(2 ^ 11);
+        {
+            let text_style: TextStyle = ("sans-serif", 20).into();
+            let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
+                .into_drawing_area()
+                .titled("Rate Curve", text_style.clone())
+                .expect("");
+
+            let mut chart = ChartBuilder::on(&root)
+                .margin(4)
+                .set_label_area_size(LabelAreaPosition::Left, 40)
+                .set_label_area_size(LabelAreaPosition::Bottom, 40)
+                .set_label_area_size(LabelAreaPosition::Right, 0)
+                .caption("Rate Curve", ("sans-serif", 30))
+                .build_cartesian_2d(
+                    (x_vec.first().cloned().unwrap() as f64)
+                        ..(x_vec.last().cloned().unwrap() as f64),
+                    (y_vec.first().cloned().unwrap())..(y_vec.last()).cloned().unwrap(),
+                )
+                .unwrap();
+
+            chart
+                .configure_mesh()
+                .x_labels(10)
+                .y_labels(10)
+                .disable_mesh()
+                .x_label_formatter(&|v| format!("{:.1}", v))
+                .y_label_formatter(&|v| format!("{:.1}%", v))
+                .draw()
+                .unwrap();
+
+            chart
+                .draw_series(
+                    LineSeries::new(
+                        x_vec.iter().enumerate().map(|(i, x)| (*x, y_vec[i])),
+                        &GREEN,
+                    )
+                    .point_size(2),
+                )
+                .unwrap()
+                .label("PDF");
+
+            root.present().expect("Should show");
+        }
+
+        plot_buff
         // ω <fn PlotData::plot for RateCurve>
     }
 }
