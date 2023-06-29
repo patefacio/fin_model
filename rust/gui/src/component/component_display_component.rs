@@ -25,6 +25,7 @@ pub fn ComponentDisplayComponent(
     use crate::DossierCorrelationMatrixComponent;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
+    use crate::Modification;
     use crate::OkCancelComponent;
     use crate::PercentInput;
     use crate::RateCurveComponent;
@@ -86,7 +87,7 @@ pub fn ComponentDisplayComponent(
             placeholder=Some("MM/DD/YYYY".to_string())
         />
         <hr/>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr">
             <div>
                 <h4>"Numeric Input"</h4>
                 <p>"Models a single floating point number."</p>
@@ -121,7 +122,7 @@ pub fn ComponentDisplayComponent(
                 />
             </div>
             <div>
-                <h4>"Percent Input"</h4>
+                <h4>"Percent Input (i.e. suffix `%`)"</h4>
                 <p inner_html="
                 Provides a <em>NumericInput<em> with a percent suffix modification.
                 "></p>
@@ -133,6 +134,24 @@ pub fn ComponentDisplayComponent(
                     placeholder=Some("pct complete".to_string())
                 />
             </div>
+            <div>
+            <h4>"Numeric Input With Prefix & Suffix)"</h4>
+            <p inner_html="
+            Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
+            "></p>
+            <NumericInput
+                updatable=Updatable::new(
+                    None,
+                    move |n| { show_update(format!("Input updated -> {n:?}")) },
+                )
+                modification=Some(Modification::PrefixAndSuffix {
+                    prefix: "€ ".into(),
+                    suffix: "/yr".into()
+                })
+                placeholder=Some("expense/yr".to_string())
+                size=15
+            />
+        </div>
             <hr/>
         </div>
         <h4>"Currency Select"</h4>

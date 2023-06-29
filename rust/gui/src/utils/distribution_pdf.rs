@@ -37,8 +37,8 @@ impl DistributionPdf for NormalSpec {
 
         // The more points the larger the number of std_devs to consider
         let (max_sigma, sigma_factor) = match num_points {
-            num_points if num_points >= 1024 => (3.5, 0.75),
-            _ => (3.5, 0.70),
+            num_points if num_points >= 1024 => (3.5, 0.85),
+            _ => (3.5, 0.80),
         };
 
         let mut x_vec = vec![0.0; num_points];

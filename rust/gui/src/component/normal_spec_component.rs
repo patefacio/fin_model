@@ -65,7 +65,7 @@ pub fn NormalSpecComponent(
     );
 
     fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec) {
-        normal_bits.drawing_svg = new_normal.get_chart(200);
+        normal_bits.drawing_svg = new_normal.get_chart(400);
         // Before signalling undo the 100x
         new_normal.mean /= 100.0;
         new_normal.std_dev /= 100.0;
