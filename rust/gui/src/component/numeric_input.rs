@@ -71,6 +71,10 @@ pub fn NumericInput(
     /// Placeholder shown if entry is empty.
     #[prop(default=None)]
     placeholder: Option<String>,
+
+    #[prop(default=None)]
+    max_len: Option<usize>,
+
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
     #[prop(default = 7)]
@@ -82,9 +86,13 @@ pub fn NumericInput(
 
     // Get the initial value for the year if provided. Set to empty string if
     // not provided.
+    
+
     let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
         if let Some(modification) = modification.as_ref() {
-            modification.modify(&initial_value.to_string())
+            let temp = initial_value.to_string();
+            let temp = temp[0..temp.len().min(max_len.unwrap_or(temp.len() as usize))].to_string();
+            modification.modify(&temp)
         } else {
             initial_value.to_string()
         }
@@ -114,6 +122,7 @@ pub fn NumericInput(
                     value.remove(neg_pos);
                 }
             }
+            
 
             // `format_number_lenient` will return the input with all non-digit
             // characters stripped in `new_value` excluding separator (',').
@@ -137,6 +146,9 @@ pub fn NumericInput(
                     // `new_value` has any requisite separator chars (i.e. ',')
                     // but does not have prefix/suffix - so fix that
                     new_value = modification.modify(&new_value);
+                    
+                    
+                    
                     // Update the input with the improved value
                     _ = input_ref.set_value(&new_value);
                     // find out where the cursor should go
@@ -202,6 +214,7 @@ pub fn NumericInput(
             on:input=move |_| update_value.update_value(|update_value| update_value())
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
+            max_len=max_len
             size=size
             type="text"
         />
@@ -246,6 +259,9 @@ impl Modification {
         let mut modified = input.to_string();
 
         console_log(&format!("modifying {input}"));
+
+        
+
         let result = match &self {
             Modification::ReactivePrefix(p) => p.with(|p| {
                 debug_assert!(!modified.contains(p));
