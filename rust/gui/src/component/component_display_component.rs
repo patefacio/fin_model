@@ -109,7 +109,10 @@ pub fn ComponentDisplayComponent(
                 </li>
                 </ul>
                 "></p>
-                <NumericInput updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })/>
+                <NumericInput
+                    updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })
+                    size=13
+                />
             </div>
             <div>
                 <div>
@@ -166,7 +169,7 @@ pub fn ComponentDisplayComponent(
                 />
             </div>
             <div>
-                <h4>"Percent Input (i.e. suffix `%`)"</h4>
+                <h4 inner_html="Percent Input (i.e. suffix `%`) <strong>max_len=8</strong>"></h4>
                 <p inner_html="
                 Provides a <em>NumericInput<em> with a percent suffix modification.
                 "></p>
@@ -176,6 +179,7 @@ pub fn ComponentDisplayComponent(
                         move |n| { show_update(format!("Percent updated -> {n:?}")) },
                     )
                     placeholder=Some("pct complete".to_string())
+                    max_len=8
                 />
             </div>
             <hr/>

@@ -53,6 +53,8 @@ pub enum Modification {
 ///   * **size** - The size attribute, which one hopes would make the size of the
 /// input field roughly that number of characters. But YMMV.
 ///
+///   * **max_len** - The maximum number of characters for the input.
+///
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -72,14 +74,13 @@ pub fn NumericInput(
     /// Placeholder shown if entry is empty.
     #[prop(default=None)]
     placeholder: Option<String>,
-
-    #[prop(default=None)]
-    max_len: Option<usize>,
-
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
-    #[prop(default = 7)]
+    #[prop(default = 9)]
     size: u32,
+    /// The maximum number of characters for the input.
+    #[prop(default = 12)]
+    max_len: u32,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
@@ -87,19 +88,19 @@ pub fn NumericInput(
 
     // Get the initial value for the year if provided. Set to empty string if
     // not provided.
-    
-
-    let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
-        if let Some(modification) = modification.as_ref() {
-            let temp = initial_value.to_string();
-            let temp = temp[0..temp.len().min(max_len.unwrap_or(temp.len() as usize))].to_string();
-            modification.modify(&temp)
-        } else {
-            initial_value.to_string()
-        }
-    } else {
-        String::default()
-    };
+    let initial_value = updatable
+        .value
+        .as_ref()
+        .map(|initial_value| {
+            modification
+                .as_ref()
+                .map(|modification| modification.modify(&initial_value.to_string()))
+                .unwrap_or_else(|| initial_value.to_string())
+                .chars()
+                .take(max_len as usize)
+                .collect::<String>()
+        })
+        .unwrap_or_default();
 
     let node_ref = create_node_ref::<Input>(cx);
     let modification = store_value(cx, modification);
@@ -125,7 +126,6 @@ pub fn NumericInput(
                     value.remove(neg_pos);
                 }
             }
-            
 
             // `format_number_lenient` will return the input with all non-digit
             // characters stripped in `new_value` excluding separator (',').
@@ -149,9 +149,7 @@ pub fn NumericInput(
                     // `new_value` has any requisite separator chars (i.e. ',')
                     // but does not have prefix/suffix - so fix that
                     new_value = modification.modify(&new_value);
-                    
-                    
-                    
+
                     // Update the input with the improved value
                     _ = input_ref.set_value(&new_value);
                     // find out where the cursor should go
@@ -215,7 +213,7 @@ pub fn NumericInput(
             on:input=move |_| update_value.update_value(|update_value| update_value())
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
-            max_len=max_len
+            maxlength=max_len
             size=size
             type="text"
         />
@@ -264,8 +262,6 @@ impl Modification {
         let mut modified = input.to_string();
 
         console_log(&format!("modifying {input}"));
-
-        
 
         let result = match &self {
             Modification::ReactivePrefix(p) => p.with(|p| {

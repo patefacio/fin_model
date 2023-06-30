@@ -111,6 +111,7 @@ pub fn IntegerInput(
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
             size=max_len + 2
+            maxlength=max_len
             type="text"
         />
         <div style="

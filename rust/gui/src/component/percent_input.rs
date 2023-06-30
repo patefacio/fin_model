@@ -17,6 +17,11 @@ use leptos_dom::console_log;
 ///   * **cx** - Context
 ///   * **updatable** - Called when input is updated.
 ///   * **placeholder** - Placeholder for the year field
+///   * **size** - The size attribute, which one hopes would make the size of the
+/// input field roughly that number of characters. But YMMV.
+///
+///   * **max_len** - The maximum number of characters for the percent input.
+///
 ///   * _return_ - View for percent_input
 #[component]
 pub fn PercentInput(
@@ -27,6 +32,13 @@ pub fn PercentInput(
     /// Placeholder for the year field
     #[prop(default=None)]
     placeholder: Option<String>,
+    /// The size attribute, which one hopes would make the size of the
+    /// input field roughly that number of characters. But YMMV.
+    #[prop(default = 9)]
+    size: u32,
+    /// The maximum number of characters for the percent input.
+    #[prop(default = 8)]
+    max_len: u32,
 ) -> impl IntoView {
     // α <fn percent_input>
 
@@ -50,7 +62,8 @@ pub fn PercentInput(
             modification=Some(Modification::Suffix("%".into()))
             non_negative=true
             placeholder=placeholder
-            max_len = Some(4)
+            max_len=max_len
+            size=size
         />
     }
 
