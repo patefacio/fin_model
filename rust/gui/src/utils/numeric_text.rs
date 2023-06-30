@@ -76,7 +76,7 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
     let mut negative_seen = false;
     let mut numeric_to_caret = 0u32;
     let mut last_char = '?';
-    let mut digits_after_decimal = 0;
+    let mut digits_after_decimal = 0usize;
     let mut numeric_char_count = 0u32;
 
     for (i, c) in n.chars().enumerate() {
@@ -121,7 +121,13 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
             }
         }
 
-        last_char = c;
+        if ascii_digit_seen {
+            last_char = c;
+            match c {
+                'k' | 'm' | 'b' => break,
+                _ => (),
+            }
+        }
     }
 
     let digit_shift: usize = match last_char {
@@ -130,8 +136,6 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
         'b' => 9,
         _ => 0,
     };
-
-    numeric_to_caret += digit_shift as u32;
 
     if digit_shift > 0 {
         if let Some(decimal_pos) = decimal_position {
@@ -163,28 +167,45 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
         }
     }
 
-    let result = if let Ok(parsed_number) = numeric.parse::<f64>() {
+    match numeric.as_str() {
+        "-" => {
+            return (None, "-".into(), 1);
+        }
+        "-0" => {
+            return (None, "-0".into(), 2);
+        }
+        "-0." => {
+            return (None, "-0.".into(), 3);
+        }
+        _ => (),
+    };
+
+    let (parsed_value, text) = if let Ok(parsed_number) = numeric.parse::<f64>() {
         if let Some(decimal_position) = decimal_position {
             let integer_part = parsed_number as i64;
             if integer_part <= -1000 || integer_part >= 1000 {
                 let mut final_number = commify_number(integer_part);
                 final_number.push_str(&numeric[decimal_position..]);
-                (Some(parsed_number), final_number, numeric_to_caret)
+                (Some(parsed_number), final_number)
             } else {
-                (Some(parsed_number), numeric, numeric_to_caret)
+                (Some(parsed_number), numeric)
             }
         } else {
-            (
-                Some(parsed_number),
-                commify_number(parsed_number as i64),
-                numeric_to_caret,
-            )
+            (Some(parsed_number), commify_number(parsed_number as i64))
         }
     } else {
-        (None, numeric, numeric_to_caret)
+        (None, numeric)
     };
 
-    result
+    if digit_shift > 0 {
+        let last_pos = text
+            .chars()
+            .filter(|&c| c.is_ascii_digit() || c == '.' || c == '-')
+            .count() as u32;
+        (parsed_value, text, last_pos)
+    } else {
+        (parsed_value, text, numeric_to_caret)
+    }
 
     // ω <fn format_number_lenient>
 }
@@ -219,15 +240,19 @@ pub mod unit_tests {
             ("$1.3456", 2, (Some(1.3456), String::from("1.3456"), 1)),
             ("$$$1.3456", 0, (Some(1.3456), String::from("1.3456"), 0)),
             ("$$$1.3456", 8, (Some(1.3456), String::from("1.3456"), 5)),
-            ("$1.2k", 2, (Some(1200.0), String::from("1,200"), 4)),
-            ("$1.2m", 2, (Some(1200000.0), String::from("1,200,000"), 7)),
+            ("$1.2k", 4, (Some(1200.0), String::from("1,200"), 4)),
+            ("$1.2m", 4, (Some(1200000.0), String::from("1,200,000"), 7)),
             (
                 "$1.2b",
-                2,
+                4,
                 (Some(1200000000.0), String::from("1,200,000,000"), 10),
             ),
             (".23%", 1, (Some(0.23), String::from("0.23"), 2)),
-            ("$1.3456k", 2, (Some(1345.6), String::from("1,345.6"), 4)),
+            ("$1.3456k", 7, (Some(1345.6), String::from("1,345.6"), 6)),
+            ("€3.5k/yr", 4, (Some(3500.0), String::from("3,500"), 4)),
+            ("-", 1, (None, String::from("-"), 1)),
+            ("-0", 2, (None, String::from("-0"), 2)),
+            ("-0.", 3, (None, String::from("-0."), 3)),
         ] {
             let (n, current_caret, expected) = ele;
             assert_eq!(expected, format_number_lenient(n, current_caret));

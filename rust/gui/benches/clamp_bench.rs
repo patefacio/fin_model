@@ -1,7 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use fin_model_gui::utils::clamp::clamp_one_pass::clamp as clamp_one_pass;
-use fin_model_gui::utils::year_clamp::{YearClamp, YearClampStrings};
-use plus_modeled::core::YearRange;
+use fin_model_gui::utils::integer_clamp::{IntegerClamp, IntegerClampStrings};
 
 pub fn clamp_sm_benchmark(c: &mut Criterion) {
     use fin_model_gui::utils::clamp::clamp_sm::clamp;
@@ -27,13 +26,10 @@ pub fn clamp_sm_benchmark(c: &mut Criterion) {
     });
 }
 
-pub fn clamp_year_range_benchmark(c: &mut Criterion) {
-    let year_clamp = YearClamp::new(YearRange {
-        start: 1900,
-        end: 2300,
-    });
+pub fn clamp_integer_range_benchmark(c: &mut Criterion) {
+    let year_clamp = IntegerClamp::new(1900..2300);
 
-    c.bench_function("ClampYearRange on (1900, 2300)", |b| {
+    c.bench_function("ClampIntegerRange on (1900, 2300)", |b| {
         b.iter(|| {
             let _ = year_clamp.clamp("1");
             let _ = year_clamp.clamp("19");
@@ -52,13 +48,10 @@ pub fn clamp_year_range_benchmark(c: &mut Criterion) {
     });
 }
 
-pub fn clamp_year_range_strings_benchmark(c: &mut Criterion) {
-    let year_clamp = YearClampStrings::new(YearRange {
-        start: 1900,
-        end: 2300,
-    });
+pub fn clamp_integer_range_strings_benchmark(c: &mut Criterion) {
+    let year_clamp = IntegerClampStrings::new(1900..2300);
 
-    c.bench_function("ClampYearRangeStrings on (1900, 2300)", |b| {
+    c.bench_function("ClampIntegerRangeStrings on (1900, 2300)", |b| {
         b.iter(|| {
             let _ = year_clamp.clamp("1");
             let _ = year_clamp.clamp("19");
@@ -130,8 +123,8 @@ criterion_group!(
     clamp_sm_benchmark,
     clamp_one_pass_benchmark,
     clamp_parse_input_benchmark,
-    clamp_year_range_benchmark,
-    clamp_year_range_strings_benchmark,
+    clamp_integer_range_benchmark,
+    clamp_integer_range_strings_benchmark,
 );
 
 criterion_main!(benches);

@@ -77,15 +77,15 @@ pub fn YearCurrencyValueInput(
         updatable_for_currency
             .as_ref()
             .borrow_mut()
-            .update_and_then_signal(|yvc| {
-                if let Some(yvc) = yvc {
-                    console_log(&format!("Setting year on YVC -> {new_currency:?}"));
-                    yvc.currency = *new_currency as i32;
+            .update_and_then_signal(|ycv| {
+                if let Some(ycv) = ycv {
+                    console_log(&format!("Setting year on ycv -> {new_currency:?}"));
+                    ycv.currency = *new_currency as i32;
                 } else {
                     console_log(&format!(
-                        "Setting empty YVC on first change of currency -> {new_currency:?}"
+                        "Setting empty ycv on first change of currency -> {new_currency:?}"
                     ));
-                    *yvc = Some(YearCurrencyValue {
+                    *ycv = Some(YearCurrencyValue {
                         year: year_range.start,
                         value: 0.0,
                         currency: *new_currency as i32,
@@ -127,16 +127,16 @@ pub fn YearCurrencyValueInput(
             updatable_for_value
                 .as_ref()
                 .borrow_mut()
-                .update_and_then_signal(|yvc| {
-                    if let Some(yvc) = yvc {
-                        console_log(&format!("Setting value on YVC -> {new_input:?}"));
-                        yvc.value = new_input
+                .update_and_then_signal(|ycv| {
+                    if let Some(ycv) = ycv {
+                        console_log(&format!("Setting value on ycv -> {new_input:?}"));
+                        ycv.value = new_input
                     } else {
                         console_log(&format!(
                             "Setting empty YVC on first change of value -> {new_input:?}"
                         ));
 
-                        *yvc = Some(YearCurrencyValue {
+                        *ycv = Some(YearCurrencyValue {
                             year: 1900,
                             value: new_input,
                             currency: Currency::Usd as i32,
@@ -148,21 +148,22 @@ pub fn YearCurrencyValueInput(
     });
 
     view! { cx,
-        <fieldset class="year-currency-value">
-            <legend>"Currency/Value/Year"</legend>
-            <div style="display: inline-flex">
-                <div style="margin: 0.25em">
-                    <CurrencySelect updatable=currency_select_updatable/>
-                </div>
+        <div class="ycv" style="display: flex">
+            <div class="ycv-currency">
+                <CurrencySelect updatable=currency_select_updatable/>
+            </div>
+            <div class="ycv-value">
                 <NumericInput updatable=value_updatable placeholder=Some(value_placeholder)/>
-                <div style="vertical-align: bottom; padding: 0.75em">"As Of"</div>
+            </div>
+            <div class="ycv-as-of">"As Of"</div>
+            <div class="ycv-year">
                 <YearInput
                     updatable=year_updatable
                     year_range=year_range
                     placeholder=Some(year_placeholder)
                 />
             </div>
-        </fieldset>
+        </div>
     }
 
     // ω <fn year_currency_value_input>

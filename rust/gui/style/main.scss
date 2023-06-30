@@ -6,8 +6,8 @@
 	--mcs-btn-color: cyan;
 	--mcs-tbl-color: white;
 	--plus-btn-color: hsl(120, 50%, 90%);
-	--plus-btn-padding: 0.4rem;
-	--plus-btn-margin: 0.25rem;
+	--plus-btn-padding: 0.2rem;
+	--plus-btn-margin: 0.15rem;
 	--plus-background: white;
 	--plus-label-bg: white;
 	--plus-label-margin: 0 0.5rem 0.5rem 0;
@@ -240,6 +240,23 @@
 }
 
 .year-input.invalid, textarea  {
-	background-color: rgb(246, 225, 225)
+	background-color: rgb(246, 225, 225);
+	box-sizing: content-box;
+}
+
+.ycv {
+	box-sizing: content-box;
+}
+
+.ycv-value {
+	align-self: flex-end;
+}
+.ycv-as-of {
+	align-self: flex-end;
+	padding: 2px 7px;
+}
+
+.ycv-year {
+	align-self: flex-end;
 }
   

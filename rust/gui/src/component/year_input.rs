@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::IntegerClamp;
 use crate::Updatable;
-use crate::YearClamp;
 use leptos::{component, view, IntoView, Scope};
 use leptos::{create_node_ref, ReadSignal, RwSignal};
 #[allow(unused_imports)]
@@ -79,7 +79,7 @@ pub fn YearInput(
 
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;
-    let year_clamp = YearClamp::new(year_range);
+    let year_clamp = IntegerClamp::new(year_range.start..year_range.end);
 
     // TODO: Figure out a way for this control to own and manage the input but
     // also for the parent to, on request, clear the contents.

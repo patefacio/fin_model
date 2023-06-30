@@ -23,12 +23,14 @@ pub fn ComponentDisplayComponent(
     use crate::component::dispose_test::DisposeTest;
     use crate::CurrencySelect;
     use crate::DossierCorrelationMatrixComponent;
+    use crate::EnumSelect;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
     use crate::Modification;
     use crate::OkCancelComponent;
     use crate::PercentInput;
     use crate::RateCurveComponent;
+    use crate::SelectDirection;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
     use crate::YearRangeInput;
@@ -40,6 +42,7 @@ pub fn ComponentDisplayComponent(
     use crate::utils::updatable::Updatable;
     use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::Currency;
+    use plus_modeled::StateOfResidence;
     use plus_modeled::NormalSpec;
     use plus_modeled::RateCurve;
     use plus_modeled::YearCurrencyValue;
@@ -109,6 +112,47 @@ pub fn ComponentDisplayComponent(
                 <NumericInput updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })/>
             </div>
             <div>
+                <div>
+                    <h4>"Numeric Input With Prefix"</h4>
+                    <p inner_html="
+                    Provides a <em>NumericInput<em> with <em>prefix</em>.
+                    "></p>
+                    <NumericInput
+                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        modification=Some(Modification::Prefix("$ ".to_string()))
+                        placeholder=Some("dollars".to_string())
+                        size=15
+                    />
+                </div>
+                <div>
+                    <h4>"Numeric Input With Prefix Unicode"</h4>
+                    <p inner_html="
+                    Provides a <em>NumericInput<em> with <em>prefix</em>.
+                    "></p>
+                    <NumericInput
+                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        modification=Some(Modification::Prefix("€ ".to_string()))
+                        placeholder=Some("euros".to_string())
+                        size=15
+                    />
+                </div>
+                <div>
+                    <h4>"Numeric Input With Prefix & Suffix"</h4>
+                    <p inner_html="
+                    Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
+                    "></p>
+                    <NumericInput
+                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        modification=Some(Modification::PrefixAndSuffix {
+                            prefix: "€ ".into(),
+                            suffix: "/yr".into(),
+                        })
+                        placeholder=Some("expense/yr".to_string())
+                        size=15
+                    />
+                </div>
+            </div>
+            <div>
                 <h4>"Integer Input"</h4>
                 <p inner_html="Models a single integer with similar features to <em>Numeric Input</em> without decimals"></p>
                 <IntegerInput
@@ -134,52 +178,78 @@ pub fn ComponentDisplayComponent(
                     placeholder=Some("pct complete".to_string())
                 />
             </div>
-            <div>
-                <h4>"Numeric Input With Prefix & Suffix)"</h4>
-                <p inner_html="
-                Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
-                "></p>
-                <NumericInput
-                    updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
-                    modification=Some(Modification::PrefixAndSuffix {
-                        prefix: "€ ".into(),
-                        suffix: "/yr".into(),
-                    })
-                    placeholder=Some("expense/yr".to_string())
-                    size=15
-                />
-            </div>
             <hr/>
         </div>
-        <h4>"Currency Select"</h4>
-        <p inner_html="
-        <em>Two Field, Three Column Example of <strong>MultiColumnSelect</strong></em>.
-        <p>
-        A component that supports a drop down selection which can span multiple columns.
-        The purpose is to be able to better style large selection lists that otherwise would
-        be very long vertical lists. The features include:
-        </p>
-        <ul>
-        <li>Navigating the selections with left/right and up/down arrow keys</li>
-        <li> Tab support for each entry</li>
-        <li>Focus _auto-selects_ the item so tabbing and navigating to selection makes it the
-        current selection</li>
-        <li>Accept the selection on Enter, Space</li>
-        <li>No-Op on Escape</li>
-        </ul>
-        "></p>
-        <CurrencySelect updatable=Updatable::new(
-            Currency::Eur,
-            move |currency: &Currency| {
-                show_update(format!("Currency set to {currency:?}"));
-            },
-        )/>
         <hr/>
-        <h4>"Year Input (min=1900, max=2300)"</h4>
-        <YearInput
-            updatable=Updatable::new(Some(1999), move |y| { show_update(format!("Year updated -> {y:?}")) })
-            placeholder=Some("year".to_string())
-        />
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
+            <div>
+                <h4>"Mutli-Column Select (Top To Bottom)"</h4>
+                <p inner_html="
+                <p>
+                A component that supports a drop down selection which can span multiple columns.
+                The purpose is to be able to better style large selection lists that otherwise would
+                be very long vertical lists. The features include:
+                </p>
+                <ul>
+                <li>Navigating the selections with left/right and up/down arrow keys</li>
+                <li> Tab support for each entry</li>
+                <li>Focus <strong>auto-selects</strong> the item so tabbing and navigating to selection makes it the
+                current selection</li>
+                <li>Accept the selection <strong>and signals</strong> on Enter, Space</li>
+                <li>No-Op on Escape</li>
+                <li>Display Selections Left-To-Right or Top-To-Bottom</li>
+                </ul>
+                "></p>
+                <EnumSelect
+                    updatable=Updatable::new(
+                        StateOfResidence::Fl,
+                        move |state| { show_update(format!("State updated -> {state:?}")) },
+                    )
+                    direction=SelectDirection::TopToBottom
+                />
+            </div>
+            <div>
+                <h4>"Mutli-Column Select (Left To Right)"</h4>
+                <EnumSelect
+                    updatable=Updatable::new(
+                        StateOfResidence::Fl,
+                        move |state| { show_update(format!("State updated -> {state:?}")) },
+                    )
+                    direction=SelectDirection::LeftToRight
+                />
+            </div>
+            <div>
+                <h4>"Currency Select"</h4>
+                <p inner_html="
+                <em>Two Field, Three Column Example of <strong>MultiColumnSelect</strong></em>.
+                "></p>
+                <CurrencySelect updatable=Updatable::new(
+                    Currency::Eur,
+                    move |currency: &Currency| {
+                        show_update(format!("Currency set to {currency:?}"));
+                    },
+                )/>
+            </div>
+        </div>
+        <hr/>
+        <div style="display: grid; grid-template-columns: 1fr 1fr">
+            <div>
+                <h4>"Year Input (min=1900, max=2300) With No Data"</h4>
+                <p inner_html="Year Input - Supports range and provides a <em>live</em> clamp type
+                functionality. Currently invalid/incomplete is is indicated by css <strong>redish</strong> text field."></p>
+                <YearInput
+                    updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
+                    placeholder=Some("year".to_string())
+                />
+            </div>
+            <div>
+                <h4>"Year Input (min=1900, max=2300) With Data"</h4>
+                <YearInput
+                    updatable=Updatable::new(Some(1999), move |y| { show_update(format!("Year updated -> {y:?}")) })
+                    placeholder=Some("year".to_string())
+                />
+            </div>
+        </div>
         <hr/>
         <div style="display: grid; grid-template-columns: 1fr 1fr">
             <div>

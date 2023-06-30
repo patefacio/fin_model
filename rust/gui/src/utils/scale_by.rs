@@ -12,6 +12,7 @@
 ///   * **n** - Number to scale up
 ///   * **scale_factor** - Factor to scale the number
 ///   * _return_ - The number scaled by factor
+#[inline]
 pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
     // α <fn scale_by>
 

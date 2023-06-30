@@ -14,13 +14,13 @@ pub mod constants;
 pub mod distribution_pdf;
 pub mod element_sugar;
 pub mod html_tag;
+pub mod integer_clamp;
 pub mod log_dispose;
 pub mod numeric_text;
 pub mod parsed_num;
 pub mod plot_data;
 pub mod scale_by;
 pub mod updatable;
-pub mod year_clamp;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

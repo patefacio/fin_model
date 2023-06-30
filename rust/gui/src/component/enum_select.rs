@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::SelectDirection;
 use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
@@ -29,6 +30,7 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * **cx** - Context
 ///   * **updatable** - Value of enum that will be changed on selection.
 ///   * **column_count** - Number of columns to display in the grid of options.
+///   * **direction** - Specifies whether items flows from top to bottom or left to right.
 ///   * _return_ - View for enum_select
 #[component]
 pub fn EnumSelect<E>(
@@ -39,6 +41,9 @@ pub fn EnumSelect<E>(
     /// Number of columns to display in the grid of options.
     #[prop(default = 3)]
     column_count: usize,
+    /// Specifies whether items flows from top to bottom or left to right.
+    #[prop(default=SelectDirection::LeftToRight)]
+    direction: SelectDirection,
 ) -> impl IntoView
 where
     E: Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
@@ -79,6 +84,7 @@ where
             column_count=column_count
             initial_value=Some(InitialValue::SelectionIndex(initial_index))
             on_select=menu_select
+            direction=direction
         />
     }
 

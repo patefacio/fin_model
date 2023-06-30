@@ -30,9 +30,9 @@ pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;
 pub use component::year_range_input::YearRangeInput;
 pub use component::year_value_input::YearValueInput;
+pub use utils::integer_clamp::IntegerClamp;
 pub use utils::parsed_num::ParsedNum;
 pub use utils::updatable::Updatable;
-pub use utils::year_clamp::YearClamp;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---

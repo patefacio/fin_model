@@ -21,6 +21,7 @@ use web_sys::KeyboardEvent;
 /// Reactive prefixes are supported for cases where like
 /// currency which may need reactivity. The modification text appears
 /// in the html input of the component.
+#[derive(Debug)]
 pub enum Modification {
     /// A prefix for the number.
     Prefix(String),
@@ -114,6 +115,8 @@ pub fn NumericInput(
 
             let mut value = input_ref.value();
 
+            console_log(&format!("Actual input -> {value:?}"));
+
             if non_negative {
                 while let Some(neg_pos) = value.find('-') {
                     if neg_pos < selection_start as usize {
@@ -160,7 +163,6 @@ pub fn NumericInput(
                 }
             } else {
                 input_ref.set_value(&new_value);
-                //TODO like input in 117
             }
             updatable.update_and_then_signal(|number| *number = value);
         });
@@ -187,7 +189,6 @@ pub fn NumericInput(
                     if key_code == LEFT_KEY {}
                     _ = input_ref.set_selection_range(selection_start, selection_start);
                     ev.stop_immediate_propagation();
-                    //ev.prevent_default()
                 }
             }),
             _ => (),
@@ -237,14 +238,18 @@ impl Modification {
         // α <fn Modification::position_in_number>
         debug_assert!(position <= input_len);
         let constrained = match &self {
-            Modification::ReactivePrefix(p) => p.with(|p| p.len().max(position)),
-            Modification::Prefix(p) => p.len().max(position),
-            Modification::Suffix(s) => (input_len - s.len()).min(position),
-            Modification::PrefixAndSuffix { prefix, suffix } => {
-                (input_len - suffix.len()).min(position).max(prefix.len())
-            }
+            Modification::ReactivePrefix(p) => p.with(|p| p.chars().count().max(position)),
+            Modification::Prefix(p) => p.chars().count().max(position),
+            Modification::Suffix(s) => (input_len - s.chars().count()).min(position),
+            Modification::PrefixAndSuffix { prefix, suffix } => (input_len
+                - suffix.chars().count())
+            .min(position)
+            .max(prefix.chars().count()),
         };
-        console_log(&format!("Constrained {position} to {constrained}"));
+        console_log(&format!(
+            "Constrained input({input_len}), self({:?}), {position} to {constrained}",
+            self
+        ));
         constrained
 
         // ω <fn Modification::position_in_number>
@@ -286,6 +291,20 @@ impl Modification {
         };
         result
         // ω <fn Modification::modify>
+    }
+
+    /// Returns the count of *chars* in prefix
+    ///
+    ///   * _return_ - Number of characters in prefix
+    pub fn prefix_count(&self) -> usize {
+        // α <fn Modification::prefix_count>
+        match &self {
+            Modification::ReactivePrefix(p) => p.with(|p| p.chars().count()),
+            Modification::Prefix(p) => p.chars().count(),
+            Modification::PrefixAndSuffix { prefix, suffix: _ } => prefix.chars().count(),
+            Modification::Suffix(_) => 0,
+        }
+        // ω <fn Modification::prefix_count>
     }
 }
 
@@ -346,10 +365,29 @@ pub mod unit_tests {
             // ω <fn test Modification::modify>
         }
 
-        // α <mod-def test_modification>
-        use super::*;
-        use crate::Modification;
+        #[test]
+        fn prefix_count() {
+            // α <fn test Modification::prefix_count>
 
+            let unicode_prefix_mod = Modification::PrefixAndSuffix {
+                prefix: "σ=".into(),
+                suffix: "%".into(),
+            };
+
+            match &unicode_prefix_mod {
+                Modification::PrefixAndSuffix { prefix, suffix: _ } => {
+                    assert!(prefix.len() > 2);
+                }
+                _ => unreachable!(),
+            }
+
+            assert_eq!(2, unicode_prefix_mod.prefix_count());
+
+            // ω <fn test Modification::prefix_count>
+        }
+
+        // α <mod-def test_modification>
+        use crate::Modification;
         // ω <mod-def test_modification>
     }
 
