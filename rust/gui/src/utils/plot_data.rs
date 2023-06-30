@@ -1,3 +1,4 @@
+use plotters::chart;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -30,26 +31,61 @@ impl PlotData for RateCurve {
 
         use crate::Year;
         use plotters::prelude::*;
+        use plus_modeled::RateCurve;
+        use std::slice::Windows;
+        use plus_modeled::YearValue;
 
         //Extract the x and y coordinates out of RateCurve and Curve to collect in a vector
-        let mut x_vec = self
-            .curve
-            .iter()
-            .map(|yv| yv.year as f64)
-            .collect::<Vec<f64>>();
-        let mut y_vec = self.curve.iter().map(|yv| yv.value).collect::<Vec<f64>>();
+        // let mut x_vec = self
+        //     .curve
+        //     .iter()
+        //     .map(|yv| yv.year as f64)
+        //     .collect::<Vec<f64>>();
+        // let mut y_vec = self.curve.iter().map(|yv| yv.value).collect::<Vec<f64>>();
+
+        // let step_diagram = /*(x_vec: Vec<f64>, y_vec: Vec<f64>) -> RateCurve*/ {
+        //     ChartBuilder::build_cartesian_2d(&mut self, x_vec[0], y_vec[0]);
+        //     ChartBuilder::build_cartesian_2d(&mut self, x_vec[1], y_vec[0]);
+        //     ChartBuilder::build_cartesian_2d(&mut self, x_vec[1], y_vec[1]);
+
+        // };
+
+        // for (first, second) in self.curve.iter().windows(2) {
+        //     let vec_slice = self.curve;
+        //     let iter = vec_slice.windows(2);
+        //     vec_slice.push(self.curve)
+        // }
 
         //check curve to see if it is empty
-        let mut check_empty_curve = || {
-            if self.curve.is_empty() {
-                x_vec.push(0.0);
-                y_vec.push(0.0);
-                //console_log(&format!("Curve is empty. Wait for the user to enter data"));
-            }
-        };
+        // let mut check_empty_curve = || {
+        //     if self.curve.is_empty() {
+                
+        //         //console_log(&format!("Curve is empty. Wait for the user to enter data"));
+        //     }
+        // };
 
-        check_empty_curve();
+        // check_empty_curve();
 
+        if self.curve.is_empty() {
+            return String::default();
+        }
+
+
+        let mut vec_slice: Vec<(f64, f64)> = Vec::with_capacity(self.curve.len());
+        let mut min_y = f64::MAX;
+        let mut max_y = f64::MIN;
+        for slice in self.curve.as_slice().windows(2) {
+            let (left, right) = (slice.first().unwrap(), slice.last().unwrap());
+            vec_slice.push((left.year as f64, left.value));
+            vec_slice.push((right.year as f64, left.value));
+            min_y = left.value.min(min_y);
+            max_y = left.value.max(max_y);
+        }
+        let min_x = self.curve.first().unwrap().year;
+        let max_x = self.curve.last().unwrap().year;
+        
+
+        
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
             let text_style: TextStyle = ("sans-serif", 20).into();
@@ -65,9 +101,8 @@ impl PlotData for RateCurve {
                 .set_label_area_size(LabelAreaPosition::Right, 0)
                 .caption("Rate Curve", ("sans-serif", 30))
                 .build_cartesian_2d(
-                    (x_vec.first().cloned().unwrap() as f64)
-                        ..(x_vec.last().cloned().unwrap() as f64),
-                    (y_vec.first().cloned().unwrap())..(y_vec.last()).cloned().unwrap(),
+                    (min_x as f64 ..max_x as f64 ),
+                    (min_y..max_y),
                 )
                 .unwrap();
 
@@ -77,15 +112,17 @@ impl PlotData for RateCurve {
                 .y_labels(10)
                 .disable_mesh()
                 .x_label_formatter(&|v| format!("{:.1}", v))
-                .y_label_formatter(&|v| format!("{:.1}%", v))
+                .y_label_formatter(&|v| format!("{:.1}%", v * 100.0))
                 .draw()
                 .unwrap();
 
+            
+            //let foo = vec_slice.iter();
             chart
                 .draw_series(
                     LineSeries::new(
-                        x_vec.iter().enumerate().map(|(i, x)| (*x, y_vec[i])),
-                        &GREEN,
+                        vec_slice,
+                        &BLUE,
                     )
                     .point_size(2),
                 )
