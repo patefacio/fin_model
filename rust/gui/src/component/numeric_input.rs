@@ -11,6 +11,7 @@ use leptos::{create_effect, create_node_ref, store_value, ReadSignal, SignalWith
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::html::Input;
+use std::ops::Range;
 use web_sys::KeyboardEvent;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +56,7 @@ pub enum Modification {
 ///
 ///   * **max_len** - The maximum number of characters for the input.
 ///
+///   * **range** - Range of valid values for input.
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -81,10 +83,19 @@ pub fn NumericInput(
     /// The maximum number of characters for the input.
     #[prop(default = 12)]
     max_len: u32,
+    /// Range of valid values for input.
+    #[prop(default=None)]
+    range: Option<Range<f64>>,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
+    use leptos::create_signal;
     use leptos::IntoAttribute;
+    use leptos::SignalSet;
+    use leptos::SignalGet;
+    use leptos::IntoClass;
+
+    let mut is_in_range = true;
 
     // Get the initial value for the year if provided. Set to empty string if
     // not provided.
@@ -92,6 +103,10 @@ pub fn NumericInput(
         .value
         .as_ref()
         .map(|initial_value| {
+            is_in_range = range
+                .as_ref()
+                .map(|range| range.contains(&initial_value))
+                .unwrap_or(true);
             modification
                 .as_ref()
                 .map(|modification| modification.modify(&initial_value.to_string()))
@@ -102,12 +117,26 @@ pub fn NumericInput(
         })
         .unwrap_or_default();
 
+    let (is_in_range, set_is_in_range) = create_signal(cx, is_in_range);
+
+    struct NumericInputData {
+        updatable: Updatable<Option<f64>>,
+        modification: Option<Modification>,
+        range: Option<Range<f64>>,
+    }
+
+    let numeric_input_data = NumericInputData {
+        updatable,
+        modification,
+        range,
+    };
+
+    let numeric_input_data = store_value(cx, numeric_input_data);
     let node_ref = create_node_ref::<Input>(cx);
-    let modification = store_value(cx, modification);
-    let mut updatable = updatable;
 
     let update_value = move || {
-        modification.with_value(|modification| {
+        numeric_input_data.update_value(|numeric_input_data| {
+            let modification = &numeric_input_data.modification;
             let input_ref = node_ref.get().expect("Input node");
             let mut selection_start = input_ref
                 .selection_start()
@@ -162,7 +191,18 @@ pub fn NumericInput(
             } else {
                 input_ref.set_value(&new_value);
             }
-            updatable.update_and_then_signal(|number| *number = value);
+
+            set_is_in_range.set(
+                numeric_input_data
+                    .range
+                    .as_ref()
+                    .map(move |range| value.map(|value| range.contains(&value)).unwrap_or(true))
+                    .unwrap_or(true),
+            );
+
+            numeric_input_data
+                .updatable
+                .update_and_then_signal(|number| *number = value);
         });
     };
 
@@ -172,8 +212,8 @@ pub fn NumericInput(
         let key_code = ev.key_code();
         console_log(&format!("Examining key {key_code}"));
         match key_code {
-            LEFT_KEY | RIGHT_KEY => modification.with_value(|modification| {
-                if let Some(modification) = modification {
+            LEFT_KEY | RIGHT_KEY => numeric_input_data.with_value(|numeric_input_data| {
+                if let Some(modification) = numeric_input_data.modification.as_ref() {
                     let input_ref = node_ref.get().expect("Input node");
                     let mut selection_start = input_ref
                         .selection_start()
@@ -194,8 +234,10 @@ pub fn NumericInput(
     };
 
     create_effect(cx, move |_| {
-        modification.with_value(|modification| {
-            if let Some(Modification::ReactivePrefix(reactive)) = modification {
+        numeric_input_data.with_value(|numeric_input_data| {
+            if let Some(Modification::ReactivePrefix(reactive)) =
+                numeric_input_data.modification.as_ref()
+            {
                 reactive.with(|_| {
                     if let Some(_) = node_ref.get() {
                         update_value.update_value(|update_value| update_value())
@@ -208,6 +250,7 @@ pub fn NumericInput(
     view! { cx,
         <input
             class=input_class
+            class:invalid=move || { !is_in_range.get() }
             node_ref=node_ref
             on:keydown=key_movement
             on:input=move |_| update_value.update_value(|update_value| update_value())

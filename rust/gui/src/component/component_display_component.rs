@@ -79,20 +79,9 @@ pub fn ComponentDisplayComponent(
             <h4>"Last Update"</h4>
             <p>{last_update}</p>
         </div>
-        <h4>"Date Input"</h4>
-        <DateInput
-            updatable=Updatable::new(
-                None,
-                move |n| {
-                    console_log(&format!("Date updated -> {n:?}"));
-                },
-            )
-            placeholder=Some("MM/DD/YYYY".to_string())
-        />
-        <hr/>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr">
             <div>
-                <h4>"Numeric Input"</h4>
+                <h4>"Numeric Input Range(-5.0,5.0)"</h4>
                 <p>"Models a single floating point number."</p>
                 <h5>"Special Features"</h5>
                 <p inner_html="
@@ -107,10 +96,15 @@ pub fn ComponentDisplayComponent(
                 <li>Support for <em>Prefix</em> and/or <em>Suffix</em> (See <em>Percent</em> 
                 for suffix example and <em>NormalSpec</em> for prefix and suffix)
                 </li>
+                <li>Specify Range</li>
+                <li>max_len: maps to html attribute <em>maxlength</em></li>
+                <li>size: maps to html attribute <em>size</em></li>
                 </ul>
                 "></p>
                 <NumericInput
                     updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })
+                    range=Some(-5.0..5.0)
+                    placeholder=Some("temp".to_string())
                     size=13
                 />
             </div>
@@ -140,7 +134,7 @@ pub fn ComponentDisplayComponent(
                     />
                 </div>
                 <div>
-                    <h4>"Numeric Input With Prefix & Suffix"</h4>
+                    <h4>"Numeric Input Prefix & Suffix Range(0,5,000.0001)"</h4>
                     <p inner_html="
                     Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
                     "></p>
@@ -151,6 +145,8 @@ pub fn ComponentDisplayComponent(
                             suffix: "/yr".into(),
                         })
                         placeholder=Some("expense/yr".to_string())
+                        range=Some(0.0..5_000.0001)
+                        max_len=14
                         size=15
                     />
                 </div>
@@ -183,6 +179,53 @@ pub fn ComponentDisplayComponent(
                 />
             </div>
             <hr/>
+        </div>
+        <hr/>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr">
+            <div>
+                <h4>"Year Input (min=1900, max=2300) With No Data"</h4>
+                <p inner_html="Year Input - Supports range and provides a <em>live</em> clamp type
+                functionality. Currently invalid/incomplete is is indicated by css <strong>redish</strong> text field."></p>
+                <YearInput
+                    updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
+                    placeholder=Some("year".to_string())
+                />
+            </div>
+            <div>
+                <h4>"Year Input (min=1900, max=2300) With Data"</h4>
+                <YearInput
+                    updatable=Updatable::new(Some(1999), move |y| { show_update(format!("Year updated -> {y:?}")) })
+                    placeholder=Some("year".to_string())
+                />
+            </div>
+            <div>
+                <h4>"Date Input (Range (1990 -> 2070))"</h4>
+                <p inner_html="
+                <p>
+                A date input component with following features:
+                </p>
+                <ul>
+                <li>Any non numeric character (e.g. space or '/' advances from month or day field)</li>
+                <li>Tab from month to day to year and shift-tab for reverse</li>
+                <li>Year range is supported</li>
+                <li>Signals on complete/valid input</li>
+                <li>class `invalid` if input is not valid</li>
+                </ul>
+                "></p>
+                <DateInput
+                    updatable=Updatable::new(
+                        None,
+                        move |n| {
+                            show_update(format!("Date updated -> {n:?}"));
+                        },
+                    )
+                    placeholder=Some("MM/DD/YYYY".to_string())
+                    year_range=Some(YearRange {
+                        start: 1990,
+                        end: 2070,
+                    })
+                />
+            </div>
         </div>
         <hr/>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
@@ -233,25 +276,6 @@ pub fn ComponentDisplayComponent(
                         show_update(format!("Currency set to {currency:?}"));
                     },
                 )/>
-            </div>
-        </div>
-        <hr/>
-        <div style="display: grid; grid-template-columns: 1fr 1fr">
-            <div>
-                <h4>"Year Input (min=1900, max=2300) With No Data"</h4>
-                <p inner_html="Year Input - Supports range and provides a <em>live</em> clamp type
-                functionality. Currently invalid/incomplete is is indicated by css <strong>redish</strong> text field."></p>
-                <YearInput
-                    updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
-                    placeholder=Some("year".to_string())
-                />
-            </div>
-            <div>
-                <h4>"Year Input (min=1900, max=2300) With Data"</h4>
-                <YearInput
-                    updatable=Updatable::new(Some(1999), move |y| { show_update(format!("Year updated -> {y:?}")) })
-                    placeholder=Some("year".to_string())
-                />
             </div>
         </div>
         <hr/>

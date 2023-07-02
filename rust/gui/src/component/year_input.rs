@@ -153,6 +153,7 @@ pub fn YearInput(
         <input
             node_ref=node_ref
             class="year-input"
+            class=input_class
             class:invalid=move || { !is_in_range.get() }
             on:input=move |_| update_value()
             value=initial_value

@@ -21,6 +21,7 @@ use std::ops::Range;
 /// - "18" -> "19" : "18" is too small, the smallest number will begin with "19"
 /// - "24" -> "23" : "24" is too large, the largest number will begin with "23"
 /// - "198" -> "198" : "198" is valid
+#[derive(Debug, Clone)]
 pub struct IntegerClamp {
     /// The supplied range (inclusive) of valid integers.
     pub integer_range: Range<u32>,

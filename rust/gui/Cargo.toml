@@ -120,4 +120,8 @@ criterion = "0.4.0"
 name = "clamp_bench"
 harness = false
 
+[[bench]]
+name = "date_input_bench"
+harness = false
+
 # ω <additional>
