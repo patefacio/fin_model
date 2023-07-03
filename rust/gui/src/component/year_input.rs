@@ -24,6 +24,10 @@ use plus_modeled::core::YearRange;
 ///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * **disabled** - Signal allowing the disabling of the input.
 ///   * **clear_input** - Signal requesting to clear the input.
+///   * **live_clamp** - If set will force values to be within year range as they are typed.
+/// With this true if the user enters a year with the proper number
+/// of digits it will be within range. But it may be disorienting
+/// as the numbers showing up in input may not be those typed.
 ///   * _return_ - View for year_input
 #[component]
 pub fn YearInput(
@@ -46,9 +50,16 @@ pub fn YearInput(
     /// Signal requesting to clear the input.
     #[prop(default=None)]
     clear_input: Option<RwSignal<bool>>,
+    /// If set will force values to be within year range as they are typed.
+    /// With this true if the user enters a year with the proper number
+    /// of digits it will be within range. But it may be disorienting
+    /// as the numbers showing up in input may not be those typed.
+    #[prop(default = false)]
+    live_clamp: bool,
 ) -> impl IntoView {
     // α <fn year_input>
 
+    use crate::ParsedNum;
     use leptos::create_signal;
     use leptos::IntoAttribute;
     use leptos::SignalGet;
@@ -79,7 +90,11 @@ pub fn YearInput(
 
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;
-    let year_clamp = IntegerClamp::new(year_range.start..year_range.end);
+    let year_clamp = if live_clamp {
+        Some(IntegerClamp::new(year_range.start..=year_range.end))
+    } else {
+        None
+    };
 
     // TODO: Figure out a way for this control to own and manage the input but
     // also for the parent to, on request, clear the contents.
@@ -100,11 +115,6 @@ pub fn YearInput(
         }
     };
 
-    // Bunch of not great code here has been elided. The elided code and
-    // therefore the code we want to write will ensure the value in the input
-    // field is valid. It will get the value - which is a String (because input
-    // fields always accept text which maps to Strings) - and then ensures the
-    // provided number is within the range.
     let mut update_value = move || {
         // First get the HtmlElement<Input>, think of it as a handle that provides
         // access to the input element in the DOM that holds our number.
@@ -141,7 +151,10 @@ pub fn YearInput(
             // be off-putting and we should discuss. Imagine typing "2303" and on
             // entering that last 3 what gets displayed is "2300". It will certainly
             // ensure the value is in range but maybe the approach is heavy handed.
-            let clamped = year_clamp.clamp(&value);
+            let clamped = year_clamp
+                .as_ref()
+                .map(|year_clamp| year_clamp.clamp(&value))
+                .unwrap_or_else(|| ParsedNum::from_str(&value));
             updatable.update_and_then_signal(|year| *year = Some(clamped.as_u32));
             set_is_in_range.set(year_is_valid(clamped.as_u32));
             input_ref.set_value(&clamped.as_string);
@@ -158,6 +171,7 @@ pub fn YearInput(
             on:input=move |_| update_value()
             value=initial_value
             size=5
+            maxlength=4
             placeholder=placeholder
             type="text"
             disabled=disabled.map(|disabled| disabled.get()).unwrap_or_default()

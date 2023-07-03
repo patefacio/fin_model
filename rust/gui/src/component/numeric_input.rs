@@ -11,7 +11,7 @@ use leptos::{create_effect, create_node_ref, store_value, ReadSignal, SignalWith
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::html::Input;
-use std::ops::Range;
+use std::ops::RangeInclusive;
 use web_sys::KeyboardEvent;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ pub fn NumericInput(
     max_len: u32,
     /// Range of valid values for input.
     #[prop(default=None)]
-    range: Option<Range<f64>>,
+    range: Option<RangeInclusive<f64>>,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
@@ -122,7 +122,7 @@ pub fn NumericInput(
     struct NumericInputData {
         updatable: Updatable<Option<f64>>,
         modification: Option<Modification>,
-        range: Option<Range<f64>>,
+        range: Option<RangeInclusive<f64>>,
     }
 
     let numeric_input_data = NumericInputData {

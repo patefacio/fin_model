@@ -2,12 +2,12 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::ParsedNum;
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// The struct is configured with a `Range<u32>` and supports clamping input integer
+/// The struct is configured with a `RangeInclusive<u32>` and supports clamping input integer
 /// values to the range. What is special about this clamp is that the input
 /// is a string representing the value as it is being typed and therefore may
 /// not be complete. So if the range is: `{ start: 1900, end: 2300 }` the following
@@ -24,8 +24,8 @@ use std::ops::Range;
 #[derive(Debug, Clone)]
 pub struct IntegerClamp {
     /// The supplied range (inclusive) of valid integers.
-    pub integer_range: Range<u32>,
-    /// A vector of `Range<u32>` instances created on construction, one for each number of digits up to the
+    pub integer_range: RangeInclusive<u32>,
+    /// A vector of `RangeInclusive<u32>` instances created on construction, one for each number of digits up to the
     /// number of digits in `integer_range.end`.
     ///
     /// So for the range `{ start: 1900, end: 2300 }` the resulting vector would look like:
@@ -38,7 +38,7 @@ pub struct IntegerClamp {
     ///
     /// Now to clamp a value, the function can find the length of the string and index
     /// into the appropriate range in the vector to make the check.
-    pub ranges_by_digit: Vec<Range<u32>>,
+    pub ranges_by_digit: Vec<RangeInclusive<u32>>,
     /// Number of digits in the maximum
     pub max_len: usize,
 }
@@ -46,7 +46,7 @@ pub struct IntegerClamp {
 /// Integer clamp where the ranges are stored as strings
 pub struct IntegerClampStrings {
     /// The supplied range (inclusive) of valid integers.
-    pub integer_range: Range<u32>,
+    pub integer_range: RangeInclusive<u32>,
     /// A vector of integer range instances created on construction, one for each number of digits up to the
     /// number of digits in `integer_range.end`.
     ///
@@ -88,10 +88,10 @@ impl IntegerClamp {
             self.clamp(&value[0..self.max_len])
         } else if let Some(year_range) = self.ranges_by_digit.get(num_digits - 1) {
             // Index into the proper ranges_by_digit, do the clamp and return the number
-            let clamped = value_as_u32.clamp(year_range.start, year_range.end);
+            let clamped = value_as_u32.clamp(*year_range.start(), *year_range.end());
             ParsedNum::new(clamped)
         } else {
-            ParsedNum::new(self.ranges_by_digit.last().expect("not empty").end)
+            ParsedNum::new(*self.ranges_by_digit.last().expect("not empty").end())
         }
 
         // ω <fn IntegerClamp::clamp>
@@ -123,7 +123,7 @@ impl IntegerClampStrings {
         } else {
             ParsedNum::from_str(value)
         }
-        
+
         // ω <fn IntegerClampStrings::clamp>
     }
 }
@@ -133,20 +133,20 @@ impl IntegerClamp {
     ///
     ///   * **integer_range** - The supplied range (inclusive) of valid integers.
     ///   * _return_ - The new instance
-    pub fn new(integer_range: Range<u32>) -> IntegerClamp {
+    pub fn new(integer_range: RangeInclusive<u32>) -> IntegerClamp {
         // α <fn IntegerClamp::new>
 
-        debug_assert!(integer_range.start <= integer_range.end, "Start <= end");
+        debug_assert!(integer_range.start() <= integer_range.end(), "Start <= end");
 
         //////////////////////////
-        let num_digits_start = (integer_range.start as f64).log10().round() as usize + 1;
-        let num_digits_end = (integer_range.end as f64).log10().round() as usize + 1;
+        let num_digits_start = (*integer_range.start() as f64).log10().round() as usize + 1;
+        let num_digits_end = (*integer_range.end() as f64).log10().round() as usize + 1;
         let vec_size = num_digits_start.max(num_digits_end);
-        let mut ranges_by_digit: Vec<Range<u32>> = Vec::with_capacity(vec_size);
+        let mut ranges_by_digit: Vec<RangeInclusive<u32>> = Vec::with_capacity(vec_size);
 
         // Convert the numbers in range to strings so iteration over digits is simpler
-        let start_year = integer_range.start.to_string();
-        let end_year = integer_range.end.to_string();
+        let start_year = integer_range.start().to_string();
+        let end_year = integer_range.end().to_string();
 
         let mut start_partial_value = 0;
         let mut end_partial_value = 0;
@@ -173,10 +173,10 @@ impl IntegerClamp {
                 end_partial_value += digit_as_u32;
             }
 
-            ranges_by_digit.push(Range::<u32> {
-                start: start_partial_value,
-                end: end_partial_value,
-            });
+            ranges_by_digit.push(RangeInclusive::<u32>::new(
+                start_partial_value,
+                end_partial_value,
+            ));
         }
 
         IntegerClamp {
@@ -193,20 +193,20 @@ impl IntegerClampStrings {
     ///
     ///   * **integer_range** - The supplied range (inclusive) of valid integers.
     ///   * _return_ - The new instance
-    pub fn new(integer_range: Range<u32>) -> IntegerClampStrings {
+    pub fn new(integer_range: RangeInclusive<u32>) -> IntegerClampStrings {
         // α <fn IntegerClampStrings::new>
-  
-        debug_assert!(integer_range.start <= integer_range.end, "Start <= end");
+
+        debug_assert!(integer_range.start() <= integer_range.end(), "Start <= end");
 
         //////////////////////////
-        let num_digits_start = (integer_range.start as f64).log10().round() as usize + 1;
-        let num_digits_end = (integer_range.end as f64).log10().round() as usize + 1;
+        let num_digits_start = (*integer_range.start() as f64).log10().round() as usize + 1;
+        let num_digits_end = (*integer_range.end() as f64).log10().round() as usize + 1;
         let vec_size = num_digits_start.max(num_digits_end);
         let mut ranges_by_digit: Vec<(ParsedNum, ParsedNum)> = Vec::with_capacity(vec_size);
 
         // Convert the numbers in range to strings so iteration over digits is simpler
-        let start_year = integer_range.start.to_string();
-        let end_year = integer_range.end.to_string();
+        let start_year = integer_range.start().to_string();
+        let end_year = integer_range.end().to_string();
 
         let mut start_partial_value = 0;
         let mut end_partial_value = 0;
@@ -239,7 +239,7 @@ impl IntegerClampStrings {
             ));
         }
 
-        IntegerClampStrings { 
+        IntegerClampStrings {
             integer_range,
             ranges_by_digit,
             max_len: num_digits_end,
@@ -285,6 +285,9 @@ pub mod unit_tests {
             assert_eq!(ParsedNum::new(2300), integer_clamp.clamp("99999"));
             assert_eq!(ParsedNum::new(193), integer_clamp.clamp("193"));
             assert_eq!(ParsedNum::new(209), integer_clamp.clamp("209"));
+            assert_eq!(ParsedNum::new(1900), integer_clamp.clamp("1900"));
+            assert_eq!(ParsedNum::new(2300), integer_clamp.clamp("2300"));
+
             // ω <fn test IntegerClamp::clamp>
         }
 

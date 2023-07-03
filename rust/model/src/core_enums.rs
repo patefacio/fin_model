@@ -707,7 +707,7 @@ impl Country {
 pub enum StateOfResidence {
     ///
     /// Unspecified state.
-    UnspecifiedState = 0,
+    None = 0,
     ///
     /// State of `AL`
     Al = 1,
@@ -866,7 +866,7 @@ impl StateOfResidence {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            StateOfResidence::UnspecifiedState => "UNSPECIFIED_STATE",
+            StateOfResidence::None => "NONE",
             StateOfResidence::Al => "AL",
             StateOfResidence::Ak => "AK",
             StateOfResidence::Az => "AZ",
@@ -922,7 +922,7 @@ impl StateOfResidence {
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "UNSPECIFIED_STATE" => Some(Self::UnspecifiedState),
+            "NONE" => Some(Self::None),
             "AL" => Some(Self::Al),
             "AK" => Some(Self::Ak),
             "AZ" => Some(Self::Az),

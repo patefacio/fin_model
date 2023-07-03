@@ -124,80 +124,11 @@ where
 {
     // α <fn multi_column_select>
 
-    use std::cell::RefCell;
-    let block_time = BlockTime::new("Creation of element");
+    use leptos::create_rw_signal;
+    use leptos::html::Button;
+    use leptos::NodeRef;
+    use leptos::*;
     let mut on_select = on_select;
-
-    let indexer = Indexer::new(options.len(), column_count, direction);
-    let mcs_grid_ref = create_node_ref::<Div>(cx);
-    let main_button_ref = create_node_ref::<Button>(cx);
-    let set_focus_main_button = move || {
-        console_log("Focus to  main");
-        main_button_ref
-            .get()
-            .expect("ref should be loaded")
-            .focus()
-            .expect("focus back to main menu");
-        console_log("Focus should go to main button ref!!");
-    };
-
-    let menu_is_hidden = create_rw_signal(cx, true);
-    let current_selected_index = create_rw_signal(
-        cx,
-        if let Some(InitialValue::SelectionIndex(i)) = initial_value {
-            i
-        } else {
-            0
-        },
-    );
-
-    let selection_vec = store_value(
-        cx,
-        Rc::new(
-            (0..indexer.item_count)
-                .map(|_| create_node_ref::<Button>(cx))
-                .collect::<Vec<_>>(),
-        ),
-    );
-
-    let initial_value = if let Some(InitialValue::Placeholder(placeholder)) = initial_value {
-        placeholder
-    } else {
-        options[current_selected_index.get()]
-            .main_button_label()
-            .clone()
-    };
-
-    on_select(initial_value.clone());
-
-    let main_button_label = create_rw_signal(cx, initial_value);
-    let using_mouse = create_rw_signal(cx, false);
-
-    let set_target_focus = move |flat_index: usize| {
-        selection_vec.with_value(|selection_vec| {
-            selection_vec
-                .get(flat_index)
-                .as_ref()
-                .expect("Node exists")
-                .get()
-                .expect("ref should be loaded")
-                .focus()
-                .expect("focus set");
-        });
-
-        console_log(&format!("Done to manually set focus {flat_index}"));
-    };
-
-    let show_menu = move || {
-        console_log("Showing Menu!!");
-        menu_is_hidden.set(false);
-        set_target_focus(current_selected_index.get());
-    };
-
-    let hide_menu = move || {
-        console_log("Hiding Menu!!");
-        menu_is_hidden.set(true);
-    };
 
     fn get_selection(element: Element) -> Option<(usize, String)> {
         find_element_up(element, HtmlTag::Button).and_then(|element| {
@@ -214,17 +145,91 @@ where
         })
     }
 
-    let set_selection = Rc::new(RefCell::new(move |element: Element| {
+    let indexer = Indexer::new(options.len(), column_count, direction);
+
+    struct MCSData<F> {
+        options: Vec<SelectOption>,
+        on_select: F,
+        selection_vec: Vec<NodeRef<Button>>,
+        current_index: usize,
+        main_button_label: String
+    }
+
+    let (current_index, initial_value) = match initial_value {
+        Some(InitialValue::SelectionIndex(i)) => (i, options[i].main_button_label().clone()),
+        Some(InitialValue::Placeholder(placeholder)) => (0, placeholder),
+        None => (0, options[0].main_button_label().clone()),
+    };
+
+    // Signal the resolved initial value
+    on_select(initial_value.clone());
+
+    let mcs_data = create_rw_signal(
+        cx,
+        MCSData::<F> {
+            options,
+            on_select,
+            selection_vec: (0..indexer.item_count)
+                .map(|_| create_node_ref::<Button>(cx))
+                .collect::<Vec<_>>(),
+            current_index,
+            main_button_label: initial_value.clone()
+        },
+    );
+    let menu_is_hidden = create_rw_signal(cx, true);
+    let using_mouse = create_rw_signal(cx, false);
+    let mcs_grid_ref = create_node_ref::<Div>(cx);
+    let main_button_ref = create_node_ref::<Button>(cx);
+    
+    let set_focus_main_button = move || {
+        console_log("Focus to  main");
+        main_button_ref
+            .get()
+            .expect("ref should be loaded")
+            .focus()
+            .expect("focus back to main menu");
+        console_log("Focus should go to main button ref!!");
+    };
+
+    let set_target_focus = move |flat_index: usize| {
+        mcs_data.with(|mcs_data| {
+            mcs_data
+                .selection_vec
+                .get(flat_index)
+                .as_ref()
+                .expect("Node exists")
+                .get()
+                .expect("ref should be loaded")
+                .focus()
+                .expect("focus set");
+            console_log(&format!("Done to manually set focus {flat_index}"));
+        })
+    };
+
+    let show_menu = move || {
+        console_log("Showing Menu!!");
+        menu_is_hidden.set(false);
+        mcs_data.with(|mcs_data| set_target_focus(mcs_data.current_index));
+    };
+
+    let hide_menu = move || {
+        console_log("Hiding Menu!!");
+        menu_is_hidden.set(true);
+    };
+
+    let set_selection = move |element: Element| {
+        let _timing = BlockTime::new(&format!("setting_selection -> {element:?}"));
         if let Some((flat_index, selected)) = get_selection(element) {
             console_log(&format!("Selected {flat_index} {selected}"));
-            current_selected_index.set(flat_index);
-            main_button_label.set(selected.clone());
-            on_select(selected);
+            mcs_data.update(|mcs_data| {
+                mcs_data.main_button_label = selected.clone();
+                mcs_data.current_index = flat_index;
+                (mcs_data.on_select)(selected);
+            })
         }
-    }));
+    };
 
-    let key_down_set_selection = set_selection.clone();
-    let handle_key_down = Rc::new(move |ev: KeyboardEvent| {
+    let handle_key_down = move |ev: KeyboardEvent| {
         let _timing = BlockTime::new("key_down");
         let key_code = ev.key_code();
 
@@ -235,8 +240,7 @@ where
             ENTER_KEY | SPACE_KEY | ESCAPE_KEY => {
                 console_log("Enter|Space|Escape Key");
                 if key_code != ESCAPE_KEY {
-                    let mut current = key_down_set_selection.borrow_mut();
-                    current(element_from_event(&ev));
+                    set_selection(element_from_event(&ev));
                 }
                 hide_menu();
                 set_focus_main_button();
@@ -252,14 +256,12 @@ where
             }
             _ => console_log("Other key"),
         };
-    });
+    };
 
-    let click_set_selection = set_selection.clone();
     let handle_click = Rc::new(move |ev: MouseEvent| {
         console_log("Select button handle click");
         let _timing = BlockTime::new("click");
-        let mut current = click_set_selection.borrow_mut();
-        current(element_from_event(&ev));
+        set_selection(element_from_event(&ev));
         hide_menu();
         set_focus_main_button();
     });
@@ -305,56 +307,57 @@ where
     };
 
     let mut cells = Vec::with_capacity(indexer.item_count);
-    for row in 0..indexer.row_count {
-        for column in 0..column_count {
-            let flat_index = indexer.two_d_to_flat_index(row, column);
-            let cell = if let Some(select_option) = options.get(flat_index) {
-                let button_ref =
-                    selection_vec.with_value(|selection_vec| selection_vec[flat_index]);
-                let (value, button_content) = match select_option {
-                    SelectOption::Label(label) => (
-                        label,
-                        view! { cx, <div class="mcs-label">{label}</div> }.into_view(cx),
-                    ),
-                    SelectOption::KeyLabel { key, label } => (
-                        key,
-                        view! { cx,
-                            <div class="icon-label">
-                                <div class="icon">{key}</div>
-                                <div class="label">{label}</div>
-                            </div>
-                        }
-                        .into_view(cx),
-                    ),
+    mcs_data.with(|mcs_data| {
+        for row in 0..indexer.row_count {
+            for column in 0..column_count {
+                let flat_index = indexer.two_d_to_flat_index(row, column);
+                let cell = if let Some(select_option) = mcs_data.options.get(flat_index) {
+                    let button_ref = mcs_data.selection_vec[flat_index];
+                    let (value, button_content) = match select_option {
+                        SelectOption::Label(label) => (
+                            label,
+                            view! { cx, <div class="mcs-label">{label}</div> }.into_view(cx),
+                        ),
+                        SelectOption::KeyLabel { key, label } => (
+                            key,
+                            view! { cx,
+                                <div class="icon-label">
+                                    <div class="icon">{key}</div>
+                                    <div class="label">{label}</div>
+                                </div>
+                            }
+                            .into_view(cx),
+                        ),
+                    };
+
+                    let wrapped_click = handle_click.clone();
+                    let wrapped_handle_click = move |ev| wrapped_click(ev);
+                    let wrapped_handle_keydown = handle_key_down.clone();
+                    let wrapped_handle_keydown = move |ev| wrapped_handle_keydown(ev);
+
+                    view! { cx,
+                        <button
+                            class="select-button"
+                            on:click=wrapped_handle_click
+                            on:mouseover=handle_mouseover
+                            on:mousemove=handle_mousemove
+                            on:keydown=wrapped_handle_keydown
+                            class:using-mouse=using_mouse
+                            data-flat-index=flat_index
+                            data-value=value
+                            node_ref=button_ref
+                        >
+                            {button_content}
+                        </button>
+                    }
+                    .into_view(cx)
+                } else {
+                    view! { cx, <div></div> }.into_view(cx)
                 };
-
-                let wrapped_click = handle_click.clone();
-                let wrapped_handle_click = move |ev| wrapped_click(ev);
-                let wrapped_handle_keydown = handle_key_down.clone();
-                let wrapped_handle_keydown = move |ev| wrapped_handle_keydown(ev);
-
-                view! { cx,
-                    <button
-                        class="select-button"
-                        on:click=wrapped_handle_click
-                        on:mouseover=handle_mouseover
-                        on:mousemove=handle_mousemove
-                        on:keydown=wrapped_handle_keydown
-                        class:using-mouse=using_mouse
-                        data-flat-index=flat_index
-                        data-value=value
-                        node_ref=button_ref
-                    >
-                        {button_content}
-                    </button>
-                }
-                .into_view(cx)
-            } else {
-                view! { cx, <div></div> }.into_view(cx)
-            };
-            cells.push(cell);
+                cells.push(cell);
+            }
         }
-    }
+    });
 
     let handle_global_mousedown = move |ev: Event| {
         console_log("Global mousedown working !!");
@@ -406,7 +409,7 @@ where
                 class="main-button"
                 node_ref=main_button_ref
             >
-                {main_button_label}
+               { move || {mcs_data.with(|mcs_data| mcs_data.main_button_label.clone())} }
             </button>
             <div
                 class="container"

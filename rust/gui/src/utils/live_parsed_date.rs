@@ -86,7 +86,7 @@ impl LiveParsedDate {
             probable_delete: false,
             parsed_state: ParsedState::M1,
             year_clamp: year_range
-                .map(|year_range| IntegerClamp::new(year_range.start..year_range.end)),
+                .map(|year_range| IntegerClamp::new(year_range.start..=year_range.end)),
         }
 
         // ω <fn LiveParsedDate::new>
@@ -111,7 +111,7 @@ impl LiveParsedDate {
             probable_delete: false,
             parsed_state: ParsedState::M1,
             year_clamp: year_range
-                .map(|year_range| IntegerClamp::new(year_range.start..year_range.end)),
+                .map(|year_range| IntegerClamp::new(year_range.start..=year_range.end)),
         }
         // ω <fn LiveParsedDate::from_date>
     }

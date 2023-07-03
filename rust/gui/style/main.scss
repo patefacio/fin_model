@@ -239,9 +239,17 @@
 	padding: 5px;
 }
 
+// .invalid {
+// 	border: 3px solid red;
+// }
+
 .invalid, textarea  {
-	background-color: rgb(246, 225, 225);
+	background-color: rgb(237, 199, 199);
 	box-sizing: content-box;
+}
+
+input.invalid:focus {
+	border: 3px solid red;
 }
 
 .ycv {

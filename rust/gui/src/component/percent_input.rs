@@ -8,6 +8,7 @@ use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use std::ops::RangeInclusive;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -22,6 +23,7 @@ use leptos_dom::console_log;
 ///
 ///   * **max_len** - The maximum number of characters for the percent input.
 ///
+///   * **range** - Range of valid values for input.
 ///   * _return_ - View for percent_input
 #[component]
 pub fn PercentInput(
@@ -39,6 +41,9 @@ pub fn PercentInput(
     /// The maximum number of characters for the percent input.
     #[prop(default = 8)]
     max_len: u32,
+    /// Range of valid values for input.
+    #[prop(default=None)]
+    range: Option<RangeInclusive<f64>>,
 ) -> impl IntoView {
     // α <fn percent_input>
 
@@ -64,6 +69,7 @@ pub fn PercentInput(
             placeholder=placeholder
             max_len=max_len
             size=size
+            range=range
         />
     }
 

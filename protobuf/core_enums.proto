@@ -444,7 +444,7 @@ enum StateOfResidence {
   /*
     Unspecified state.
   */
-  UNSPECIFIED_STATE = 0;
+  NONE = 0;
   
   /*
     State of `AL`

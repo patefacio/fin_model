@@ -79,8 +79,9 @@ pub fn ComponentDisplayComponent(
             <h4>"Last Update"</h4>
             <p>{last_update}</p>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr">
-            <div>
+        <h3>"Numbers"</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div style="padding: 1em;">
                 <h4>"Numeric Input Range(-5.0,5.0)"</h4>
                 <p>"Models a single floating point number."</p>
                 <h5>"Special Features"</h5>
@@ -103,12 +104,12 @@ pub fn ComponentDisplayComponent(
                 "></p>
                 <NumericInput
                     updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })
-                    range=Some(-5.0..5.0)
+                    range=Some(-5.0..=5.0)
                     placeholder=Some("temp".to_string())
                     size=13
                 />
             </div>
-            <div>
+            <div style="padding: 1em;">
                 <div>
                     <h4>"Numeric Input With Prefix"</h4>
                     <p inner_html="
@@ -134,7 +135,7 @@ pub fn ComponentDisplayComponent(
                     />
                 </div>
                 <div>
-                    <h4>"Numeric Input Prefix & Suffix Range(0,5,000.0001)"</h4>
+                    <h4>"Numeric Input Prefix & Suffix RangeInclusive(0 to 5,000)"</h4>
                     <p inner_html="
                     Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
                     "></p>
@@ -145,15 +146,20 @@ pub fn ComponentDisplayComponent(
                             suffix: "/yr".into(),
                         })
                         placeholder=Some("expense/yr".to_string())
-                        range=Some(0.0..5_000.0001)
+                        range=Some(0.0..=5_000.0)
                         max_len=14
                         size=15
                     />
                 </div>
             </div>
-            <div>
+            <div style="padding: 1em;">
                 <h4>"Integer Input"</h4>
-                <p inner_html="Models a single integer with similar features to <em>Numeric Input</em> without decimals"></p>
+                <p inner_html="Models a single integer with similar features to <em>Numeric Input</em> without decimals.
+                <ul>
+                <li>Special characters ('k', 'm', 'b')</li>
+                <li>Optional commify</li>
+                </ul>
+                "></p>
                 <IntegerInput
                     updatable=Updatable::new(
                         None,
@@ -164,41 +170,60 @@ pub fn ComponentDisplayComponent(
                     placeholder=Some("Integer".to_string())
                 />
             </div>
-            <div>
-                <h4 inner_html="Percent Input (i.e. suffix `%`) <strong>max_len=8</strong>"></h4>
+            <div style="padding: 1em;">
+                <h4 inner_html="Percent Input (i.e. suffix `%`) <strong>max_len=8</strong> RangeInclusive(0% to 40%)"></h4>
                 <p inner_html="
                 Provides a <em>NumericInput<em> with a percent suffix modification.
                 "></p>
                 <PercentInput
                     updatable=Updatable::new(
-                        Some(0.4324),
-                        move |n| { show_update(format!("Percent updated -> {n:?}")) },
+                        Some(0.0315),
+                        move |n| { show_update(format!("Percent updated -> {n:?}")) }
                     )
                     placeholder=Some("pct complete".to_string())
                     max_len=8
+                    range=Some(0.0..=0.4)
                 />
             </div>
             <hr/>
         </div>
         <hr/>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr">
-            <div>
-                <h4>"Year Input (min=1900, max=2300) With No Data"</h4>
+        <h3>"Years and Dates"</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1.5fr">
+        <div style="padding: 1em;">
+                <h4>"Year Input"</h4>
                 <p inner_html="Year Input - Supports range and provides a <em>live</em> clamp type
-                functionality. Currently invalid/incomplete is is indicated by css <strong>redish</strong> text field."></p>
+                functionality. With <em>live clamp</em> true, if the user enters a year with the proper number
+                of digits it will be within range. This is achieved by modifying user input on the fly to
+                stay within range. As this may be disorienting it is optional.
+                "></p>
+                <div>
+                <h5>"With Clamp, RangeInclusive(1900 to 2300)"</h5>
                 <YearInput
                     updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
                     placeholder=Some("year".to_string())
+                    live_clamp=true
+                    year_range=YearRange{start:1900, end:2300}
                 />
-            </div>
-            <div>
-                <h4>"Year Input (min=1900, max=2300) With Data"</h4>
+                </div>
+                <div>
+                <h5>"Without Clamp, RangeInclusive(1900 to 2300)"</h5>
                 <YearInput
-                    updatable=Updatable::new(Some(1999), move |y| { show_update(format!("Year updated -> {y:?}")) })
+                    updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
                     placeholder=Some("year".to_string())
+                    year_range=YearRange{start:1900, end:2300}
+                />
+                </div>
+                <div>
+                <h4>"Without Clamp, RangeInclusive(2020 to 2030) With Initial Valid Year"</h4>
+                <YearInput
+                    updatable=Updatable::new(Some(2030), move |y| { show_update(format!("Year updated -> {y:?}")) })
+                    placeholder=Some("year".to_string())
+                    year_range=YearRange{start:2020, end:2030}
                 />
             </div>
-            <div>
+            </div>
+            <div style="padding: 1em;">
                 <h4>"Date Input (Range (1990 -> 2070))"</h4>
                 <p inner_html="
                 <p>
@@ -207,9 +232,9 @@ pub fn ComponentDisplayComponent(
                 <ul>
                 <li>Any non numeric character (e.g. space or '/' advances from month or day field)</li>
                 <li>Tab from month to day to year and shift-tab for reverse</li>
-                <li>Year range is supported</li>
+                <li>Year range <strong>with clamp</strong> is supported</li>
                 <li>Signals on complete/valid input</li>
-                <li>class `invalid` if input is not valid</li>
+                <li>Class `invalid` if input is not valid</li>
                 </ul>
                 "></p>
                 <DateInput
@@ -228,8 +253,11 @@ pub fn ComponentDisplayComponent(
             </div>
         </div>
         <hr/>
+        <h3>"Select Lists"</h3>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
-            <div>
+        <div style="padding: 1em;">
+
                 <h4>"Mutli-Column Select (Top To Bottom)"</h4>
                 <p inner_html="
                 <p>
@@ -253,9 +281,11 @@ pub fn ComponentDisplayComponent(
                         move |state| { show_update(format!("State updated -> {state:?}")) },
                     )
                     direction=SelectDirection::TopToBottom
+                    column_count=5
                 />
             </div>
-            <div>
+            <div style="padding: 1em;">
+
                 <h4>"Mutli-Column Select (Left To Right)"</h4>
                 <EnumSelect
                     updatable=Updatable::new(
@@ -263,9 +293,11 @@ pub fn ComponentDisplayComponent(
                         move |state| { show_update(format!("State updated -> {state:?}")) },
                     )
                     direction=SelectDirection::LeftToRight
+                    column_count=5
                 />
             </div>
-            <div>
+            <div style="padding: 1em;">
+
                 <h4>"Currency Select"</h4>
                 <p inner_html="
                 <em>Two Field, Three Column Example of <strong>MultiColumnSelect</strong></em>.

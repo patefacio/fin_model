@@ -94,7 +94,6 @@ pub fn NormalSpecComponent(
 
     view! { cx,
         <fieldset class="nsg">
-            <legend>"Normal Growth"</legend>
             <div class="form">
                 <div style="display: inline-flex">
                     "N("
