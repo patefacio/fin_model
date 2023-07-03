@@ -266,11 +266,11 @@ pub mod unit_tests {
         fn clamp() {
             // α <fn test IntegerClamp::clamp>
 
-            let mut integer_clamp = IntegerClamp::new(3_500_000..3_800_000);
+            let mut integer_clamp = IntegerClamp::new(3_500_000..=3_800_000);
 
             assert_eq!(ParsedNum::new(3507001), integer_clamp.clamp("3507001"));
 
-            integer_clamp = IntegerClamp::new(1900..2300);
+            integer_clamp = IntegerClamp::new(1900..=2300);
             assert_eq!(ParsedNum::new(2200), integer_clamp.clamp("2200"));
             assert_eq!(ParsedNum::new(2025), integer_clamp.clamp("2025"));
             assert_eq!(ParsedNum::new(1980), integer_clamp.clamp("1980"));
@@ -309,17 +309,11 @@ pub mod unit_tests {
         #[test]
         fn clamp() {
             // α <fn test IntegerClampStrings::clamp>
-            let mut integer_clamp = IntegerClampStrings::new(Range::<u32> {
-                start: 3500000,
-                end: 3800000,
-            });
+            let mut integer_clamp = IntegerClampStrings::new(3500000..=3800000);
 
             assert_eq!(ParsedNum::new(3507001), integer_clamp.clamp("3507001"));
 
-            integer_clamp = IntegerClampStrings::new(Range::<u32> {
-                start: 1900,
-                end: 2300,
-            });
+            integer_clamp = IntegerClampStrings::new(1900..=2300);
             assert_eq!(ParsedNum::new(2200), integer_clamp.clamp("2200"));
             assert_eq!(ParsedNum::new(2025), integer_clamp.clamp("2025"));
             assert_eq!(ParsedNum::new(1980), integer_clamp.clamp("1980"));
