@@ -31,48 +31,19 @@ impl PlotData for RateCurve {
         use crate::Year;
         use plotters::prelude::*;
         use plus_modeled::RateCurve;
-        use std::slice::Windows;
         use plus_modeled::YearValue;
+        use std::slice::Windows;
 
-        //Extract the x and y coordinates out of RateCurve and Curve to collect in a vector
-        // let mut x_vec = self
-        //     .curve
-        //     .iter()
-        //     .map(|yv| yv.year as f64)
-        //     .collect::<Vec<f64>>();
-        // let mut y_vec = self.curve.iter().map(|yv| yv.value).collect::<Vec<f64>>();
-
-        // let step_diagram = /*(x_vec: Vec<f64>, y_vec: Vec<f64>) -> RateCurve*/ {
-        //     ChartBuilder::build_cartesian_2d(&mut self, x_vec[0], y_vec[0]);
-        //     ChartBuilder::build_cartesian_2d(&mut self, x_vec[1], y_vec[0]);
-        //     ChartBuilder::build_cartesian_2d(&mut self, x_vec[1], y_vec[1]);
-
-        // };
-
-        // for (first, second) in self.curve.iter().windows(2) {
-        //     let vec_slice = self.curve;
-        //     let iter = vec_slice.windows(2);
-        //     vec_slice.push(self.curve)
-        // }
-
-        //check curve to see if it is empty
-        // let mut check_empty_curve = || {
-        //     if self.curve.is_empty() {
-                
-        //         //console_log(&format!("Curve is empty. Wait for the user to enter data"));
-        //     }
-        // };
-
-        // check_empty_curve();
-
+        //Check to see if the curve is empty -> no values can be plotted if the user hasn't given any input
         if self.curve.is_empty() {
             return String::default();
         }
 
-
         let mut vec_slice: Vec<(f64, f64)> = Vec::with_capacity(self.curve.len());
         let mut min_y = f64::MAX;
         let mut max_y = f64::MIN;
+
+        //windows returns a slice of the vector [left: (2005, 4.5), right: (2006, 2.6)]
         for slice in self.curve.as_slice().windows(2) {
             let (left, right) = (slice.first().unwrap(), slice.last().unwrap());
             vec_slice.push((left.year as f64, left.value));
@@ -82,9 +53,20 @@ impl PlotData for RateCurve {
         }
         let min_x = self.curve.first().unwrap().year;
         let max_x = self.curve.last().unwrap().year;
-        
+        vec_slice.push(
+            self.curve
+                .last()
+                .map(|year_value| (year_value.year as f64, year_value.value))
+                .unwrap(),
+        );
 
-        
+        //push the last y value in the curve to the graph since the vector could contain an odd number of
+        //points, thereby failing to share the window of the next point
+        let last_y = self.curve.last().unwrap().value;
+        min_y = min_y.min(last_y);
+        max_y = max_y.max(last_y);
+
+        //This is all code for the writing and styling of the graph from the plotters library
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
             let text_style: TextStyle = ("sans-serif", 20).into();
@@ -99,10 +81,7 @@ impl PlotData for RateCurve {
                 .set_label_area_size(LabelAreaPosition::Bottom, 40)
                 .set_label_area_size(LabelAreaPosition::Right, 0)
                 .caption("Rate Curve", ("sans-serif", 30))
-                .build_cartesian_2d(
-                    (min_x as f64 ..max_x as f64 ),
-                    (min_y..max_y),
-                )
+                .build_cartesian_2d((min_x as f64..max_x as f64), (min_y..max_y))
                 .unwrap();
 
             chart
@@ -115,16 +94,8 @@ impl PlotData for RateCurve {
                 .draw()
                 .unwrap();
 
-            
-            //let foo = vec_slice.iter();
             chart
-                .draw_series(
-                    LineSeries::new(
-                        vec_slice,
-                        &BLUE,
-                    )
-                    .point_size(2),
-                )
+                .draw_series(LineSeries::new(vec_slice, &BLUE).point_size(2))
                 .unwrap()
                 .label("PDF");
 
@@ -132,6 +103,7 @@ impl PlotData for RateCurve {
         }
 
         plot_buff
+
         // ω <fn PlotData::plot for RateCurve>
     }
 }
