@@ -91,9 +91,9 @@ pub fn NumericInput(
 
     use leptos::create_signal;
     use leptos::IntoAttribute;
-    use leptos::SignalSet;
-    use leptos::SignalGet;
     use leptos::IntoClass;
+    use leptos::SignalGet;
+    use leptos::SignalSet;
 
     let mut is_in_range = true;
 

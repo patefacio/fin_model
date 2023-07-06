@@ -8,6 +8,7 @@ use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::YearRange;
+use std::ops::RangeInclusive;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -16,6 +17,7 @@ use plus_modeled::YearRange;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - The [YearRange] being edited
+///   * **range** - Range of valid values for input.
 ///   * _return_ - View for year_range_input
 #[component]
 pub fn YearRangeInput(
@@ -23,6 +25,9 @@ pub fn YearRangeInput(
     cx: Scope,
     /// The [YearRange] being edited
     updatable: Updatable<Option<YearRange>>,
+    /// Range of valid values for input.
+    #[prop(default=None)]
+    range: Option<RangeInclusive<u32>>,
 ) -> impl IntoView {
     // α <fn year_range_input>
 
@@ -82,6 +87,16 @@ pub fn YearRangeInput(
         })
     });
 
+    let year_range = range
+        .map(|range| YearRange {
+            start: *range.start(),
+            end: *range.end(),
+        })
+        .unwrap_or_else(|| YearRange {
+            start: 1900,
+            end: 2400,
+        });
+
     view! { cx,
         <fieldset class="nsg">
             <legend>"Year Range"</legend>
@@ -91,9 +106,15 @@ pub fn YearRangeInput(
                     <YearInput
                         placeholder=Some("start".to_string())
                         updatable=start_year_updatable
+                        year_range=year_range
+                        live_clamp=true
                     /> ","
-                    <YearInput placeholder=Some("end".to_string()) updatable=end_year_updatable/>
-                    ")"
+                    <YearInput
+                        placeholder=Some("end".to_string())
+                        updatable=end_year_updatable
+                        year_range=year_range
+                        live_clamp=true
+                    /> ")"
                 </div>
             </div>
         </fieldset>

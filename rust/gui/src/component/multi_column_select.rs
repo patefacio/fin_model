@@ -412,7 +412,7 @@ where
                 class="main-button"
                 node_ref=main_button_ref
             >
-               { move || {mcs_data.with(|mcs_data| mcs_data.main_button_label.clone())} }
+                {move || { mcs_data.with(|mcs_data| mcs_data.main_button_label.clone()) }}
             </button>
             <div
                 class="container"

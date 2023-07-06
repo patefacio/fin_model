@@ -178,7 +178,7 @@ pub fn ComponentDisplayComponent(
                 <PercentInput
                     updatable=Updatable::new(
                         Some(0.0315),
-                        move |n| { show_update(format!("Percent updated -> {n:?}")) }
+                        move |n| { show_update(format!("Percent updated -> {n:?}")) },
                     )
                     placeholder=Some("pct complete".to_string())
                     max_len=8
@@ -190,7 +190,7 @@ pub fn ComponentDisplayComponent(
         <hr/>
         <h3>"Years and Dates"</h3>
         <div style="display: grid; grid-template-columns: 2fr 1.5fr">
-        <div style="padding: 1em;">
+            <div style="padding: 1em;">
                 <h4>"Year Input"</h4>
                 <p inner_html="Year Input - Supports range and provides a <em>live</em> clamp type
                 functionality. With <em>live clamp</em> true, if the user enters a year with the proper number
@@ -198,30 +198,39 @@ pub fn ComponentDisplayComponent(
                 stay within range. As this may be disorienting it is optional.
                 "></p>
                 <div>
-                <h5>"With Clamp, RangeInclusive(1900 to 2300)"</h5>
-                <YearInput
-                    updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
-                    placeholder=Some("year".to_string())
-                    live_clamp=true
-                    year_range=YearRange{start:1900, end:2300}
-                />
+                    <h5>"With Clamp, RangeInclusive(1900 to 2300)"</h5>
+                    <YearInput
+                        updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
+                        placeholder=Some("year".to_string())
+                        live_clamp=true
+                        year_range=YearRange {
+                            start: 1900,
+                            end: 2300,
+                        }
+                    />
                 </div>
                 <div>
-                <h5>"Without Clamp, RangeInclusive(1900 to 2300)"</h5>
-                <YearInput
-                    updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
-                    placeholder=Some("year".to_string())
-                    year_range=YearRange{start:1900, end:2300}
-                />
+                    <h5>"Without Clamp, RangeInclusive(1900 to 2300)"</h5>
+                    <YearInput
+                        updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
+                        placeholder=Some("year".to_string())
+                        year_range=YearRange {
+                            start: 1900,
+                            end: 2300,
+                        }
+                    />
                 </div>
                 <div>
-                <h4>"Without Clamp, RangeInclusive(2020 to 2030) With Initial Valid Year"</h4>
-                <YearInput
-                    updatable=Updatable::new(Some(2030), move |y| { show_update(format!("Year updated -> {y:?}")) })
-                    placeholder=Some("year".to_string())
-                    year_range=YearRange{start:2020, end:2030}
-                />
-            </div>
+                    <h4>"Without Clamp, RangeInclusive(2020 to 2030) With Initial Valid Year"</h4>
+                    <YearInput
+                        updatable=Updatable::new(Some(2030), move |y| { show_update(format!("Year updated -> {y:?}")) })
+                        placeholder=Some("year".to_string())
+                        year_range=YearRange {
+                            start: 2020,
+                            end: 2030,
+                        }
+                    />
+                </div>
             </div>
             <div style="padding: 1em;">
                 <h4>"Date Input (Range (1990 -> 2070))"</h4>
@@ -254,10 +263,8 @@ pub fn ComponentDisplayComponent(
         </div>
         <hr/>
         <h3>"Select Lists"</h3>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr">
-        <div style="padding: 1em;">
-
+            <div style="padding: 1em;">
                 <h4>"Mutli-Column Select (Top To Bottom)"</h4>
                 <p inner_html="
                 <p>
@@ -285,7 +292,6 @@ pub fn ComponentDisplayComponent(
                 />
             </div>
             <div style="padding: 1em;">
-
                 <h4>"Mutli-Column Select (Left To Right)"</h4>
                 <EnumSelect
                     updatable=Updatable::new(
@@ -297,7 +303,6 @@ pub fn ComponentDisplayComponent(
                 />
             </div>
             <div style="padding: 1em;">
-
                 <h4>"Currency Select"</h4>
                 <p inner_html="
                 <em>Two Field, Three Column Example of <strong>MultiColumnSelect</strong></em>.
@@ -410,7 +415,7 @@ pub fn ComponentDisplayComponent(
         </p>
         <button on:click=move |_| {
             write_count.update(|c| *c = *c + 1);
-        }>"INC"</button>
+        }>{move || format!("Inc({})", read_count.get())}</button>
     }
 
     // ω <fn component_display_component>

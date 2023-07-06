@@ -76,29 +76,30 @@ pub fn RateCurveComponent(
     let clear_fields = create_rw_signal(cx, false);
 
     view! { cx,
-        <For
-            each=move || updatable.with(|updatable| updatable.value.curve.clone())
-            key=|year_value| { year_value.year }
-            view=move |cx, year_value| {
-                let (disabled, _set_disabled) = create_signal(cx, true);
-                let remove_me = move |_event| {
-                    set_updatable
-                        .update(|updatable| {
-                            if let Some(found_index)
-                                = updatable
-                                    .value
-                                    .curve
-                                    .iter()
-                                    .position(|elm_year_value| {
-                                        elm_year_value.year == year_value.year
-                                    })
-                            {
-                                updatable.value.curve.remove(found_index);
-                            }
-                        });
-                };
-                view! { cx,
-                    <div>
+        <div class="rate-curve-data">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
+            <For
+                each=move || updatable.with(|updatable| updatable.value.curve.clone())
+                key=|year_value| { year_value.year }
+                view=move |cx, year_value| {
+                    let (disabled, _set_disabled) = create_signal(cx, true);
+                    let remove_me = move |_event| {
+                        set_updatable
+                            .update(|updatable| {
+                                if let Some(found_index)
+                                    = updatable
+                                        .value
+                                        .curve
+                                        .iter()
+                                        .position(|elm_year_value| {
+                                            elm_year_value.year == year_value.year
+                                        })
+                                {
+                                    updatable.value.curve.remove(found_index);
+                                }
+                            });
+                    };
+                    view! { cx,
                         <button on:click=remove_me>"🗑"</button>
                         <YearInput
                             disabled=Some(disabled)
@@ -134,77 +135,73 @@ pub fn RateCurveComponent(
                             )
                             placeholder=Some("rate".to_string())
                         />
-                    </div>
-                }
-            }
-        />
-        <div>
-            <div style="display: inline-flex;">
-                <div></div>
-                <button
-                    disabled=move || !add_enabled.get()
-                    on:click=move |_| {
-                        set_updatable
-                            .update(move |updatable| {
-                                entry_complete
-                                    .with(|entry_complete| {
-                                        updatable
-                                            .value
-                                            .curve
-                                            .push(YearValue {
-                                                year: entry_complete.0.unwrap(),
-                                                value: entry_complete.1.unwrap(),
-                                            });
-                                        clean_curve(&mut updatable.value.curve);
-                                        console_log("Finished adding curve point, clearing fields!");
-                                        clear_fields.set(true);
-                                    });
-                            })
                     }
-                >
-                    "+"
-                </button>
-                <YearInput
-                    updatable=Updatable::new(
-                        None,
-                        move |year| {
-                            console_log(&format!("Year is updating => {year:?}"));
-                            set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
-                            set_add_enabled
-                                .update(|add_enabled| {
-                                    *add_enabled = entry_complete
-                                        .with(|entry_complete| {
-                                            entry_complete.0.is_some() && entry_complete.1.is_some()
+                }
+            />
+            <button
+                disabled=move || !add_enabled.get()
+                on:click=move |_| {
+                    set_updatable
+                        .update(move |updatable| {
+                            entry_complete
+                                .with(|entry_complete| {
+                                    updatable
+                                        .value
+                                        .curve
+                                        .push(YearValue {
+                                            year: entry_complete.0.unwrap(),
+                                            value: entry_complete.1.unwrap(),
                                         });
-                                    console_log(&format!("Checking entry complete => {add_enabled:?}"));
+                                    clean_curve(&mut updatable.value.curve);
+                                    console_log("Finished adding curve point, clearing fields!");
+                                    clear_fields.set(true);
                                 });
-                        },
-                    )
-                    placeholder=Some("year".to_string())
-                    clear_input=Some(clear_fields)
-                />
-                <PercentInput
-                    updatable=Updatable::new(
-                        None,
-                        move |percent| {
-                            console_log(&format!("Percent is updating => {percent:?}"));
-                            set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
-                            set_add_enabled
-                                .update(|add_enabled| {
-                                    *add_enabled = entry_complete
-                                        .with(|entry_complete| {
-                                            console_log(
-                                                &format!("Checking entry complete => {entry_complete:?}"),
-                                            );
-                                            entry_complete.0.is_some() && entry_complete.1.is_some()
-                                        });
-                                    console_log(&format!("Checking entry complete => {add_enabled:?}"));
-                                });
-                        },
-                    )
-                    placeholder=Some("rate".to_string())
-                />
-            </div>
+                        })
+                }
+            >
+                "+"
+            </button>
+            <YearInput
+                updatable=Updatable::new(
+                    None,
+                    move |year| {
+                        console_log(&format!("Year is updating => {year:?}"));
+                        set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
+                        set_add_enabled
+                            .update(|add_enabled| {
+                                *add_enabled = entry_complete
+                                    .with(|entry_complete| {
+                                        entry_complete.0.is_some() && entry_complete.1.is_some()
+                                    });
+                                console_log(&format!("Checking entry complete => {add_enabled:?}"));
+                            });
+                    },
+                )
+                placeholder=Some("year".to_string())
+                clear_input=Some(clear_fields)
+            />
+            <PercentInput
+                updatable=Updatable::new(
+                    None,
+                    move |percent| {
+                        console_log(&format!("Percent is updating => {percent:?}"));
+                        set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
+                        set_add_enabled
+                            .update(|add_enabled| {
+                                *add_enabled = entry_complete
+                                    .with(|entry_complete| {
+                                        console_log(
+                                            &format!("Checking entry complete => {entry_complete:?}"),
+                                        );
+                                        entry_complete.0.is_some() && entry_complete.1.is_some()
+                                    });
+                                console_log(&format!("Checking entry complete => {add_enabled:?}"));
+                            });
+                    },
+                )
+                placeholder=Some("rate".to_string())
+            />
+        </div>
         </div>
         <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
     }

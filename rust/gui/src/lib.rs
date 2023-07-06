@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+pub use component::collection_grid_component::CollectionGridComponent;
 pub use component::component_display_component::ComponentDisplayComponent;
 pub use component::currency_select::CurrencySelect;
 pub use component::currency_value_input::CurrencyValueInput;

@@ -46,10 +46,10 @@ pub fn IntegerInput(
 ) -> impl IntoView {
     // α <fn integer_input>
 
+    use crate::utils::commify_number;
     use leptos::create_node_ref;
     use leptos::html::Input;
     use leptos::IntoAttribute;
-    use crate::utils::commify_number;
 
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;
@@ -83,7 +83,6 @@ pub fn IntegerInput(
 
         if value.is_empty() {
             updatable.update_and_then_signal(|int| *int = None);
-            leptos_dom::console_log(&format!("IntegerInput: setting value to -> None"));
             input_ref.set_value("");
         } else {
             let raw_num = value.parse::<u32>().unwrap_or(0);
@@ -92,7 +91,6 @@ pub fn IntegerInput(
             }
             updatable.update_and_then_signal(|int| *int = Some(raw_num));
             input_ref.set_value(&value);
-            leptos_dom::console_log(&format!("IntegerInput: setting value to -> {value:?}"));
         }
     };
 

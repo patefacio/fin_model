@@ -21,46 +21,53 @@ pub fn DisposeTest(
 ) -> impl IntoView {
     // α <fn dispose_test>
 
+    use leptos::*;
     use std::rc::Rc;
+
     let sz = std::mem::size_of_val(&cx);
+
+    let some_data = Rc::new(SomeData::new(&format!("DisposeTest Badabing:{cx:?}")));
+
+/* 
     let (some_data, some_data_write) = leptos::create_signal(
         cx,
-        Rc::new(SomeData::new(&format!("DisposeTest Badabing:{cx:?}"))),
+       SomeData::new(&format!("DisposeTest Badabing:{cx:?}"))
     );
-
+*/
     let do_stuff = move || {
         leptos_dom::console_log(&format!("Doing stuff"));
     };
 
     let do_stuff = leptos::store_value(cx, do_stuff);
 
-    leptos_dom::console_log(&format!(
-        "Size of read signal is {}, size of write signal is {}",
-        std::mem::size_of_val(&some_data),
-        std::mem::size_of_val(&some_data_write),
-    ));
+    // leptos_dom::console_log(&format!(
+    //     "Size of read signal is {}, size of write signal is {}",
+    //     std::mem::size_of_val(&some_data),
+    //     std::mem::size_of_val(&some_data_write),
+    // ));
 
     leptos_dom::console_log(&format!("DisposeTest cx({cx:?}"));
-    let cloned = Rc::downgrade(&some_data());
-    let d = crate::utils::log_dispose::LogDispose::new("dIsPoSe".into());
+    let log_dispose_item = crate::utils::log_dispose::LogDispose::new("dIsPoSe".into());
 
     let on_click = leptos::store_value(cx, move |_| {
-        println!("{d:?}");
-        leptos_dom::console_log(&format!(
-            "Clicked on {:?} -> {:?}({}) size({sz})",
-            cloned,
-            if let Some(guts) = cloned.upgrade() {
-                format!("{guts:?}")
-            } else {
-                "No stuff".to_string()
-            },
-            cloned.strong_count(),
-        ));
+        println!("{log_dispose_item:?}");
+        console_log("Clicked Bam Button");
+        // leptos_dom::console_log(&format!(
+        //     "Clicked on {:?} -> {:?}({}) size({sz})",
+        //     cloned,
+        //     if let Some(guts) = cloned.upgrade() {
+        //         format!("{guts:?}")
+        //     } else {
+        //         "No stuff".to_string()
+        //     },
+        //     cloned.strong_count(),
+        // ));
     });
 
     view! { cx,
         <button on:click=move |e| { on_click.with_value(|on_click| on_click(e)) }>"Bam"</button>
         <p>{&format!("Scope {cx:?}")}</p>
+        <p>{&format!("Some data string -> {}", some_data.data.clone())}</p>
     }
 
     // ω <fn dispose_test>

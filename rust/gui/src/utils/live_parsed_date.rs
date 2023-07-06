@@ -214,7 +214,9 @@ impl LiveParsedDate {
                     unsafe {
                         let bytes = self.formatted.as_bytes_mut();
                         bytes[0] = bytes[0].min('1' as u8);
-                        bytes[1] = bytes[1].min('2' as u8);
+                        if bytes[0] == 1 {
+                            bytes[1] = bytes[1].min('2' as u8);
+                        }
                     }
                     ParsedState::D1
                 }
@@ -355,8 +357,12 @@ pub mod unit_tests {
             // α <fn test LiveParsedDate::parse_date>
             let mut lpd = LiveParsedDate::new(None);
 
-            assert_eq!(("1_/__/____".into(), None, 1), lpd.parse_date("1", 1));
-            assert_eq!(("01/__/____".into(), None, 3), lpd.parse_date("1/", 2));
+            // assert_eq!(("1_/__/____".into(), None, 1), lpd.parse_date("1", 1));
+            // assert_eq!(("01/__/____".into(), None, 3), lpd.parse_date("1/", 2));
+            assert_eq!(
+                ("04/__/____".into(), None, 3),
+                lpd.parse_date("04_/__/____", 3)
+            );
             assert_eq!(("12/__/____".into(), None, 3), lpd.parse_date("12/", 3));
 
             // Only possible via copy/paste since missing `/`

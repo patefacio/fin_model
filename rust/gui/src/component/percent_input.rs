@@ -69,7 +69,7 @@ pub fn PercentInput(
             placeholder=placeholder
             max_len=max_len
             size=size
-            range=range
+            range=range.map(|range| range.start() * 100.0..=range.end() * 100.0)
         />
     }
 
