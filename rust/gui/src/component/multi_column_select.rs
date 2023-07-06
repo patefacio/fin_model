@@ -253,6 +253,9 @@ where
                     using_mouse.set(false);
                 }
                 console_log(&format!("Got one of the movement keys {key_code}"));
+                // The following prevents the window from jumping around as the 
+                // browser scrolls based on key movement.
+                ev.prevent_default();
             }
             _ => console_log("Other key"),
         };
