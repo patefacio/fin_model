@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::IntegerClamp;
 use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
@@ -43,24 +44,65 @@ pub fn IntegerInput(
     /// Range of valid values for input.
     #[prop(default=None)]
     range: Option<RangeInclusive<u32>>,
+    ///Implements clamp
+    #[prop(default = false)]
+    live_clamp: bool,
 ) -> impl IntoView {
     // α <fn integer_input>
-
+    
+    use crate::ParsedNum;
     use crate::utils::commify_number;
     use leptos::create_node_ref;
+    use leptos::create_signal;
     use leptos::html::Input;
     use leptos::IntoAttribute;
+    use leptos::IntoClass;
+    use leptos::SignalGet;
+    use leptos::SignalSet;
+    use leptos::*;
+
+    let mut is_in_range = true;
+
+    let integer_clamp = if let Some(range) = range.as_ref().cloned() {
+        if live_clamp {
+            Some(IntegerClamp::new(range))
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+
+    struct IntegerInputData {
+        updatable: Updatable<Option<u32>>,
+        input_class: Option<String>,
+        placeholder: Option<String>,
+        range: Option<RangeInclusive<u32>>,
+    }
+
+    let mut integer_input_data = store_value(
+        cx,
+        IntegerInputData {
+            updatable,
+            input_class,
+            placeholder,
+            range,
+        },
+    );
 
     let node_ref = create_node_ref::<Input>(cx);
-    let mut updatable = updatable;
 
-    let initial_value = if let Some(initial_value) = updatable.value.as_ref() {
+    let initial_value = if let Some(initial_value) =
+        integer_input_data.with_value(|integer_input_data| integer_input_data.updatable.value)
+    {
         initial_value.to_string()
     } else {
         String::default()
     };
 
-    let mut update_value = move || {
+    let (is_in_range, set_is_in_range) = create_signal(cx, is_in_range);
+
+    let update_value = move || {
         let input_ref = node_ref.get().expect("Integer input node");
         let mut value = input_ref.value();
 
@@ -81,16 +123,38 @@ pub fn IntegerInput(
 
         value = value.chars().filter(|c| c.is_ascii_digit()).collect();
 
+        let clamped = integer_clamp
+                .as_ref()
+                .map(|integer_clamp| integer_clamp.clamp(&value))
+                .unwrap_or_else(|| ParsedNum::from_str(&value));
+
+        value = clamped.as_string;
         if value.is_empty() {
-            updatable.update_and_then_signal(|int| *int = None);
+            integer_input_data.update_value(|integer_input_data| {
+                integer_input_data
+                    .updatable
+                    .update_and_then_signal(|int| *int = None)
+            });
             input_ref.set_value("");
         } else {
-            let raw_num = value.parse::<u32>().unwrap_or(0);
+            let raw_num = clamped.as_u32;
             if include_comma {
                 value = commify_number(raw_num);
             }
-            updatable.update_and_then_signal(|int| *int = Some(raw_num));
+
+            integer_input_data.update_value(|integer_input_data| {
+                integer_input_data
+                    .updatable
+                    .update_and_then_signal(|int| *int = Some(raw_num))
+            });
             input_ref.set_value(&value);
+            set_is_in_range.set(integer_input_data.with_value(|integer_input_range| {
+                integer_input_range
+                    .range
+                    .as_ref()
+                    .map(move |range| range.contains(&raw_num))
+                    .unwrap_or(true)
+            }));
         }
     };
 
@@ -98,10 +162,11 @@ pub fn IntegerInput(
 
     view! { cx,
         <input
-            class=input_class
+            class={move || integer_input_data.with_value(|integer_input_data| integer_input_data.input_class.as_ref().cloned().unwrap_or_default())}
+            class:invalid=move || { !is_in_range.get() }
             node_ref=node_ref
             on:input=move |_| update_value()
-            placeholder=placeholder.unwrap_or_default()
+            placeholder={move || integer_input_data.with_value(|integer_input_data| integer_input_data.placeholder.as_ref().cloned().unwrap_or_default())}
             value=initial_value
             size=max_len + 2
             maxlength=max_len
