@@ -110,7 +110,7 @@ impl PlotData for RateCurve {
                 .x_labels(10)
                 .y_labels(10)
                 .disable_mesh()
-                .x_label_formatter(&|v| format!("{:.1}", v))
+                .x_label_formatter(&|year| format!("{year}"))
                 .y_label_formatter(&|v| format!("{:.1}%", v * 100.0))
                 .draw()
                 .unwrap();

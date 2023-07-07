@@ -27,7 +27,7 @@ pub fn YearCurrencyValueInput(
     /// Initial value and callback
     updatable: Updatable<Option<YearCurrencyValue>>,
     /// Range of valid years.
-    #[prop(default=YearRange{ start: 1900, end: 2300 })]
+    #[prop(default=YearRange{ start: 1900, end: 2400 })]
     year_range: YearRange,
     /// Placeholder for the value field
     #[prop(default="value".to_string())]

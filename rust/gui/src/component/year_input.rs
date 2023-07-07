@@ -37,7 +37,7 @@ pub fn YearInput(
     #[prop(default=None)]
     input_class: Option<String>,
     /// Range of valid years.
-    #[prop(default=YearRange{ start: 1900, end: 2300 })]
+    #[prop(default=YearRange{ start: 1900, end: 2400 })]
     year_range: YearRange,
     /// Value and callback
     updatable: Updatable<Option<u32>>,

@@ -8,6 +8,7 @@ use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::RateCurve;
+use plus_modeled::YearRange;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -19,6 +20,7 @@ use plus_modeled::RateCurve;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - The [RateCurve] being edited
+///   * **year_range** - Range of valid years.
 ///   * _return_ - View for rate_curve_component
 #[component]
 pub fn RateCurveComponent(
@@ -26,6 +28,9 @@ pub fn RateCurveComponent(
     cx: Scope,
     /// The [RateCurve] being edited
     updatable: Updatable<RateCurve>,
+    /// Range of valid years.
+    #[prop(default=YearRange{ start: 1900, end: 2400 })]
+    year_range: YearRange,
 ) -> impl IntoView {
     // α <fn rate_curve_component>
     use crate::utils::plot_data::PlotData;
@@ -179,6 +184,8 @@ pub fn RateCurveComponent(
                 )
                 placeholder=Some("year".to_string())
                 clear_input=Some(clear_fields)
+                year_range=year_range
+                live_clamp=true
             />
             <PercentInput
                 updatable=Updatable::new(
