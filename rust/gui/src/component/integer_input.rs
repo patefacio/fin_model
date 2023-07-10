@@ -61,7 +61,7 @@ pub fn IntegerInput(
     use leptos::SignalSet;
     use leptos::*;
 
-    let mut is_in_range = true;
+    let is_in_range = true;
 
     let integer_clamp = if let Some(range) = range.as_ref().cloned() {
         if live_clamp {
@@ -80,7 +80,7 @@ pub fn IntegerInput(
         range: Option<RangeInclusive<u32>>,
     }
 
-    let mut integer_input_data = store_value(
+    let integer_input_data = store_value(
         cx,
         IntegerInputData {
             updatable,
