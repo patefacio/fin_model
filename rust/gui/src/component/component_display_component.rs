@@ -406,7 +406,7 @@ pub fn ComponentDisplayComponent(
         )/>
 
         <hr/>
-        <h4>"Collection Grid Component"</h4>
+        <h4>"Collection Grid Component<Holding>"</h4>
         <CollectionGridComponent updatable=Updatable::new(
             vec! {
                 Holding{
