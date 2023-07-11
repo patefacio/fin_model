@@ -13,7 +13,6 @@ pub mod clamp;
 pub mod constants;
 pub mod distribution_cdf;
 pub mod distribution_pdf;
-pub mod distribution_cdf;
 pub mod element_sugar;
 pub mod html_tag;
 pub mod integer_clamp;
