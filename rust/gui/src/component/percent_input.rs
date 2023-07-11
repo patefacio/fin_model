@@ -55,26 +55,13 @@ pub fn PercentInput(
 
 
     let scaled_value = updatable.value.map(|value| scale_by(value, 2));
-    let rvalue = updatable.value.map(|value| value);
     let mut updatable = updatable;
-    /*
     let numeric_updatable = Updatable::new(scaled_value, move |new_scaled_value| {
         
         let actual_value = new_scaled_value.map(|v| v / 100.0);
         updatable.update_and_then_signal(|new_value| {
             *new_value = actual_value;
         });
-    });
-    */
-
-    let numeric_updatable = Updatable::new(rvalue, move |unscaled_value| {
-
-        let avalue = unscaled_value.map(|v| v);
-        updatable.update_and_then_signal(|nvalue| {
-            *nvalue = avalue;
-        });
-
-
     });
 
     view! { cx,
