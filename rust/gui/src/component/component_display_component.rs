@@ -347,7 +347,7 @@ pub fn ComponentDisplayComponent(
                 <NormalSpecComponent updatable=Updatable::new(
                     Some(NormalSpec {
                         mean: 0.1,
-                        std_dev: 0.2,
+                        std_dev: 0.002,
                     }),
                     move |ns: &Option<NormalSpec>| show_update(format!("Normal Spec -> {ns:?}")),
                 )/>

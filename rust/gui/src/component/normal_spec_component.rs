@@ -42,7 +42,8 @@ pub fn NormalSpecComponent(
         mean: Option<f64>,
         std_dev: Option<f64>,
         updatable: Updatable<Option<NormalSpec>>,
-        drawing_svg: String,
+        pdf_drawing_svg: String,
+        cdf_drawing_svg: String
     }
 
     let initial_mean = updatable
@@ -61,16 +62,24 @@ pub fn NormalSpecComponent(
             mean: initial_mean,
             std_dev: initial_std_dev,
             updatable,
-            drawing_svg: initial_mean
+            pdf_drawing_svg: initial_mean
                 .and_then(|mean| {
                     initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_chart(200))
                 })
                 .unwrap_or_default(),
+            cdf_drawing_svg: initial_mean
+                .and_then(|mean| {
+                    initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_cdf_chart(200))
+                })
+                .unwrap_or_default(),
         },
     );
+    
+
 
     fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec) {
-        normal_bits.drawing_svg = new_normal.get_chart(400);
+        normal_bits.pdf_drawing_svg = new_normal.get_chart(400);
+        normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
         // Before signalling undo the 100x
         new_normal.mean /= 100.0;
         new_normal.std_dev /= 100.0;
@@ -126,8 +135,8 @@ pub fn NormalSpecComponent(
                     /> ")"
                 </div>
             </div>
-            <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.drawing_svg.clone()) }></div>
-            <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.drawing_svg.clone()) }></div>
+            <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.pdf_drawing_svg.clone()) }></div>
+            <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.cdf_drawing_svg.clone()) }></div>
         </fieldset>
     }
 

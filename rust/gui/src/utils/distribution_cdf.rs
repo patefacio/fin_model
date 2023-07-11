@@ -2,6 +2,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use plus_modeled::NormalSpec;
+use leptos_dom::console_log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- traits ---
@@ -28,11 +29,6 @@ impl DistributionCdf for NormalSpec {
     ///   * **num_points** - Number of points to pull from the distribution
     ///   * _return_ - SVG image of distribution
     /// 
-    fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
-        let correction = 1.70175;
-        let temp = (correction * (x-mu)/sigma).exp();
-        return temp/(1.0+temp);
-    }
 
     fn get_cdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionPdf::get_chart for NormalSpec>
@@ -54,21 +50,24 @@ impl DistributionCdf for NormalSpec {
         let correction = 1.70175;
         //let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
         let cdf = |z: f64| {
-            debug_assert!(z <= self.mean);
-            (correction*(z - self.mean)/self.std_dev).exp() / (1 + (correction*(z - self.mean)/self.std_dev).exp() )
+            //debug_assert!(z <= self.mean);
+            
+            (correction*(z - self.mean)/self.std_dev).exp() / ( 1.0 + (correction*(z - self.mean)/self.std_dev).exp() )
         };
+        console_log(&format!("Sig: {}, MU: {}, x: {}, CDF: {}", self.std_dev, self.mean, 45.0, cdf(45.0),));
 
         let mut num_sigmas = max_sigma as f64;
         for i in 0..(num_points / 2) {
             let x_lhs = self.mean - self.std_dev * num_sigmas;
             let x_rhs = self.mean + self.std_dev * num_sigmas;
-            let y = cdf(x_lhs);
+            let yr = cdf(x_lhs);
+            let yl = cdf(x_rhs);
             let rhs = num_points - i - 1;
 
             x_vec[i] = x_lhs;
             x_vec[rhs] = x_rhs;
-            y_vec[i] = y;
-            y_vec[rhs] = y;
+            y_vec[i] = yr;
+            y_vec[rhs] = yl;
 
             num_sigmas *= sigma_factor;
         }
@@ -91,23 +90,23 @@ impl DistributionCdf for NormalSpec {
                 .set_label_area_size(LabelAreaPosition::Right, 0)
                 .build_cartesian_2d(
                     (x_vec[0])..(x_vec[num_points - 1]),
-                    0f64..y_vec[num_points / 2] * 1.1,
+                    0f64..y_vec[num_points / 2] * 2.1,
                 )
                 .unwrap();
 
             chart
                 .configure_mesh()
                 .x_labels(10)
-                //.y_labels(5)
+                .y_labels(5)
                 .disable_mesh()
                 .x_label_formatter(&|v| format!("{:.1}%", v))
-                .y_label_formatter(&|v| String::default())
+                .y_label_formatter(&|v| format!("{:.1}", v))
                 .draw()
                 .unwrap();
 
             chart
                 .draw_series(
-                    LineSeries::new(x_vec.iter().enumerate().map(|(i, x)| (*x, y_vec[i])), &RED)
+                    LineSeries::new(x_vec.iter().enumerate().map(|(i, x)| (*x, y_vec[i])), &BLUE)
                         .point_size(1),
                 )
                 .unwrap()
@@ -145,7 +144,7 @@ pub mod unit_tests {
                     mean: 4.0,
                     std_dev: 1.0
                 }
-                .get_chart(200)
+                .get_cdf_chart(200)
             );
 
             // ω <fn test DistributionPdf::get_chart on NormalSpec>
