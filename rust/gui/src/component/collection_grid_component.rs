@@ -27,12 +27,13 @@ pub trait CollectionGrid {
     /// The header for the collection.
     ///
     ///   * _return_ - The header as a list of elements
-    fn get_header() -> Vec<View>;
+    fn get_header() -> Vec<String>;
 
     /// Get the display fields for the element.
     ///
+    ///   * **cx** - The context for the fields
     ///   * _return_ - The fields as elements
-    fn get_fields(&self) -> Vec<View>;
+    fn get_fields(&self, cx: Scope) -> Vec<View>;
 
     /// Get key that uniquely identifies the element.
     ///
@@ -73,15 +74,53 @@ pub fn CollectionGridComponent<T>(
     updatable: Updatable<Vec<T>>,
 ) -> impl IntoView
 where
-    T: 'static + Debug + CollectionGrid,
+    T: 'static + Clone + Debug + CollectionGrid,
 {
     // α <fn collection_grid_component>
 
     use leptos::store_value;
+    use leptos::For;
+    use leptos::IntoView;
+    use leptos::View;
+    use leptos_dom::HtmlElement;
+    use leptos_dom::html::Div;
 
-    let collection = store_value(cx, updatable);
+    let updatable = store_value(cx, updatable);
 
-    todo!("Implement `collection_grid_component`")
+    let header = {
+        <T as CollectionGrid>::get_header()
+            .into_iter()
+            .map(|column_header| {
+                view! {
+                    cx,
+                    <div>
+                    {column_header}
+                    </div>
+                }
+            })
+           .collect::<Vec<HtmlElement<Div>>>()
+    };
+
+    view! {
+        cx,
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
+
+        {header}
+
+        <For
+        // TODO: AVOID THIS CLONE
+        each=move || updatable.with_value(|updatable| updatable.value.clone())
+        key=|item| {item.get_key()}
+        view=move |cx, item| {
+                view!{
+                cx,
+                {item.get_fields(cx)}
+            }
+        }
+        />
+        </div>
+    }
+
     // ω <fn collection_grid_component>
 }
 
