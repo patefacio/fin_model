@@ -20,31 +20,33 @@ pub fn ComponentDisplayComponent(
     cx: Scope,
 ) -> impl IntoView {
     // α <fn component_display_component>
+    use crate::{InitialValue, MultiColumnSelect, SelectOption};
+    use crate::CollectionGridComponent;
     use crate::component::dispose_test::DisposeTest;
     use crate::CurrencySelect;
     use crate::DossierCorrelationMatrixComponent;
     use crate::EnumSelect;
+    use crate::Modification;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
-    use crate::Modification;
     use crate::OkCancelComponent;
     use crate::PercentInput;
     use crate::RateCurveComponent;
     use crate::SelectDirection;
+    use crate::utils::updatable::Updatable;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
     use crate::YearRangeInput;
     use crate::YearValueInput;
-    use crate::{InitialValue, MultiColumnSelect, SelectOption};
-    use leptos::*;
     use leptos_dom::console_log;
+    use leptos::*;
 
-    use crate::utils::updatable::Updatable;
     use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::Currency;
-    use plus_modeled::StateOfResidence;
+    use plus_modeled::Holding;
     use plus_modeled::NormalSpec;
     use plus_modeled::RateCurve;
+    use plus_modeled::StateOfResidence;
     use plus_modeled::YearCurrencyValue;
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
@@ -402,6 +404,52 @@ pub fn ComponentDisplayComponent(
                 console_log(&format!("RateCurve updated -> {rc:?}"));
             },
         )/>
+
+        <hr/>
+        <h4>"Collection Grid Component"</h4>
+        <CollectionGridComponent updatable=Updatable::new(
+            vec! {
+                Holding{
+                    instrument_name: "SPY".to_string(),
+                    quantity: 755.3,
+                    unit_valuation: Some(YearCurrencyValue{
+                        year: 2020,
+                        currency: 0,
+                        value: 440.1
+                    }),
+                    cost_basis: 320_000.0,
+                    ..Default::default()
+                },
+                Holding{
+                    instrument_name: "IWM".to_string(),
+                    quantity: 1000.0,
+                    unit_valuation: Some(YearCurrencyValue{
+                        year: 2020,
+                        currency: 0,
+                        value: 180.1
+                    }),
+                    cost_basis: 150_000.0,
+                    ..Default::default()
+                },
+                Holding{
+                    instrument_name: "NVDA".to_string(),
+                    quantity: 500.3,
+                    unit_valuation: Some(YearCurrencyValue{
+                        year: 2020,
+                        currency: 0,
+                        value: 420.1
+                    }),
+                    cost_basis: 140_000.0,
+                    ..Default::default()
+                },
+            }, move |holding_list| {
+                show_update(format!("Holding list updated -> {holding_list:?}"));
+            },
+        )/>
+
+        
+
+        
         <div>"Dispose Test"</div>
         <Show when=move || (read_count() % 2) == 0 fallback=|_| "Nothing">
             <DisposeTest/>

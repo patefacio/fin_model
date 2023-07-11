@@ -4,6 +4,7 @@
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod collection_grid_component;
+pub mod collection_grid_impls;
 pub mod component_display_component;
 pub mod currency_select;
 pub mod currency_value_input;

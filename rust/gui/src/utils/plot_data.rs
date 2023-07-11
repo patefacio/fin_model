@@ -51,8 +51,8 @@ impl PlotData for RateCurve {
             min_y = left.value.min(min_y);
             max_y = left.value.max(max_y);
         }
-        let min_x = self.curve.first().unwrap().year;
-        let max_x = self.curve.last().unwrap().year;
+        let mut min_x = self.curve.first().unwrap().year;
+        let mut max_x = self.curve.last().unwrap().year;
         vec_slice.push(
             self.curve
                 .last()
@@ -65,6 +65,26 @@ impl PlotData for RateCurve {
         let last_y = self.curve.last().unwrap().value;
         min_y = min_y.min(last_y);
         max_y = max_y.max(last_y);
+
+        //Extend rate_curve line to start at zero dollars and extend at the same value "infinitely" at the last year_value pair
+        let delta = ((max_x - min_x) as f64 * 0.1) as u32;
+
+        vec_slice.push(
+            vec_slice
+                .last()
+                .map(|last_point| {
+                    max_x += delta;
+                    (max_x as f64, last_point.1)
+                })
+                .unwrap(),
+        );
+        vec_slice.insert(
+            0,
+            vec_slice
+                .first()
+                .map(|first_point| (min_x as f64, 0.0))
+                .unwrap(),
+        );
 
         //This is all code for the writing and styling of the graph from the plotters library
         let mut plot_buff = String::with_capacity(2 ^ 11);
