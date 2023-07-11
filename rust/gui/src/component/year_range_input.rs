@@ -102,9 +102,9 @@ pub fn YearRangeInput(
         });
 
     view! { cx,
-        <div style="display: inline-flex">
-            "("
+        <div style="display: inline-flex;">
             <YearInput
+                input_class=Some("yri-start".to_string())
                 placeholder=Some("start".to_string())
                 updatable=start_year_updatable
                 year_range=year_range
@@ -112,12 +112,13 @@ pub fn YearRangeInput(
                 align_left=align_left
             />
             <YearInput
+                input_class=Some("yri-end".to_string())
                 placeholder=Some("end".to_string())
                 updatable=end_year_updatable
                 year_range=year_range
                 live_clamp=true
                 align_left=align_left
-            /> ")"
+            /> 
         </div>
     }
     // ω <fn year_range_input>

@@ -82,7 +82,7 @@ pub fn RateCurveComponent(
 
     view! { cx,
         <div class="rate-curve-data">
-        <div style="display: grid; grid-template-columns: 0.25fr 1fr 1fr;">
+        <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
             <For
                 each=move || updatable.with(|updatable| updatable.value.curve.clone())
                 key=|year_value| { year_value.year }

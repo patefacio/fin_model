@@ -84,12 +84,13 @@ pub fn YearValueInput(
     view! { cx,
         <div style="display: inline-flex">
             <YearInput
+                input_class=Some("yvi-year".to_string())
                 updatable=year_updatable
                 placeholder=Some("year".to_string())
                 align_left=align_left
             />
-            ","
             <NumericInput
+                input_class=Some("yvi-value".to_string())
                 placeholder=Some("value".to_string())
                 updatable=value_updatable
                 non_negative=true

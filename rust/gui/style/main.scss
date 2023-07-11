@@ -213,35 +213,11 @@
 	margin-right: 3px;
   }
   
-  /////// Normal Spec
-  
-//   .nsg .form {
-// 	background-color: var(--plus-form-bg);
-// 	display: grid;
-// 	grid-template-columns: 1fr 1fr;
-// 	grid-gap: rem;
-//   }
-  
-//   .nsg input { 
-// 	//font-size: 0.75em;
-// 	width: 6.8em;
-//   }
-  
-//   .nsg label {
-// 	text-align: left;
-// 	white-space: nowrap;
-// 	background-color: var(--plus-label-bg);
-// 	display: block;
-//   }
 
   ///////// ItemGrowthComponent
 .icg-select {
 	padding: 5px;
 }
-
-// .invalid {
-// 	border: 3px solid red;
-// }
 
 .invalid, textarea  {
 	background-color: rgb(237, 199, 199);
@@ -272,3 +248,6 @@ input.invalid:focus {
 	width: 250px;
 }
   
+.yri-start, .yri-end, .yvi-year, .yvi-value {
+	margin-left: 0.25em
+}
