@@ -15,6 +15,15 @@ pub trait DistributionCdf {
     ///   * **num_points** - Number of points to pull from the distribution
     ///   * _return_ - SVG image of distribution
     fn get_cdf_chart(&self, num_points: usize) -> String;
+
+    /// Get a chart representing the distribution.
+    /// See [Normal Distribution](https://en.wikipedia.org/wiki/Normal_distribution)
+    /// for function definition.
+    ///
+    ///   * **num_points** - Number of points to pull from the distribution
+    ///   * _return_ - SVG image of distribution
+    ///
+    fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -27,11 +36,11 @@ impl DistributionCdf for NormalSpec {
     ///
     ///   * **num_points** - Number of points to pull from the distribution
     ///   * _return_ - SVG image of distribution
-    /// 
+    ///
     fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
         let correction = 1.70175;
-        let temp = (correction * (x-mu)/sigma).exp();
-        return temp/(1.0+temp);
+        let temp = (correction * (x - mu) / sigma).exp();
+        return temp / (1.0 + temp);
     }
 
     fn get_cdf_chart(&self, num_points: usize) -> String {
@@ -55,7 +64,8 @@ impl DistributionCdf for NormalSpec {
         //let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
         let cdf = |z: f64| {
             debug_assert!(z <= self.mean);
-            (correction*(z - self.mean)/self.std_dev).exp() / (1 + (correction*(z - self.mean)/self.std_dev).exp() )
+            (correction * (z - self.mean) / self.std_dev).exp()
+                / (1.0 + (correction * (z - self.mean) / self.std_dev).exp())
         };
 
         let mut num_sigmas = max_sigma as f64;
