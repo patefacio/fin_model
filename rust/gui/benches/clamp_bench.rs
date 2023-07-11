@@ -27,7 +27,7 @@ pub fn clamp_sm_benchmark(c: &mut Criterion) {
 }
 
 pub fn clamp_integer_range_benchmark(c: &mut Criterion) {
-    let year_clamp = IntegerClamp::new(1900..2300);
+    let year_clamp = IntegerClamp::new(1900..=2300);
 
     c.bench_function("ClampIntegerRange on (1900, 2300)", |b| {
         b.iter(|| {
@@ -49,7 +49,7 @@ pub fn clamp_integer_range_benchmark(c: &mut Criterion) {
 }
 
 pub fn clamp_integer_range_strings_benchmark(c: &mut Criterion) {
-    let year_clamp = IntegerClampStrings::new(1900..2300);
+    let year_clamp = IntegerClampStrings::new(1900..=2300);
 
     c.bench_function("ClampIntegerRangeStrings on (1900, 2300)", |b| {
         b.iter(|| {

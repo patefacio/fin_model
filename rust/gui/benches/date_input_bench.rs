@@ -18,7 +18,7 @@ pub fn clean_date_benchmark(c: &mut Criterion) {
     .map(|d| d.to_string())
     .collect::<Vec<_>>();
 
-    c.bench_function("Cleaning dates", |b| {
+    c.bench_function("Cleaning dates: Single Function", |b| {
         b.iter(|| {
             for d in dates.iter() {
                 let _ = clean_date(d.clone());
@@ -45,7 +45,7 @@ pub fn scrub_date_benchmark(c: &mut Criterion) {
 
     let mut live_parsed_date = LiveParsedDate::new(None);
 
-    c.bench_function("Cleaning dates", |b| {
+    c.bench_function("Cleaning dates: LiveParseDate", |b| {
         b.iter(|| {
             for d in dates.iter() {
                 // following clone not required but there to make more fair comparison

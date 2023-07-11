@@ -18,6 +18,7 @@ use std::ops::RangeInclusive;
 ///   * **cx** - Context
 ///   * **updatable** - The [YearRange] being edited
 ///   * **range** - Range of valid values for input.
+///   * **align_left** - If set, numeric text aligned to left.
 ///   * _return_ - View for year_range_input
 #[component]
 pub fn YearRangeInput(
@@ -28,6 +29,9 @@ pub fn YearRangeInput(
     /// Range of valid values for input.
     #[prop(default=None)]
     range: Option<RangeInclusive<u32>>,
+    /// If set, numeric text aligned to left.
+    #[prop(default = false)]
+    align_left: bool,
 ) -> impl IntoView {
     // α <fn year_range_input>
 
@@ -98,26 +102,23 @@ pub fn YearRangeInput(
         });
 
     view! { cx,
-        <fieldset class="nsg">
-            <legend>"Year Range"</legend>
-            <div class="form">
-                <div style="display: inline-flex">
-                    "("
-                    <YearInput
-                        placeholder=Some("start".to_string())
-                        updatable=start_year_updatable
-                        year_range=year_range
-                        live_clamp=true
-                    /> ","
-                    <YearInput
-                        placeholder=Some("end".to_string())
-                        updatable=end_year_updatable
-                        year_range=year_range
-                        live_clamp=true
-                    /> ")"
-                </div>
-            </div>
-        </fieldset>
+        <div style="display: inline-flex">
+            "("
+            <YearInput
+                placeholder=Some("start".to_string())
+                updatable=start_year_updatable
+                year_range=year_range
+                live_clamp=true
+                align_left=align_left
+            />
+            <YearInput
+                placeholder=Some("end".to_string())
+                updatable=end_year_updatable
+                year_range=year_range
+                live_clamp=true
+                align_left=align_left
+            /> ")"
+        </div>
     }
     // ω <fn year_range_input>
 }

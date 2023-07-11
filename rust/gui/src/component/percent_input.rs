@@ -24,6 +24,7 @@ use std::ops::RangeInclusive;
 ///   * **max_len** - The maximum number of characters for the percent input.
 ///
 ///   * **range** - Range of valid values for input.
+///   * **non_negative** - If set, negative values are disallowed.
 ///   * _return_ - View for percent_input
 #[component]
 pub fn PercentInput(
@@ -44,6 +45,9 @@ pub fn PercentInput(
     /// Range of valid values for input.
     #[prop(default=None)]
     range: Option<RangeInclusive<f64>>,
+    /// If set, negative values are disallowed.
+    #[prop(default = false)]
+    non_negative: bool,
 ) -> impl IntoView {
     // α <fn percent_input>
 
@@ -77,7 +81,7 @@ pub fn PercentInput(
         <NumericInput
             updatable=numeric_updatable
             modification=Some(Modification::Suffix("%".into()))
-            non_negative=true
+            non_negative=non_negative
             placeholder=placeholder
             max_len=max_len
             size=size

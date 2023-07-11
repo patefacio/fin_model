@@ -50,6 +50,7 @@ pub enum Modification {
 ///   * **input_class** - Class to decorate input element for styling
 ///   * **modification** - Optional modification (e.g. suffix/prefix)
 ///   * **non_negative** - If set, negative values are disallowed.
+///   * **align_left** - If set, numeric text aligned to left.
 ///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * **size** - The size attribute, which one hopes would make the size of the
 /// input field roughly that number of characters. But YMMV.
@@ -73,6 +74,9 @@ pub fn NumericInput(
     /// If set, negative values are disallowed.
     #[prop(default = false)]
     non_negative: bool,
+    /// If set, numeric text aligned to left.
+    #[prop(default = false)]
+    align_left: bool,
     /// Placeholder shown if entry is empty.
     #[prop(default=None)]
     placeholder: Option<String>,
@@ -94,6 +98,7 @@ pub fn NumericInput(
     use leptos::IntoClass;
     use leptos::SignalGet;
     use leptos::SignalSet;
+    use leptos::IntoStyle;
 
     let mut is_in_range = true;
 
@@ -251,6 +256,7 @@ pub fn NumericInput(
         <input
             class=input_class
             class:invalid=move || { !is_in_range.get() }
+            style:text-align=move || { if align_left { "left" } else { "right" } }
             node_ref=node_ref
             on:keydown=key_movement
             on:input=move |_| update_value.update_value(|update_value| update_value())

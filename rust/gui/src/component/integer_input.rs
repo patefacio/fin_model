@@ -22,6 +22,7 @@ use std::ops::RangeInclusive;
 ///   * **max_len** - Maximum length (digit count including any commas).
 ///   * **include_comma** - If true commifies the number
 ///   * **range** - Range of valid values for input.
+///   * **live_clamp** - If set will force values to be within the range as they are typed.
 ///   * _return_ - View for integer_input
 #[component]
 pub fn IntegerInput(
@@ -44,7 +45,7 @@ pub fn IntegerInput(
     /// Range of valid values for input.
     #[prop(default=None)]
     range: Option<RangeInclusive<u32>>,
-    ///Implements clamp
+    /// If set will force values to be within the range as they are typed.
     #[prop(default = false)]
     live_clamp: bool,
 ) -> impl IntoView {
@@ -61,7 +62,7 @@ pub fn IntegerInput(
     use leptos::SignalSet;
     use leptos::*;
 
-    let mut is_in_range = true;
+    let is_in_range = true;
 
     let integer_clamp = if let Some(range) = range.as_ref().cloned() {
         if live_clamp {
@@ -80,7 +81,7 @@ pub fn IntegerInput(
         range: Option<RangeInclusive<u32>>,
     }
 
-    let mut integer_input_data = store_value(
+    let integer_input_data = store_value(
         cx,
         IntegerInputData {
             updatable,
@@ -162,11 +163,21 @@ pub fn IntegerInput(
 
     view! { cx,
         <input
-            class={move || integer_input_data.with_value(|integer_input_data| integer_input_data.input_class.as_ref().cloned().unwrap_or_default())}
+            class=move || {
+                integer_input_data
+                    .with_value(|integer_input_data| {
+                        integer_input_data.input_class.as_ref().cloned().unwrap_or_default()
+                    })
+            }
             class:invalid=move || { !is_in_range.get() }
             node_ref=node_ref
             on:input=move |_| update_value()
-            placeholder={move || integer_input_data.with_value(|integer_input_data| integer_input_data.placeholder.as_ref().cloned().unwrap_or_default())}
+            placeholder=move || {
+                integer_input_data
+                    .with_value(|integer_input_data| {
+                        integer_input_data.placeholder.as_ref().cloned().unwrap_or_default()
+                    })
+            }
             value=initial_value
             size=max_len + 2
             maxlength=max_len

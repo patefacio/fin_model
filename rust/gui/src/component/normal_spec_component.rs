@@ -17,6 +17,7 @@ use plus_modeled::core::NormalSpec;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - The normal spec being edited
+///   * **non_negative_mean** - If set, negative values are disallowed for the mean.
 ///   * _return_ - View for normal_spec_component
 #[component]
 pub fn NormalSpecComponent(
@@ -24,6 +25,9 @@ pub fn NormalSpecComponent(
     cx: Scope,
     /// The normal spec being edited
     updatable: Updatable<Option<NormalSpec>>,
+    /// If set, negative values are disallowed for the mean.
+    #[prop(default = false)]
+    non_negative_mean: bool,
 ) -> impl IntoView {
     // α <fn normal_spec_component>
 
@@ -95,7 +99,7 @@ pub fn NormalSpecComponent(
     view! { cx,
         <fieldset class="nsg">
             <div class="form">
-                <div style="display: inline-flex">
+                <div style="display: grid">
                     "N("
                     <NumericInput
                         placeholder=Some("mean".to_string())
@@ -103,8 +107,10 @@ pub fn NormalSpecComponent(
                             prefix: "μ=".into(),
                             suffix: "%".into(),
                         })
-                        non_negative=true
+                        non_negative=non_negative_mean
                         updatable=mean_updatable
+                        size=9
+                        max_len=9
                     /> ", "
                     <NumericInput
                         placeholder=Some("std. dev".to_string())
@@ -114,6 +120,8 @@ pub fn NormalSpecComponent(
                         })
                         non_negative=true
                         updatable=std_dev_updatable
+                        size=9
+                        max_len=9
                     /> ")"
                 </div>
             </div>
