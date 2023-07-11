@@ -215,24 +215,24 @@
   
   /////// Normal Spec
   
-  .nsg .form {
-	background-color: var(--plus-form-bg);
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: rem;
-  }
+//   .nsg .form {
+// 	background-color: var(--plus-form-bg);
+// 	display: grid;
+// 	grid-template-columns: 1fr 1fr;
+// 	grid-gap: rem;
+//   }
   
-  .nsg input { 
-	//font-size: 0.75em;
-	width: 6.8em;
-  }
+//   .nsg input { 
+// 	//font-size: 0.75em;
+// 	width: 6.8em;
+//   }
   
-  .nsg label {
-	text-align: left;
-	white-space: nowrap;
-	background-color: var(--plus-label-bg);
-	display: block;
-  }
+//   .nsg label {
+// 	text-align: left;
+// 	white-space: nowrap;
+// 	background-color: var(--plus-label-bg);
+// 	display: block;
+//   }
 
   ///////// ItemGrowthComponent
 .icg-select {

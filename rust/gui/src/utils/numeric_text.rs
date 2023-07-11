@@ -78,6 +78,7 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
     let mut last_char = '?';
     let mut digits_after_decimal = 0usize;
     let mut numeric_char_count = 0u32;
+    let mut non_zero_seen = false;
 
     for (i, c) in n.chars().enumerate() {
         let precedes_caret = (i as u32) < current_caret;
@@ -90,6 +91,9 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
                 numeric.push(c);
                 if decimal_position.is_some() {
                     digits_after_decimal += 1;
+                }
+                if c != '0' {
+                    non_zero_seen = true;
                 }
             }
             '-' => {
@@ -167,6 +171,18 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
         }
     }
 
+    // Leave early with any _effective_ 0, but keep the digits
+    if !non_zero_seen {
+        match numeric.as_str() {
+            "0.0" => {return (None, "0.0".into(), 3);}
+            "0.00" => {return (None, "0.00".into(), 4);}
+            "0.000" => {return (None, "0.000".into(), 5);}
+            "0.0000" => {return (None, "0.0000".into(), 6);}
+            "0.00000" => {return (None, "0.00000".into(), 7);}
+            _ => ()
+        }
+    }
+
     match numeric.as_str() {
         "-" => {
             return (None, "-".into(), 1);
@@ -178,7 +194,7 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
             return (None, "-0.".into(), 3);
         }
         _ => (),
-    };
+    }
 
     let (parsed_value, text) = if let Ok(parsed_number) = numeric.parse::<f64>() {
         if let Some(decimal_position) = decimal_position {

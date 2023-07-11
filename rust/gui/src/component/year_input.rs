@@ -28,6 +28,7 @@ use plus_modeled::core::YearRange;
 /// With this true if the user enters a year with the proper number
 /// of digits it will be within range. But it may be disorienting
 /// as the numbers showing up in input may not be those typed.
+///   * **align_left** - If set, numeric text aligned to left.
 ///   * _return_ - View for year_input
 #[component]
 pub fn YearInput(
@@ -56,6 +57,9 @@ pub fn YearInput(
     /// as the numbers showing up in input may not be those typed.
     #[prop(default = false)]
     live_clamp: bool,
+    /// If set, numeric text aligned to left.
+    #[prop(default = false)]
+    align_left: bool,
 ) -> impl IntoView {
     // α <fn year_input>
 
@@ -172,6 +176,7 @@ pub fn YearInput(
             value=initial_value
             size=5
             maxlength=4
+            style:text-align=move || { if align_left { "left" } else { "right" } }
             placeholder=placeholder
             type="text"
             disabled=disabled.map(|disabled| disabled.get()).unwrap_or_default()

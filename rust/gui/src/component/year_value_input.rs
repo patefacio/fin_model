@@ -16,6 +16,7 @@ use plus_modeled::YearValue;
 ///
 ///   * **cx** - Context
 ///   * **updatable** - The [YearValue] being edited
+///   * **align_left** - If set, numeric text aligned to left.
 ///   * _return_ - View for year_value_input
 #[component]
 pub fn YearValueInput(
@@ -23,6 +24,9 @@ pub fn YearValueInput(
     cx: Scope,
     /// The [YearValue] being edited
     updatable: Updatable<Option<YearValue>>,
+    /// If set, numeric text aligned to left.
+    #[prop(default = false)]
+    align_left: bool,
 ) -> impl IntoView {
     // α <fn year_value_input>
 
@@ -78,21 +82,21 @@ pub fn YearValueInput(
     });
 
     view! { cx,
-        <fieldset class="nsg">
-            <legend>"Year Value"</legend>
-            <div class="form">
-                <div style="display: inline-flex">
-                    <YearInput placeholder=Some("year".to_string()) updatable=year_updatable/>
-                    ","
-                    <NumericInput
-                        placeholder=Some("value".to_string())
-                        updatable=value_updatable
-                        non_negative=true
-                        modification=Some(Modification::Prefix(("$".into())))
-                    />
-                </div>
-            </div>
-        </fieldset>
+        <div style="display: inline-flex">
+            <YearInput
+                updatable=year_updatable
+                placeholder=Some("year".to_string())
+                align_left=align_left
+            />
+            ","
+            <NumericInput
+                placeholder=Some("value".to_string())
+                updatable=value_updatable
+                non_negative=true
+                modification=Some(Modification::Prefix(("$".into())))
+                align_left=align_left
+            />
+        </div>
     }
 
     // ω <fn year_value_input>
