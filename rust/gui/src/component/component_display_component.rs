@@ -103,11 +103,10 @@ pub fn ComponentDisplayComponent(
                 </ul>
                 "></p>
                 <NumericInput
-                    updatable=Updatable::new(Some(3.0), move |n| { show_update(format!("Number updated -> {n:?}")) })
+                    updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })
                     range=Some(-5.0..=5.0)
-                    placeholder=Some("valence".to_string())
-                    max_len=6
-                    size=6
+                    placeholder=Some("temp".to_string())
+                    size=13
                 />
             </div>
             <div style="padding: 1em;">
@@ -179,8 +178,7 @@ pub fn ComponentDisplayComponent(
                         move |n| { show_update(format!("Percent updated -> {n:?}")) },
                     )
                     placeholder=Some("pct complete".to_string())
-                    size=10
-                    max_len=10
+                    max_len=8
                     range=Some(0.0..=0.4)
                 />
             </div>
@@ -197,7 +195,7 @@ pub fn ComponentDisplayComponent(
                 stay within range. As this may be disorienting it is optional.
                 "></p>
                 <div>
-                    <h5>"With Clamp, [1900, 2300]"</h5>
+                    <h5>"With Clamp, RangeInclusive(1900 to 2300)"</h5>
                     <YearInput
                         updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
                         placeholder=Some("year".to_string())
@@ -209,7 +207,7 @@ pub fn ComponentDisplayComponent(
                     />
                 </div>
                 <div>
-                    <h5>"Without Clamp, [1900, 2300]"</h5>
+                    <h5>"Without Clamp, RangeInclusive(1900 to 2300)"</h5>
                     <YearInput
                         updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
                         placeholder=Some("year".to_string())
@@ -220,7 +218,7 @@ pub fn ComponentDisplayComponent(
                     />
                 </div>
                 <div>
-                    <h4>"Without Clamp, [2020, 2030] With Initial Valid Year"</h4>
+                    <h4>"Without Clamp, RangeInclusive(2020 to 2030) With Initial Valid Year"</h4>
                     <YearInput
                         updatable=Updatable::new(Some(2030), move |y| { show_update(format!("Year updated -> {y:?}")) })
                         placeholder=Some("year".to_string())
@@ -232,7 +230,7 @@ pub fn ComponentDisplayComponent(
                 </div>
             </div>
             <div style="padding: 1em;">
-                <h4>"Date Input [1990, 2070]"</h4>
+                <h4>"Date Input (Range (1990 -> 2070))"</h4>
                 <p inner_html="
                 <p>
                 A date input component with following features:

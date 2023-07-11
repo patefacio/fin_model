@@ -32,6 +32,7 @@ pub fn NormalSpecComponent(
     // α <fn normal_spec_component>
 
     use crate::utils::distribution_pdf::DistributionPdf;
+    use crate::utils::distribution_cdf::DistributionCdf;
     use leptos::create_signal;
     use leptos::IntoAttribute;
     use leptos::SignalUpdate;
@@ -125,6 +126,7 @@ pub fn NormalSpecComponent(
                     /> ")"
                 </div>
             </div>
+            <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.drawing_svg.clone()) }></div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.drawing_svg.clone()) }></div>
         </fieldset>
     }
