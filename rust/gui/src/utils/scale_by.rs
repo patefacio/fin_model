@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,49 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
     // TODO: Don't do it this way. Either use some math trickery or
     // convert input to string up front, iterate through adjusting the
     // number
-    n * 10.0f64.powf(scale_factor as f64) as f64
+
+    let mut s = n.to_string();
+    let temp = s.find('.');
+    let point: usize;
+    match temp {
+        Some(_) => point = temp.unwrap(),
+        None => {s.push_str(".0"); 
+        point = s.len()-2;
+    }
+    };
+    
+    let mut lhs = (&s[0..point]).to_string();
+    let mut rhs = (&s[point+1..s.len()]).to_string();
+
+    
+    if scale_factor > 0 {
+        for _i in 0..scale_factor{
+            if rhs.len() != 0 {
+                lhs.push(rhs.remove(0));
+            }
+            else {
+                lhs.push('0');
+            }
+        }
+    } else if scale_factor < 0 {
+        for _i in scale_factor..0{
+            if lhs.len() != 0 {
+                rhs.insert(0,lhs.pop().unwrap());
+            }
+            else {
+                rhs.insert(0, '0');
+            }
+        }
+    }
+
+    println!("{}", s);
+
+    let s = lhs + "." + &rhs;
+    return s.parse::<f64>().unwrap();
+
+
+
+    //n * 10.0f64.powf(scale_factor as f64) as f64
 
     // ω <fn scale_by>
 }
@@ -34,7 +77,11 @@ pub mod unit_tests {
     fn test_scale_by() {
         // α <fn test_scale_by>
 
+        assert_eq!(30.0, scale_by(3.0, 1));
         assert_eq!(3.33, scale_by(0.0333, 2));
+        assert_eq!(33333.3333, scale_by(3.33333333, 4));
+        assert_eq!(55.5, scale_by(555.0, -1));
+        assert_eq!(55.5, scale_by(55.5, 0));
 
         // ω <fn test_scale_by>
     }

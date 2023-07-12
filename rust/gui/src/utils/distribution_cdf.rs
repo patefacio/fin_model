@@ -2,7 +2,6 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use plus_modeled::NormalSpec;
-use leptos_dom::console_log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- traits ---
@@ -26,10 +25,22 @@ pub trait DistributionCdf {
     fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64;
 }
 
+pub fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
+    // α <fn DistributionCdf::sigmoid_approx for NormalSpec>
+    assert!(sigma != 0.0);
+    let correction = 1.70175;
+    let temp = (correction * (x - mu) / sigma).exp();
+    return temp / (1.0 + temp);
+    // ω <fn DistributionCdf::sigmoid_approx for NormalSpec>
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
 impl DistributionCdf for NormalSpec {
+
+
+
     /// Get a chart representing the *cdf* of the distribution.
     /// See [Normal Distribution](https://en.wikipedia.org/wiki/Normal_distribution)
     /// for function definition.
@@ -53,21 +64,13 @@ impl DistributionCdf for NormalSpec {
         let mut x_vec = vec![0.0; num_points];
         let mut y_vec = vec![0.0; num_points];
 
-        let correction = 1.70175;
-        //let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
-        let cdf = |z: f64| {
-            //debug_assert!(z <= self.mean);
-            
-            (correction*(z - self.mean)/self.std_dev).exp() / ( 1.0 + (correction*(z - self.mean)/self.std_dev).exp() )
-        };
-        console_log(&format!("Sig: {}, MU: {}, x: {}, CDF: {}", self.std_dev, self.mean, 45.0, cdf(45.0),));
 
         let mut num_sigmas = max_sigma as f64;
         for i in 0..(num_points / 2) {
             let x_lhs = self.mean - self.std_dev * num_sigmas;
             let x_rhs = self.mean + self.std_dev * num_sigmas;
-            let yr = cdf(x_lhs);
-            let yl = cdf(x_rhs);
+            let yr = sigmoid_approx(x_lhs, self.std_dev, self.mean);
+            let yl = sigmoid_approx(x_rhs, self.std_dev, self.mean);
             let rhs = num_points - i - 1;
 
             x_vec[i] = x_lhs;
@@ -125,19 +128,10 @@ impl DistributionCdf for NormalSpec {
         // ω <fn DistributionCdf::get_cdf_chart for NormalSpec>
     }
 
-    /// Gets the cdf(x) value using an approximation
-    ///
-    ///   * **x** - x to get cdf value
-    ///   * **sigma** - Standard deviation
-    ///   * **mu** - Normal mean
-    ///   * _return_ - Approximate value of the cdf
     fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
-        // α <fn DistributionCdf::sigmoid_approx for NormalSpec>
-        let correction = 1.70175;
-        let temp = (correction * (x - mu) / sigma).exp();
-        return temp / (1.0 + temp);
-        // ω <fn DistributionCdf::sigmoid_approx for NormalSpec>
+        return sigmoid_approx(x, sigma, mu);
     }
+
 }
 
 /// Unit tests for `distribution_cdf`
@@ -155,7 +149,7 @@ pub mod unit_tests {
         // --- functions ---
         ////////////////////////////////////////////////////////////////////////////////////
         #[test]
-        fn get_cdf_chart() {
+        fn test_get_cdf_chart() {
             // α <fn test DistributionCdf::get_cdf_chart on NormalSpec>
             println!(
                 "Data\n{}",
@@ -169,9 +163,12 @@ pub mod unit_tests {
         }
 
         #[test]
-        fn sigmoid_approx() {
+        fn test_sigmoid_approx() {
             // α <fn test DistributionCdf::sigmoid_approx on NormalSpec>
-            todo!("Test sigmoid_approx")
+            //todo!("Test sigmoid_approx")
+            assert_eq!(0.5, sigmoid_approx(10.0, 1.0, 10.0) as f64);
+            assert_eq!(1.0, sigmoid_approx(100.0, 1.0, 10.0) as f64);
+            
             // ω <fn test DistributionCdf::sigmoid_approx on NormalSpec>
         }
 

@@ -10,7 +10,7 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 use plus_modeled::core::NormalSpec;
 
-use leptos_dom::html::Output;
+//use leptos_dom::html::Output;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -111,7 +111,7 @@ pub fn NormalSpecComponent(
     });
 
 
-    let loss_updatable = Updatable::new(initial_loss, move |mut loss| {
+    let loss_updatable = Updatable::new(initial_loss, move |loss| {
         normal_bits.with(|normal_bits| {
             let correction = 1.70175;
             let cdf = |z: f64| {

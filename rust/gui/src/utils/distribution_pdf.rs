@@ -93,7 +93,7 @@ impl DistributionPdf for NormalSpec {
                 //.y_labels(5)
                 .disable_mesh()
                 .x_label_formatter(&|v| format!("{:.1}%", v))
-                .y_label_formatter(&|v| String::default())
+                .y_label_formatter(&|_v| String::default())
                 .draw()
                 .unwrap();
 
