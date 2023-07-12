@@ -93,7 +93,7 @@ where
             .map(|column_header| {
                 view! {
                     cx,
-                    <div>
+                    <div class="header">
                     {column_header}
                     </div>
                 }

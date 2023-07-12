@@ -44,31 +44,42 @@ impl CollectionGrid for Holding {
     ///   * _return_ - The fields as elements
     fn get_fields(&self, cx: Scope) -> Vec<View> {
         // α <fn CollectionGrid::get_fields for Holding>
+
+        use leptos::IntoStyle;
+
         [
             view! {
                 cx,
-                <div>
+                <div
+                style:text-align="right"
+                >
                 {self.instrument_name.clone()}
                 </div>
             }, 
 
             view! {
                 cx,
-                <div>
+                <div
+                    style:text-align="right"
+                >
                 {self.quantity}
                 </div>
             }, 
 
             view! {
                 cx,
-                <div>
+                <div
+                    style:text-align="right"
+                >
                 {self.unit_valuation.as_ref().map(|uv| uv.value).unwrap_or_default()}
                 </div>
             }, 
 
             view! {
                 cx,
-                <div>
+                <div
+                    style:text-align="right"
+                >
                 {self.cost_basis}
                 </div>
             }, 

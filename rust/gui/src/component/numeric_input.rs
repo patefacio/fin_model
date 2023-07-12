@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::utils::constants::{LEFT_KEY, RIGHT_KEY};
+use crate::utils::constants::{ENTER_KEY, LEFT_KEY, RIGHT_KEY};
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
 use leptos::{component, view, IntoView, Scope};
@@ -90,15 +90,18 @@ pub fn NumericInput(
     /// Range of valid values for input.
     #[prop(default=None)]
     range: Option<RangeInclusive<f64>>,
+    ///Function called when enter is pressed
+    #[prop(default = None)]
+    on_enter: Option<Box<dyn FnMut(String)>>,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
     use leptos::create_signal;
     use leptos::IntoAttribute;
     use leptos::IntoClass;
+    use leptos::IntoStyle;
     use leptos::SignalGet;
     use leptos::SignalSet;
-    use leptos::IntoStyle;
 
     let mut is_in_range = true;
 
@@ -128,12 +131,14 @@ pub fn NumericInput(
         updatable: Updatable<Option<f64>>,
         modification: Option<Modification>,
         range: Option<RangeInclusive<f64>>,
+        on_enter: Option<Box<dyn FnMut(String)>>,
     }
 
     let numeric_input_data = NumericInputData {
         updatable,
         modification,
         range,
+        on_enter,
     };
 
     let numeric_input_data = store_value(cx, numeric_input_data);
@@ -234,6 +239,18 @@ pub fn NumericInput(
                     ev.stop_immediate_propagation();
                 }
             }),
+
+            ENTER_KEY => {
+                console_log(&format!("Numeric input enter key was pressed:1"));
+                let input_ref = node_ref.get().expect("Input node");
+                numeric_input_data.update_value(|numeric_input_data| {
+                    console_log(&format!("Numeric input enter key was pressed:2"));
+                    if let Some(on_enter) = numeric_input_data.on_enter.as_mut() {
+                        console_log(&format!("Numeric input enter key was pressed:3"));
+                        on_enter(input_ref.value())
+                    }
+                })
+            }
             _ => (),
         }
     };
