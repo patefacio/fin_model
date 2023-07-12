@@ -79,6 +79,25 @@ pub fn RateCurveComponent(
     let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
     let (add_enabled, set_add_enabled) = create_signal(cx, false);
     let clear_fields = create_rw_signal(cx, false);
+    let on_accept = move || {
+        console_log("Initiating on accept");
+        set_updatable.update(move |updatable| {
+            entry_complete.with(|entry_complete| {
+                updatable.value.curve.push(YearValue {
+                    year: entry_complete.0.unwrap(),
+                    value: entry_complete.1.unwrap(),
+                });
+                clean_curve(&mut updatable.value.curve);
+                console_log("Finished adding curve point, clearing fields!");
+                clear_fields.set(true);
+            });
+        })
+    };
+    let on_accept_evt = move |_| {
+        console_log("Initiating on_accept_evt");
+        on_accept()
+    };
+    let on_accept_number = Box::new(move |_| on_accept());
 
     view! { cx,
         <div class="rate-curve-data">
@@ -142,30 +161,14 @@ pub fn RateCurveComponent(
                                 },
                             )
                             placeholder=Some("rate".to_string())
+
                         />
                     }
                 }
             />
             <button
                 disabled=move || !add_enabled.get()
-                on:click=move |_| {
-                    set_updatable
-                        .update(move |updatable| {
-                            entry_complete
-                                .with(|entry_complete| {
-                                    updatable
-                                        .value
-                                        .curve
-                                        .push(YearValue {
-                                            year: entry_complete.0.unwrap(),
-                                            value: entry_complete.1.unwrap(),
-                                        });
-                                    clean_curve(&mut updatable.value.curve);
-                                    console_log("Finished adding curve point, clearing fields!");
-                                    clear_fields.set(true);
-                                });
-                        })
-                }
+                on:click=on_accept_evt
             >
                 "+"
             </button>
@@ -210,6 +213,7 @@ pub fn RateCurveComponent(
                     },
                 )
                 placeholder=Some("rate".to_string())
+                on_enter=Some(on_accept_number)
             />
         </div>
         </div>

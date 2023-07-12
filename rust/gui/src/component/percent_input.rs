@@ -48,6 +48,9 @@ pub fn PercentInput(
     /// If set, negative values are disallowed.
     #[prop(default = false)]
     non_negative: bool,
+    ///Function called when enter is pressed
+    #[prop(default = None)]
+    on_enter: Option<Box<dyn FnMut(String)>>,
 ) -> impl IntoView {
     // α <fn percent_input>
 
@@ -64,9 +67,11 @@ pub fn PercentInput(
         });
     });
 
+    console_log(&format!("on_enter -> {}", on_enter.is_some()));
     view! { cx,
         <NumericInput
             updatable=numeric_updatable
+            on_enter=on_enter
             modification=Some(Modification::Suffix("%".into()))
             non_negative=non_negative
             placeholder=placeholder
