@@ -9,6 +9,8 @@ use crate::utils::constants::{
 };
 use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::utils::html_tag::HtmlTag;
+#[allow(unused_imports)]
+use leptos::log;
 use leptos::{component, view, IntoView, Scope};
 use leptos::{create_node_ref, create_rw_signal, store_value};
 use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet};

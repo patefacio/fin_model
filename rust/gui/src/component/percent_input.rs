@@ -5,6 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
 use crate::Updatable;
+use leptos::create_signal;
+#[allow(unused_imports)]
+use leptos::log;
+use leptos::ReadSignal;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -25,6 +29,8 @@ use std::ops::RangeInclusive;
 ///
 ///   * **range** - Range of valid values for input.
 ///   * **non_negative** - If set, negative values are disallowed.
+///   * **on_enter** - Called if user hits enter, passes current input value.
+///   * **clear_input** - Signal requesting to clear the input.
 ///   * _return_ - View for percent_input
 #[component]
 pub fn PercentInput(
@@ -48,14 +54,16 @@ pub fn PercentInput(
     /// If set, negative values are disallowed.
     #[prop(default = false)]
     non_negative: bool,
-    ///Function called when enter is pressed
-    #[prop(default = None)]
+    /// Called if user hits enter, passes current input value.
+    #[prop(default=None)]
     on_enter: Option<Box<dyn FnMut(String)>>,
+    /// Signal requesting to clear the input.
+    #[prop(default=None)]
+    clear_input: Option<ReadSignal<()>>,
 ) -> impl IntoView {
     // α <fn percent_input>
 
     use crate::utils::scale_by::scale_by;
-
 
     let scaled_value = updatable.value.map(|value| scale_by(value, 2));
     let mut updatable = updatable;
@@ -67,7 +75,6 @@ pub fn PercentInput(
         });
     });
 
-    console_log(&format!("on_enter -> {}", on_enter.is_some()));
     view! { cx,
         <NumericInput
             updatable=numeric_updatable
@@ -76,6 +83,7 @@ pub fn PercentInput(
             non_negative=non_negative
             placeholder=placeholder
             max_len=max_len
+            clear_input=clear_input
             size=size
             range=range.map(|range| range.start() * 100.0..=range.end() * 100.0)
         />

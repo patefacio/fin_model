@@ -4,6 +4,8 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+#[allow(unused_imports)]
+use leptos::log;
 use leptos::RwSignal;
 use leptos::View;
 use leptos::{component, view, IntoView, Scope};

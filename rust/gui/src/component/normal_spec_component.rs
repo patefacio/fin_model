@@ -5,12 +5,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
 use crate::Updatable;
+#[allow(unused_imports)]
+use leptos::log;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::core::NormalSpec;
-
-//use leptos_dom::html::Output;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---

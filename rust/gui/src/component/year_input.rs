@@ -5,8 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::IntegerClamp;
 use crate::Updatable;
+#[allow(unused_imports)]
+use leptos::log;
 use leptos::{component, view, IntoView, Scope};
-use leptos::{create_node_ref, ReadSignal, RwSignal};
+use leptos::{create_node_ref, ReadSignal};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::html::Input;
@@ -24,6 +26,7 @@ use plus_modeled::core::YearRange;
 ///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * **disabled** - Signal allowing the disabling of the input.
 ///   * **clear_input** - Signal requesting to clear the input.
+///   * **set_focus** - Signal requesting to set focus.
 ///   * **live_clamp** - If set will force values to be within year range as they are typed.
 /// With this true if the user enters a year with the proper number
 /// of digits it will be within range. But it may be disorienting
@@ -50,7 +53,10 @@ pub fn YearInput(
     disabled: Option<ReadSignal<bool>>,
     /// Signal requesting to clear the input.
     #[prop(default=None)]
-    clear_input: Option<RwSignal<bool>>,
+    clear_input: Option<ReadSignal<()>>,
+    /// Signal requesting to set focus.
+    #[prop(default=None)]
+    set_focus: Option<ReadSignal<()>>,
     /// If set will force values to be within year range as they are typed.
     /// With this true if the user enters a year with the proper number
     /// of digits it will be within range. But it may be disorienting
@@ -64,14 +70,16 @@ pub fn YearInput(
     // α <fn year_input>
 
     use crate::ParsedNum;
+    use leptos::create_effect;
     use leptos::create_signal;
+    use leptos::log;
     use leptos::IntoAttribute;
     use leptos::SignalGet;
     use leptos::*;
 
     // Determine if year is in the provided range
     let year_is_valid = move |year| {
-        console_log(&format!("Checking {year} against {year_range:?}"));
+        log!("YearInput<{cx:?}>: Checking {year} against {year_range:?}");
         year >= year_range.start && year <= year_range.end
     };
 
@@ -92,6 +100,8 @@ pub fn YearInput(
         String::default()
     };
 
+    log!("YearInput<{cx:?}>: InitialValue({initial_value:?}) on {year_range:?}");
+
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;
     let year_clamp = if live_clamp {
@@ -100,24 +110,23 @@ pub fn YearInput(
         None
     };
 
-    // TODO: Figure out a way for this control to own and manage the input but
-    // also for the parent to, on request, clear the contents.
-    let clear_requested = move || {
-        console_log(&format!("Checking on clearing input {clear_input:?}!!"));
-
-        if let Some(clear_input) = clear_input {
-            if clear_input.get() {
-                console_log("Requested to clear input");
-
-                if let Some(input_ref) = node_ref.get() {
-                    console_log(&format!("Clearing input from {}!!", input_ref.value()));
-                    input_ref.set_value("");
-                }
+    create_effect(cx, move |_| {
+        if let Some(clear_input) = clear_input.as_ref() {
+            let _ = clear_input();
+            if let Some(input_ref) = node_ref.get() {
+                input_ref.set_value("");
             }
-
-            clear_input.set(false);
         }
-    };
+    });
+
+    create_effect(cx, move |_| {
+        if let Some(set_focus) = set_focus.as_ref() {
+            let _ = set_focus();
+            if let Some(input_ref) = node_ref.get() {
+                let _ = input_ref.focus();
+            }
+        }
+    });
 
     let mut update_value = move || {
         // First get the HtmlElement<Input>, think of it as a handle that provides
@@ -132,23 +141,10 @@ pub fn YearInput(
         // no negative or decimal allowed. (Could this be faster?)
         value = value.chars().filter(|c| c.is_ascii_digit()).collect();
 
-        console_log(&format!("YearInput: filtered -> {value:?}"));
-
-        if value.is_empty()
-            || clear_input
-                .map(|clear_input| {
-                    console_log("What side effect");
-                    clear_input.get()
-                })
-                .unwrap_or_default()
-        {
+        if value.is_empty() {
             // No characters in the input are valid digits - the value is now None
             updatable.update_and_then_signal(|year| *year = None);
-            console_log(&format!("YearInput: setting value to -> None"));
             input_ref.set_value("");
-            // if let Some(clear_input) = clear_input {
-            //     clear_input.set(false);
-            // }
         } else {
             // We have valid digits, pass to clamp to ensure value is in range.
             // Update the input by setting the value to the clamped_year. This may
@@ -162,7 +158,6 @@ pub fn YearInput(
             updatable.update_and_then_signal(|year| *year = Some(clamped.as_u32));
             set_is_in_range.set(year_is_valid(clamped.as_u32));
             input_ref.set_value(&clamped.as_string);
-            console_log(&format!("YearInput: setting value to -> {clamped:?}"));
         }
     };
 
@@ -180,10 +175,6 @@ pub fn YearInput(
             placeholder=placeholder
             type="text"
             disabled=disabled.map(|disabled| disabled.get()).unwrap_or_default()
-            hat=move || {
-                let _ = clear_requested();
-                1
-            }
         />
     }
 

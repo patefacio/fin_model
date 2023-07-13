@@ -6,8 +6,10 @@
 use crate::utils::constants::{ENTER_KEY, LEFT_KEY, RIGHT_KEY};
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
+#[allow(unused_imports)]
+use leptos::log;
 use leptos::{component, view, IntoView, Scope};
-use leptos::{create_effect, create_node_ref, store_value, ReadSignal, SignalWith};
+use leptos::{create_effect, create_node_ref, create_signal, store_value, ReadSignal, SignalWith};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::html::Input;
@@ -58,6 +60,8 @@ pub enum Modification {
 ///   * **max_len** - The maximum number of characters for the input.
 ///
 ///   * **range** - Range of valid values for input.
+///   * **on_enter** - Called if user hits enter, passes current input value.
+///   * **clear_input** - Signal requesting to clear the input.
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -90,18 +94,22 @@ pub fn NumericInput(
     /// Range of valid values for input.
     #[prop(default=None)]
     range: Option<RangeInclusive<f64>>,
-    ///Function called when enter is pressed
-    #[prop(default = None)]
+    /// Called if user hits enter, passes current input value.
+    #[prop(default=None)]
     on_enter: Option<Box<dyn FnMut(String)>>,
+    /// Signal requesting to clear the input.
+    #[prop(default=None)]
+    clear_input: Option<ReadSignal<()>>,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
-    use leptos::create_signal;
     use leptos::IntoAttribute;
     use leptos::IntoClass;
     use leptos::IntoStyle;
     use leptos::SignalGet;
     use leptos::SignalSet;
+    use std::cell::RefCell;
+    use std::rc::Rc;
 
     let mut is_in_range = true;
 
@@ -131,18 +139,33 @@ pub fn NumericInput(
         updatable: Updatable<Option<f64>>,
         modification: Option<Modification>,
         range: Option<RangeInclusive<f64>>,
-        on_enter: Option<Box<dyn FnMut(String)>>,
+        on_enter: Option<Rc<RefCell<Box<dyn FnMut(String)>>>>,
     }
 
     let numeric_input_data = NumericInputData {
         updatable,
         modification,
         range,
-        on_enter,
+        on_enter: on_enter.map(|on_enter| Rc::new(RefCell::new(on_enter))),
     };
 
+    // TODO: This requires locking the leptos slotmap
     let numeric_input_data = store_value(cx, numeric_input_data);
     let node_ref = create_node_ref::<Input>(cx);
+
+    create_effect(cx, move |_| {
+        log!(
+            "NumericInput<{cx:?}>: RUNNING EFFECT -> {cx:?} -> {}",
+            clear_input.is_some()
+        );
+
+        if let Some(clear_input) = clear_input.as_ref() {
+            let _ = clear_input();
+            if let Some(input_ref) = node_ref.get() {
+                input_ref.set_value("");
+            }
+        }
+    });
 
     let update_value = move || {
         numeric_input_data.update_value(|numeric_input_data| {
@@ -154,8 +177,6 @@ pub fn NumericInput(
                 .unwrap_or_default();
 
             let mut value = input_ref.value();
-
-            console_log(&format!("Actual input -> {value:?}"));
 
             if non_negative {
                 while let Some(neg_pos) = value.find('-') {
@@ -173,10 +194,7 @@ pub fn NumericInput(
             let (value, mut new_value, numeric_to_caret) =
                 format_number_lenient(&value, selection_start);
 
-            console_log(&format!(
-                "Format result {:?}",
-                (value, &new_value, numeric_to_caret)
-            ));
+            log!("Format result {:?}", (value, &new_value, numeric_to_caret));
 
             if let Some(modification) = modification.as_ref() {
                 if new_value.is_empty() {
@@ -220,7 +238,6 @@ pub fn NumericInput(
 
     let key_movement = move |ev: KeyboardEvent| {
         let key_code = ev.key_code();
-        console_log(&format!("Examining key {key_code}"));
         match key_code {
             LEFT_KEY | RIGHT_KEY => numeric_input_data.with_value(|numeric_input_data| {
                 if let Some(modification) = numeric_input_data.modification.as_ref() {
@@ -241,15 +258,17 @@ pub fn NumericInput(
             }),
 
             ENTER_KEY => {
-                console_log(&format!("Numeric input enter key was pressed:1"));
-                let input_ref = node_ref.get().expect("Input node");
+                let mut on_enter_handler = None;
+                // TODO: The following locks the leptos slotmap
                 numeric_input_data.update_value(|numeric_input_data| {
-                    console_log(&format!("Numeric input enter key was pressed:2"));
                     if let Some(on_enter) = numeric_input_data.on_enter.as_mut() {
-                        console_log(&format!("Numeric input enter key was pressed:3"));
-                        on_enter(input_ref.value())
+                        on_enter_handler = Some(on_enter.clone());
                     }
-                })
+                });
+                if let Some(on_enter_handler) = on_enter_handler {
+                    let input_ref = node_ref.get().expect("Input node");
+                    (on_enter_handler.borrow_mut().as_mut())(input_ref.value());
+                }
             }
             _ => (),
         }
@@ -310,10 +329,6 @@ impl Modification {
             .min(position)
             .max(prefix.chars().count()),
         };
-        console_log(&format!(
-            "Constrained input({input_len}), self({:?}), {position} to {constrained}",
-            self
-        ));
         constrained
 
         // ω <fn Modification::position_in_number>
@@ -326,9 +341,6 @@ impl Modification {
     pub fn modify(&self, input: &str) -> String {
         // α <fn Modification::modify>
         let mut modified = input.to_string();
-
-        console_log(&format!("modifying {input}"));
-
         let result = match &self {
             Modification::ReactivePrefix(p) => p.with(|p| {
                 debug_assert!(!modified.contains(p));

@@ -4,6 +4,8 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+#[allow(unused_imports)]
+use leptos::log;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -38,6 +40,8 @@ pub fn YearRangeInput(
     use crate::Year;
     use crate::YearInput;
     use leptos::store_value;
+
+    console_log(&format!("Creating YearRangeInput -> {cx:?}"));
 
     let start = updatable
         .value

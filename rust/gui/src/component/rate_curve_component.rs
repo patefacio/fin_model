@@ -4,6 +4,8 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+#[allow(unused_imports)]
+use leptos::log;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -41,18 +43,21 @@ pub fn RateCurveComponent(
     use leptos::create_rw_signal;
     use leptos::create_signal;
     use leptos::For;
-    use leptos::*;
+    use leptos::log;
+    use leptos::SignalUpdate;
+    use leptos::SignalWith;
+    use leptos::SignalGet;
+    use leptos::IntoAttribute;
     use plus_modeled::YearValue;
 
-    console_log("Constructing RateCurveComponent!!");
+    log!("Creating RateCurveComponent -> {cx:?}");
 
     let mut updatable = updatable;
 
+    /// Sort entries by year and remove any duplicate years
     fn clean_curve(points: &mut Vec<YearValue>) {
         // First sort the data by year to ensure points are ordered
         points.sort_by(|a, b| a.year.cmp(&b.year));
-        // Remove duplicates  where dupe is defined as years being equal.
-        // If year appears multiple times, keep the last value.
         let mut last_inserted: Option<Year> = None;
         let mut deduped = Vec::with_capacity(points.len());
 
@@ -74,30 +79,32 @@ pub fn RateCurveComponent(
     }
 
     clean_curve(&mut updatable.value.curve);
-    console_log(&format!("Sorted data -> {:?}", updatable.value));
+
     let (updatable, set_updatable) = create_signal(cx, updatable);
     let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
     let (add_enabled, set_add_enabled) = create_signal(cx, false);
-    let clear_fields = create_rw_signal(cx, false);
+    let (clear_fields, set_clear_fields) = create_signal(cx, ());
+    let (year_input_focus, set_year_input_focus) = create_signal(cx, ());
     let on_accept = move || {
-        console_log("Initiating on accept");
         set_updatable.update(move |updatable| {
+            log!("Updating rate curve updatable");
             entry_complete.with(|entry_complete| {
+                log!("Accessing entry complete {entry_complete:?}");
                 updatable.value.curve.push(YearValue {
                     year: entry_complete.0.unwrap(),
                     value: entry_complete.1.unwrap(),
                 });
                 clean_curve(&mut updatable.value.curve);
-                console_log("Finished adding curve point, clearing fields!");
-                clear_fields.set(true);
+                set_clear_fields.update(|_| {});
+                set_year_input_focus.update(|_| {});
             });
-        })
+        });
     };
-    let on_accept_evt = move |_| {
-        console_log("Initiating on_accept_evt");
-        on_accept()
-    };
-    let on_accept_number = Box::new(move |_| on_accept());
+    let on_accept_evt = move |_| on_accept();
+
+    let on_accept_enter: Option<Box<dyn FnMut(String)>> = Some(Box::new(move |_| {
+        on_accept();
+    }));
 
     view! { cx,
         <div class="rate-curve-data">
@@ -129,6 +136,7 @@ pub fn RateCurveComponent(
                     view! { cx,
                         <button on:click=remove_me>"🗑"</button>
                         <YearInput
+                            input_class=Some("rcc-yi".to_string())
                             disabled=Some(disabled)
                             updatable=Updatable::new(
                                 Some(year_value.year),
@@ -149,7 +157,7 @@ pub fn RateCurveComponent(
                             updatable=Updatable::new(
                                 Some(year_value.value),
                                 move |percent| {
-                                    console_log(&format!("Percent is updating => {percent:?}"));
+                                    log!("Percent is updating => {percent:?}");
                                     set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
                                     set_add_enabled
                                         .update(|add_enabled| {
@@ -176,7 +184,6 @@ pub fn RateCurveComponent(
                 updatable=Updatable::new(
                     None,
                     move |year| {
-                        console_log(&format!("Year is updating => {year:?}"));
                         set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
                         set_add_enabled
                             .update(|add_enabled| {
@@ -184,12 +191,12 @@ pub fn RateCurveComponent(
                                     .with(|entry_complete| {
                                         entry_complete.0.is_some() && entry_complete.1.is_some()
                                     });
-                                console_log(&format!("Checking entry complete => {add_enabled:?}"));
                             });
                     },
                 )
                 placeholder=Some("year".to_string())
                 clear_input=Some(clear_fields)
+                set_focus=Some(year_input_focus)
                 year_range=year_range
                 live_clamp=true
             />
@@ -197,23 +204,19 @@ pub fn RateCurveComponent(
                 updatable=Updatable::new(
                     None,
                     move |percent| {
-                        console_log(&format!("Percent is updating => {percent:?}"));
                         set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
                         set_add_enabled
                             .update(|add_enabled| {
                                 *add_enabled = entry_complete
                                     .with(|entry_complete| {
-                                        console_log(
-                                            &format!("Checking entry complete => {entry_complete:?}"),
-                                        );
                                         entry_complete.0.is_some() && entry_complete.1.is_some()
                                     });
-                                console_log(&format!("Checking entry complete => {add_enabled:?}"));
                             });
                     },
                 )
                 placeholder=Some("rate".to_string())
-                on_enter=Some(on_accept_number)
+                clear_input=Some(clear_fields)
+                on_enter=on_accept_enter
             />
         </div>
         </div>

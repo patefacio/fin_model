@@ -51,6 +51,7 @@ impl DistributionCdf for NormalSpec {
         // α <fn DistributionCdf::get_cdf_chart for NormalSpec>
 
         use plotters::prelude::*;
+        use leptos_dom::console_log;
 
         // Cap the number of points to range (32, 1024)
         let num_points = num_points.max(32).min(1024);
