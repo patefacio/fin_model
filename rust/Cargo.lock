@@ -1114,6 +1114,7 @@ dependencies = [
  "leptos_router",
  "log",
  "num-format",
+ "once_cell",
  "plotters",
  "plotters-svg",
  "plus_modeled",

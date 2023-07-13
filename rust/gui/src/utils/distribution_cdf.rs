@@ -15,23 +15,25 @@ pub trait DistributionCdf {
     ///   * **num_points** - Number of points to pull from the distribution
     ///   * _return_ - SVG image of distribution
     fn get_cdf_chart(&self, num_points: usize) -> String;
-
-    /// Gets the cdf(x) value using an approximation
-    ///
-    ///   * **x** - x to get cdf value
-    ///   * **sigma** - Standard deviation
-    ///   * **mu** - Normal mean
-    ///   * _return_ - Approximate value of the cdf
-    fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64;
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+// --- functions ---
+////////////////////////////////////////////////////////////////////////////////////
+/// Gets the cdf(x) value using an approximation
+///
+///   * **x** - x to get cdf value
+///   * **sigma** - Standard deviation
+///   * **mu** - Normal mean
+///   * _return_ - Approximate value of the cdf
+#[inline]
 pub fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
-    // α <fn DistributionCdf::sigmoid_approx for NormalSpec>
+    // α <fn sigmoid_approx>
     assert!(sigma != 0.0);
     let correction = 1.70175;
     let temp = (correction * (x - mu) / sigma).exp();
     return temp / (1.0 + temp);
-    // ω <fn DistributionCdf::sigmoid_approx for NormalSpec>
+    // ω <fn sigmoid_approx>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -140,15 +142,21 @@ impl DistributionCdf for NormalSpec {
         plot_buff
         // ω <fn DistributionCdf::get_cdf_chart for NormalSpec>
     }
-
-    fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
-        return sigmoid_approx(x, sigma, mu);
-    }
 }
 
 /// Unit tests for `distribution_cdf`
 #[cfg(test)]
 pub mod unit_tests {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- functions ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    #[test]
+    fn test_sigmoid_approx() {
+        // α <fn test_sigmoid_approx>
+        assert_eq!(0.5, sigmoid_approx(10.0, 1.0, 10.0) as f64);
+        assert_eq!(1.0, sigmoid_approx(100.0, 1.0, 10.0) as f64);
+        // ω <fn test_sigmoid_approx>
+    }
 
     /// Test trait distribution_cdf on NormalSpec
     pub mod test_distribution_cdf_on_normal_spec {
@@ -161,7 +169,7 @@ pub mod unit_tests {
         // --- functions ---
         ////////////////////////////////////////////////////////////////////////////////////
         #[test]
-        fn test_get_cdf_chart() {
+        fn get_cdf_chart() {
             // α <fn test DistributionCdf::get_cdf_chart on NormalSpec>
             println!(
                 "Data\n{}",
@@ -172,16 +180,6 @@ pub mod unit_tests {
                 .get_cdf_chart(200)
             );
             // ω <fn test DistributionCdf::get_cdf_chart on NormalSpec>
-        }
-
-        #[test]
-        fn test_sigmoid_approx() {
-            // α <fn test DistributionCdf::sigmoid_approx on NormalSpec>
-            //todo!("Test sigmoid_approx")
-            assert_eq!(0.5, sigmoid_approx(10.0, 1.0, 10.0) as f64);
-            assert_eq!(1.0, sigmoid_approx(100.0, 1.0, 10.0) as f64);
-
-            // ω <fn test DistributionCdf::sigmoid_approx on NormalSpec>
         }
 
         // α <mod-def test_distribution_cdf_on_normal_spec>

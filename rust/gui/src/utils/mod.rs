@@ -14,6 +14,7 @@ pub mod constants;
 pub mod distribution_cdf;
 pub mod distribution_pdf;
 pub mod element_sugar;
+pub mod historic_risk_return;
 pub mod html_tag;
 pub mod integer_clamp;
 pub mod live_parsed_date;

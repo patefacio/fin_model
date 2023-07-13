@@ -6,7 +6,6 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::SignalWithUntracked;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -49,6 +48,7 @@ pub fn RateCurveComponent(
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
+    use leptos::SignalWithUntracked;
     use plus_modeled::YearValue;
 
     log!("Creating RateCurveComponent -> {cx:?}");
