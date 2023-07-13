@@ -47,7 +47,8 @@ impl DistributionPdf for NormalSpec {
         let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
         let pdf = |z: f64| {
             debug_assert!(z <= self.mean);
-            coefficient * (-0.5 * (z - self.mean) * (z - self.mean) / (self.std_dev * self.std_dev) ).exp()
+            coefficient
+                * (-0.5 * (z - self.mean) * (z - self.mean) / (self.std_dev * self.std_dev)).exp()
         };
 
         let mut num_sigmas = max_sigma as f64;

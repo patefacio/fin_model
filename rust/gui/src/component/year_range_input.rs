@@ -122,7 +122,7 @@ pub fn YearRangeInput(
                 year_range=year_range
                 live_clamp=true
                 align_left=align_left
-            /> 
+            />
         </div>
     }
     // ω <fn year_range_input>

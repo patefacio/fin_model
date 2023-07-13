@@ -34,7 +34,9 @@ impl CollectionGrid for Holding {
             "Quantity".to_string(),
             "Price".to_string(),
             "Cost".to_string(),
-        ].into_iter().collect()
+        ]
+        .into_iter()
+        .collect()
         // ω <fn CollectionGrid::get_header for Holding>
     }
 
@@ -48,43 +50,18 @@ impl CollectionGrid for Holding {
         use leptos::IntoStyle;
 
         [
-            view! {
-                cx,
-                <div
-                style:text-align="right"
-                >
-                {self.instrument_name.clone()}
+            view! { cx, <div style:text-align="right">{self.instrument_name.clone()}</div> },
+            view! { cx, <div style:text-align="right">{self.quantity}</div> },
+            view! { cx,
+                <div style:text-align="right">
+                    {self.unit_valuation.as_ref().map(|uv| uv.value).unwrap_or_default()}
                 </div>
-            }, 
-
-            view! {
-                cx,
-                <div
-                    style:text-align="right"
-                >
-                {self.quantity}
-                </div>
-            }, 
-
-            view! {
-                cx,
-                <div
-                    style:text-align="right"
-                >
-                {self.unit_valuation.as_ref().map(|uv| uv.value).unwrap_or_default()}
-                </div>
-            }, 
-
-            view! {
-                cx,
-                <div
-                    style:text-align="right"
-                >
-                {self.cost_basis}
-                </div>
-            }, 
-
-        ].into_iter().map(|item| item.into_view(cx)).collect()
+            },
+            view! { cx, <div style:text-align="right">{self.cost_basis}</div> },
+        ]
+        .into_iter()
+        .map(|item| item.into_view(cx))
+        .collect()
         // ω <fn CollectionGrid::get_fields for Holding>
     }
 

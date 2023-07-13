@@ -52,9 +52,9 @@ pub fn IntegerInput(
     live_clamp: bool,
 ) -> impl IntoView {
     // α <fn integer_input>
-    
-    use crate::ParsedNum;
+
     use crate::utils::commify_number;
+    use crate::ParsedNum;
     use leptos::create_node_ref;
     use leptos::create_signal;
     use leptos::html::Input;
@@ -127,9 +127,9 @@ pub fn IntegerInput(
         value = value.chars().filter(|c| c.is_ascii_digit()).collect();
 
         let clamped = integer_clamp
-                .as_ref()
-                .map(|integer_clamp| integer_clamp.clamp(&value))
-                .unwrap_or_else(|| ParsedNum::from_str(&value));
+            .as_ref()
+            .map(|integer_clamp| integer_clamp.clamp(&value))
+            .unwrap_or_else(|| ParsedNum::from_str(&value));
 
         value = clamped.as_string;
         if value.is_empty() {

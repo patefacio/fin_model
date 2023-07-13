@@ -33,8 +33,8 @@ pub fn NormalSpecComponent(
 ) -> impl IntoView {
     // α <fn normal_spec_component>
 
-    use crate::utils::distribution_pdf::DistributionPdf;
     use crate::utils::distribution_cdf::DistributionCdf;
+    use crate::utils::distribution_pdf::DistributionPdf;
     use leptos::create_signal;
     use leptos::IntoAttribute;
     use leptos::SignalUpdate;
@@ -45,7 +45,7 @@ pub fn NormalSpecComponent(
         std_dev: Option<f64>,
         updatable: Updatable<Option<NormalSpec>>,
         pdf_drawing_svg: String,
-        cdf_drawing_svg: String
+        cdf_drawing_svg: String,
     }
 
     let initial_mean = updatable
@@ -58,7 +58,6 @@ pub fn NormalSpecComponent(
         .as_ref()
         .map(|normal_spec| normal_spec.std_dev * 100.0);
     let initial_loss = Some(0.0);
-
 
     let (normal_bits, set_normal_bits) = create_signal(
         cx,
@@ -78,8 +77,6 @@ pub fn NormalSpecComponent(
                 .unwrap_or_default(),
         },
     );
-    
-
 
     fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec) {
         normal_bits.pdf_drawing_svg = new_normal.get_chart(400);
@@ -111,14 +108,21 @@ pub fn NormalSpecComponent(
     });
 
 
-    let loss_updatable = Updatable::new(initial_loss, move |loss| {
+    let loss_updatable = Updatable::new(initial_loss, move |mut loss| {
         normal_bits.with(|normal_bits| {
             let correction = 1.70175;
             let cdf = |z: f64| {
-                (correction*(z - normal_bits.mean.unwrap())/normal_bits.std_dev.unwrap()).exp() / ( 1.0 + (correction*(z - normal_bits.mean.unwrap())/normal_bits.std_dev.unwrap()).exp() )
+                (correction * (z - normal_bits.mean.unwrap()) / normal_bits.std_dev.unwrap()).exp()
+                    / (1.0
+                        + (correction * (z - normal_bits.mean.unwrap())
+                            / normal_bits.std_dev.unwrap())
+                        .exp())
             };
-            console_log(&format!("Probability of having {}% or less: {}%", loss.unwrap_or_default(), cdf(loss.unwrap_or_default())*100.0));
-            
+            console_log(&format!(
+                "Probability of having {}% or less: {}%",
+                loss.unwrap_or_default(),
+                cdf(loss.unwrap_or_default()) * 100.0
+            ));
         });
     });
 
@@ -153,19 +157,18 @@ pub fn NormalSpecComponent(
             </div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.pdf_drawing_svg.clone()) }></div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.cdf_drawing_svg.clone()) }></div>
-                    <NumericInput
-                        placeholder=Some("CDF Sample".to_string())
-                        modification=Some(Modification::PrefixAndSuffix {
-                            prefix: "loss= ".into(),
-                            suffix: "%".into(),
-                        })
-                        non_negative=non_negative_mean
-                        updatable=loss_updatable
-                        size=9
-                        max_len=14
-                    />
-                    <output
-                    />
+            <NumericInput
+                placeholder=Some("CDF Sample".to_string())
+                modification=Some(Modification::PrefixAndSuffix {
+                    prefix: "loss= ".into(),
+                    suffix: "%".into(),
+                })
+                non_negative=non_negative_mean
+                updatable=loss_updatable
+                size=9
+                max_len=14
+            />
+            <output></output>
         </fieldset>
     }
 

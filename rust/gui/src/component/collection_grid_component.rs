@@ -84,8 +84,8 @@ where
     use leptos::For;
     use leptos::IntoView;
     use leptos::View;
-    use leptos_dom::HtmlElement;
     use leptos_dom::html::Div;
+    use leptos_dom::HtmlElement;
 
     let updatable = store_value(cx, updatable);
 
@@ -93,33 +93,21 @@ where
         <T as CollectionGrid>::get_header()
             .into_iter()
             .map(|column_header| {
-                view! {
-                    cx,
-                    <div class="header">
-                    {column_header}
-                    </div>
-                }
+                view! { cx, <div class="header">{column_header}</div> }
             })
-           .collect::<Vec<HtmlElement<Div>>>()
+            .collect::<Vec<HtmlElement<Div>>>()
     };
 
-    view! {
-        cx,
+    view! { cx,
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
-
-        {header}
-
-        <For
-        // TODO: AVOID THIS CLONE
-        each=move || updatable.with_value(|updatable| updatable.value.clone())
-        key=|item| {item.get_key()}
-        view=move |cx, item| {
-                view!{
-                cx,
-                {item.get_fields(cx)}
-            }
-        }
-        />
+            {header}
+            <For
+                each=move || updatable.with_value(|updatable| updatable.value.clone())
+                key=|item| { item.get_key() }
+                view=move |cx, item| {
+                    view! { cx, {item.get_fields(cx)} }
+                }
+            />
         </div>
     }
 

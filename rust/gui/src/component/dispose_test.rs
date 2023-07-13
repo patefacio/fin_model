@@ -30,12 +30,12 @@ pub fn DisposeTest(
 
     let some_data = Rc::new(SomeData::new(&format!("DisposeTest Badabing:{cx:?}")));
 
-/* 
-    let (some_data, some_data_write) = leptos::create_signal(
-        cx,
-       SomeData::new(&format!("DisposeTest Badabing:{cx:?}"))
-    );
-*/
+    /*
+        let (some_data, some_data_write) = leptos::create_signal(
+            cx,
+           SomeData::new(&format!("DisposeTest Badabing:{cx:?}"))
+        );
+    */
     let do_stuff = move || {
         leptos_dom::console_log(&format!("Doing stuff"));
     };

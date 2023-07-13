@@ -42,12 +42,12 @@ pub fn RateCurveComponent(
     use crate::YearInput;
     use leptos::create_rw_signal;
     use leptos::create_signal;
-    use leptos::For;
     use leptos::log;
+    use leptos::For;
+    use leptos::IntoAttribute;
+    use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
-    use leptos::SignalGet;
-    use leptos::IntoAttribute;
     use plus_modeled::YearValue;
 
     log!("Creating RateCurveComponent -> {cx:?}");
@@ -108,117 +108,113 @@ pub fn RateCurveComponent(
 
     view! { cx,
         <div class="rate-curve-data">
-        <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
-            <div class="header"></div>
-            <div class="header">"Year"</div>
-            <div class="header">"Rate(%)"</div>
-            <For
-                each=move || updatable.with(|updatable| updatable.value.curve.clone())
-                key=|year_value| { year_value.year }
-                view=move |cx, year_value| {
-                    let (disabled, _set_disabled) = create_signal(cx, true);
-                    let remove_me = move |_event| {
-                        set_updatable
-                            .update(|updatable| {
-                                if let Some(found_index)
-                                    = updatable
-                                        .value
-                                        .curve
-                                        .iter()
-                                        .position(|elm_year_value| {
-                                            elm_year_value.year == year_value.year
-                                        })
-                                {
-                                    updatable.value.curve.remove(found_index);
-                                }
-                            });
-                    };
-                    view! { cx,
-                        <button on:click=remove_me>"🗑"</button>
-                        <YearInput
-                            input_class=Some("rcc-yi".to_string())
-                            disabled=Some(disabled)
-                            updatable=Updatable::new(
-                                Some(year_value.year),
-                                move |year| {
-                                    set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
-                                    set_add_enabled
-                                        .update(|add_enabled| {
-                                            *add_enabled = entry_complete
-                                                .with(|entry_complete| {
-                                                    entry_complete.0.is_some() && entry_complete.1.is_some()
-                                                });
-                                        });
-                                },
-                            )
-                            placeholder=Some("year".to_string())
-                        />
-                        <PercentInput
-                            updatable=Updatable::new(
-                                Some(year_value.value),
-                                move |percent| {
-                                    log!("Percent is updating => {percent:?}");
-                                    set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
-                                    set_add_enabled
-                                        .update(|add_enabled| {
-                                            *add_enabled = entry_complete
-                                                .with(|entry_complete| {
-                                                    entry_complete.0.is_some() && entry_complete.1.is_some()
-                                                });
-                                        });
-                                },
-                            )
-                            placeholder=Some("rate".to_string())
-
-                        />
+            <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
+                <div class="header"></div>
+                <div class="header">"Year"</div>
+                <div class="header">"Rate(%)"</div>
+                <For
+                    each=move || updatable.with(|updatable| updatable.value.curve.clone())
+                    key=|year_value| { year_value.year }
+                    view=move |cx, year_value| {
+                        let (disabled, _set_disabled) = create_signal(cx, true);
+                        let remove_me = move |_event| {
+                            set_updatable
+                                .update(|updatable| {
+                                    if let Some(found_index)
+                                        = updatable
+                                            .value
+                                            .curve
+                                            .iter()
+                                            .position(|elm_year_value| {
+                                                elm_year_value.year == year_value.year
+                                            })
+                                    {
+                                        updatable.value.curve.remove(found_index);
+                                    }
+                                });
+                        };
+                        view! { cx,
+                            <button on:click=remove_me>"🗑"</button>
+                            <YearInput
+                                input_class=Some("rcc-yi".to_string())
+                                disabled=Some(disabled)
+                                updatable=Updatable::new(
+                                    Some(year_value.year),
+                                    move |year| {
+                                        set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
+                                        set_add_enabled
+                                            .update(|add_enabled| {
+                                                *add_enabled = entry_complete
+                                                    .with(|entry_complete| {
+                                                        entry_complete.0.is_some() && entry_complete.1.is_some()
+                                                    });
+                                            });
+                                    },
+                                )
+                                placeholder=Some("year".to_string())
+                            />
+                            <PercentInput
+                                updatable=Updatable::new(
+                                    Some(year_value.value),
+                                    move |percent| {
+                                        log!("Percent is updating => {percent:?}");
+                                        set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
+                                        set_add_enabled
+                                            .update(|add_enabled| {
+                                                *add_enabled = entry_complete
+                                                    .with(|entry_complete| {
+                                                        entry_complete.0.is_some() && entry_complete.1.is_some()
+                                                    });
+                                            });
+                                    },
+                                )
+                                placeholder=Some("rate".to_string())
+                            />
+                        }
                     }
-                }
-            />
-            <button
-                disabled=move || !add_enabled.get()
-                on:click=on_accept_evt
-            >
-                "+"
-            </button>
-            <YearInput
-                updatable=Updatable::new(
-                    None,
-                    move |year| {
-                        set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
-                        set_add_enabled
-                            .update(|add_enabled| {
-                                *add_enabled = entry_complete
-                                    .with(|entry_complete| {
-                                        entry_complete.0.is_some() && entry_complete.1.is_some()
-                                    });
-                            });
-                    },
-                )
-                placeholder=Some("year".to_string())
-                clear_input=Some(clear_fields)
-                set_focus=Some(year_input_focus)
-                year_range=year_range
-                live_clamp=true
-            />
-            <PercentInput
-                updatable=Updatable::new(
-                    None,
-                    move |percent| {
-                        set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
-                        set_add_enabled
-                            .update(|add_enabled| {
-                                *add_enabled = entry_complete
-                                    .with(|entry_complete| {
-                                        entry_complete.0.is_some() && entry_complete.1.is_some()
-                                    });
-                            });
-                    },
-                )
-                placeholder=Some("rate".to_string())
-                clear_input=Some(clear_fields)
-                on_enter=on_accept_enter
-            />
-        </div>
+                />
+                <button disabled=move || !add_enabled.get() on:click=on_accept_evt>
+                    "+"
+                </button>
+                <YearInput
+                    updatable=Updatable::new(
+                        None,
+                        move |year| {
+                            set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
+                            set_add_enabled
+                                .update(|add_enabled| {
+                                    *add_enabled = entry_complete
+                                        .with(|entry_complete| {
+                                            entry_complete.0.is_some() && entry_complete.1.is_some()
+                                        });
+                                });
+                        },
+                    )
+                    placeholder=Some("year".to_string())
+                    clear_input=Some(clear_fields)
+                    set_focus=Some(year_input_focus)
+                    year_range=year_range
+                    live_clamp=true
+                />
+                <PercentInput
+                    updatable=Updatable::new(
+                        None,
+                        move |percent| {
+                            set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
+                            set_add_enabled
+                                .update(|add_enabled| {
+                                    *add_enabled = entry_complete
+                                        .with(|entry_complete| {
+                                            entry_complete.0.is_some() && entry_complete.1.is_some()
+                                        });
+                                });
+                        },
+                    )
+                    placeholder=Some("rate".to_string())
+                    clear_input=Some(clear_fields)
+                    on_enter=on_accept_enter
+                />
+            </div>
         </div>
         <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
     }

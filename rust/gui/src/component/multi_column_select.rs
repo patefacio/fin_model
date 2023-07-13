@@ -154,7 +154,7 @@ where
         on_select: F,
         selection_vec: Vec<NodeRef<Button>>,
         current_index: usize,
-        main_button_label: String
+        main_button_label: String,
     }
 
     let (current_index, initial_value) = match initial_value {
@@ -175,14 +175,14 @@ where
                 .map(|_| create_node_ref::<Button>(cx))
                 .collect::<Vec<_>>(),
             current_index,
-            main_button_label: initial_value.clone()
+            main_button_label: initial_value.clone(),
         },
     );
     let menu_is_hidden = create_rw_signal(cx, true);
     let using_mouse = create_rw_signal(cx, false);
     let mcs_grid_ref = create_node_ref::<Div>(cx);
     let main_button_ref = create_node_ref::<Button>(cx);
-    
+
     let set_focus_main_button = move || {
         console_log("Focus to  main");
         main_button_ref
@@ -255,7 +255,7 @@ where
                     using_mouse.set(false);
                 }
                 console_log(&format!("Got one of the movement keys {key_code}"));
-                // The following prevents the window from jumping around as the 
+                // The following prevents the window from jumping around as the
                 // browser scrolls based on key movement.
                 ev.prevent_default();
             }

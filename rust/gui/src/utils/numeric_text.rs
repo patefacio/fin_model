@@ -174,12 +174,22 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
     // Leave early with any _effective_ 0, but keep the digits
     if !non_zero_seen {
         match numeric.as_str() {
-            "0.0" => {return (None, "0.0".into(), 3);}
-            "0.00" => {return (None, "0.00".into(), 4);}
-            "0.000" => {return (None, "0.000".into(), 5);}
-            "0.0000" => {return (None, "0.0000".into(), 6);}
-            "0.00000" => {return (None, "0.00000".into(), 7);}
-            _ => ()
+            "0.0" => {
+                return (None, "0.0".into(), 3);
+            }
+            "0.00" => {
+                return (None, "0.00".into(), 4);
+            }
+            "0.000" => {
+                return (None, "0.000".into(), 5);
+            }
+            "0.0000" => {
+                return (None, "0.0000".into(), 6);
+            }
+            "0.00000" => {
+                return (None, "0.00000".into(), 7);
+            }
+            _ => (),
         }
     }
 

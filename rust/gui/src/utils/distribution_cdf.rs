@@ -50,8 +50,8 @@ impl DistributionCdf for NormalSpec {
     fn get_cdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionCdf::get_cdf_chart for NormalSpec>
 
-        use plotters::prelude::*;
         use leptos_dom::console_log;
+        use plotters::prelude::*;
 
         // Cap the number of points to range (32, 1024)
         let num_points = num_points.max(32).min(1024);
@@ -65,6 +65,21 @@ impl DistributionCdf for NormalSpec {
         let mut x_vec = vec![0.0; num_points];
         let mut y_vec = vec![0.0; num_points];
 
+        let correction = 1.70175;
+        //let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
+        let cdf = |z: f64| {
+            //debug_assert!(z <= self.mean);
+
+            (correction * (z - self.mean) / self.std_dev).exp()
+                / (1.0 + (correction * (z - self.mean) / self.std_dev).exp())
+        };
+        console_log(&format!(
+            "Sig: {}, MU: {}, x: {}, CDF: {}",
+            self.std_dev,
+            self.mean,
+            45.0,
+            cdf(45.0),
+        ));
 
         let mut num_sigmas = max_sigma as f64;
         for i in 0..(num_points / 2) {
