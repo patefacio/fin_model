@@ -259,7 +259,6 @@ pub fn NumericInput(
 
             ENTER_KEY => {
                 let mut on_enter_handler = None;
-                // TODO: The following locks the leptos slotmap
                 numeric_input_data.update_value(|numeric_input_data| {
                     if let Some(on_enter) = numeric_input_data.on_enter.as_mut() {
                         on_enter_handler = Some(on_enter.clone());

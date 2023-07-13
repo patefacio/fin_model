@@ -402,8 +402,8 @@ pub fn ComponentDisplayComponent(
                     value : - 0.0334 }
                 ],
             },
-            |rc| {
-                console_log(&format!("RateCurve updated -> {rc:?}"));
+            move |rc| {
+                show_update(format!("Rate Curve -> {rc:?}"));
             },
         )/>
         <hr/>

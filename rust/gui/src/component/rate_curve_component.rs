@@ -6,6 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::SignalWithUntracked;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -81,24 +82,43 @@ pub fn RateCurveComponent(
     clean_curve(&mut updatable.value.curve);
 
     let (updatable, set_updatable) = create_signal(cx, updatable);
+    let (curve, set_curve) = create_signal(cx, {
+        let curve = updatable.with(|updatable| updatable.value.curve.clone());
+        set_updatable.update(|updatable| {
+            updatable.value.curve.clear();
+        });
+        curve
+    });
+
     let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
     let (add_enabled, set_add_enabled) = create_signal(cx, false);
     let (clear_fields, set_clear_fields) = create_signal(cx, ());
     let (year_input_focus, set_year_input_focus) = create_signal(cx, ());
+
+    let signal_parent_update = move || {
+        curve.with_untracked(|curve| {
+            set_updatable.update(|updatable| {
+                updatable.update_and_then_signal(|client_curve| {
+                    client_curve.curve = curve.clone();
+                })
+            })
+        })
+    };
+
     let on_accept = move || {
-        set_updatable.update(move |updatable| {
-            log!("Updating rate curve updatable");
+        set_curve.update(move |curve| {
             entry_complete.with(|entry_complete| {
                 log!("Accessing entry complete {entry_complete:?}");
-                updatable.value.curve.push(YearValue {
+                curve.push(YearValue {
                     year: entry_complete.0.unwrap(),
                     value: entry_complete.1.unwrap(),
                 });
-                clean_curve(&mut updatable.value.curve);
+                clean_curve(curve);
                 set_clear_fields.update(|_| {});
                 set_year_input_focus.update(|_| {});
             });
         });
+        signal_parent_update()
     };
     let on_accept_evt = move |_| on_accept();
 
@@ -113,25 +133,24 @@ pub fn RateCurveComponent(
                 <div class="header">"Year"</div>
                 <div class="header">"Rate(%)"</div>
                 <For
-                    each=move || updatable.with(|updatable| updatable.value.curve.clone())
+                    each=curve
                     key=|year_value| { year_value.year }
                     view=move |cx, year_value| {
                         let (disabled, _set_disabled) = create_signal(cx, true);
                         let remove_me = move |_event| {
-                            set_updatable
-                                .update(|updatable| {
+                            set_curve
+                                .update(|curve| {
                                     if let Some(found_index)
-                                        = updatable
-                                            .value
-                                            .curve
+                                        = curve
                                             .iter()
                                             .position(|elm_year_value| {
                                                 elm_year_value.year == year_value.year
                                             })
                                     {
-                                        updatable.value.curve.remove(found_index);
+                                        curve.remove(found_index);
                                     }
                                 });
+                                signal_parent_update();
                         };
                         view! { cx,
                             <button on:click=remove_me>"🗑"</button>

@@ -27,7 +27,7 @@ ENTER_KEY => {
                     console_log(&format!("Numeric input enter key was pressed:2"));
                     if let Some(on_enter) = numeric_input_data.on_enter.as_mut() {
                         console_log(&format!("Numeric input enter key was pressed:3"));
-                        on_enter(input_ref.value());
+ ===> OOOPS!!           on_enter(input_ref.value());
                         console_log(&format!("User done with on_enter"));
                         ev.prevent_default();
                     }
