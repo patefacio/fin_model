@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -26,30 +25,28 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
     let point: usize;
     match temp {
         Some(_) => point = temp.unwrap(),
-        None => {s.push_str(".0"); 
-        point = s.len()-2;
-    }
+        None => {
+            s.push_str(".0");
+            point = s.len() - 2;
+        }
     };
-    
-    let mut lhs = (&s[0..point]).to_string();
-    let mut rhs = (&s[point+1..s.len()]).to_string();
 
-    
+    let mut lhs = (&s[0..point]).to_string();
+    let mut rhs = (&s[point + 1..s.len()]).to_string();
+
     if scale_factor > 0 {
-        for _i in 0..scale_factor{
+        for _i in 0..scale_factor {
             if rhs.len() != 0 {
                 lhs.push(rhs.remove(0));
-            }
-            else {
+            } else {
                 lhs.push('0');
             }
         }
     } else if scale_factor < 0 {
-        for _i in scale_factor..0{
+        for _i in scale_factor..0 {
             if lhs.len() != 0 {
-                rhs.insert(0,lhs.pop().unwrap());
-            }
-            else {
+                rhs.insert(0, lhs.pop().unwrap());
+            } else {
                 rhs.insert(0, '0');
             }
         }
@@ -59,8 +56,6 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
 
     let s = lhs + "." + &rhs;
     return s.parse::<f64>().unwrap();
-
-
 
     //n * 10.0f64.powf(scale_factor as f64) as f64
 

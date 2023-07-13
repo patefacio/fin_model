@@ -38,9 +38,6 @@ pub fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
 impl DistributionCdf for NormalSpec {
-
-
-
     /// Get a chart representing the *cdf* of the distribution.
     /// See [Normal Distribution](https://en.wikipedia.org/wiki/Normal_distribution)
     /// for function definition.
@@ -147,7 +144,6 @@ impl DistributionCdf for NormalSpec {
     fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
         return sigmoid_approx(x, sigma, mu);
     }
-
 }
 
 /// Unit tests for `distribution_cdf`
@@ -184,7 +180,7 @@ pub mod unit_tests {
             //todo!("Test sigmoid_approx")
             assert_eq!(0.5, sigmoid_approx(10.0, 1.0, 10.0) as f64);
             assert_eq!(1.0, sigmoid_approx(100.0, 1.0, 10.0) as f64);
-            
+
             // ω <fn test DistributionCdf::sigmoid_approx on NormalSpec>
         }
 

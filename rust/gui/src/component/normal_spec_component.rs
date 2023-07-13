@@ -107,7 +107,6 @@ pub fn NormalSpecComponent(
         });
     });
 
-
     let loss_updatable = Updatable::new(initial_loss, move |mut loss| {
         normal_bits.with(|normal_bits| {
             let correction = 1.70175;

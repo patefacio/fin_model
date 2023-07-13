@@ -150,7 +150,7 @@ pub fn RateCurveComponent(
                                         curve.remove(found_index);
                                     }
                                 });
-                                signal_parent_update();
+                            signal_parent_update();
                         };
                         view! { cx,
                             <button on:click=remove_me>"🗑"</button>
