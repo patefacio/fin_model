@@ -34,9 +34,9 @@ pub fn DossierCorrelationMatrixComponent(
     use leptos::SignalGet;
     use plus_modeled::core::dossier_item_index::ItemIndex;
 
-    let index_pairs = updatable.value.mappings.iter();
+    //let index_pairs = updatable.value.mappings.iter();
 
-    let (indices, set_indices) = create_signal(cx, updatable.value.mappings);
+    let (indices, _set_indices) = create_signal(cx, updatable.value.mappings);
     console_log(&format!("MATRIX WORKING"));
 
     view! { cx,
@@ -141,9 +141,9 @@ pub fn set_matrix_correlation(
 
 pub fn get_matrix_correlation(matrix: &DossierCorrelationMatrix, index: (u32, u32)) -> f64 {
     use plus_modeled::core::dossier_item_index::ItemIndex;
-    use plus_modeled::core::DossierHoldingIndex;
-    use plus_modeled::DossierCorrelationEntry;
-    use plus_modeled::DossierItemIndex;
+    //use plus_modeled::core::DossierHoldingIndex;
+    //use plus_modeled::DossierCorrelationEntry;
+    //use plus_modeled::DossierItemIndex;
 
     for i in matrix.mappings.iter() {
         let row_index = i

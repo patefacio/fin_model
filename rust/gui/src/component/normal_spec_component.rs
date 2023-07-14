@@ -13,9 +13,6 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 use plus_modeled::core::NormalSpec;
 
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -43,13 +40,12 @@ pub fn NormalSpecComponent(
     use crate::utils::historic_risk_return::HistoricRiskReturnPlot;
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use leptos::create_signal;
+    use leptos::For;
     use leptos::IntoAttribute;
+    use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
-    use leptos::SignalGet;
-    use leptos::For;
 
-    //#[derive(Clone)]
     struct NormalBits {
         mean: Option<f64>,
         std_dev: Option<f64>,
@@ -99,12 +95,10 @@ pub fn NormalSpecComponent(
             mean: initial_mean,
             std_dev: initial_std_dev,
             updatable,
-            pdf_drawing_svg,
-            cdf_drawing_svg,
             historic_drawing_svg,
             pdf_drawing_svg: initial_mean
                 .and_then(|mean| {
-                    initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_chart(200))
+                    initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_pdf_chart(200))
                 })
                 .unwrap_or_default(),
             cdf_drawing_svg: initial_mean
@@ -112,11 +106,11 @@ pub fn NormalSpecComponent(
                     initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_cdf_chart(200))
                 })
                 .unwrap_or_default(),
-            cdf_output: initial_output
+            cdf_output: initial_output,
         },
     );
 
-    fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec) {
+    fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec, new_input: Option<f64>) {
         new_normal.mean /= 100.0;
         new_normal.std_dev /= 100.0;
         normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
@@ -126,13 +120,13 @@ pub fn NormalSpecComponent(
         normal_bits
             .updatable
             .update_and_then_signal(move |normal_spec| *normal_spec = Some(new_normal));
-        normal_bits.cdf_output = Some(update_cdf(new_normal.std_dev, new_normal.std_dev, new_input.unwrap_or(0.0)));
-        console_log(&format!("uadnasda {:?}", normal_bits.cdf_output.unwrap()));
-        //update_cdf(normal_bits.std_dev.unwrap_or(1.0), normal_bits.mean.unwrap_or(0.0), new_input.unwrap_or(0.0));
-    }
-
-    fn update_cdf(sd: f64, m: f64, new_input: f64) -> f64 {
-        return cdf(new_input, sd, m);
+        match new_input {
+            Some(_) => {
+                normal_bits.cdf_output =
+                    Some(cdf(new_input.unwrap(), new_normal.std_dev, new_normal.mean))
+            }
+            None => (),
+        }
     }
 
     let mean_updatable = Updatable::new(initial_mean, move |mean| {
@@ -147,80 +141,79 @@ pub fn NormalSpecComponent(
     let std_dev_updatable = Updatable::new(initial_std_dev, move |std_dev| {
         set_normal_bits.update(|normal_bits| {
             normal_bits.std_dev = *std_dev;
+            if normal_bits.std_dev.unwrap_or_default() == 0.0 {
+                normal_bits.std_dev = None
+            };
             if let (Some(mean), Some(std_dev)) = (normal_bits.mean, normal_bits.std_dev) {
                 make_updates(normal_bits, NormalSpec { mean, std_dev }, None);
             }
         });
     });
 
-    let loss_updatable = Updatable::new(initial_loss, move |loss| {
-        set_normal_bits.update(|normal_bits| {
-            //make_updates(normal_bits, normal_bits.updatable.value.unwrap(), *loss);
-            normal_bits.cdf_output = Some(cdf(loss.unwrap_or(0.0), normal_bits.std_dev.unwrap_or(1.0), normal_bits.mean.unwrap_or(0.0)));
-            console_log(&format!("{}: {}", loss.unwrap_or(0.0), normal_bits.cdf_output.unwrap()));
-        });
-    });
-
-
-    //let loss_updatable = Updatable::new(initial_loss, move |loss| {
-    //    normal_bits.with(|normal_bits| {
-    //        console_log(&format!("Probability of having {}% or less: {}%", loss.unwrap_or_default(), cdf(loss.unwrap_or_default(), normal_bits.std_dev.unwrap_or_default(), normal_bits.mean.unwrap_or_default())));
-    //    });
-    //});
-
     let initial_loss_vec = vec![10.0, 5.0, 1.0, 0.0, -1.0, -5.0, -10.0];
-    let loss_table = Updatable::new(initial_loss_vec.clone(), move |l| {
-        
-    });
-
-
-    //let (updatable, set_updatable) = create_signal(cx, updatable);
     let (loss_indices, set_indices) = create_signal(cx, initial_loss_vec);
 
-
+    let loss_updatable = Updatable::new(initial_loss, move |loss| {
+        set_normal_bits.update(|normal_bits| {
+            match (loss, normal_bits.std_dev, normal_bits.mean) {
+                (Some(_), Some(_), Some(_)) => {
+                    normal_bits.cdf_output = Some(cdf(
+                        loss.unwrap(),
+                        normal_bits.std_dev.unwrap(),
+                        normal_bits.mean.unwrap(),
+                    ));
+                    make_updates(
+                        normal_bits,
+                        NormalSpec {
+                            mean: normal_bits.mean.unwrap(),
+                            std_dev: normal_bits.std_dev.unwrap(),
+                        },
+                        None,
+                    );
+                }
+                _ => (),
+            };
+        });
+        set_indices.update(|vec| {
+            *vec = vec![10.0, 5.0, 1.0, 0.0, -1.0, -5.0, -10.0];
+            vec.push(loss.unwrap_or_default());
+        })
+    });
 
     view! { cx,
         <fieldset class="nsg">
-        <div style="display: grid; grid-template-columns: 1fr 4fr;">
-            //<div class="header"></div>
-            <div class="header">"Chance to gain(%)"</div>
-            <div class="header">"Amount(%)"</div>
-            <For
-                each = move || loss_indices.get()
-                key = |item| { format!("{item:?}") }
-                view = move |cx, cdf_input| {
-                    //let cdf_output = cdf(cdf_input, normal_bits.with(|normal_bits| normal_bits.std_dev.unwrap_or(1.0)), normal_bits.with(|normal_bits| normal_bits.mean.unwrap_or_default()));
-                    //normal_bits.with(|nb| nb.updatable.value.unwrap_or(NormalSpec { mean: 0.0, std_dev: 1.0 }));
-                    //let i = normal_bits.get();
-                    //let cdf_output = 0.0;//normal_bits.with(|nb| cdf(*cdf_input, nb.std_dev.unwrap_or(1.0), nb.mean.unwrap_or(0.0))) ;//update_cdf(std_dev_updatable.value.unwrap_or(1.0), mean_updatable.value.unwrap_or(0.0), cdf_input);
-                    let temp = format!("{:8}", cdf_input.to_string());
-                    
-                    view! { cx,
-                        //<div style="display: inline">
+            <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                <div class="header">"Chance to gain(%)"</div>
+                <div class="header">"Amount(%)"</div>
+                <For
+                    each = move || loss_indices.get()
+                    key = |item| { format!("{item:?}") }
+                    view = move |cx, cdf_input| {
+                        view! { cx,
                             <div inner_html=move || { format!("{:.2}",cdf_input) } ></div>
-                            <div inner_html=move || { normal_bits.with(|normal_bits| format!("{:.2}", cdf(cdf_input , normal_bits.std_dev.unwrap_or(1.0), normal_bits.mean.unwrap_or(0.0))*100.0 ) )} ></div>
-                            //<div> "Hi" </div>
-                        //</div>
+                            <div inner_html=move || { normal_bits.with(|normal_bits| match (normal_bits.std_dev, normal_bits.mean){
+                                    (Some(_), Some(_)) => format!("{:.2}", cdf(cdf_input , normal_bits.std_dev.unwrap(), normal_bits.mean.unwrap())*100.0 ),
+                                    _ => format!("_"),
+                                })
+                            } ></div>
+                        }
                     }
-                }
-            />
-            
-                   // <div inner_html=move || { normal_bits.with(|normal_bits| format!("{:.2}", cdf(loss_updatable.value.unwrap_or(-5.0) , normal_bits.std_dev.unwrap_or(1.0), normal_bits.mean.unwrap_or(0.0))*100.0 ) )} ></div>
-                    <NumericInput
-                        placeholder=Some("CDF Sample".to_string())
-                        modification=Some(Modification::PrefixAndSuffix {
-                            prefix: "gain= ".into(),
-                            suffix: "%".into(),
-                        })
-                        non_negative=non_negative_mean
-                        updatable=loss_updatable
-                        size=9
-                        max_len=14
-                    />
+                />
+                <NumericInput
+                    placeholder=Some("CDF Sample".to_string())
+                    modification=Some(Modification::PrefixAndSuffix {
+                        prefix: "gain= ".into(),
+                        suffix: "%".into(),
+                    })
+                    non_negative=non_negative_mean
+                    updatable=loss_updatable
+                    size=9
+                    max_len=14
+                />
 
-        
-                    </div>
-            
+
+            </div>
+
             <div class="form">
                 <div style="display: grid">
                     "N("
