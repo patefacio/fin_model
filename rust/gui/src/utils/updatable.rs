@@ -38,10 +38,6 @@ where
     ///   * _return_ - The new [Updatable].
     pub fn new(value: T, on_update: impl FnMut(&T) + 'static) -> Self {
         // α <fn Updatable[T]::new>
-        leptos_dom::console_log(&format!(
-            "Creating Updatable<`{}`>",
-            std::any::type_name::<T>()
-        ));
         Updatable {
             value,
             on_update: Box::new(on_update),
@@ -58,7 +54,6 @@ where
         U: Fn(&mut T),
     {
         // α <fn Updatable[T]::update>
-        leptos_dom::console_log(&format!("Updating to {:?}", self.value));
         updater(&mut self.value);
         // ω <fn Updatable[T]::update>
     }
@@ -73,7 +68,6 @@ where
         U: Fn(&mut T),
     {
         // α <fn Updatable[T]::update_and_then_signal>
-        leptos_dom::console_log(&format!("Updating and then signalling: {:?}", self.value));
         updater(&mut self.value);
         self.signal();
         // ω <fn Updatable[T]::update_and_then_signal>

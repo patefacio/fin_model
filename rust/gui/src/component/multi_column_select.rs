@@ -184,17 +184,15 @@ where
     let main_button_ref = create_node_ref::<Button>(cx);
 
     let set_focus_main_button = move || {
-        console_log("Focus to  main");
         main_button_ref
             .get()
             .expect("ref should be loaded")
             .focus()
             .expect("focus back to main menu");
-        console_log("Focus should go to main button ref!!");
     };
 
     let set_target_focus = move |flat_index: usize| {
-        mcs_data.with(|mcs_data| {
+        mcs_data.with_untracked(|mcs_data| {
             mcs_data
                 .selection_vec
                 .get(flat_index)
@@ -204,25 +202,22 @@ where
                 .expect("ref should be loaded")
                 .focus()
                 .expect("focus set");
-            console_log(&format!("Done to manually set focus {flat_index}"));
         })
     };
 
     let show_menu = move || {
-        console_log("Showing Menu!!");
         menu_is_hidden.set(false);
-        mcs_data.with(|mcs_data| set_target_focus(mcs_data.current_index));
+        let current_index = mcs_data.with_untracked(|mcs_data| mcs_data.current_index);
+        set_target_focus(current_index);
     };
 
     let hide_menu = move || {
-        console_log("Hiding Menu!!");
         menu_is_hidden.set(true);
     };
 
     let set_selection = move |element: Element| {
         let _timing = BlockTime::new(&format!("setting_selection -> {element:?}"));
         if let Some((flat_index, selected)) = get_selection(element) {
-            console_log(&format!("Selected {flat_index} {selected}"));
             mcs_data.update(|mcs_data| {
                 mcs_data.main_button_label = selected.clone();
                 mcs_data.current_index = flat_index;
@@ -240,7 +235,6 @@ where
                 using_mouse.set(false);
             }
             ENTER_KEY | SPACE_KEY | ESCAPE_KEY => {
-                console_log("Enter|Space|Escape Key");
                 if key_code != ESCAPE_KEY {
                     set_selection(element_from_event(&ev));
                 }
@@ -254,17 +248,15 @@ where
                     set_target_focus(target_i);
                     using_mouse.set(false);
                 }
-                console_log(&format!("Got one of the movement keys {key_code}"));
                 // The following prevents the window from jumping around as the
                 // browser scrolls based on key movement.
                 ev.prevent_default();
             }
-            _ => console_log("Other key"),
+            _ => (),
         };
     };
 
     let handle_click = Rc::new(move |ev: MouseEvent| {
-        console_log("Select button handle click");
         let _timing = BlockTime::new("click");
         set_selection(element_from_event(&ev));
         hide_menu();
@@ -273,7 +265,6 @@ where
 
     let handle_main_button_action = move || {
         let _timing = BlockTime::new("main button action");
-        console_log(&format!("Main button action hidden({})", menu_is_hidden()));
         if menu_is_hidden() {
             show_menu();
         }
@@ -292,11 +283,10 @@ where
 
         match key_code {
             ENTER_KEY | SPACE_KEY => {
-                console_log("Enter|Space Key");
                 handle_main_button_action();
                 ev.prevent_default();
             }
-            _ => console_log("Other key"),
+            _ => (),
         };
     };
 
@@ -365,16 +355,10 @@ where
     });
 
     let handle_global_mousedown = move |ev: Event| {
-        console_log("Global mousedown working !!");
         if !menu_is_hidden() {
             let container_div = mcs_grid_ref.get().expect("div");
             let target_element = element_from_event(&ev);
             let same_element = container_div.is_equal_node(Some(target_element.unchecked_ref()));
-
-            console_log(&format!(
-                "same({same_element}) target({:?}), container({:?})",
-                target_element, *container_div
-            ));
             if same_element || !container_div.contains(Some(&target_element)) {
                 hide_menu()
             }
@@ -390,9 +374,6 @@ where
         if !menu_is_hidden() {
             let container_div = mcs_grid_ref.get().expect("div");
             let target_element = element_from_event(&ev);
-
-            console_log(&format!("Global focus in !! {}", target_element.tag_name(),));
-
             let main_button_got_focus = main_button_ref
                 .get()
                 .expect("ref should be loaded!")

@@ -90,7 +90,10 @@ where
     let updatable = store_value(cx, updatable);
 
     let header = {
-        <T as CollectionGrid>::get_header()
+        let mut fields = <T as CollectionGrid>::get_header();
+        fields.insert(0, String::default());
+        fields.insert(0, String::default());
+        fields
             .into_iter()
             .map(|column_header| {
                 view! { cx, <div class="header">{column_header}</div> }
@@ -99,13 +102,30 @@ where
     };
 
     view! { cx,
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
+        <div style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;">
             {header}
             <For
                 each=move || updatable.with_value(|updatable| updatable.value.clone())
                 key=|item| { item.get_key() }
                 view=move |cx, item| {
-                    view! { cx, {item.get_fields(cx)} }
+                    view! { cx,
+                        {
+                            let mut user_fields = item.get_fields(cx);
+                            user_fields
+                                .insert(
+                                    0,
+                                    view! { cx, <button>"🗑"</button> }
+                                        .into_view(cx),
+                                );
+                            user_fields
+                                .insert(
+                                    0,
+                                    view! { cx, <button>"✍"</button> }
+                                        .into_view(cx),
+                                );
+                            user_fields
+                        }
+                    }
                 }
             />
         </div>

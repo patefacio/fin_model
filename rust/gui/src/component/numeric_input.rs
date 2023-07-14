@@ -149,22 +149,17 @@ pub fn NumericInput(
         on_enter: on_enter.map(|on_enter| Rc::new(RefCell::new(on_enter))),
     };
 
-    // TODO: This requires locking the leptos slotmap
     let numeric_input_data = store_value(cx, numeric_input_data);
     let node_ref = create_node_ref::<Input>(cx);
+    let component_is_initialized = move || node_ref.get().is_some();
 
     create_effect(cx, move |_| {
-        log!(
-            "NumericInput<{cx:?}>: RUNNING EFFECT -> {cx:?} -> {}",
-            clear_input.is_some()
-        );
-
-        if let Some(clear_input) = clear_input.as_ref() {
-            let _ = clear_input();
+        if let Some(clear_input) = clear_input {
+            clear_input.track();
             if let Some(input_ref) = node_ref.get() {
                 input_ref.set_value("");
             }
-        }
+        };
     });
 
     let update_value = move || {
@@ -264,6 +259,8 @@ pub fn NumericInput(
                         on_enter_handler = Some(on_enter.clone());
                     }
                 });
+
+                // **NOTE** on_inter_handler invoked outside of store borrow above
                 if let Some(on_enter_handler) = on_enter_handler {
                     let input_ref = node_ref.get().expect("Input node");
                     (on_enter_handler.borrow_mut().as_mut())(input_ref.value());
@@ -274,17 +271,20 @@ pub fn NumericInput(
     };
 
     create_effect(cx, move |_| {
+        let mut should_update = false;
         numeric_input_data.with_value(|numeric_input_data| {
             if let Some(Modification::ReactivePrefix(reactive)) =
                 numeric_input_data.modification.as_ref()
             {
-                reactive.with(|_| {
-                    if let Some(_) = node_ref.get() {
-                        update_value.update_value(|update_value| update_value())
-                    }
-                })
+                reactive.track();
+                should_update = true;
             }
-        })
+        });
+
+        // **NOTE** Actual update occurs while not holding store or signal borrow
+        if component_is_initialized() && should_update {
+            update_value.with_value(|update_value| update_value());
+        }
     });
 
     view! { cx,

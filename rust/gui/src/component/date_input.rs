@@ -101,9 +101,6 @@ pub fn DateInput(
         date_data.update_value(|date_data| {
             let live_parsed_date = &mut date_data.live_parsed_date;
             let (new_value, new_date, new_position) = live_parsed_date.parse_date(&value, position);
-            console_log(&format!(
-                "act(`{value}`) {new_value} -> {new_position}) -> {live_parsed_date:?}"
-            ));
             input_ref.set_value(&new_value);
             _ = input_ref.set_selection_range(new_position, new_position);
             if let Some(new_date) = new_date.as_ref() {
@@ -132,10 +129,6 @@ pub fn DateInput(
                     .unwrap_or_default()
                     .unwrap_or_default();
 
-                console_log(&format!(
-                    "Processing tab key from pos({position}) with shift({is_shift})"
-                ));
-
                 match key_code {
                     TAB_KEY if !value.is_empty() => {
                         // Shift-tab means jump to prior field and tab means jump to next field
@@ -160,10 +153,8 @@ pub fn DateInput(
                                 ev.prevent_default();
                             }
                         }
-                        console_log("Processing tab");
                     }
                     RIGHT_KEY => {
-                        console_log("Processing left/right");
                         date_data.with_value(|date_data| {
                             let position = input_ref
                                 .selection_start()
@@ -171,7 +162,6 @@ pub fn DateInput(
                                 .unwrap_or_default()
                                 + 1;
                             if let Some(i) = date_data.live_parsed_date.formatted.find('_') {
-                                console_log(&format!("Moving position to {i}"));
                                 let capped_position = position.min(i as u32);
                                 _ = input_ref.set_selection_range(capped_position, capped_position);
                                 ev.prevent_default();
