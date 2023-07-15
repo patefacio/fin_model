@@ -49,6 +49,7 @@ pub fn DateInput(
     use leptos::IntoAttribute;
     use leptos::IntoClass;
     use leptos::SignalGet;
+    use leptos::SignalSet;
     use leptos_dom::html::Input;
     use web_sys::KeyboardEvent;
 
@@ -105,11 +106,11 @@ pub fn DateInput(
             _ = input_ref.set_selection_range(new_position, new_position);
             if let Some(new_date) = new_date.as_ref() {
                 date_data.updatable.update_and_then_signal(|date| {
-                    set_is_in_range(true);
+                    set_is_in_range.set(true);
                     *date = Some(new_date.clone());
                 });
             } else {
-                set_is_in_range(false);
+                set_is_in_range.set(false);
             }
         });
     };

@@ -339,9 +339,10 @@ impl Modification {
     ///   * _return_ - Modified input
     pub fn modify(&self, input: &str) -> String {
         // α <fn Modification::modify>
+        use leptos::SignalWithUntracked;
         let mut modified = input.to_string();
         let result = match &self {
-            Modification::ReactivePrefix(p) => p.with(|p| {
+            Modification::ReactivePrefix(p) => p.with_untracked(|p| {
                 debug_assert!(!modified.contains(p));
                 modified.insert_str(0, p);
                 modified

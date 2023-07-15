@@ -179,9 +179,7 @@ impl LiveParsedDate {
             }
         }
 
-        leptos::log!("From `{input_date}` at {position} to `{}`", self.formatted);
         (self.formatted.clone(), self.to_date(), self.position)
-
         // ω <fn LiveParsedDate::parse_date>
     }
 

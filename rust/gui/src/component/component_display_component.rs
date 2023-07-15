@@ -362,7 +362,7 @@ pub fn ComponentDisplayComponent(
                 <NormalSpecComponent updatable=Updatable::new(
                     Some(NormalSpec {
                         mean: 0.1,
-                        std_dev: 0.002,
+                        std_dev: 0.2,
                     }),
                     move |ns: &Option<NormalSpec>| show_update(format!("Normal Spec -> {ns:?}")),
                 )/>
@@ -435,7 +435,7 @@ pub fn ComponentDisplayComponent(
             },
         )/>
         <div>"Dispose Test"</div>
-        <Show when=move || (read_count() % 2) == 0 fallback=|_| "Nothing">
+        <Show when=move || (read_count.get() % 2) == 0 fallback=|_| "Nothing">
             <DisposeTest/>
         </Show>
         <p>

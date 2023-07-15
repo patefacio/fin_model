@@ -265,7 +265,7 @@ where
 
     let handle_main_button_action = move || {
         let _timing = BlockTime::new("main button action");
-        if menu_is_hidden() {
+        if menu_is_hidden.get() {
             show_menu();
         }
     };
@@ -302,7 +302,7 @@ where
     };
 
     let mut cells = Vec::with_capacity(indexer.item_count);
-    mcs_data.with(|mcs_data| {
+    mcs_data.with_untracked(|mcs_data| {
         for row in 0..indexer.row_count {
             for column in 0..column_count {
                 let flat_index = indexer.two_d_to_flat_index(row, column);
@@ -337,7 +337,7 @@ where
                             on:mouseover=handle_mouseover
                             on:mousemove=handle_mousemove
                             on:keydown=wrapped_handle_keydown
-                            class:using-mouse=using_mouse
+                            class:using-mouse=move || using_mouse.get()
                             data-flat-index=flat_index
                             data-value=value
                             node_ref=button_ref
@@ -355,7 +355,7 @@ where
     });
 
     let handle_global_mousedown = move |ev: Event| {
-        if !menu_is_hidden() {
+        if !menu_is_hidden.get() {
             let container_div = mcs_grid_ref.get().expect("div");
             let target_element = element_from_event(&ev);
             let same_element = container_div.is_equal_node(Some(target_element.unchecked_ref()));
@@ -371,7 +371,7 @@ where
     // Important that this reacts to focusin and not focus or blur.
     // Focus and blur do not propagate!
     let handle_global_focusin = move |ev: Event| {
-        if !menu_is_hidden() {
+        if !menu_is_hidden.get() {
             let container_div = mcs_grid_ref.get().expect("div");
             let target_element = element_from_event(&ev);
             let main_button_got_focus = main_button_ref
@@ -388,7 +388,7 @@ where
     window_event_listener_untyped("focusin", handle_global_focusin);
 
     view! { cx,
-        <div class="mcs-grid" disabled=move || { !menu_is_hidden() } node_ref=mcs_grid_ref>
+        <div class="mcs-grid" disabled=move || { !menu_is_hidden.get() } node_ref=mcs_grid_ref>
             <button
                 on:mousedown=handle_main_button_mousedown
                 on:keydown=handle_main_button_key_activate
@@ -399,7 +399,7 @@ where
             </button>
             <div
                 class="container"
-                class:hidden=menu_is_hidden
+                class:hidden=move || menu_is_hidden.get()
                 style=format!("grid-template-columns: {}", "1fr ".repeat(column_count))
             >
                 {cells.into_view(cx)}

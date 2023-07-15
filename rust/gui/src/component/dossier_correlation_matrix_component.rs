@@ -31,6 +31,7 @@ pub fn DossierCorrelationMatrixComponent(
     use leptos::create_signal;
     use leptos::For;
     use leptos::IntoAttribute;
+    use leptos::SignalGet;
     use plus_modeled::core::dossier_item_index::ItemIndex;
 
     let index_pairs = updatable.value.mappings.iter();
@@ -40,7 +41,7 @@ pub fn DossierCorrelationMatrixComponent(
 
     view! { cx,
         <For
-            each=indices
+            each=move || indices.get()
             key=|entry| { format!("{entry:?}") }
             view=|cx, element| {
                 let row_index = element
@@ -202,6 +203,7 @@ pub fn DisplayEntireMatrix(
     use leptos::create_signal;
     use leptos::For;
     use leptos::IntoAttribute;
+    use leptos::SignalGet;
 
     let mut rows = vec![];
     let mut cols = vec![];
@@ -247,7 +249,7 @@ pub fn DisplayEntireMatrix(
     view! { cx,
         <div inner_html=format!("_ {cols:?}")></div>
         <For
-            each=row_indices
+            each= move || row_indices.get()
             key=|entry| { format!("{entry:?}") }
             view=move |cx, r_element| {
                 let row_index = rows.get(r_element as usize).unwrap();
@@ -255,7 +257,7 @@ pub fn DisplayEntireMatrix(
                 view! { cx,
                     <div inner_html=format!("R({row_index:?})")></div>
                     <For
-                        each=col_indices
+                        each=move || col_indices.get()
                         key=|entry| { format!("{entry:?}") }
                         view=move |cx, c_element| {
                             let column_index = updatable

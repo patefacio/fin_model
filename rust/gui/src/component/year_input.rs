@@ -112,7 +112,7 @@ pub fn YearInput(
 
     create_effect(cx, move |_| {
         if let Some(clear_input) = clear_input.as_ref() {
-            let _ = clear_input();
+            let _ = clear_input.get();
             if let Some(input_ref) = node_ref.get() {
                 input_ref.set_value("");
             }
@@ -121,7 +121,7 @@ pub fn YearInput(
 
     create_effect(cx, move |_| {
         if let Some(set_focus) = set_focus.as_ref() {
-            let _ = set_focus();
+            let _ = set_focus.get();
             if let Some(input_ref) = node_ref.get() {
                 let _ = input_ref.focus();
             }
@@ -174,7 +174,7 @@ pub fn YearInput(
             style:text-align=move || { if align_left { "left" } else { "right" } }
             placeholder=placeholder
             type="text"
-            disabled=disabled.map(|disabled| disabled.get()).unwrap_or_default()
+            disabled=move || disabled.map(|disabled| disabled.get()).unwrap_or_default()
         />
     }
 

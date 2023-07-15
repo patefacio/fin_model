@@ -65,8 +65,10 @@ impl DistributionPdf for NormalSpec {
             num_sigmas *= sigma_factor;
         }
 
-        tracing::debug!("X -> {x_vec:?}");
+        tracing::debug!("{self:?} -> X -> {x_vec:?}");
         tracing::debug!("Y -> {y_vec:?}");
+
+        leptos::log!("Creating pdf for `{self:?}`");
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
@@ -99,7 +101,7 @@ impl DistributionPdf for NormalSpec {
                 .x_labels(10)
                 //.y_labels(5)
                 .disable_mesh()
-                .x_label_formatter(&|v| format!("{:.1}%", v))
+                .x_label_formatter(&|v| format!("{:.1}%", scale_by(*v, 2)))
                 .y_label_formatter(&|_v| String::default())
                 .draw()
                 .unwrap();

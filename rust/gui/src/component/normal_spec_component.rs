@@ -4,6 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
+use crate::utils::updatable;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
@@ -59,31 +60,35 @@ pub fn NormalSpecComponent(
         .map(|normal_spec| normal_spec.std_dev * 100.0);
     let initial_loss = Some(0.0);
 
+    let pdf_drawing_svg = updatable
+        .value
+        .as_ref()
+        .map(|ns| ns.get_pdf_chart(200))
+        .unwrap_or_default();
+
+    let cdf_drawing_svg = updatable
+        .value
+        .as_ref()
+        .map(|ns| ns.get_cdf_chart(200))
+        .unwrap_or_default();
+
     let (normal_bits, set_normal_bits) = create_signal(
         cx,
         NormalBits {
             mean: initial_mean,
             std_dev: initial_std_dev,
             updatable,
-            pdf_drawing_svg: initial_mean
-                .and_then(|mean| {
-                    initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_pdf_chart(200))
-                })
-                .unwrap_or_default(),
-            cdf_drawing_svg: initial_mean
-                .and_then(|mean| {
-                    initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_cdf_chart(200))
-                })
-                .unwrap_or_default(),
+            pdf_drawing_svg,
+            cdf_drawing_svg,
         },
     );
 
     fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec) {
+        new_normal.mean /= 100.0;
+        new_normal.std_dev /= 100.0;
         normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
         normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
         // Before signalling undo the 100x
-        new_normal.mean /= 100.0;
-        new_normal.std_dev /= 100.0;
         normal_bits
             .updatable
             .update_and_then_signal(move |normal_spec| *normal_spec = Some(new_normal));

@@ -83,7 +83,7 @@ pub fn RateCurveComponent(
 
     let (updatable, set_updatable) = create_signal(cx, updatable);
     let (curve, set_curve) = create_signal(cx, {
-        let curve = updatable.with(|updatable| updatable.value.curve.clone());
+        let curve = updatable.with_untracked(|updatable| updatable.value.curve.clone());
         set_updatable.update(|updatable| {
             updatable.value.curve.clear();
         });
@@ -133,7 +133,7 @@ pub fn RateCurveComponent(
                 <div class="header">"Year"</div>
                 <div class="header">"Rate(%)"</div>
                 <For
-                    each=curve
+                    each=move || curve.get()
                     key=|year_value| { year_value.year }
                     view=move |cx, year_value| {
                         let (disabled, _set_disabled) = create_signal(cx, true);

@@ -131,7 +131,7 @@ impl DistributionCdf for NormalSpec {
                 .x_labels(10)
                 .y_labels(5)
                 .disable_mesh()
-                .x_label_formatter(&|v| format!("{:.1}%", v))
+                .x_label_formatter(&|v| format!("{:.1}%", scale_by(*v, 2)))
                 .y_label_formatter(&|v| format!("{:.1}", v))
                 .draw()
                 .unwrap();
