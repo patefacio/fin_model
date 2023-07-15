@@ -49,6 +49,7 @@ impl DistributionCdf for NormalSpec {
     fn get_cdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionCdf::get_cdf_chart for NormalSpec>
 
+        use crate::utils::scale_by::scale_by;
         use leptos_dom::console_log;
         use plotters::prelude::*;
 
@@ -104,7 +105,14 @@ impl DistributionCdf for NormalSpec {
             let text_style: TextStyle = ("sans-serif", 18).into();
             let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
                 .into_drawing_area()
-                .titled("Cumulative Distribution", text_style.clone())
+                .titled(
+                    &format!(
+                        "CDF N(μ={}%, σ={}%)",
+                        scale_by(self.mean, 2),
+                        scale_by(self.std_dev, 2)
+                    ),
+                    text_style.clone(),
+                )
                 .expect("");
 
             let mut chart = ChartBuilder::on(&root)

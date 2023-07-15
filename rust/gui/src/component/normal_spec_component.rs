@@ -67,7 +67,7 @@ pub fn NormalSpecComponent(
             updatable,
             pdf_drawing_svg: initial_mean
                 .and_then(|mean| {
-                    initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_chart(200))
+                    initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_pdf_chart(200))
                 })
                 .unwrap_or_default(),
             cdf_drawing_svg: initial_mean
@@ -79,7 +79,7 @@ pub fn NormalSpecComponent(
     );
 
     fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec) {
-        normal_bits.pdf_drawing_svg = new_normal.get_chart(400);
+        normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
         normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
         // Before signalling undo the 100x
         new_normal.mean /= 100.0;
@@ -151,7 +151,7 @@ pub fn NormalSpecComponent(
                         updatable=std_dev_updatable
                         size=9
                         max_len=9
-                    /> ")"
+                    /> ")" <button style="margin-left: 0.2rem;">"…"</button>
                 </div>
             </div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.pdf_drawing_svg.clone()) }></div>

@@ -76,24 +76,26 @@ pub mod unit_tests {
 
 use once_cell::sync::Lazy;
 
-pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::new(||  vec! {
-    // Samples pulled from here: https://www.visualcapitalist.com/historical-returns-by-asset-class/
-    HistoricRiskReturn{
-        risk_return: (0.096, 0.161),
-        label: "US Large Cap".into()
-    },
-    HistoricRiskReturn{
-        risk_return: (0.041, 0.051),
-        label: "US Bonds".into()
-    },
-    HistoricRiskReturn{
-        risk_return: (0.085, 0.171),
-        label: "REITS".into()
-    },
-    HistoricRiskReturn{
-        risk_return: (0.1212, 0.288),
-        label: "Emerging Markets".into()
-    },
+pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::new(|| {
+    vec![
+        // Samples pulled from here: https://www.visualcapitalist.com/historical-returns-by-asset-class/
+        HistoricRiskReturn {
+            risk_return: (0.096, 0.161),
+            label: "US Large Cap".into(),
+        },
+        HistoricRiskReturn {
+            risk_return: (0.041, 0.051),
+            label: "US Bonds".into(),
+        },
+        HistoricRiskReturn {
+            risk_return: (0.085, 0.171),
+            label: "REITS".into(),
+        },
+        HistoricRiskReturn {
+            risk_return: (0.1212, 0.288),
+            label: "Emerging Markets".into(),
+        },
+    ]
 });
 
 // ω <mod-def historic_risk_return>

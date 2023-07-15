@@ -52,12 +52,8 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
         }
     }
 
-    println!("{}", s);
-
     let s = lhs + "." + &rhs;
     return s.parse::<f64>().unwrap();
-
-    //n * 10.0f64.powf(scale_factor as f64) as f64
 
     // ω <fn scale_by>
 }

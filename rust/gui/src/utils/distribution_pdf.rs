@@ -14,7 +14,13 @@ pub trait DistributionPdf {
     ///
     ///   * **num_points** - Number of points to pull from the distribution
     ///   * _return_ - SVG image of distribution
-    fn get_chart(&self, num_points: usize) -> String;
+    fn get_pdf_chart(&self, num_points: usize) -> String;
+
+    /// Get _pdf(z)_
+    ///
+    ///   * **z** - Value to get _pdf(z)_
+    ///   * _return_ - The point on the _pdf_ for z.
+    fn pdf(&self, z: f64) -> f64;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -27,9 +33,9 @@ impl DistributionPdf for NormalSpec {
     ///
     ///   * **num_points** - Number of points to pull from the distribution
     ///   * _return_ - SVG image of distribution
-    fn get_chart(&self, num_points: usize) -> String {
-        // α <fn DistributionPdf::get_chart for NormalSpec>
-
+    fn get_pdf_chart(&self, num_points: usize) -> String {
+        // α <fn DistributionPdf::get_pdf_chart for NormalSpec>
+        use crate::utils::scale_by::scale_by;
         use plotters::prelude::*;
 
         // Cap the number of points to range (32, 1024)
@@ -44,18 +50,11 @@ impl DistributionPdf for NormalSpec {
         let mut x_vec = vec![0.0; num_points];
         let mut y_vec = vec![0.0; num_points];
 
-        let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
-        let pdf = |z: f64| {
-            debug_assert!(z <= self.mean);
-            coefficient
-                * (-0.5 * (z - self.mean) * (z - self.mean) / (self.std_dev * self.std_dev)).exp()
-        };
-
         let mut num_sigmas = max_sigma as f64;
         for i in 0..(num_points / 2) {
             let x_lhs = self.mean - self.std_dev * num_sigmas;
             let x_rhs = self.mean + self.std_dev * num_sigmas;
-            let y = pdf(x_lhs);
+            let y = self.pdf(x_lhs);
             let rhs = num_points - i - 1;
 
             x_vec[i] = x_lhs;
@@ -74,7 +73,14 @@ impl DistributionPdf for NormalSpec {
             let text_style: TextStyle = ("sans-serif", 18).into();
             let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
                 .into_drawing_area()
-                .titled("Normal Distribution", text_style.clone())
+                .titled(
+                    &format!(
+                        "PDF N(μ={}%, σ={}%)",
+                        scale_by(self.mean, 2),
+                        scale_by(self.std_dev, 2)
+                    ),
+                    text_style.clone(),
+                )
                 .expect("");
 
             let mut chart = ChartBuilder::on(&root)
@@ -110,7 +116,22 @@ impl DistributionPdf for NormalSpec {
         }
 
         plot_buff
-        // ω <fn DistributionPdf::get_chart for NormalSpec>
+
+        // ω <fn DistributionPdf::get_pdf_chart for NormalSpec>
+    }
+
+    /// Get _pdf(z)_
+    ///
+    ///   * **z** - Value to get _pdf(z)_
+    ///   * _return_ - The point on the _pdf_ for z.
+    #[inline]
+    fn pdf(&self, z: f64) -> f64 {
+        // α <fn DistributionPdf::pdf for NormalSpec>
+        debug_assert!(z <= self.mean);
+        let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
+        coefficient
+            * (-0.5 * (z - self.mean) * (z - self.mean) / (self.std_dev * self.std_dev)).exp()
+        // ω <fn DistributionPdf::pdf for NormalSpec>
     }
 }
 
@@ -129,19 +150,56 @@ pub mod unit_tests {
         // --- functions ---
         ////////////////////////////////////////////////////////////////////////////////////
         #[test]
-        fn get_chart() {
-            // α <fn test DistributionPdf::get_chart on NormalSpec>
+        fn pdf() {
+            // α <fn test DistributionPdf::pdf on NormalSpec>
 
-            println!(
-                "Data\n{}",
-                NormalSpec {
-                    mean: 4.0,
-                    std_dev: 1.0
-                }
-                .get_chart(200)
-            );
+            /*  Test motivated by this bard interaction:
 
-            // ω <fn test DistributionPdf::get_chart on NormalSpec>
+            > I have a normal distribution with mu=0.1 and standard deviation of 0.2. What
+            > is the probability distribution function value for 0.05?
+
+            ---
+
+            > Sure, I can help you with that.
+
+            > The probability distribution function value for 0.05 in a normal distribution
+            > with mu=0.1 and standard deviation of 0.2 is 1.9333405840142461.
+
+            > To calculate this, we can use the following formula:
+
+            ```
+            pdf = 1 / math.sqrt(2 * math.pi * sigma**2) * math.exp(-(x - mu)**2 / (2 * sigma**2))
+            ```
+
+            where:
+
+            - pdf is the probability distribution function value
+            - x is the value to evaluate the PDF at (in this case, 0.05)
+            - mu is the mean of the distribution (in this case, 0.1)
+            - sigma is the standard deviation of the distribution (in this case, 0.2)
+
+            Plugging these values into the formula, we get:
+
+            ```
+            pdf = 1 / math.sqrt(2 * math.pi * 0.2**2) * math.exp(-(0.05 - 0.1)**2 / (2 * 0.2**2))
+            ```
+
+            ```
+            pdf = 1.9333405840142461
+            ```
+
+            Therefore, the probability distribution function value for 0.05 in a normal
+            distribution with mu=0.1 and standard deviation of 0.2 is 1.9333405840142461.
+
+             */
+
+            let normal_spec = NormalSpec {
+                mean: 0.1,
+                std_dev: 0.2,
+            };
+            let pdf = normal_spec.pdf(0.05);
+            assert_eq!(pdf, 1.9333405840142461);
+            // ω <fn test DistributionPdf::pdf on NormalSpec>
         }
 
         // α <mod-def test_distribution_pdf_on_normal_spec>

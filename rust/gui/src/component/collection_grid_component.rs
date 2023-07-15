@@ -118,18 +118,18 @@ where
                         {
                             let mut user_fields = item.get_fields(cx);
                             if !read_only {
-                            user_fields
-                                .insert(
-                                    0,
-                                    view! { cx, <button>"🗑"</button> }
-                                        .into_view(cx),
-                                );
-                            user_fields
-                                .insert(
-                                    0,
-                                    view! { cx, <button>"✍"</button> }
-                                        .into_view(cx),
-                                );
+                                user_fields
+                                    .insert(
+                                        0,
+                                        view! { cx, <button>"🗑"</button> }
+                                            .into_view(cx),
+                                    );
+                                user_fields
+                                    .insert(
+                                        0,
+                                        view! { cx, <button>"✍"</button> }
+                                            .into_view(cx),
+                                    );
                             }
                             user_fields
                         }

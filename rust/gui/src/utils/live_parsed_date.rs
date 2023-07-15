@@ -59,7 +59,7 @@ pub enum ParsedState {
 pub struct LiveParsedDate {
     /// The date as string formatted
     pub formatted: String,
-    /// The position of the caret before normalization
+    /// The position of the caret, including last entered character, before normalization
     pub position: u32,
     /// Indicates likely delete requiring special position logic
     pub probable_delete: bool,
@@ -171,8 +171,6 @@ impl LiveParsedDate {
                 .filter(|c| c.is_ascii_digit())
                 .collect::<String>();
 
-            leptos_dom::console_log(&format!("Year part is -> `{year_part}`"));
-
             if !year_part.is_empty() {
                 let parsed_num = year_clamp.clamp(&year_part);
                 _ = self
@@ -181,6 +179,7 @@ impl LiveParsedDate {
             }
         }
 
+        leptos::log!("From `{input_date}` at {position} to `{}`", self.formatted);
         (self.formatted.clone(), self.to_date(), self.position)
 
         // ω <fn LiveParsedDate::parse_date>
@@ -357,8 +356,20 @@ pub mod unit_tests {
             // α <fn test LiveParsedDate::parse_date>
             let mut lpd = LiveParsedDate::new(None);
 
-            // assert_eq!(("1_/__/____".into(), None, 1), lpd.parse_date("1", 1));
-            // assert_eq!(("01/__/____".into(), None, 3), lpd.parse_date("1/", 2));
+            // If users enters `1/`
+            assert_eq!(
+                ("01/__/____".into(), None, 3),
+                lpd.parse_date("1/_/__/____", 2)
+            );
+
+            // Reset instance so backspace logic not triggered
+            lpd = LiveParsedDate::new(None);
+            // Use of space instead of '/' to _jump_ to next field
+            assert_eq!(
+                ("01/__/____".into(), None, 3),
+                lpd.parse_date("1 _/__/____", 2)
+            );
+
             assert_eq!(
                 ("04/__/____".into(), None, 3),
                 lpd.parse_date("04_/__/____", 3)
@@ -381,18 +392,34 @@ pub mod unit_tests {
                 lpd.parse_date("12122023", 3)
             );
 
-            // assert_eq!(
-            //     ("12/1_/____".into(), 4),
-            //     lpd.parse_date("12/1", 4).reformatted_value()
-            // );
-            // assert_eq!(
-            //     ("12/1_/____".into(), 4),
-            //     lpd.parse_date("12/1__/____", 3).reformatted_value()
-            // );
-            // assert_eq!(
-            //     ("01/01/2___".into(), 7),
-            //     lpd.parse_date("1/1/2", 5).reformatted_value()
-            // );
+            assert_eq!(
+                ("12/01/____".into(), None, 6),
+                lpd.parse_date("12/1 _/____", 5)
+            );
+            assert_eq!(
+                ("12/01/1___".into(), None, 7),
+                lpd.parse_date("12/01/1____", 7)
+            );
+            assert_eq!(
+                ("12/01/19__".into(), None, 8),
+                lpd.parse_date("12/01/19___", 8)
+            );
+            assert_eq!(
+                ("12/01/199_".into(), None, 9),
+                lpd.parse_date("12/01/199__", 9)
+            );
+            assert_eq!(
+                (
+                    "12/01/1999".into(),
+                    Some(Date {
+                        year: 1999,
+                        month: 12,
+                        day: 1
+                    }),
+                    10
+                ),
+                lpd.parse_date("12/01/1999_", 10)
+            );
 
             // ω <fn test LiveParsedDate::parse_date>
         }

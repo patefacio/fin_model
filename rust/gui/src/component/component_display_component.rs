@@ -26,6 +26,8 @@ pub fn ComponentDisplayComponent(
     use crate::utils::updatable::Updatable;
     use crate::CollectionGridComponent;
     use crate::CurrencySelect;
+    use crate::DistributionCdfComponent;
+    use crate::DistributionPdfComponent;
     use crate::DossierCorrelationMatrixComponent;
     use crate::EnumSelect;
     use crate::Modification;
@@ -83,6 +85,15 @@ pub fn ComponentDisplayComponent(
             <h4>"Last Update"</h4>
             <p>{last_update}</p>
         </div>
+        <h3>"Distributions/Plots"</h3>
+        <DistributionPdfComponent normal_spec=MaybeSignal::Static(plus_modeled::NormalSpec {
+            mean: 0.1,
+            std_dev: 0.2,
+        })/>
+        <DistributionCdfComponent normal_spec=MaybeSignal::Static(plus_modeled::NormalSpec {
+            mean: 0.1,
+            std_dev: 0.2,
+        })/>
         <h3>"Numbers"</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
             <div style="padding: 1em;">
