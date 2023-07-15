@@ -324,7 +324,9 @@ impl LiveParsedDate {
         if let Ok(month) = self.formatted[0..2].parse::<u32>() {
             if let Ok(day) = self.formatted[3..5].parse::<u32>() {
                 if let Ok(year) = self.formatted[6..].parse::<u32>() {
-                    return Some(Date { month, day, year });
+                    if let Some(_) = chrono::NaiveDate::from_ymd_opt(year as i32, month, day) {
+                        return Some(Date { month, day, year });
+                    }
                 }
             }
         }
