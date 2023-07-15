@@ -67,6 +67,7 @@ pub trait CollectionGrid {
 ///
 ///   * **cx** - Context
 ///   * **updatable** - Items to show
+///   * **read_only** - If true just display (default false)
 ///   * _return_ - View for collection_grid_component
 #[component]
 pub fn CollectionGridComponent<T>(
@@ -74,6 +75,9 @@ pub fn CollectionGridComponent<T>(
     cx: Scope,
     /// Items to show
     updatable: Updatable<Vec<T>>,
+    /// If true just display (default false)
+    #[prop(default = false)]
+    read_only: bool,
 ) -> impl IntoView
 where
     T: 'static + Clone + Debug + CollectionGrid,
@@ -91,8 +95,10 @@ where
 
     let header = {
         let mut fields = <T as CollectionGrid>::get_header();
-        fields.insert(0, String::default());
-        fields.insert(0, String::default());
+        if !read_only {
+            fields.insert(0, String::default());
+            fields.insert(0, String::default());
+        }
         fields
             .into_iter()
             .map(|column_header| {
@@ -111,6 +117,7 @@ where
                     view! { cx,
                         {
                             let mut user_fields = item.get_fields(cx);
+                            if !read_only {
                             user_fields
                                 .insert(
                                     0,
@@ -123,6 +130,7 @@ where
                                     view! { cx, <button>"✍"</button> }
                                         .into_view(cx),
                                 );
+                            }
                             user_fields
                         }
                     }

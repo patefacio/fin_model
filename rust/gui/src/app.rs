@@ -11,7 +11,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <Stylesheet id="leptos" href="/pkg/fin_model_gui.css"/>
-        <Title text="Welcome to Leptos"/>
+        <Title text="FinModel Components"/>
         <Router>
             <main>
                 <Routes>

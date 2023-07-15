@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope, SignalUpdate};
+use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
