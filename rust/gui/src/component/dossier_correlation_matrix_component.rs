@@ -249,7 +249,7 @@ pub fn DisplayEntireMatrix(
     view! { cx,
         <div inner_html=format!("_ {cols:?}")></div>
         <For
-            each= move || row_indices.get()
+            each=move || row_indices.get()
             key=|entry| { format!("{entry:?}") }
             view=move |cx, r_element| {
                 let row_index = rows.get(r_element as usize).unwrap();
