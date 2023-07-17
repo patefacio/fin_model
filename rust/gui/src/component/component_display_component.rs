@@ -184,7 +184,6 @@ pub fn ComponentDisplayComponent(
                     updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
                     placeholder=Some("Integer".to_string())
                     range=Some(0..=5000)
-                    live_clamp=true
                 />
             </div>
             <div style="padding: 1em;">

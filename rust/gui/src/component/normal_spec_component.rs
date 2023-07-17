@@ -190,9 +190,9 @@ pub fn NormalSpecComponent(
                     key = |item| { format!("{item:?}") }
                     view = move |cx, cdf_input| {
                         view! { cx,
-                            <div inner_html=move || { format!("{:.2}",cdf_input) } ></div>
+                            <div inner_html=move || { format!("{:.2}%",cdf_input) } ></div>
                             <div inner_html=move || { normal_bits.with(|normal_bits| match (normal_bits.std_dev, normal_bits.mean){
-                                    (Some(_), Some(_)) => format!("{:.2}", cdf(cdf_input , normal_bits.std_dev.unwrap(), normal_bits.mean.unwrap())*100.0 ),
+                                    (Some(_), Some(_)) => format!("{:.2}%", cdf(cdf_input , normal_bits.std_dev.unwrap(), normal_bits.mean.unwrap())*100.0 ),
                                     _ => format!("_"),
                                 })
                             } ></div>

@@ -100,6 +100,9 @@ pub fn NumericInput(
     /// Signal requesting to clear the input.
     #[prop(default=None)]
     clear_input: Option<ReadSignal<()>>,
+    /// Decimal Support
+    #[prop(default = false)]
+    no_decimal: bool,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
@@ -186,10 +189,21 @@ pub fn NumericInput(
             // characters stripped in `new_value` excluding separator (',').
             // The value passed in will likely have a prefix or suffix which
             // is now *not present* in `new_value`
-            let (value, mut new_value, numeric_to_caret) =
+            let (mut value, mut new_value, numeric_to_caret) =
                 format_number_lenient(&value, selection_start);
 
-            log!("Format result {:?}", (value, &new_value, numeric_to_caret));
+            if no_decimal {
+                value = match value {
+                    Some(_) => Some(value.unwrap().round()),
+                    None => None,
+                };
+                new_value = new_value.split('.').collect::<Vec<_>>()[0].to_string();
+            }
+
+            console_log(&format!(
+                "Format result {:?}",
+                (value, &new_value, numeric_to_caret)
+            ));
 
             if let Some(modification) = modification.as_ref() {
                 if new_value.is_empty() {
