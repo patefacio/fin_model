@@ -93,12 +93,11 @@ impl CollectionGrid for Holding {
     fn edit_element(cx: Scope, element: RwSignal<Box<Self>>) -> View {
         // α <fn CollectionGrid::edit_element for Holding>
 
-
-        use plus_modeled::Holding;
-        use crate::Updatable;
         use crate::HoldingComponent;
-        use leptos::SignalWith;
+        use crate::Updatable;
         use leptos::log;
+        use leptos::SignalWith;
+        use plus_modeled::Holding;
 
         let holding = element.with(|element| *element.clone());
 

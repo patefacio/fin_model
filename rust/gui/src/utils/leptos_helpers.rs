@@ -93,21 +93,19 @@ pub mod unit_tests {
             use leptos::log;
             use leptos::run_scope;
             use leptos::store_value;
-    
+
             #[derive(Debug)]
             struct S {
                 t: String,
             }
-    
+
             impl S {
                 fn new(t: &str) -> Self {
                     println!("Creating new s with {t}");
-                    S {
-                        t: t.to_string(),
-                    }
+                    S { t: t.to_string() }
                 }
             }
-    
+
             fn user_callback(s: &mut S) {
                 let runtime = create_runtime();
                 println!("Callback exclusively using {s:?}");
@@ -115,17 +113,17 @@ pub mod unit_tests {
                     let s = store_value(cx, true);
                 })
             }
-    
+
             impl Drop for S {
                 fn drop(&mut self) {
                     println!("Dropping s");
                 }
             }
-    
+
             fn make_updatable(t: &str) -> Updatable<S> {
                 Updatable::new(S::new(t), |s| println!("Updating {s:?}"))
             }
-    
+
             fn should_panic() {
                 let updatable = make_updatable("should panic");
                 let runtime = create_runtime();
@@ -137,7 +135,7 @@ pub mod unit_tests {
                     })
                 })
             }
-    
+
             fn should_not_panic() {
                 let updatable = make_updatable("should not panic");
                 let runtime = create_runtime();
@@ -150,13 +148,13 @@ pub mod unit_tests {
                     user_callback(&mut value.as_ref().borrow_mut().value);
                 })
             }
-    
+
             // This panics
             assert!(std::panic::catch_unwind(should_panic).is_err());
             should_not_panic();
-    
+
             println!("DONE RUNNING");
-    
+
             // ω <fn test SharedData::sharable on Sharable[T]>
         }
 

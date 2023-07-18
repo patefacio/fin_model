@@ -69,7 +69,13 @@ pub fn ComponentDisplayComponent(
         });
     };
 
-    let (pdf_normal, set_pdf_normal) = create_signal(cx, NormalSpec{ mean: 0.05, std_dev: 0.1 });
+    let (pdf_normal, set_pdf_normal) = create_signal(
+        cx,
+        NormalSpec {
+            mean: 0.05,
+            std_dev: 0.1,
+        },
+    );
 
     view! { cx,
         <div style="

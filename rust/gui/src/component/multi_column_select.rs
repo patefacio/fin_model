@@ -365,7 +365,8 @@ where
         if !menu_is_hidden.get() {
             if let Some(container_div) = mcs_grid_ref.get() {
                 let target_element = element_from_event(&ev);
-                let same_element = container_div.is_equal_node(Some(target_element.unchecked_ref()));
+                let same_element =
+                    container_div.is_equal_node(Some(target_element.unchecked_ref()));
                 if same_element || !container_div.contains(Some(&target_element)) {
                     hide_menu()
                 }
@@ -383,8 +384,8 @@ where
             if let Some(container_div) = mcs_grid_ref.get() {
                 let target_element = element_from_event(&ev);
                 if let Some(main_button_ref) = main_button_ref.get() {
-                    if main_button_ref.is_equal_node(Some(&target_element.unchecked_ref())) &&
-                    !container_div.contains(Some(&target_element))
+                    if main_button_ref.is_equal_node(Some(&target_element.unchecked_ref()))
+                        && !container_div.contains(Some(&target_element))
                     {
                         hide_menu();
                     }

@@ -78,17 +78,17 @@ pub fn HoldingComponent(
 
     use crate::EnumSelect;
     use crate::NormalSpecComponent;
-    use crate::{Modification, NumericInput};
+    use crate::OkCancelComponent;
     use crate::SymbolInput;
     use crate::YearInput;
-    use crate::OkCancelComponent;
+    use crate::{Modification, NumericInput};
+    use leptos::create_signal;
+    use leptos::SignalGet;
+    use leptos_dom::console_log;
     use plus_modeled::{
         core_enums::HoldingType,
         growth::{system_growth_id::SystemId, SystemGrowthId},
     };
-    use leptos::SignalGet;
-    use leptos::create_signal;
-    use leptos_dom::console_log;
     use std::cell::RefCell;
     use std::rc::Rc;
 
@@ -152,10 +152,8 @@ pub fn HoldingComponent(
     */
 
     let initial_holding_type = HoldingType::UsEquityMarket;
-    
 
-    let holding_type_updatable =
-        Updatable::new(initial_holding_type, |_| println!("Updated!"));
+    let holding_type_updatable = Updatable::new(initial_holding_type, |_| println!("Updated!"));
 
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
