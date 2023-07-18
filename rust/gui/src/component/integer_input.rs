@@ -72,41 +72,6 @@ pub fn IntegerInput(
 
     let mut is_in_range = true;
 
-    // Get the initial value for the year if provided. Set to empty string if
-    // not provided.
-    let initial_value = updatable
-        .value
-        .as_ref()
-        .map(|initial_value| {
-            is_in_range = range
-                .as_ref()
-                .map(|range| range.contains(&initial_value))
-                .unwrap_or(true);
-            modification
-                .as_ref()
-                .map(|modification| modification.modify(&initial_value.to_string()))
-                .unwrap_or_else(|| initial_value.to_string())
-                .chars()
-                .take(max_len as usize)
-                .collect::<String>()
-        })
-        .unwrap_or_default();
-
-    let (is_in_range, set_is_in_range) = create_signal(cx, is_in_range);
-
-    struct NumericInputData {
-        updatable: Updatable<Option<u32>>,
-        modification: Option<Modification>,
-        range: Option<RangeInclusive<u32>>,
-        on_enter: Option<Box<dyn FnMut(String)>>,
-    }
-
-    let numeric_input_data = NumericInputData {
-        updatable,
-        modification,
-        range,
-        on_enter,
-    };
 
     let scaled_value = updatable.value.map(|value| value as f64);
     let mut updatable = updatable;
@@ -130,7 +95,7 @@ pub fn IntegerInput(
             max_len=max_len
             clear_input=clear_input
             size=size
-            range=range.map(|range| range.start() * 100.0..=range.end() * 100.0)
+            range=range.map(|range| *range.start() as f64 * 100.0..= *range.end() as f64 * 100.0)
             no_decimal=true
         />
     }
