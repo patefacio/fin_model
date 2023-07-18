@@ -258,3 +258,12 @@ input.invalid:focus {
 	text-align: right;
 	font-weight: bold;
 }
+
+.cgc-insert {
+	background-color: hsl(120, 50%, 90%);
+}
+
+.cgc-editable {
+	grid-column-start: 1; 
+	grid-column-end: 7;
+}

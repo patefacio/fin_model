@@ -69,6 +69,8 @@ pub fn ComponentDisplayComponent(
         });
     };
 
+    let (pdf_normal, set_pdf_normal) = create_signal(cx, NormalSpec{ mean: 0.05, std_dev: 0.1 });
+
     view! { cx,
         <div style="
         position: -webkit-sticky; 
@@ -86,11 +88,8 @@ pub fn ComponentDisplayComponent(
             <p>{last_update}</p>
         </div>
         <h3>"Distributions/Plots"</h3>
-        <DistributionPdfComponent normal_spec=MaybeSignal::Static(plus_modeled::NormalSpec {
-            mean: 0.1,
-            std_dev: 0.2,
-        })/>
-        <DistributionCdfComponent normal_spec=MaybeSignal::Static(plus_modeled::NormalSpec {
+        <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(pdf_normal.into())/>
+        <DistributionCdfComponent normal_spec=MaybeSignal::Static(NormalSpec {
             mean: 0.1,
             std_dev: 0.2,
         })/>
@@ -346,7 +345,6 @@ pub fn ComponentDisplayComponent(
             </div>
         </div>
         <hr/>
-        <hr/>
         <div style="display: grid; grid-template-columns: 1fr 1fr">
             <div>
                 <h4>"Normal Spec Without Values"</h4>
@@ -434,7 +432,8 @@ pub fn ComponentDisplayComponent(
                 show_update(format!("Holding list updated -> {holding_list:?}"));
             },
         )/>
-        <div>"Dispose Test"</div>
+        <hr/>
+        <div style="margin: 2rem;">"Dispose Test"</div>
         <Show when=move || (read_count.get() % 2) == 0 fallback=|_| "Nothing">
             <DisposeTest/>
         </Show>
@@ -443,6 +442,10 @@ pub fn ComponentDisplayComponent(
             <br/>
         </p>
         <button on:click=move |_| {
+            set_pdf_normal
+                .update(|normal| {
+                    normal.mean *= 1.1;
+                });
             write_count.update(|c| *c = *c + 1);
         }>{move || format!("Inc({})", read_count.get())}</button>
     }

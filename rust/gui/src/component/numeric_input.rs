@@ -253,18 +253,13 @@ pub fn NumericInput(
             }),
 
             ENTER_KEY => {
-                let mut on_enter_handler = None;
                 numeric_input_data.update_value(|numeric_input_data| {
                     if let Some(on_enter) = numeric_input_data.on_enter.as_mut() {
-                        on_enter_handler = Some(on_enter.clone());
+                        if let Some(input_ref) = node_ref.get() {
+                            (on_enter.borrow_mut().as_mut())(input_ref.value());
+                        }
                     }
                 });
-
-                // **NOTE** on_inter_handler invoked outside of store borrow above
-                if let Some(on_enter_handler) = on_enter_handler {
-                    let input_ref = node_ref.get().expect("Input node");
-                    (on_enter_handler.borrow_mut().as_mut())(input_ref.value());
-                }
             }
             _ => (),
         }

@@ -4,7 +4,6 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
-use crate::utils::updatable;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;

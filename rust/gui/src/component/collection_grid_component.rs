@@ -49,11 +49,12 @@ pub trait CollectionGrid {
 
     /// Create a view to edit the element
     ///
+    ///   * **cx** - Context
     ///   * **element** - Read/write signal containing the element to edit.
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * _return_ - The edit view
-    fn edit_element(element: RwSignal<Box<Self>>) -> View;
+    fn edit_element(cx: Scope, element: RwSignal<Box<Self>>) -> View;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -84,14 +85,42 @@ where
 {
     // α <fn collection_grid_component>
 
+    use leptos::create_rw_signal;
     use leptos::store_value;
+    use leptos::Component;
     use leptos::For;
+    use leptos::IntoAttribute;
     use leptos::IntoView;
+    use leptos::Show;
+    use leptos::SignalUpdate;
+    use leptos::SignalWith;
     use leptos::View;
     use leptos_dom::html::Div;
+    use leptos_dom::Element;
     use leptos_dom::HtmlElement;
 
-    let updatable = store_value(cx, updatable);
+    #[derive(Eq, PartialEq, Debug)]
+    enum ComponentState {
+        Display,
+        EditNew,
+        EditSelection { selection_key: String },
+    }
+
+    struct CGCData<T> {
+        updatable: Updatable<Vec<T>>,
+        component_state: ComponentState,
+    }
+
+    let cgc_data = create_rw_signal(
+        cx,
+        CGCData {
+            updatable,
+            component_state: ComponentState::Display,
+        },
+    );
+
+    let disabled =
+        move || cgc_data.with(|cgc_data| cgc_data.component_state != ComponentState::Display);
 
     let header = {
         let mut fields = <T as CollectionGrid>::get_header();
@@ -111,31 +140,83 @@ where
         <div style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;">
             {header}
             <For
-                each=move || updatable.with_value(|updatable| updatable.value.clone())
+                each=move || cgc_data.with(|cgc_data| cgc_data.updatable.value.clone())
                 key=|item| { item.get_key() }
                 view=move |cx, item| {
+                    use std::rc::Rc;
+                    let item = Rc::new(item);
+                    let mut user_fields = item.get_fields(cx);
+                    let key = item.get_key();
+                    let this_row_edit = move || {
+                        cgc_data
+                            .with(|cgc_data| {
+                                let key = key.clone();
+                                log!("Checking on selection key vs `{key}`");
+                                match &cgc_data.component_state {
+                                    ComponentState::EditSelection { selection_key } => {
+                                        *selection_key == key
+                                    }
+                                    _ => false,
+                                }
+                            })
+                    };
+                    let key = item.get_key();
+                    let cloned_item = Rc::clone(&item);
                     view! { cx,
                         {
-                            let mut user_fields = item.get_fields(cx);
                             if !read_only {
                                 user_fields
                                     .insert(
                                         0,
-                                        view! { cx, <button>"🗑"</button> }
+                                        view! { cx,
+                                            <button on:click=|_| { log!("Trashcan clicked!") } disabled=disabled>
+                                                "🗑"
+                                            </button>
+                                        }
                                             .into_view(cx),
                                     );
                                 user_fields
                                     .insert(
                                         0,
-                                        view! { cx, <button>"✍"</button> }
+                                        view! { cx,
+                                            <button
+                                                on:click=move |_| {
+                                                    cgc_data
+                                                        .update(|cgc_data| {
+                                                            cgc_data
+                                                                .component_state = ComponentState::EditSelection {
+                                                                selection_key: key.clone(),
+                                                            };
+                                                            log!("Updated component_state -> {:?}", cgc_data.component_state);
+                                                        });
+                                                    log!("Edit clicked!");
+                                                }
+                                                disabled=disabled
+                                            >
+                                                "✍"
+                                            </button>
+                                        }
                                             .into_view(cx),
                                     );
                             }
                             user_fields
                         }
+                        <Show when=move || this_row_edit() fallback=|_| ()>
+                            <div class="cgc-editable">
+                                {
+                                    use std::boxed::Box;
+                                    let editable_item = Box::new((*item).clone());
+                                    let editable = create_rw_signal(cx, editable_item);
+                                    <T as CollectionGrid>::edit_element(cx, editable)
+                                }
+                            </div>
+                        </Show>
                     }
                 }
-            />
+            /> <button>
+                <strong>"+"</strong>
+            </button>
+            <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>
         </div>
     }
 

@@ -1329,8 +1329,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be4136b2a15dd319360be1c07d9933517ccf0be8f16bf62a3bee4f0d618df427"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -1708,8 +1710,7 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 [[package]]
 name = "leptos"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87b76c901bbc33da8f6768a0cdd1224b78597b5add8824567022522b410a57f3"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "cfg-if",
  "leptos_config",
@@ -1725,8 +1726,7 @@ dependencies = [
 [[package]]
 name = "leptos_actix"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a1c10364da23c89f97f945b7b8833811cb0ebccd419fbd888ad2bd061119e97"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "actix-http",
  "actix-web",
@@ -1744,8 +1744,7 @@ dependencies = [
 [[package]]
 name = "leptos_config"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dedd46acf2b56044276a90d67969a0ceea56c80231636467211099eb081328b8"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "config",
  "regex",
@@ -1757,14 +1756,14 @@ dependencies = [
 [[package]]
 name = "leptos_dom"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f87e1895651eabecb578e8338f5394065628f6bb8b7fee6c4b5df0dd1db62405"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "async-recursion",
  "cfg-if",
  "drain_filter_polyfill",
  "educe",
  "futures",
+ "getrandom",
  "html-escape",
  "indexmap 2.0.0",
  "itertools",
@@ -1786,8 +1785,7 @@ dependencies = [
 [[package]]
 name = "leptos_hot_reload"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "24375596c72ae14f8adb606ed8b2ee504aa6ebee44babda9ed1c2e94649fe4f4"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "anyhow",
  "camino",
@@ -1804,8 +1802,7 @@ dependencies = [
 [[package]]
 name = "leptos_integration_utils"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51965dbd866e5e0ad916a910bdeff5a2fcb7290991a42fa108b499f93eb2c740"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "futures",
  "leptos",
@@ -1818,8 +1815,7 @@ dependencies = [
 [[package]]
 name = "leptos_macro"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "107cff74abffce014426baff18d14a151d86a894c88ab7a50f000ed86c59a6cd"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "attribute-derive",
  "cfg-if",
@@ -1841,8 +1837,7 @@ dependencies = [
 [[package]]
 name = "leptos_meta"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "584e285bd0328e3637d9ed358d87a20e1e4eb4fdf6ff53b381c7c5f43f581687"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "cfg-if",
  "indexmap 2.0.0",
@@ -1855,8 +1850,7 @@ dependencies = [
 [[package]]
 name = "leptos_reactive"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c02851b21bcadee7a2f1182aa3dbbfc4065a71e0fe5a036196bcc95ab3c4d2d"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "base64 0.21.2",
  "cfg-if",
@@ -1880,8 +1874,7 @@ dependencies = [
 [[package]]
 name = "leptos_router"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8697a0f4250983a9cd07b5b2a431e8c01163ebcac3b700828b6c22ad83b107df"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "cached",
  "cfg-if",
@@ -1910,8 +1903,7 @@ dependencies = [
 [[package]]
 name = "leptos_server"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49bb8d9764ae441d31cd9a79cd4cabeb685ef02d821c8139d397452bf1eecdd2"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "inventory",
  "lazy_static",
@@ -2939,8 +2931,7 @@ dependencies = [
 [[package]]
 name = "server_fn"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "66e7548322b4d4f1ff602883a5f47b3291d69523ef25a6521c334e2f723825f0"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "ciborium",
  "const_format",
@@ -2964,8 +2955,7 @@ dependencies = [
 [[package]]
 name = "server_fn_macro"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "534134dd0b3c4f12f4fa967aa9961323d8d3195f35450f56c7bfda991a4bd7ba"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "const_format",
  "proc-macro-error",
@@ -2979,8 +2969,7 @@ dependencies = [
 [[package]]
 name = "server_fn_macro_default"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76fa0b34a9f1271b98c5b1e8eae8b498f63c1beeca7d7596ad527896f946d011"
+source = "git+https://github.com/leptos-rs/leptos?branch=stored-value-panic-fix#2b34a669bd1485bf61677861b4e7eb8da807e723"
 dependencies = [
  "server_fn_macro",
  "syn 2.0.25",
@@ -3538,9 +3527,9 @@ checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
 
 [[package]]
 name = "wasm-bindgen"
-version = "0.2.84"
+version = "0.2.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31f8dcbc21f30d9b8f2ea926ecb58f6b91192c17e9d33594b3df58b2007ca53b"
+checksum = "7706a72ab36d8cb1f80ffbf0e071533974a60d0a308d01a5d0375bf60499a342"
 dependencies = [
  "cfg-if",
  "wasm-bindgen-macro",
@@ -3548,16 +3537,16 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-backend"
-version = "0.2.84"
+version = "0.2.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95ce90fd5bcc06af55a641a86428ee4229e44e07033963a2290a8e241607ccb9"
+checksum = "5ef2b6d3c510e9625e5fe6f509ab07d66a760f0885d858736483c32ed7809abd"
 dependencies = [
  "bumpalo",
  "log",
  "once_cell",
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.25",
  "wasm-bindgen-shared",
 ]
 
@@ -3575,9 +3564,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro"
-version = "0.2.84"
+version = "0.2.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c21f77c0bedc37fd5dc21f897894a5ca01e7bb159884559461862ae90c0b4c5"
+checksum = "dee495e55982a3bd48105a7b947fd2a9b4a8ae3010041b9e0faab3f9cd028f1d"
 dependencies = [
  "quote",
  "wasm-bindgen-macro-support",
@@ -3585,22 +3574,22 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro-support"
-version = "0.2.84"
+version = "0.2.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2aff81306fcac3c7515ad4e177f521b5c9a15f2b08f4e32d823066102f35a5f6"
+checksum = "54681b18a46765f095758388f2d0cf16eb8d4169b639ab575a8f5693af210c7b"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.25",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
 
 [[package]]
 name = "wasm-bindgen-shared"
-version = "0.2.84"
+version = "0.2.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0046fef7e28c3804e5e38bfa31ea2a0f73905319b677e57ebe37e49358989b5d"
+checksum = "ca6ad05a4870b2bf5fe995117d3728437bd27d7cd5f06f13c17443ef369775a1"
 
 [[package]]
 name = "web-sys"

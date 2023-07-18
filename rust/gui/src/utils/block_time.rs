@@ -46,7 +46,7 @@ impl BlockTime {
             }
         } else {
             pub fn new(label: &str) -> BlockTime {
-                console_log(&format!("Open block `{}`", label));
+                leptos::log!("Open block `{}`", label);
                 BlockTime { label: label.into(), start: web_now() }
             }
         }

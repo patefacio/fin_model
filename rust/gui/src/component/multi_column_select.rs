@@ -157,6 +157,18 @@ where
         main_button_label: String,
     }
 
+    impl<F> std::fmt::Debug for MCSData<F> {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "options: {:?}", self.options)
+        }
+    }
+
+    impl<F> Drop for MCSData<F> {
+        fn drop(&mut self) {
+            log!("DROPPING MCSData -> {self:?}");
+        }
+    }
+
     let (current_index, initial_value) = match initial_value {
         Some(InitialValue::SelectionIndex(i)) => (i, options[i].main_button_label().clone()),
         Some(InitialValue::Placeholder(placeholder)) => (0, placeholder),
@@ -172,7 +184,7 @@ where
             options,
             on_select,
             selection_vec: (0..indexer.item_count)
-                .map(|_| create_node_ref::<Button>(cx))
+                .map(move |_| create_node_ref::<Button>(cx))
                 .collect::<Vec<_>>(),
             current_index,
             main_button_label: initial_value.clone(),
@@ -184,31 +196,26 @@ where
     let main_button_ref = create_node_ref::<Button>(cx);
 
     let set_focus_main_button = move || {
-        main_button_ref
-            .get()
-            .expect("ref should be loaded")
-            .focus()
-            .expect("focus back to main menu");
+        if let Some(main_button_ref) = main_button_ref.get_untracked() {
+            let _ = main_button_ref.focus();
+        }
     };
 
     let set_target_focus = move |flat_index: usize| {
-        mcs_data.with_untracked(|mcs_data| {
-            mcs_data
-                .selection_vec
-                .get(flat_index)
-                .as_ref()
-                .expect("Node exists")
-                .get()
-                .expect("ref should be loaded")
-                .focus()
-                .expect("focus set");
+        mcs_data.with_untracked(move |mcs_data| {
+            if let Some(selection_ref) = mcs_data.selection_vec.get(flat_index) {
+                if let Some(html_element) = selection_ref.get_untracked() {
+                    let _ = html_element.focus();
+                }
+            }
         })
     };
 
     let show_menu = move || {
         menu_is_hidden.set(false);
-        let current_index = mcs_data.with_untracked(|mcs_data| mcs_data.current_index);
-        set_target_focus(current_index);
+        mcs_data.with_untracked(|mcs_data| {
+            set_target_focus(mcs_data.current_index);
+        });
     };
 
     let hide_menu = move || {
@@ -265,7 +272,7 @@ where
 
     let handle_main_button_action = move || {
         let _timing = BlockTime::new("main button action");
-        if menu_is_hidden.get() {
+        if menu_is_hidden.get_untracked() {
             show_menu();
         }
     };
@@ -291,7 +298,7 @@ where
     };
 
     let handle_mouseover = move |ev: MouseEvent| {
-        console_log("Got mouseover!");
+        log!("Got mouseover!");
         if let Some((index, _)) = get_selection(element_from_event(&ev)) {
             set_target_focus(index);
         }
@@ -356,11 +363,12 @@ where
 
     let handle_global_mousedown = move |ev: Event| {
         if !menu_is_hidden.get() {
-            let container_div = mcs_grid_ref.get().expect("div");
-            let target_element = element_from_event(&ev);
-            let same_element = container_div.is_equal_node(Some(target_element.unchecked_ref()));
-            if same_element || !container_div.contains(Some(&target_element)) {
-                hide_menu()
+            if let Some(container_div) = mcs_grid_ref.get() {
+                let target_element = element_from_event(&ev);
+                let same_element = container_div.is_equal_node(Some(target_element.unchecked_ref()));
+                if same_element || !container_div.contains(Some(&target_element)) {
+                    hide_menu()
+                }
             }
         }
     };
@@ -372,14 +380,15 @@ where
     // Focus and blur do not propagate!
     let handle_global_focusin = move |ev: Event| {
         if !menu_is_hidden.get() {
-            let container_div = mcs_grid_ref.get().expect("div");
-            let target_element = element_from_event(&ev);
-            let main_button_got_focus = main_button_ref
-                .get()
-                .expect("ref should be loaded!")
-                .is_equal_node(Some(&target_element.unchecked_ref()));
-            if main_button_got_focus || !container_div.contains(Some(&target_element)) {
-                hide_menu()
+            if let Some(container_div) = mcs_grid_ref.get() {
+                let target_element = element_from_event(&ev);
+                if let Some(main_button_ref) = main_button_ref.get() {
+                    if main_button_ref.is_equal_node(Some(&target_element.unchecked_ref())) &&
+                    !container_div.contains(Some(&target_element))
+                    {
+                        hide_menu();
+                    }
+                }
             }
         }
     };

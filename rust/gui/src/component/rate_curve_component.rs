@@ -116,6 +116,7 @@ pub fn RateCurveComponent(
                 clean_curve(curve);
                 set_clear_fields.update(|_| {});
                 set_year_input_focus.update(|_| {});
+                set_add_enabled.update(|enabled| *enabled = false);
             });
         });
         signal_parent_update()

@@ -85,13 +85,28 @@ impl CollectionGrid for Holding {
 
     /// Create a view to edit the element
     ///
+    ///   * **cx** - Context
     ///   * **element** - Read/write signal containing the element to edit.
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * _return_ - The edit view
-    fn edit_element(element: RwSignal<Box<Self>>) -> View {
+    fn edit_element(cx: Scope, element: RwSignal<Box<Self>>) -> View {
         // α <fn CollectionGrid::edit_element for Holding>
-        todo!("Implement `edit_element`")
+
+
+        use plus_modeled::Holding;
+        use crate::Updatable;
+        use crate::HoldingComponent;
+        use leptos::SignalWith;
+        use leptos::log;
+
+        let holding = element.with(|element| *element.clone());
+
+        let holding_updatable = Updatable::new(holding, move |holding| {
+            log!("Holding updated -> {holding:?}");
+        });
+
+        view! { cx, <HoldingComponent holding_updatable=holding_updatable/> }.into_view(cx)
         // ω <fn CollectionGrid::edit_element for Holding>
     }
 }
