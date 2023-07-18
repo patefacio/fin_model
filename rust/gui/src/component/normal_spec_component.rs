@@ -4,6 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::component::numeric_input::{Modification, NumericInput};
+use crate::utils::{updatable, historic_risk_return};
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
@@ -35,6 +36,9 @@ pub fn NormalSpecComponent(
 
     use crate::utils::distribution_cdf::DistributionCdf;
     use crate::utils::distribution_pdf::DistributionPdf;
+    use crate::utils::historic_risk_return::HistoricRiskReturn;
+    use crate::utils::historic_risk_return::HistoricRiskReturnPlot;
+    use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use leptos::create_signal;
     use leptos::IntoAttribute;
     use leptos::SignalUpdate;
@@ -46,6 +50,7 @@ pub fn NormalSpecComponent(
         updatable: Updatable<Option<NormalSpec>>,
         pdf_drawing_svg: String,
         cdf_drawing_svg: String,
+        historic_drawing_svg: String,
     }
 
     let initial_mean = updatable
@@ -71,6 +76,12 @@ pub fn NormalSpecComponent(
         .map(|ns| ns.get_cdf_chart(200))
         .unwrap_or_default();
 
+    let historic_drawing_svg = updatable
+        .value
+        .as_ref()
+        .map(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES))
+        .unwrap_or_default();
+
     let (normal_bits, set_normal_bits) = create_signal(
         cx,
         NormalBits {
@@ -79,6 +90,7 @@ pub fn NormalSpecComponent(
             updatable,
             pdf_drawing_svg,
             cdf_drawing_svg,
+            historic_drawing_svg,
         },
     );
 
@@ -87,6 +99,7 @@ pub fn NormalSpecComponent(
         new_normal.std_dev /= 100.0;
         normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
         normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
+        normal_bits.historic_drawing_svg = new_normal.get_historic_plot((&*HISTORIC_RISK_RETURN_SAMPLES));
         // Before signalling undo the 100x
         normal_bits
             .updatable
@@ -160,6 +173,7 @@ pub fn NormalSpecComponent(
             </div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.pdf_drawing_svg.clone()) }></div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.cdf_drawing_svg.clone()) }></div>
+            <div inner_html = move || {normal_bits.with(|normal_bits| normal_bits.historic_drawing_svg.clone())}></div>
             <NumericInput
                 placeholder=Some("CDF Sample".to_string())
                 modification=Some(Modification::PrefixAndSuffix {

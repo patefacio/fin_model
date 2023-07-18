@@ -23,19 +23,19 @@ console_error_panic_hook = "0.1"
 cfg-if = "1"
 
 ### TODO: Switching to this branch until released
-leptos = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false, features = [ "serde"] }
-leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false }
-leptos_actix = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", optional = true }
-leptos_router = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false }
-leptos_dom = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix" }
+# leptos = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false, features = [ "serde"] }
+# leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false }
+# leptos_actix = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", optional = true }
+# leptos_router = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false }
+# leptos_dom = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix" }
 
-# leptos = { version = "0.4", default-features = false, features = [
-#   "serde",
-# ] }
-# leptos_meta = { version = "0.4", default-features = false }
-# leptos_actix = { version = "0.4", optional = true }
-# leptos_router = { version = "0.4", default-features = false }
-# leptos_dom = { version = "0.4" }
+leptos = { version = "0.4", default-features = false, features = [
+  "serde",
+] }
+leptos_meta = { version = "0.4", default-features = false }
+leptos_actix = { version = "0.4", optional = true }
+leptos_router = { version = "0.4", default-features = false }
+leptos_dom = { version = "0.4" }
 wasm-bindgen = "=0.2.87"
 web-sys = { version = "0.3", features = [ "Performance"] }
 num-format = "0.4.3"

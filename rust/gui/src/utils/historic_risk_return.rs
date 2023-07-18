@@ -20,6 +20,8 @@ pub trait HistoricRiskReturnPlot {
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// Contains a (risk, return) pair and a label
+
+#[derive(Debug)]
 pub struct HistoricRiskReturn {
     /// Historic risk/return value
     pub risk_return: (f64, f64),
@@ -40,67 +42,68 @@ impl HistoricRiskReturnPlot for NormalSpec {
         // α <fn HistoricRiskReturnPlot::get_historic_plot for NormalSpec>
         use plotters::prelude::*;
 
-        let mut x_vec = historic_values
-            .iter()
-            .map(|hv| hv.risk_return.0)
-            .collect::<Vec<_>>();
-        let mut y_vec = historic_values
-            .iter()
-            .map(|hv| hv.risk_return.1)
-            .collect::<Vec<_>>();
-        String::default()
-        // for each in HISTORIC_RISK_RETURN_SAMPLES{
-        //     x_vec.push(risk_return.0);
-        //     y_vec.push(risk_return.1);
-        // }
+        //let user_point =
 
-        /*let mut vec_slice: Vec<(f64, f64)> = Vec::with_capacity(HISTORIC_RISK_RETURN_SAMPLES.len());
-        let min_y = f64::MAX;
-        let max_y = f64::MIN;
+        // let mut x_vec = historic_values
+        //     .iter()
+        //     .map(|hv| hv.risk_return.0)
+        //     .collect::<Vec<_>>();
 
-        for each in HistoricRiskReturn::risk_return.as_slice(){}
+        // let mut y_vec = historic_values
+        //     .iter()
+        //     .map(|hv| hv.risk_return.1)
+        //     .collect::<Vec<_>>();
 
-        let min_x = HISTORIC_RISK_RETURN_SAMPLES::HistoricRiskReturn::risk_return.0;
-        let max_x = HistoricRiskReturn::risk_return.1;
-
-
-        //This is all code for the writing and styling of the graph from the plotters library
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
-            let text_style: TextStyle = ("sans-serif", 20).into();
-            let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
-                .into_drawing_area()
-                .titled("Historic Risk & Return", text_style.clone())
-                .expect("");
+            let root = SVGBackend::with_string(&mut plot_buff, (400, 375)).into_drawing_area();
+            root.fill(&WHITE);
+            let root = root.margin(10, 10, 10, 10);
 
             let mut chart = ChartBuilder::on(&root)
                 .margin(4)
-                .set_label_area_size(LabelAreaPosition::Left, 40)
-                .set_label_area_size(LabelAreaPosition::Bottom, 40)
-                .set_label_area_size(LabelAreaPosition::Right, 0)
-                .caption("Historic Risk & Return", ("sans-serif", 30))
-                .build_cartesian_2d((0.041..0.122/*min_x as f64..max_x as f64*/), (0.051..0.288/*min_y..max_y*/))
+                .caption("Historic Risk Return", ("sans-serif", 40).into_font())
+                .x_label_area_size(30)
+                .y_label_area_size(60)
+                .build_cartesian_2d(0f64..50f64, 0f64..20f64)
                 .unwrap();
 
             chart
                 .configure_mesh()
-                .x_labels(10)
-                .y_labels(10)
-                .disable_mesh()
-                .x_label_formatter(&|v| format!("{:.1}", v))
-                .y_label_formatter(&|v| format!("{:.1}%", v * 100.0))
+                .x_labels(5)
+                .y_labels(5)
+                .y_label_formatter(&|x| format!("{:.3}", x))
                 .draw()
                 .unwrap();
 
+            // chart
+            //     .draw_series(LineSeries::new(
+
+            //         HISTORIC_RISK_RETURN_SAMPLES.iter().map(|hv| hv.risk_return),
+            //         &RED,
+            //     ))
+            //     .unwrap();
+
             chart
-                .draw_series(LineSeries::new(vec_slice, &BLUE).point_size(2))
-                .unwrap()
-                .label("PDF");
-
-            root.present().expect("Should show");
+                .draw_series(PointSeries::of_element(
+                    //HISTORIC_RISK_RETURN_SAMPLES.iter().map(|hv| hv.risk_return)
+                    HISTORIC_RISK_RETURN_SAMPLES.iter(),
+                    5,
+                    &RED,
+                    &|c, s, st| {
+                        return EmptyElement::at(c.risk_return)
+                            + Circle::new((0, 0), s, st.filled())
+                            + Text::new(
+                                format!("{}\n{:?}", c.label, c.risk_return),
+                                (15, -10),
+                                ("sans-serif", 10).into_font(),
+                            );
+                    },
+                ))
+                .unwrap();
+            root.present().expect("Should present");
         }
-
-        plot_buff*/
+        plot_buff
 
         // ω <fn HistoricRiskReturnPlot::get_historic_plot for NormalSpec>
     }
@@ -139,25 +142,27 @@ pub mod unit_tests {
 
 use once_cell::sync::Lazy;
 
+use crate::utils::historic_risk_return;
+
 pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::new(|| {
     vec![
         // Samples pulled from here: https://www.visualcapitalist.com/historical-returns-by-asset-class/
-        //x ->risk/ mean y -> return/ st. dev.
+        //x ->risk/ st. dev y -> return/ mean
         HistoricRiskReturn {
-            risk_return: (0.096, 0.161),
+            risk_return: (16.1, 9.6),
             label: "US Large Cap".into(),
         },
         HistoricRiskReturn {
-            risk_return: (0.041, 0.051),
+            risk_return: (5.1, 4.1),
             label: "US Bonds".into(),
         },
         HistoricRiskReturn {
-            risk_return: (0.085, 0.171),
+            risk_return: (17.1, 8.5),
             label: "REITS".into(),
         },
         HistoricRiskReturn {
-            risk_return: (0.1212, 0.288),
-            label: "Emerging Markets".into(),
+            risk_return: (28.8, 12.12),
+            label: "Emerging Mkts".into(),
         },
     ]
 });
