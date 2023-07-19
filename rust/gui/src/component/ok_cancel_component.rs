@@ -10,35 +10,44 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 
 ////////////////////////////////////////////////////////////////////////////////////
+// --- enums ---
+////////////////////////////////////////////////////////////////////////////////////
+/// Models exist status of component
+#[derive(Debug, Clone)]
+pub enum OkCancel {
+    /// Indicates component accepted data edit
+    Ok,
+    /// Indicates component canceled data edit
+    Cancel,
+}
+
+////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models an ok/cancel button pair.
 ///
 ///   * **cx** - Context
-///   * **on_ok** - Function to call when ok
-///   * **on_cancel** - Function to call when canceled
+///   * **on_ok_cancel** - Function to call when edit complete
 ///   * _return_ - View for ok_cancel_component
 #[component]
-pub fn OkCancelComponent<O, C>(
+pub fn OkCancelComponent<F>(
     /// Context
     cx: Scope,
-    /// Function to call when ok
-    on_ok: O,
-    /// Function to call when canceled
-    on_cancel: C,
+    /// Function to call when edit complete
+    on_ok_cancel: F,
 ) -> impl IntoView
 where
-    O: FnMut() + 'static,
-    C: FnMut() + 'static,
+    F: FnMut(OkCancel) + 'static,
 {
     // α <fn ok_cancel_component>
 
-    let mut on_ok = on_ok;
-    let mut on_cancel = on_cancel;
+    use leptos::store_value;
+
+    let mut on_ok_cancel = store_value(cx, on_ok_cancel);
 
     view! { cx,
-        <button on:click=move |_| { on_ok() }>"Ok"</button>
-        <button on:click=move |_| { on_cancel() }>"Cancel"</button>
+        <button on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }>"Ok"</button>
+        <button on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }>"Cancel"</button>
     }
 
     // ω <fn ok_cancel_component>

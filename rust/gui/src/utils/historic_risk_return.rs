@@ -20,8 +20,7 @@ pub trait HistoricRiskReturnPlot {
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// Contains a (risk, return) pair and a label
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HistoricRiskReturn {
     /// Historic risk/return value
     pub risk_return: (f64, f64),

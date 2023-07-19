@@ -22,8 +22,8 @@ pub fn ComponentDisplayComponent(
     cx: Scope,
 ) -> impl IntoView {
     // α <fn component_display_component>
-    use crate::component::dispose_test::DisposeTest;
-    use crate::utils::updatable::Updatable;
+    use crate::DisposeTest;
+    use crate::Updatable;
     use crate::CollectionGridComponent;
     use crate::CurrencySelect;
     use crate::DistributionCdfComponent;
@@ -374,8 +374,7 @@ pub fn ComponentDisplayComponent(
         <hr/>
         <h4>"Ok/Cancel"</h4>
         <OkCancelComponent
-            on_ok=move || { show_update("Ok pressed".into()) }
-            on_cancel=move || { show_update("Cancel pressed".into()) }
+            on_ok_cancel=move |ok_cancel| { show_update("Ok/Cancel -> {ok_cancel:?}".into()) }
         />
         <hr/>
         <div style="display: grid; grid-template-columns: 1fr 1fr">

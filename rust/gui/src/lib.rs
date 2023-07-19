@@ -7,6 +7,8 @@
 pub use component::collection_grid_component::CollectionGrid;
 pub use component::collection_grid_component::CollectionGridComponent;
 pub use component::component_display_component::ComponentDisplayComponent;
+pub use component::currency_select::currency_from_symbol;
+pub use component::currency_select::to_currency_symbol;
 pub use component::currency_select::CurrencySelect;
 pub use component::currency_value_input::CurrencyValueInput;
 pub use component::date_input::DateInput;
@@ -28,6 +30,7 @@ pub use component::multi_column_select::SelectOption;
 pub use component::normal_spec_component::NormalSpecComponent;
 pub use component::numeric_input::Modification;
 pub use component::numeric_input::NumericInput;
+pub use component::ok_cancel_component::OkCancel;
 pub use component::ok_cancel_component::OkCancelComponent;
 pub use component::percent_input::PercentInput;
 pub use component::rate_curve_component::RateCurveComponent;
@@ -39,11 +42,15 @@ pub use component::year_range_input::YearRangeInput;
 pub use component::year_value_input::YearValueInput;
 pub use utils::distribution_cdf::DistributionCdf;
 pub use utils::distribution_pdf::DistributionPdf;
+pub use utils::historic_risk_return::HistoricRiskReturn;
+pub use utils::historic_risk_return::HistoricRiskReturnPlot;
+pub use utils::html_tag::HtmlTag;
 pub use utils::integer_clamp::IntegerClamp;
 pub use utils::leptos_helpers::make_shared_data;
 pub use utils::leptos_helpers::SharedData;
 pub use utils::live_parsed_date::LiveParsedDate;
 pub use utils::parsed_num::ParsedNum;
+pub use utils::scale_by::scale_by;
 pub use utils::updatable::Updatable;
 
 ////////////////////////////////////////////////////////////////////////////////////

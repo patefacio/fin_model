@@ -1,11 +1,10 @@
-//! Module for percent_input leptos function/component
+//! Module for integer_input leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::component::numeric_input::{Modification, NumericInput, NumericInputProps};
+use crate::NumericInput;
 use crate::Updatable;
-use leptos::create_signal;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
@@ -17,35 +16,37 @@ use std::ops::RangeInclusive;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// Provides a [NumericInput] with a percent suffix modification.
+/// Models a single integer
 ///
 ///   * **cx** - Context
 ///   * **updatable** - Called when input is updated.
-///   * **placeholder** - Placeholder for the year field
+///   * **input_class** - Class to decorate input element for styling
+///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * **size** - The size attribute, which one hopes would make the size of the
 /// input field roughly that number of characters. But YMMV.
-///
-///   * **max_len** - The maximum number of characters for the percent input.
-///
+///   * **max_len** - Maximum length (digit count including any commas).
 ///   * **range** - Range of valid values for input.
 ///   * **non_negative** - If set, negative values are disallowed.
 ///   * **on_enter** - Called if user hits enter, passes current input value.
 ///   * **clear_input** - Signal requesting to clear the input.
-///   * _return_ - View for percent_input
+///   * _return_ - View for integer_input
 #[component]
 pub fn IntegerInput(
     /// Context
     cx: Scope,
     /// Called when input is updated.
     updatable: Updatable<Option<u32>>,
-    /// Placeholder for the year field
+    /// Class to decorate input element for styling
+    #[prop(default=None)]
+    input_class: Option<String>,
+    /// Placeholder shown if entry is empty.
     #[prop(default=None)]
     placeholder: Option<String>,
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
-    #[prop(default = 9)]
+    #[prop(default = 8)]
     size: u32,
-    /// The maximum number of characters for the percent input.
+    /// Maximum length (digit count including any commas).
     #[prop(default = 8)]
     max_len: u32,
     /// Range of valid values for input.
@@ -87,9 +88,9 @@ pub fn IntegerInput(
 
     view! { cx,
         <NumericInput
+            input_class=input_class
             updatable=numeric_updatable
             on_enter=on_enter
-            //modification=Some(Modification::Suffix("I".into()))
             non_negative=non_negative
             placeholder=placeholder
             max_len=max_len
@@ -100,8 +101,9 @@ pub fn IntegerInput(
         />
     }
 
-    // ω <fn percent_input>
+
+    // ω <fn integer_input>
 }
 
-// α <mod-def percent_input>
-// ω <mod-def percent_input>
+// α <mod-def integer_input>
+// ω <mod-def integer_input>

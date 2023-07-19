@@ -52,7 +52,7 @@ where
 {
     // α <fn enum_select>
 
-    use crate::component::multi_column_select::{InitialValue, MultiColumnSelect, SelectOption};
+    use crate::{InitialValue, MultiColumnSelect, SelectOption};
 
     // Iterate over enum variants to find the index of the initial value
     let (initial_index, _) = E::iter()

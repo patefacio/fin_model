@@ -3,7 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::component::numeric_input::{Modification, NumericInput, NumericInputProps};
+use crate::Modification;
+use crate::NumericInput;
 use crate::Updatable;
 use leptos::create_signal;
 #[allow(unused_imports)]

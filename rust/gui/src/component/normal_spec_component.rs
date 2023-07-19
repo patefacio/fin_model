@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::component::numeric_input::{Modification, NumericInput};
-use crate::utils::{updatable, historic_risk_return};
+use crate::Modification;
+use crate::NumericInput;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
@@ -34,10 +34,10 @@ pub fn NormalSpecComponent(
 ) -> impl IntoView {
     // α <fn normal_spec_component>
 
-    use crate::utils::distribution_cdf::DistributionCdf;
-    use crate::utils::distribution_pdf::DistributionPdf;
-    use crate::utils::historic_risk_return::HistoricRiskReturn;
-    use crate::utils::historic_risk_return::HistoricRiskReturnPlot;
+    use crate::DistributionCdf;
+    use crate::DistributionPdf;
+    use crate::HistoricRiskReturn;
+    use crate::HistoricRiskReturnPlot;
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use leptos::create_signal;
     use leptos::For;
@@ -251,16 +251,14 @@ pub fn NormalSpecComponent(
     // ω <fn normal_spec_component>
 }
 
+// α <mod-def normal_spec_component>
+
 pub fn cdf(x: f64, sigma: f64, mu: f64) -> f64 {
-    // α <fn DistributionCdf::sigmoid_approx for NormalSpec>
     if sigma == 0.0 {
         return 0.0;
     }
     let correction = 1.70175;
     let temp = (correction * (x - mu) / sigma).exp();
     return temp / (1.0 + temp);
-    // ω <fn DistributionCdf::sigmoid_approx for NormalSpec>
 }
-
-// α <mod-def normal_spec_component>
 // ω <mod-def normal_spec_component>

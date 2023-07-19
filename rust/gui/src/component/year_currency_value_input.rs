@@ -40,7 +40,7 @@ pub fn YearCurrencyValueInput(
 ) -> impl IntoView {
     // α <fn year_currency_value_input>
 
-    use crate::component::currency_select::to_currency_symbol;
+    use crate::to_currency_symbol;
     use crate::CurrencySelect;
     use crate::Modification;
     use crate::NumericInput;

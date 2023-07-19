@@ -65,19 +65,26 @@ pub struct InstrumentGrowthSync {
 ///
 ///
 ///   * **cx** - Context
-///   * **holding_updatable** - The holding being edited by this component
+///   * **updatable** - The holding being edited by this component
+///   * **on_cancel** - Called if edit is canceled.
 ///   * _return_ - View for holding_component
 #[component]
-pub fn HoldingComponent(
+pub fn HoldingComponent<F>(
     /// Context
     cx: Scope,
     /// The holding being edited by this component
-    holding_updatable: Updatable<Holding>,
-) -> impl IntoView {
+    updatable: Updatable<Holding>,
+    /// Called if edit is canceled.
+    on_cancel: F,
+) -> impl IntoView
+where
+    F: FnMut(),
+{
     // α <fn holding_component>
 
     use crate::EnumSelect;
     use crate::NormalSpecComponent;
+    use crate::OkCancel;
     use crate::OkCancelComponent;
     use crate::SymbolInput;
     use crate::YearInput;
@@ -92,9 +99,9 @@ pub fn HoldingComponent(
     use std::cell::RefCell;
     use std::rc::Rc;
 
-    let unit_valuation = holding_updatable.value.unit_valuation;
-    let instrument_name = holding_updatable.value.instrument_name.clone();
-    let holding_updatable = Rc::new(RefCell::new(holding_updatable));
+    let unit_valuation = updatable.value.unit_valuation;
+    let instrument_name = updatable.value.instrument_name.clone();
+    let updatable = Rc::new(RefCell::new(updatable));
 
     let symbol_updatable = Updatable::new(instrument_name.clone(), |symbol| {
         console_log(&format!("Symbol is now {symbol:?}"));
@@ -103,7 +110,7 @@ pub fn HoldingComponent(
     let (currency_symbol, set_currency_symbol) = create_signal(cx, String::from("$"));
     let share_price_placeholder = Some(format!("e.g. {}50.00", currency_symbol.get()));
 
-    let holding_updatable_for_price = holding_updatable.clone();
+    let updatable_for_price = updatable.clone();
 
     let price_updatable = Updatable::new(
         unit_valuation
@@ -114,9 +121,9 @@ pub fn HoldingComponent(
         },
     );
 
-    let holding_updatable_for_quantity = holding_updatable.clone();
+    let updatable_for_quantity = updatable.clone();
     let on_quantity_updated = move |quantity: f64| {
-        let mut current = holding_updatable_for_quantity.borrow_mut();
+        let mut current = updatable_for_quantity.borrow_mut();
         current.update(|h| {
             h.quantity = quantity;
         });
@@ -133,7 +140,7 @@ pub fn HoldingComponent(
     /*
 
     let mappings_updatable_for_holding_type = mappings_updatable.clone();
-    let holdings_updatable_for_holding_type = holding_updatable.clone();
+    let holdings_updatable_for_holding_type = updatable.clone();
     let on_holding_type_updated = move |holding_type: &HoldingType| {
         let mut current_mappings = mappings_updatable_for_holding_type.borrow_mut();
         let current_holding = holdings_updatable_for_holding_type.borrow();
@@ -154,6 +161,17 @@ pub fn HoldingComponent(
     let initial_holding_type = HoldingType::UsEquityMarket;
 
     let holding_type_updatable = Updatable::new(initial_holding_type, |_| println!("Updated!"));
+
+    let on_ok_cancel = move |ok_cancel| {
+        log!("Ok/Cancel holding -> {ok_cancel:?}");
+        match ok_cancel {
+           OkCancel::Ok => {
+            updatable.as_ref().borrow_mut().signal();
+            log!("Ok!");
+           }
+           OkCancel::Cancel => log!("Cancel")
+        }
+    };
 
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
@@ -181,8 +199,7 @@ pub fn HoldingComponent(
                 </div>
                 <div class="form-row">
                     <OkCancelComponent
-                        on_ok=move || log!("Ok holding")
-                        on_cancel=move || log!("Cancel holding")
+                        on_ok_cancel=on_ok_cancel
                     />
                 </div>
             </div>

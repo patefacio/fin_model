@@ -62,6 +62,7 @@ pub enum Modification {
 ///   * **range** - Range of valid values for input.
 ///   * **on_enter** - Called if user hits enter, passes current input value.
 ///   * **clear_input** - Signal requesting to clear the input.
+///   * **no_decimal** - Indicates decimals disallowed.
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -100,7 +101,7 @@ pub fn NumericInput(
     /// Signal requesting to clear the input.
     #[prop(default=None)]
     clear_input: Option<ReadSignal<()>>,
-    /// Decimal Support
+    /// Indicates decimals disallowed.
     #[prop(default = false)]
     no_decimal: bool,
 ) -> impl IntoView {
