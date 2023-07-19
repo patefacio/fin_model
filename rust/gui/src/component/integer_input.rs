@@ -68,77 +68,41 @@ pub fn IntegerInput(
 ) -> impl IntoView {
     // α <fn integer_input>
 
-    use crate::utils::commify_number;
-    use leptos::create_node_ref;
     use leptos::create_signal;
-    use leptos::html::Input;
-    use leptos::store_value;
     use leptos::IntoAttribute;
     use leptos::IntoClass;
     use leptos::IntoStyle;
     use leptos::SignalGet;
     use leptos::SignalSet;
 
-    let node_ref = create_node_ref::<Input>(cx);
-
-    let initial_value = if let Some(initial_value) = updatable.value {
-        initial_value.to_string()
-    } else {
-        String::default()
-    };
-
-    let updatable = store_value(cx, updatable);
-    let update_value = move || {
-        if let Some(input_ref) = node_ref.get() {
-            let mut value = input_ref.value();
-
-            if value.is_empty() {
-                updatable.update_value(|updatable| updatable.update_and_then_signal(|n| *n = None));
-            } else {
-                if let Some(last_letter) = value.chars().last() {
-                    match last_letter {
-                        'k' | 'm' | 'b' => {
-                            value.pop();
-                            match last_letter {
-                                'k' => value.push_str("000"),
-                                'm' => value.push_str("000000"),
-                                'b' => value.push_str("000000000"),
-                                _ => unreachable!(),
-                            }
-                        }
-                        _ => (),
-                    }
-                }
-
-                value = value.chars().filter(|c| c.is_ascii_digit()).collect();
-
-                if let Ok(raw_num) = value.parse::<u32>() {
-                    value = commify_number(raw_num);
-                    updatable.update_value(|updatable| {
-                        updatable.update_and_then_signal(|n| *n = Some(raw_num));
-                    })
-                }
-
-                input_ref.set_value(&value);
-            }
-        }
-    };
+    let float_value = updatable.value.map(|value| value as f64);
+    let mut updatable = updatable;
+    let numeric_updatable = Updatable::new(float_value, move |new_float_value| {
+        let actual_value = new_float_value.map(|v| v);
+        updatable.update_and_then_signal(|new_value| {
+            *new_value = match actual_value{
+                Some(_) => Some(actual_value.unwrap() as u32),
+                None => None,
+            };
+        });
+    });
 
     view! { cx,
-        <input
-            class=move || {
-                input_class.as_ref().cloned().unwrap_or_default()
-            }
-            node_ref=node_ref
-            on:input=move |_| update_value()
-            placeholder=placeholder.as_ref().cloned().unwrap_or_default()
-            value=initial_value
-            size=max_len + 2
-            maxlength=max_len
-            style:text-align=move || { if align_left { "left" } else { "right" } }
-            type="text"
+        <NumericInput
+            input_class=input_class
+            updatable=numeric_updatable
+            on_enter=on_enter
+            non_negative=non_negative
+            placeholder=placeholder
+            max_len=max_len
+            clear_input=clear_input
+            size=size
+            range=range.map(|range| *range.start() as f64 ..= *range.end() as f64)
+            no_decimal=true
+            align_left=align_left
         />
     }
+
 
     // ω <fn integer_input>
 }
