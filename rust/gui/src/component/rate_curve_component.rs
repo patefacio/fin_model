@@ -4,6 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+use crate::Year;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::{component, view, IntoView, Scope};
@@ -11,6 +12,7 @@ use leptos::{component, view, IntoView, Scope};
 use leptos_dom::console_log;
 use plus_modeled::RateCurve;
 use plus_modeled::YearRange;
+use plus_modeled::YearValue;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -51,36 +53,8 @@ pub fn RateCurveComponent(
     use leptos::SignalWithUntracked;
     use plus_modeled::YearValue;
 
-    log!("Creating RateCurveComponent -> {cx:?}");
-
     let mut updatable = updatable;
-
-    /// Sort entries by year and remove any duplicate years
-    fn clean_curve(points: &mut Vec<YearValue>) {
-        // First sort the data by year to ensure points are ordered
-        points.sort_by(|a, b| a.year.cmp(&b.year));
-        let mut last_inserted: Option<Year> = None;
-        let mut deduped = Vec::with_capacity(points.len());
-
-        points.iter().for_each(|year_value| {
-            if let Some(last_inserted) = last_inserted {
-                if last_inserted == year_value.year {
-                    let last_value_ref: &mut YearValue = deduped.last_mut().unwrap();
-                    last_value_ref.value = year_value.value;
-                } else {
-                    deduped.push(*year_value);
-                }
-            } else {
-                deduped.push(*year_value);
-            }
-            last_inserted = Some(year_value.year);
-        });
-
-        *points = deduped;
-    }
-
     clean_curve(&mut updatable.value.curve);
-    
 
     let (updatable, set_updatable) = create_signal(cx, updatable);
     let (curve, set_curve) = create_signal(cx, {
@@ -89,7 +63,6 @@ pub fn RateCurveComponent(
             updatable.value.curve.clear();
         });
         curve
-        
     });
 
     let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
@@ -149,8 +122,6 @@ pub fn RateCurveComponent(
                                             })
                                     {
                                         curve.remove(found_index);
-                                        //set curve new index
-                                        //set_curve.update(move |curve| {curve});
                                     }
                                 });
                             signal_parent_update();
@@ -190,7 +161,6 @@ pub fn RateCurveComponent(
                                             });
                                     },
                                 )
-                                
                                 placeholder=Some("rate".to_string())
                                 on_enter=Some(
                                     Box::new(move |_| {
@@ -252,6 +222,81 @@ pub fn RateCurveComponent(
     }
 
     // ω <fn rate_curve_component>
+}
+
+/// Sorts the [YearValue] entries by year and removes any duplicates
+///
+///   * **points** - Curve points to sort and dedup.
+pub fn clean_curve(points: &mut Vec<YearValue>) {
+    // α <fn clean_curve>
+    // First sort the data by year to ensure points are ordered
+    points.sort_by(|a, b| a.year.cmp(&b.year));
+    let mut last_inserted: Option<Year> = None;
+    let mut deduped = Vec::with_capacity(points.len());
+
+    points.iter().for_each(|year_value| {
+        if let Some(last_inserted) = last_inserted {
+            if last_inserted == year_value.year {
+                let last_value_ref: &mut YearValue = deduped.last_mut().unwrap();
+                last_value_ref.value = year_value.value;
+            } else {
+                deduped.push(*year_value);
+            }
+        } else {
+            deduped.push(*year_value);
+        }
+        last_inserted = Some(year_value.year);
+    });
+
+    *points = deduped;
+    // ω <fn clean_curve>
+}
+
+/// Unit tests for `rate_curve_component`
+#[cfg(test)]
+pub mod unit_tests {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- functions ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    #[test]
+    fn test_clean_curve() {
+        // α <fn test_clean_curve>
+
+        let mut dirty_curve = vec![
+            YearValue {
+                year: 2021,
+                value: 3.0,
+            },
+            YearValue {
+                year: 2020,
+                value: 2.0,
+            },
+            YearValue {
+                year: 2020,
+                value: 4.0,
+            },
+        ];
+        clean_curve(&mut dirty_curve);
+        assert_eq!(
+            vec![
+                YearValue {
+                    year: 2020,
+                    value: 4.0
+                },
+                YearValue {
+                    year: 2021,
+                    value: 3.0
+                }
+            ],
+            dirty_curve
+        )
+
+        // ω <fn test_clean_curve>
+    }
+
+    // α <mod-def unit_tests>
+    use super::*;
+    // ω <mod-def unit_tests>
 }
 
 // α <mod-def rate_curve_component>

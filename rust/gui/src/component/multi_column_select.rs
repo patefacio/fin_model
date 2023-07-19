@@ -8,7 +8,7 @@ use crate::utils::constants::{
     DOWN_KEY, ENTER_KEY, ESCAPE_KEY, LEFT_KEY, RIGHT_KEY, SPACE_KEY, TAB_KEY, UP_KEY,
 };
 use crate::utils::element_sugar::{element_from_event, find_element_up};
-use crate::utils::html_tag::HtmlTag;
+use crate::HtmlTag;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::{component, view, IntoView, Scope};

@@ -78,7 +78,7 @@ pub fn HoldingComponent<F>(
     on_cancel: F,
 ) -> impl IntoView
 where
-    F: FnMut(),
+    F: 'static + FnMut(),
 {
     // α <fn holding_component>
 
@@ -99,6 +99,7 @@ where
     use std::cell::RefCell;
     use std::rc::Rc;
 
+    let mut on_cancel = on_cancel;
     let unit_valuation = updatable.value.unit_valuation;
     let instrument_name = updatable.value.instrument_name.clone();
     let updatable = Rc::new(RefCell::new(updatable));
@@ -165,11 +166,14 @@ where
     let on_ok_cancel = move |ok_cancel| {
         log!("Ok/Cancel holding -> {ok_cancel:?}");
         match ok_cancel {
-           OkCancel::Ok => {
-            updatable.as_ref().borrow_mut().signal();
-            log!("Ok!");
-           }
-           OkCancel::Cancel => log!("Cancel")
+            OkCancel::Ok => {
+                updatable.as_ref().borrow_mut().signal();
+                log!("Ok!");
+            }
+            OkCancel::Cancel => {
+                on_cancel();
+                log!("Cancel");
+            }
         }
     };
 
@@ -198,9 +202,7 @@ where
                     </div>
                 </div>
                 <div class="form-row">
-                    <OkCancelComponent
-                        on_ok_cancel=on_ok_cancel
-                    />
+                    <OkCancelComponent on_ok_cancel=on_ok_cancel/>
                 </div>
             </div>
         </fieldset>

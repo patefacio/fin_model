@@ -36,12 +36,7 @@ pub fn HistoricRiskReturnComponent(
     let normal_spec = normal_spec.get();
     let plot = normal_spec.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES);
 
-    view!{
-        cx,
-
-        <div inner_html=plot></div>
-
-    }
+    view! { cx, <div inner_html=plot></div> }
     // ω <fn historic_risk_return_component>
 }
 

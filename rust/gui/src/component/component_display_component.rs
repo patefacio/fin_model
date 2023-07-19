@@ -22,10 +22,9 @@ pub fn ComponentDisplayComponent(
     cx: Scope,
 ) -> impl IntoView {
     // α <fn component_display_component>
-    use crate::DisposeTest;
-    use crate::Updatable;
     use crate::CollectionGridComponent;
     use crate::CurrencySelect;
+    use crate::DisposeTest;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
     use crate::DossierCorrelationMatrixComponent;
@@ -38,6 +37,7 @@ pub fn ComponentDisplayComponent(
     use crate::PercentInput;
     use crate::RateCurveComponent;
     use crate::SelectDirection;
+    use crate::Updatable;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
     use crate::YearRangeInput;
@@ -374,9 +374,7 @@ pub fn ComponentDisplayComponent(
         </div>
         <hr/>
         <h4>"Ok/Cancel"</h4>
-        <OkCancelComponent
-            on_ok_cancel=move |ok_cancel| { show_update("Ok/Cancel -> {ok_cancel:?}".into()) }
-        />
+        <OkCancelComponent on_ok_cancel=move |ok_cancel| { show_update("Ok/Cancel -> {ok_cancel:?}".into()) }/>
         <hr/>
         <div style="display: grid; grid-template-columns: 1fr 1fr">
             <div>

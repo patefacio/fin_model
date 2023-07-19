@@ -47,7 +47,9 @@ where
 
     view! { cx,
         <button on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }>"Ok"</button>
-        <button on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }>"Cancel"</button>
+        <button on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }>
+            "Cancel"
+        </button>
     }
 
     // ω <fn ok_cancel_component>

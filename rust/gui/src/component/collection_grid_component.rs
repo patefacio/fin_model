@@ -147,6 +147,9 @@ where
                     let item = Rc::new(item);
                     let mut user_fields = item.get_fields(cx);
                     let key = item.get_key();
+                    let this_row_updated = move |item: &_| {
+                        log!("Item updated {item:?}");
+                    };
                     let this_row_edit = move || {
                         cgc_data
                             .with(|cgc_data| {
@@ -160,13 +163,6 @@ where
                                 }
                             })
                     };
-
-                    let this_row_updated =move
-                        |item: &_| {
-                            log!("Item updated {item:?}");
-                        };
-                    
-
                     let key = item.get_key();
                     let cloned_item = Rc::clone(&item);
                     view! { cx,
@@ -210,10 +206,10 @@ where
                         }
                         <Show when=move || this_row_edit() fallback=|_| ()>
                             <div class="cgc-editable">
-                                {    
-                                
-                                    <T as CollectionGrid>::edit_element(cx, Updatable::new((*item).clone(), this_row_updated))
-                                }
+                                {<T as CollectionGrid>::edit_element(
+                                    cx,
+                                    Updatable::new((*item).clone(), this_row_updated),
+                                )}
                             </div>
                         </Show>
                     }
