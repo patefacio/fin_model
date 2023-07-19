@@ -438,7 +438,7 @@ pub fn ComponentDisplayComponent(
         <hr/>
         
         <h4>"Collection Grid Component<Holding>"</h4>
-        <CollectionGridComponent updatable=Updatable::new(
+        <TableComponent updatable=Updatable::new(
             vec! {
                 Holding { instrument_name : "SPY".to_string(), quantity : 755.3, unit_valuation :
                 Some(YearCurrencyValue { year : 2020, currency : 0, value : 440.1 }), cost_basis

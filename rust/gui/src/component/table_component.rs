@@ -20,7 +20,7 @@ use std::fmt::Debug;
 /// Models a collection to be displayed in a [TableComponent].
 /// Supports adding and removing entries and displaying as many _fields_ of
 /// each element as the trait implementation dictates.
-pub trait Table {
+pub trait Table: Sized {
     /// Get the number of columns.
     ///
     ///   * _return_ - Number of columns
@@ -50,11 +50,11 @@ pub trait Table {
     /// Create a view to edit the element
     ///
     ///   * **cx** - Context
-    ///   * **element** - Read/write signal containing the element to edit.
+    ///   * **updatable** - Read/write signal containing the element to edit.
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * _return_ - The edit view
-    fn edit_element(cx: Scope, element: RwSignal<Box<Self>>) -> View;
+    fn edit_element(cx: Scope, updatable: Updatable<Self>) -> View;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -160,6 +160,13 @@ where
                                 }
                             })
                     };
+
+                    let this_row_updated =move
+                        |item: &_| {
+                            log!("Item updated {item:?}");
+                        };
+                    
+
                     let key = item.get_key();
                     let cloned_item = Rc::clone(&item);
                     view! { cx,
@@ -203,11 +210,9 @@ where
                         }
                         <Show when=move || this_row_edit() fallback=|_| ()>
                             <div class="cgc-editable">
-                                {
-                                    use std::boxed::Box;
-                                    let editable_item = Box::new((*item).clone());
-                                    let editable = create_rw_signal(cx, editable_item);
-                                    <T as Table>::edit_element(cx, editable)
+                                {    
+                                
+                                    <T as Table>::edit_element(cx, Updatable::new((*item).clone(), this_row_updated))
                                 }
                             </div>
                         </Show>
