@@ -37,11 +37,13 @@ pub fn NormalSpecComponent(
     use crate::DistributionCdf;
     use crate::DistributionPdf;
     use crate::HistoricRiskReturn;
+    use crate::HistoricRiskReturnComponent;
     use crate::HistoricRiskReturnPlot;
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use leptos::create_signal;
     use leptos::For;
     use leptos::IntoAttribute;
+    use leptos::MaybeSignal;
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
@@ -52,7 +54,6 @@ pub fn NormalSpecComponent(
         updatable: Updatable<Option<NormalSpec>>,
         pdf_drawing_svg: String,
         cdf_drawing_svg: String,
-        historic_drawing_svg: String,
         cdf_output: Option<f64>,
     }
 
@@ -83,11 +84,9 @@ pub fn NormalSpecComponent(
         .map(|ns| ns.get_cdf_chart(200))
         .unwrap_or_default();
 
-    let historic_drawing_svg = updatable
-        .value
-        .as_ref()
-        .map(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES))
-        .unwrap_or_default();
+
+        let (normal_spec, set_normal_spec) = create_signal(cx, updatable.value.unwrap_or_default());
+
 
     let (normal_bits, set_normal_bits) = create_signal(
         cx,
@@ -95,7 +94,6 @@ pub fn NormalSpecComponent(
             mean: initial_mean,
             std_dev: initial_std_dev,
             updatable,
-            historic_drawing_svg,
             pdf_drawing_svg: initial_mean
                 .and_then(|mean| {
                     initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_pdf_chart(200))
@@ -110,12 +108,12 @@ pub fn NormalSpecComponent(
         },
     );
 
-    fn make_updates(normal_bits: &mut NormalBits, mut new_normal: NormalSpec, new_input: Option<f64>) {
+    
+    let make_updates = move |normal_bits: &mut NormalBits, mut new_normal: NormalSpec, new_input: Option<f64>| {
         new_normal.mean /= 100.0;
         new_normal.std_dev /= 100.0;
         normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
         normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
-        normal_bits.historic_drawing_svg = new_normal.get_historic_plot((&*HISTORIC_RISK_RETURN_SAMPLES));
         // Before signalling undo the 100x
         normal_bits
             .updatable
@@ -127,7 +125,7 @@ pub fn NormalSpecComponent(
             }
             None => (),
         }
-    }
+    };
 
     let mean_updatable = Updatable::new(initial_mean, move |mean| {
         set_normal_bits.update(|normal_bits| {
@@ -243,7 +241,10 @@ pub fn NormalSpecComponent(
             </div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.pdf_drawing_svg.clone()) }></div>
             <div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.cdf_drawing_svg.clone()) }></div>
-            <div inner_html = move || {normal_bits.with(|normal_bits| normal_bits.historic_drawing_svg.clone())}></div>
+            <HistoricRiskReturnComponent
+             normal_spec = MaybeSignal::Static(NormalSpec{mean:0.5, std_dev: 0.5})
+              
+            />
             <output></output>
         </fieldset>
     }

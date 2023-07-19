@@ -73,6 +73,7 @@ pub mod unit_tests {
         assert_eq!(33333.3333, scale_by(3.33333333, 4));
         assert_eq!(55.5, scale_by(555.0, -1));
         assert_eq!(55.5, scale_by(55.5, 0));
+        assert_eq!(15.0, scale_by(0.15, 2));
 
         // ω <fn test_scale_by>
     }

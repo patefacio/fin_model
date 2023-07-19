@@ -80,6 +80,7 @@ pub fn RateCurveComponent(
     }
 
     clean_curve(&mut updatable.value.curve);
+    
 
     let (updatable, set_updatable) = create_signal(cx, updatable);
     let (curve, set_curve) = create_signal(cx, {
@@ -88,6 +89,7 @@ pub fn RateCurveComponent(
             updatable.value.curve.clear();
         });
         curve
+        
     });
 
     let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
@@ -100,6 +102,8 @@ pub fn RateCurveComponent(
             set_updatable.update(|updatable| {
                 updatable.update_and_then_signal(|client_curve| {
                     client_curve.curve = curve.clone();
+                    log!("Client curve inside signal_parent -> {client_curve:?}");
+                    log!("Curve = inside signal_parent {curve:?}");
                 })
             })
         })
@@ -123,10 +127,6 @@ pub fn RateCurveComponent(
     };
     let on_accept_evt = move |_| on_accept();
 
-    let on_accept_enter: Option<Box<dyn FnMut(String)>> = Some(Box::new(move |_| {
-        on_accept();
-    }));
-
     view! { cx,
         <div class="rate-curve-data">
             <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
@@ -149,6 +149,8 @@ pub fn RateCurveComponent(
                                             })
                                     {
                                         curve.remove(found_index);
+                                        //set curve new index
+                                        //set_curve.update(move |curve| {curve});
                                     }
                                 });
                             signal_parent_update();
@@ -188,7 +190,13 @@ pub fn RateCurveComponent(
                                             });
                                     },
                                 )
+                                
                                 placeholder=Some("rate".to_string())
+                                on_enter=Some(
+                                    Box::new(move |_| {
+                                        on_accept();
+                                    }),
+                                )
                             />
                         }
                     }
@@ -232,7 +240,11 @@ pub fn RateCurveComponent(
                     )
                     placeholder=Some("rate".to_string())
                     clear_input=Some(clear_fields)
-                    on_enter=on_accept_enter
+                    on_enter=Some(
+                        Box::new(move |_| {
+                            on_accept();
+                        }),
+                    )
                 />
             </div>
         </div>

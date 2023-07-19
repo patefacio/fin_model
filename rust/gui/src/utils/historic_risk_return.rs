@@ -39,6 +39,7 @@ impl HistoricRiskReturnPlot for NormalSpec {
     ///   * _return_ - SVG image of the points on a plot.
     fn get_historic_plot(&self, historic_values: &[HistoricRiskReturn]) -> String {
         // α <fn HistoricRiskReturnPlot::get_historic_plot for NormalSpec>
+        use crate::utils::scale_by::scale_by;
         use plotters::prelude::*;
 
         //let user_point =
@@ -64,14 +65,15 @@ impl HistoricRiskReturnPlot for NormalSpec {
                 .caption("Historic Risk Return", ("sans-serif", 40).into_font())
                 .x_label_area_size(30)
                 .y_label_area_size(60)
-                .build_cartesian_2d(0f64..50f64, 0f64..20f64)
+                .build_cartesian_2d(0f64..0.5f64, 0f64..0.2f64)
                 .unwrap();
 
             chart
                 .configure_mesh()
                 .x_labels(5)
                 .y_labels(5)
-                .y_label_formatter(&|x| format!("{:.3}", x))
+                .x_label_formatter(&|x| format!("{}%", scale_by(*x, 2).round()))
+                .y_label_formatter(&|y| format!("{}%", scale_by(*y, 2).round()))
                 .draw()
                 .unwrap();
 
@@ -82,10 +84,10 @@ impl HistoricRiskReturnPlot for NormalSpec {
             //         &RED,
             //     ))
             //     .unwrap();
+            let user_points = vec![(self.std_dev, self.mean)];
 
             chart
                 .draw_series(PointSeries::of_element(
-                    //HISTORIC_RISK_RETURN_SAMPLES.iter().map(|hv| hv.risk_return)
                     HISTORIC_RISK_RETURN_SAMPLES.iter(),
                     5,
                     &RED,
@@ -93,7 +95,28 @@ impl HistoricRiskReturnPlot for NormalSpec {
                         return EmptyElement::at(c.risk_return)
                             + Circle::new((0, 0), s, st.filled())
                             + Text::new(
-                                format!("{}\n{:?}", c.label, c.risk_return),
+                                format!(
+                                    "{}\n{:?}",
+                                    c.label,
+                                    (scale_by(c.risk_return.0, 2), scale_by(c.risk_return.1, 2))
+                                ),
+                                (15, -10),
+                                ("sans-serif", 10).into_font(),
+                            );
+                    },
+                ))
+                .unwrap();
+
+            chart
+                .draw_series(PointSeries::of_element(
+                    user_points.into_iter(),
+                    5,
+                    &BLUE,
+                    &|c, s, st| {
+                        return EmptyElement::at(c)
+                            + Cross::new((0, 0), s, st.filled())
+                            + Text::new(
+                                format!("{:?}", (scale_by(c.0, 2), scale_by(c.1, 2))),
                                 (15, -10),
                                 ("sans-serif", 10).into_font(),
                             );
@@ -148,19 +171,19 @@ pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::n
         // Samples pulled from here: https://www.visualcapitalist.com/historical-returns-by-asset-class/
         //x ->risk/ st. dev y -> return/ mean
         HistoricRiskReturn {
-            risk_return: (16.1, 9.6),
+            risk_return: (0.161, 0.096),
             label: "US Large Cap".into(),
         },
         HistoricRiskReturn {
-            risk_return: (5.1, 4.1),
+            risk_return: (0.051, 0.041),
             label: "US Bonds".into(),
         },
         HistoricRiskReturn {
-            risk_return: (17.1, 8.5),
+            risk_return: (0.171, 0.085),
             label: "REITS".into(),
         },
         HistoricRiskReturn {
-            risk_return: (28.8, 12.12),
+            risk_return: (0.288, 0.1212),
             label: "Emerging Mkts".into(),
         },
     ]
