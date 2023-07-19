@@ -40,6 +40,8 @@ pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;
 pub use component::year_range_input::YearRangeInput;
 pub use component::year_value_input::YearValueInput;
+pub use component::table_component::Table;
+pub use component::table_component::TableComponent;
 pub use utils::distribution_cdf::DistributionCdf;
 pub use utils::distribution_pdf::DistributionPdf;
 pub use utils::historic_risk_return::HistoricRiskReturn;

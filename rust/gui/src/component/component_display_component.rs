@@ -33,6 +33,7 @@ pub fn ComponentDisplayComponent(
     use crate::Modification;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
+    use crate::TableComponent;
     use crate::OkCancelComponent;
     use crate::PercentInput;
     use crate::RateCurveComponent;
@@ -437,6 +438,25 @@ pub fn ComponentDisplayComponent(
             },
         )/>
         <hr/>
+        
+        <h4>"Collection Grid Component<Holding>"</h4>
+        <CollectionGridComponent updatable=Updatable::new(
+            vec! {
+                Holding { instrument_name : "SPY".to_string(), quantity : 755.3, unit_valuation :
+                Some(YearCurrencyValue { year : 2020, currency : 0, value : 440.1 }), cost_basis
+                : 320_000.0, ..Default::default() }, Holding { instrument_name : "IWM"
+                .to_string(), quantity : 1000.0, unit_valuation : Some(YearCurrencyValue { year :
+                2020, currency : 0, value : 180.1 }), cost_basis : 150_000.0,
+                ..Default::default() }, Holding { instrument_name : "NVDA".to_string(), quantity
+                : 500.3, unit_valuation : Some(YearCurrencyValue { year : 2020, currency : 0,
+                value : 420.1 }), cost_basis : 140_000.0, ..Default::default() },
+            },
+            move |holding_list| {
+                show_update(format!("Holding list updated -> {holding_list:?}"));
+            },
+        )/>
+        <hr/>
+        
         <div style="margin: 2rem;">"Dispose Test"</div>
         <Show when=move || (read_count.get() % 2) == 0 fallback=|_| "Nothing">
             <DisposeTest/>

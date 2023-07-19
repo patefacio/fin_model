@@ -17,7 +17,7 @@ use std::fmt::Debug;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- traits ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// Models a collection to be displayed in a [CollectionGridComponent].
+/// Models a collection to be displayed in a [TableComponent].
 /// Supports adding and removing entries and displaying as many _fields_ of
 /// each element as the trait implementation dictates.
 pub trait Table {
@@ -76,14 +76,12 @@ pub fn TableComponent<T>(
     cx: Scope,
     /// Items to show
     updatable: Updatable<Vec<T>>,
-    #[prop(default = None)]
-    header: Option<String>,
     /// If true just display (default false)
     #[prop(default = false)]
     read_only: bool,
 ) -> impl IntoView
 where
-    T: 'static + Clone + Debug + TableGrid,
+    T: 'static + Clone + Debug + Table,
 {
     // α <fn collection_grid_component>
 
@@ -125,7 +123,7 @@ where
         move || cgc_data.with(|cgc_data| cgc_data.component_state != ComponentState::Display);
 
     let header = {
-        let mut fields = <T as CollectionGrid>::get_header();
+        let mut fields = <T as Table>::get_header();
         if !read_only {
             fields.insert(0, String::default());
             fields.insert(0, String::default());
@@ -209,7 +207,7 @@ where
                                     use std::boxed::Box;
                                     let editable_item = Box::new((*item).clone());
                                     let editable = create_rw_signal(cx, editable_item);
-                                    <T as CollectionGrid>::edit_element(cx, editable)
+                                    <T as Table>::edit_element(cx, editable)
                                 }
                             </div>
                         </Show>
