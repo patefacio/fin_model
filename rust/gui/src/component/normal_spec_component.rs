@@ -249,3 +249,6 @@ pub fn NormalSpecComponent(
 
     // ω <fn normal_spec_component>
 }
+
+// α <mod-def normal_spec_component>
+// ω <mod-def normal_spec_component>

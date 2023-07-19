@@ -174,7 +174,7 @@ pub fn ComponentDisplayComponent(
                 </div>
             </div>
             <div style="padding: 1em;">
-                <h4>"Integer Input on Range 0..5000"</h4>
+                <h4>"Integer Input"</h4>
                 <p inner_html="Models a single integer with similar features to <em>Numeric Input</em> without decimals.
                 <ul>
                 <li>Special characters ('k', 'm', 'b')</li>

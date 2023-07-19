@@ -146,10 +146,6 @@ impl DistributionCdf for NormalSpec {
 /// Unit tests for `distribution_cdf`
 #[cfg(test)]
 pub mod unit_tests {
-    ////////////////////////////////////////////////////////////////////////////////////
-    // --- functions ---
-    ////////////////////////////////////////////////////////////////////////////////////
-    
 
     /// Test trait distribution_cdf on NormalSpec
     pub mod test_distribution_cdf_on_normal_spec {
