@@ -74,10 +74,10 @@ pub fn IntegerInput(
     let mut is_in_range = true;
 
 
-    let scaled_value = updatable.value.map(|value| value as f64);
+    let float_value = updatable.value.map(|value| value as f64);
     let mut updatable = updatable;
-    let numeric_updatable = Updatable::new(scaled_value, move |new_scaled_value| {
-        let actual_value = new_scaled_value.map(|v| v / 100.0);
+    let numeric_updatable = Updatable::new(float_value, move |new_float_value| {
+        let actual_value = new_float_value.map(|v| v);
         updatable.update_and_then_signal(|new_value| {
             *new_value = match actual_value{
                 Some(_) => Some(actual_value.unwrap() as u32),
@@ -96,7 +96,7 @@ pub fn IntegerInput(
             max_len=max_len
             clear_input=clear_input
             size=size
-            range=range.map(|range| *range.start() as f64 * 100.0..= *range.end() as f64 * 100.0)
+            range=range.map(|range| *range.start() as f64 ..= *range.end() as f64)
             no_decimal=true
         />
     }
