@@ -24,25 +24,6 @@ pub trait DistributionCdf {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-// --- functions ---
-////////////////////////////////////////////////////////////////////////////////////
-/// Gets the cdf(x) value using an approximation
-///
-///   * **x** - x to get cdf value
-///   * **sigma** - Standard deviation
-///   * **mu** - Normal mean
-///   * _return_ - Approximate value of the cdf
-#[inline]
-pub fn sigmoid_approx(x: f64, sigma: f64, mu: f64) -> f64 {
-    // α <fn sigmoid_approx>
-    assert!(sigma != 0.0);
-    let correction = 1.70175;
-    let temp = (correction * (x - mu) / sigma).exp();
-    return temp / (1.0 + temp);
-    // ω <fn sigmoid_approx>
-}
-
-////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
 impl DistributionCdf for NormalSpec {
@@ -56,7 +37,6 @@ impl DistributionCdf for NormalSpec {
         // α <fn DistributionCdf::get_cdf_chart for NormalSpec>
 
         use crate::utils::scale_by::scale_by;
-        use leptos_dom::console_log;
         use plotters::prelude::*;
 
         // Cap the number of points to range (32, 1024)
@@ -71,34 +51,20 @@ impl DistributionCdf for NormalSpec {
         let mut x_vec = vec![0.0; num_points];
         let mut y_vec = vec![0.0; num_points];
 
-        let correction = 1.70175;
-        //let coefficient = 1.0 / (self.std_dev * (2.0 * std::f64::consts::PI).sqrt());
-        let cdf = |z: f64| {
-            //debug_assert!(z <= self.mean);
-
-            (correction * (z - self.mean) / self.std_dev).exp()
-                / (1.0 + (correction * (z - self.mean) / self.std_dev).exp())
-        };
-        console_log(&format!(
-            "Sig: {}, MU: {}, x: {}, CDF: {}",
-            self.std_dev,
-            self.mean,
-            45.0,
-            cdf(45.0),
-        ));
+        
 
         let mut num_sigmas = max_sigma as f64;
         for i in 0..(num_points / 2) {
             let x_lhs = self.mean - self.std_dev * num_sigmas;
             let x_rhs = self.mean + self.std_dev * num_sigmas;
-            let yr = sigmoid_approx(x_lhs, self.std_dev, self.mean);
-            let yl = sigmoid_approx(x_rhs, self.std_dev, self.mean);
+            let yr = self.cdf_sigmoid_approx(x_lhs);
+            let yl = self.cdf_sigmoid_approx(x_rhs);
             let rhs = num_points - i - 1;
 
             x_vec[i] = x_lhs;
             x_vec[rhs] = x_rhs;
-            y_vec[i] = yr;
-            y_vec[rhs] = yl;
+            y_vec[i] = yr.unwrap_or(0.0);
+            y_vec[rhs] = yl.unwrap_or(0.0);
 
             num_sigmas *= sigma_factor;
         }
@@ -183,13 +149,7 @@ pub mod unit_tests {
     ////////////////////////////////////////////////////////////////////////////////////
     // --- functions ---
     ////////////////////////////////////////////////////////////////////////////////////
-    #[test]
-    fn test_sigmoid_approx() {
-        // α <fn test_sigmoid_approx>
-        assert_eq!(0.5, sigmoid_approx(10.0, 1.0, 10.0) as f64);
-        assert_eq!(1.0, sigmoid_approx(100.0, 1.0, 10.0) as f64);
-        // ω <fn test_sigmoid_approx>
-    }
+    
 
     /// Test trait distribution_cdf on NormalSpec
     pub mod test_distribution_cdf_on_normal_spec {

@@ -70,7 +70,7 @@ pub fn NormalSpecComponent(
     let initial_output = updatable
         .value
         .as_ref()
-        .map(|normal_spec| cdf(0.0, normal_spec.std_dev, normal_spec.mean));
+        .map(|normal_spec| normal_spec.cdf_sigmoid_approx(0.0));
 
     let pdf_drawing_svg = updatable
         .value
@@ -85,7 +85,7 @@ pub fn NormalSpecComponent(
         .unwrap_or_default();
 
 
-        let (normal_spec, set_normal_spec) = create_signal(cx, updatable.value.unwrap_or_default());
+    let (normal_spec, set_normal_spec) = create_signal(cx, updatable.value.unwrap_or_default());
 
 
     let (normal_bits, set_normal_bits) = create_signal(
@@ -104,7 +104,7 @@ pub fn NormalSpecComponent(
                     initial_std_dev.map(|std_dev| NormalSpec { mean, std_dev }.get_cdf_chart(200))
                 })
                 .unwrap_or_default(),
-            cdf_output: initial_output,
+            cdf_output: initial_output.unwrap_or(None),
         },
     );
 
@@ -114,16 +114,18 @@ pub fn NormalSpecComponent(
         new_normal.std_dev /= 100.0;
         normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
         normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
+        new_normal.mean *= 100.0;
+        new_normal.std_dev *= 100.0;
         // Before signalling undo the 100x
         normal_bits
             .updatable
             .update_and_then_signal(move |normal_spec| *normal_spec = Some(new_normal));
-        match new_input {
-            Some(_) => {
+        match (new_input, normal_bits.updatable.value) {
+            (Some(_), Some(_)) => {
                 normal_bits.cdf_output =
-                    Some(cdf(new_input.unwrap(), new_normal.std_dev, new_normal.mean))
+                    normal_bits.updatable.value.unwrap().cdf_sigmoid_approx(new_input.unwrap())
             }
-            None => (),
+            _ => (),
         }
     };
 
@@ -153,13 +155,9 @@ pub fn NormalSpecComponent(
 
     let loss_updatable = Updatable::new(initial_loss, move |loss| {
         set_normal_bits.update(|normal_bits| {
-            match (loss, normal_bits.std_dev, normal_bits.mean) {
-                (Some(_), Some(_), Some(_)) => {
-                    normal_bits.cdf_output = Some(cdf(
-                        loss.unwrap(),
-                        normal_bits.std_dev.unwrap(),
-                        normal_bits.mean.unwrap(),
-                    ));
+            match (loss, normal_bits.std_dev, normal_bits.mean, normal_bits.updatable.value) {
+                (Some(_), Some(_), Some(_), Some(_)) => {
+                    normal_bits.cdf_output = normal_bits.updatable.value.unwrap().cdf_sigmoid_approx(loss.unwrap());
                     make_updates(
                         normal_bits,
                         NormalSpec {
@@ -189,8 +187,8 @@ pub fn NormalSpecComponent(
                     view = move |cx, cdf_input| {
                         view! { cx,
                             <div inner_html=move || { format!("{:.2}%",cdf_input) } ></div>
-                            <div inner_html=move || { normal_bits.with(|normal_bits| match (normal_bits.std_dev, normal_bits.mean){
-                                    (Some(_), Some(_)) => format!("{:.2}%", cdf(cdf_input , normal_bits.std_dev.unwrap(), normal_bits.mean.unwrap())*100.0 ),
+                            <div inner_html=move || { normal_bits.with(|normal_bits| match (normal_bits.std_dev, normal_bits.mean, normal_bits.updatable.value){
+                                    (Some(_), Some(_), Some(_)) => format!("{:.2}%", normal_bits.updatable.value.unwrap().cdf_sigmoid_approx(cdf_input).unwrap()*100.0 ),
                                     _ => format!("_"),
                                 })
                             } ></div>
@@ -251,15 +249,3 @@ pub fn NormalSpecComponent(
 
     // ω <fn normal_spec_component>
 }
-
-// α <mod-def normal_spec_component>
-
-pub fn cdf(x: f64, sigma: f64, mu: f64) -> f64 {
-    if sigma == 0.0 {
-        return 0.0;
-    }
-    let correction = 1.70175;
-    let temp = (correction * (x - mu) / sigma).exp();
-    return temp / (1.0 + temp);
-}
-// ω <mod-def normal_spec_component>
