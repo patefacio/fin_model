@@ -16,7 +16,8 @@ use plus_modeled::NormalSpec;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
-impl Table for NormalSpec {
+
+impl Table for Option<NormalSpec> {
     /// Get the number of columns.
     ///
     ///   * _return_ - Number of columns
@@ -32,8 +33,8 @@ impl Table for NormalSpec {
     fn get_header() -> Vec<String> {
         // α <fn CollectionGrid::get_header for Holding>
         [
-            "Amount gain or less".to_string(),
-            "Probability".to_string(),
+            "Amount to change".to_string(),
+            "Probability of change (or less)".to_string(),
         ]
         .into_iter()
         .collect()
@@ -50,8 +51,8 @@ impl Table for NormalSpec {
         use leptos::IntoStyle;
 
         [
-            view! { cx, <div style:text-align="right">{self.cdf_sigmoid_approx(1.0)}</div> },
-            view! { cx, <div style:text-align="right">{self.cdf_sigmoid_approx(1.0)}</div> },
+            view! { cx, <div style:text-align="right">{self.unwrap_or_default().cdf_sigmoid_approx(1.0)}</div> },
+            view! { cx, <div style:text-align="right">{self.unwrap_or_default().cdf_sigmoid_approx(1.0)}</div> },
         ]
         .into_iter()
         .map(|item| item.into_view(cx))
@@ -64,7 +65,7 @@ impl Table for NormalSpec {
     ///   * _return_ - The key for the element
     fn get_key(&self) -> String {
         // α <fn CollectionGrid::get_key for Holding>
-        self.mean.to_string()
+        self.unwrap_or_default().mean.to_string()
         // ω <fn CollectionGrid::get_key for Holding>
     }
 
@@ -73,7 +74,7 @@ impl Table for NormalSpec {
     ///   * _return_ - New element
     fn new() -> Self {
         // α <fn CollectionGrid::new for Holding>
-        NormalSpec::default()
+        Some(NormalSpec::default())
         // ω <fn CollectionGrid::new for Holding>
     }
 
@@ -84,7 +85,7 @@ impl Table for NormalSpec {
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * _return_ - The edit view
-    fn edit_element(cx: Scope, updatable: Updatable<Self>) -> View {
+    fn edit_element(cx: Scope, mut updatable: Updatable<Self>) -> View {
         // α <fn CollectionGrid::edit_element for Holding>
 
         use crate::NormalSpecComponent;
@@ -93,9 +94,10 @@ impl Table for NormalSpec {
         use leptos::SignalWith;
         use plus_modeled::Holding;
 
-        let on_cancel = || log!("Holding edit canceled");
+        let on_cancel = || log!("NormalSpec edit canceled");
 
-        updatable.value = Some(updatable.value);
+        //updatable.value = Some(updatable.value);
+        //let temp = Updatable::new(Some(updatable.value),);
 
         view! { cx, <NormalSpecComponent
             updatable=updatable

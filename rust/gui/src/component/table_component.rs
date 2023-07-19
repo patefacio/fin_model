@@ -135,9 +135,16 @@ where
             })
             .collect::<Vec<HtmlElement<Div>>>()
     };
+    
+    let mut i = <T as Table>::get_column_count();
+    let mut s = "2fr ".repeat(i);
+    if !read_only {
+        s = "1.8rem 1.8rem ".to_owned() + &s;
+        i += 3
+    }
 
     view! { cx,
-        <div style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;">
+        <div style="display: grid; grid-template-columns: {s};">
             {header}
             <For
                 each=move || cgc_data.with(|cgc_data| cgc_data.updatable.value.clone())
@@ -221,7 +228,7 @@ where
             /> <button>
                 <strong>"+"</strong>
             </button>
-            <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>
+            <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: {i};"></div>
         </div>
     }
 

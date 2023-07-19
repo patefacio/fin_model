@@ -438,21 +438,17 @@ pub fn ComponentDisplayComponent(
         <hr/>
         
         <h4>"Collection Grid Component<Holding>"</h4>
-        <TableComponent updatable=Updatable::new(
+        <TableComponent 
+        updatable=Updatable::new(
             vec! {
-                Holding { instrument_name : "SPY".to_string(), quantity : 755.3, unit_valuation :
-                Some(YearCurrencyValue { year : 2020, currency : 0, value : 440.1 }), cost_basis
-                : 320_000.0, ..Default::default() }, Holding { instrument_name : "IWM"
-                .to_string(), quantity : 1000.0, unit_valuation : Some(YearCurrencyValue { year :
-                2020, currency : 0, value : 180.1 }), cost_basis : 150_000.0,
-                ..Default::default() }, Holding { instrument_name : "NVDA".to_string(), quantity
-                : 500.3, unit_valuation : Some(YearCurrencyValue { year : 2020, currency : 0,
-                value : 420.1 }), cost_basis : 140_000.0, ..Default::default() },
+                Some(NormalSpec {mean:1.0, std_dev:2.0}), Some(NormalSpec {mean:2.0, std_dev:2.0}), Some(NormalSpec {mean:3.0, std_dev:2.0}), Some(NormalSpec {mean:4.0, std_dev:2.0}),
             },
             move |holding_list| {
                 show_update(format!("Holding list updated -> {holding_list:?}"));
             },
-        )/>
+        )
+        read_only = false
+        />
         <hr/>
         
         <div style="margin: 2rem;">"Dispose Test"</div>
