@@ -79,6 +79,8 @@ pub fn ComponentDisplayComponent(
         },
     );
 
+    let (disable, _set_disable) = create_signal(cx, true);
+
     view! { cx,
         <div style="
         position: -webkit-sticky; 

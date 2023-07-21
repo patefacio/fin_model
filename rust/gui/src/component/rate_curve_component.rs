@@ -147,6 +147,7 @@ pub fn RateCurveComponent(
                                 placeholder=Some("year".to_string())
                             />
                             <PercentInput
+                                disabled=Some(disabled)
                                 updatable=Updatable::new(
                                     Some(year_value.value),
                                     move |percent| {

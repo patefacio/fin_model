@@ -101,6 +101,9 @@ pub fn NumericInput(
     /// Signal requesting to clear the input.
     #[prop(default=None)]
     clear_input: Option<ReadSignal<()>>,
+    /// Signal allowing the disabling of the input.
+    #[prop(default=None)]
+    disabled: Option<ReadSignal<bool>>,
     /// Indicates decimals disallowed.
     #[prop(default = false)]
     no_decimal: bool,
@@ -310,6 +313,7 @@ pub fn NumericInput(
             maxlength=max_len
             size=size
             type="text"
+            disabled=move || disabled.map(|disabled| disabled.get()).unwrap_or_default()
         />
     }
     // ω <fn numeric_input>

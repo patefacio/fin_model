@@ -65,6 +65,9 @@ pub fn IntegerInput(
     /// If set, numeric text aligned to left.
     #[prop(default = false)]
     align_left: bool,
+    /// Signal allowing the disabling of the input.
+    #[prop(default=None)]
+    disabled: Option<ReadSignal<bool>>,
 ) -> impl IntoView {
     // α <fn integer_input>
 
@@ -100,6 +103,7 @@ pub fn IntegerInput(
             range=range.map(|range| *range.start() as f64 ..= *range.end() as f64)
             no_decimal=true
             align_left=align_left
+            disabled = disabled
         />
     }
 

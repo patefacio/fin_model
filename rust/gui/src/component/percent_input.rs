@@ -11,6 +11,7 @@ use leptos::create_signal;
 use leptos::log;
 use leptos::ReadSignal;
 use leptos::{component, view, IntoView, Scope};
+use leptos::SignalGet;
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::ops::RangeInclusive;
@@ -61,6 +62,9 @@ pub fn PercentInput(
     /// Signal requesting to clear the input.
     #[prop(default=None)]
     clear_input: Option<ReadSignal<()>>,
+    /// Signal allowing the disabling of the input.
+    #[prop(default=None)]
+    disabled: Option<ReadSignal<bool>>,
 ) -> impl IntoView {
     // α <fn percent_input>
 
@@ -86,6 +90,7 @@ pub fn PercentInput(
             clear_input=clear_input
             size=size
             range=range.map(|range| range.start() * 100.0..=range.end() * 100.0)
+            disabled=disabled
         />
     }
 
