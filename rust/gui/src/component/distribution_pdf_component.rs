@@ -25,6 +25,9 @@ pub fn DistributionPdfComponent(
     cx: Scope,
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
+    /// Disable
+    #[prop(default=false)]
+    disabled: bool,
 ) -> impl IntoView {
     // α <fn distribution_pdf_component>
 
@@ -34,10 +37,17 @@ pub fn DistributionPdfComponent(
 
     let plot = move || {
         let normal_spec = normal_spec.get();
-        normal_spec.get_pdf_chart(200)
+        if !disabled {
+            normal_spec.get_pdf_chart(200)
+        } else {
+            " ".to_string()
+        }
+
     };
 
+
     view! { cx, <div inner_html=plot></div> }
+    
 
     // ω <fn distribution_pdf_component>
 }

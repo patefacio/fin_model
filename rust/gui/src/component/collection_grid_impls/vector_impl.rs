@@ -1,5 +1,5 @@
 //! TODO: Document Module(holdings_impl)
-/*
+
 use crate::DistributionCdf;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
@@ -17,7 +17,7 @@ use crate::component::normal_spec_component::NormalBits;
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
 
-impl Table for Option<NormalBits> {
+impl<T> Table for Vec<T> {
     /// Get the number of columns.
     ///
     ///   * _return_ - Number of columns
@@ -51,8 +51,10 @@ impl Table for Option<NormalBits> {
         use leptos::IntoStyle;
 
         [
-            view! { cx, <div style:text-align="right">{self.as_ref().unwrap().cdf_output}</div> },
-            view! { cx, <div style:text-align="right">{&self.as_ref().unwrap().cdf_output}</div> },
+            for i in self {
+                view! { cx, <div style:text-align="right">{i}</div> }
+                view! { cx, <div style:text-align="right">{i}</div> }
+            },
         ]
         .into_iter()
         .map(|item| item.into_view(cx))
@@ -65,7 +67,7 @@ impl Table for Option<NormalBits> {
     ///   * _return_ - The key for the element
     fn get_key(&self) -> String {
         // α <fn CollectionGrid::get_key for Holding>
-        self.as_ref().unwrap().mean.unwrap_or_default().to_string()
+        self.unwrap_or_default().mean.unwrap_or_default().to_string()
         // ω <fn CollectionGrid::get_key for Holding>
     }
 
@@ -79,7 +81,7 @@ impl Table for Option<NormalBits> {
     }
 
     fn inputs(&self, i: f64) -> f64 {
-        self.as_ref().unwrap().cdf_output.unwrap_or_default()
+        self.unwrap_or_default().cdf_output.unwrap_or_default()
     }
 
     /// Create a view to edit the element
@@ -102,12 +104,12 @@ impl Table for Option<NormalBits> {
 
         //updatable.value = Some(updatable.value);
         //let temp = Updatable::new(Some(updatable.value),);
-        let new_updatable = updatable.value.unwrap_or_default().updatable;
+        let new_updatable =
 
         view! { cx, <NormalSpecComponent
-            updatable = new_updatable
+            updatable=updatable
         /> }
-        .into_view(cx)
+        .into_view(cx);
 
         // ω <fn CollectionGrid::edit_element for Holding>
     }
@@ -115,4 +117,3 @@ impl Table for Option<NormalBits> {
 
 // α <mod-def holdings_impl>
 // ω <mod-def holdings_impl>
-*/

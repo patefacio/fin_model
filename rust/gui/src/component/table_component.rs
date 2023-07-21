@@ -47,6 +47,8 @@ pub trait Table: Sized {
     ///   * _return_ - New element
     fn new() -> Self;
 
+    fn inputs(&self, i: f64) -> f64;
+
     /// Create a view to edit the element
     ///
     ///   * **cx** - Context

@@ -56,6 +56,7 @@ pub fn ComponentDisplayComponent(
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
 
+
     use crate::DateInput;
     use crate::IntegerInput;
 
@@ -437,11 +438,14 @@ pub fn ComponentDisplayComponent(
         )/>
         <hr/>
         
+        /*
         <h4>"Collection Grid Component<Holding>"</h4>
         <TableComponent 
         updatable=Updatable::new(
             vec! {
-                Some(NormalSpec {mean:1.0, std_dev:2.0}), Some(NormalSpec {mean:2.0, std_dev:2.0}), Some(NormalSpec {mean:3.0, std_dev:2.0}), Some(NormalSpec {mean:4.0, std_dev:2.0}),
+                Some(NormalBits {mean:Some(1.0), std_dev:Some(2.0), cdf_drawing_svg: " ".to_string(), pdf_drawing_svg: " ".to_string(), cdf_input:Some(1.0), cdf_output:Some(0.2)}),
+                
+                
             },
             move |holding_list| {
                 show_update(format!("Holding list updated -> {holding_list:?}"));
@@ -450,6 +454,7 @@ pub fn ComponentDisplayComponent(
         read_only = false
         />
         <hr/>
+        */
         
         <div style="margin: 2rem;">"Dispose Test"</div>
         <Show when=move || (read_count.get() % 2) == 0 fallback=|_| "Nothing">
