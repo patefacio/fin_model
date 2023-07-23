@@ -40,8 +40,6 @@ pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;
 pub use component::year_range_input::YearRangeInput;
 pub use component::year_value_input::YearValueInput;
-pub use component::table_component::Table;
-pub use component::table_component::TableComponent;
 pub use utils::distribution_cdf::DistributionCdf;
 pub use utils::distribution_pdf::DistributionPdf;
 pub use utils::historic_risk_return::HistoricRiskReturn;
@@ -69,6 +67,9 @@ type Year = u32;
 
 // α <mod-def lib>
 
+pub use component::table_component::Table;
+pub use component::table_component::TableComponent;
+
 use cfg_if::cfg_if;
 use num_format::ToFormattedStr;
 
@@ -81,10 +82,25 @@ if #[cfg(feature = "hydrate")] {
     pub fn hydrate() {
       use app::*;
       use leptos::*;
+      use tracing::field::debug;
+      use tracing_subscriber::util::SubscriberInitExt;
 
-      // initializes logging using the `log` crate
-      _ = console_log::init_with_level(log::Level::Debug);
+      leptos::log!("HYDRATION HAPPENING");
       console_error_panic_hook::set_once();
+
+      tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::TRACE)
+        .without_time()
+        .with_file(true)
+        .with_line_number(true)
+        .with_target(false)
+        .with_writer(tracing_subscriber_wasm::MakeConsoleWriter::default())
+        .with_ansi(false)
+        .pretty()
+        .finish()
+        .init();
+
+      tracing::debug!("What is going on?");
 
       leptos::mount_to_body(move |cx| {
           view! { cx, <App/> }

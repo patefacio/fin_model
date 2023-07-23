@@ -200,16 +200,27 @@ pub fn NormalSpecComponent(
                 <div class="header">"Chance to gain(%)"</div>
                 <div class="header">"Amount(%)"</div>
                 <For
-                    each = move || loss_indices.get()
-                    key = |item| { format!("{item:?}") }
-                    view = move |cx, cdf_input| {
+                    each=move || loss_indices.get()
+                    key=|item| { format!("{item:?}") }
+                    view=move |cx, cdf_input| {
                         view! { cx,
-                            <div inner_html=move || { format!("{:.2}%",cdf_input) } ></div>
-                            <div inner_html=move || { normal_bits.with(|normal_bits| match (normal_bits.std_dev, normal_bits.mean, normal_bits.updatable.value){
-                                    (Some(_), Some(_), Some(_)) => format!("{:.2}%", normal_bits.updatable.value.unwrap().cdf_sigmoid_approx(cdf_input).unwrap()*100.0 ),
-                                    _ => format!("_"),
-                                })
-                            } ></div>
+                            <div inner_html=move || { format!("{:.2}%", cdf_input) }></div>
+                            <div inner_html=move || {
+                                normal_bits
+                                    .with(|normal_bits| match (
+                                        normal_bits.std_dev,
+                                        normal_bits.mean,
+                                        normal_bits.updatable.value,
+                                    ) {
+                                        (Some(_), Some(_), Some(_)) => {
+                                            format!(
+                                                "{:.2}%", normal_bits.updatable.value.unwrap()
+                                                .cdf_sigmoid_approx(cdf_input).unwrap() * 100.0
+                                            )
+                                        }
+                                        _ => format!("_"),
+                                    })
+                            }></div>
                         }
                     }
                 />
@@ -224,10 +235,7 @@ pub fn NormalSpecComponent(
                     size=9
                     max_len=14
                 />
-
-
             </div>
-
             <div class="form">
                 <div style="display: grid">
                     "N("

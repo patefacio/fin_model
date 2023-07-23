@@ -91,16 +91,16 @@ impl CollectionGrid for Holding {
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * _return_ - The edit view
-    fn edit_element(cx: Scope, updatable: Updatable<Self>) -> View {
+    fn edit_element<F>( cx: Scope, updatable: Updatable<Self>, mut on_cancel: F) -> View where F: FnMut(&str) + 'static {
         // α <fn CollectionGrid::edit_element for Holding>
 
         use crate::HoldingComponent;
-        use crate::Updatable;
-        use leptos::log;
-        use leptos::SignalWith;
-        use plus_modeled::Holding;
 
-        let on_cancel = || log!("Holding edit canceled");
+        let key = updatable.value.get_key();
+
+        let on_cancel = move || {
+            on_cancel(&key);
+        };
 
         view! { cx, <HoldingComponent updatable=updatable on_cancel=on_cancel/> }
         .into_view(cx)

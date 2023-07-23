@@ -24,7 +24,7 @@ use web_sys::KeyboardEvent;
 /// Reactive prefixes are supported for cases where like
 /// currency which may need reactivity. The modification text appears
 /// in the html input of the component.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Modification {
     /// A prefix for the number.
     Prefix(String),
@@ -157,6 +157,18 @@ pub fn NumericInput(
     };
 
     let numeric_input_data = store_value(cx, numeric_input_data);
+
+    let log_me = move |s: &str| {
+        numeric_input_data.with_value(|nid| {
+            log!(
+                "`{s}` ({cx:?}) ->\n\tN:<{:?}>\n\tMod:<{:?}>\n\tRange:<{:?}>",
+                nid.updatable.value,
+                nid.modification,
+                nid.range
+            )
+        })
+    };
+
     let node_ref = create_node_ref::<Input>(cx);
     let component_is_initialized = move || node_ref.get().is_some();
 
@@ -203,11 +215,6 @@ pub fn NumericInput(
                 };
                 new_value = new_value.split('.').collect::<Vec<_>>()[0].to_string();
             }
-
-            console_log(&format!(
-                "Format result {:?}",
-                (value, &new_value, numeric_to_caret)
-            ));
 
             if let Some(modification) = modification.as_ref() {
                 if new_value.is_empty() {
@@ -284,6 +291,7 @@ pub fn NumericInput(
     };
 
     create_effect(cx, move |_| {
+
         let mut should_update = false;
         numeric_input_data.with_value(|numeric_input_data| {
             if let Some(Modification::ReactivePrefix(reactive)) =
@@ -294,10 +302,13 @@ pub fn NumericInput(
             }
         });
 
+        /* TODO: The following works until a component is hidden and redisplayed
         // **NOTE** Actual update occurs while not holding store or signal borrow
         if component_is_initialized() && should_update {
+            log_me(&format!("WHAT IS THIS?"));
             update_value.with_value(|update_value| update_value());
         }
+        */
     });
 
     view! { cx,

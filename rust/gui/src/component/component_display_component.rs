@@ -32,11 +32,11 @@ pub fn ComponentDisplayComponent(
     use crate::Modification;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
-    use crate::TableComponent;
     use crate::OkCancelComponent;
     use crate::PercentInput;
     use crate::RateCurveComponent;
     use crate::SelectDirection;
+    use crate::TableComponent;
     use crate::Updatable;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
@@ -79,7 +79,51 @@ pub fn ComponentDisplayComponent(
         },
     );
 
-    let (disable, _set_disable) = create_signal(cx, true);
+    let holdings = vec![
+        Holding {
+            instrument_name: "SPY".to_string(),
+            quantity: 755.3,
+            unit_valuation: Some(YearCurrencyValue {
+                year: 2020,
+                currency: 0,
+                value: 440.1,
+            }),
+            cost_basis: 320_000.0,
+            ..Default::default()
+        },
+        Holding {
+            instrument_name: "IWM".to_string(),
+            quantity: 1000.0,
+            unit_valuation: Some(YearCurrencyValue {
+                year: 2020,
+                currency: 0,
+                value: 180.1,
+            }),
+            cost_basis: 150_000.0,
+            ..Default::default()
+        },
+        Holding {
+            instrument_name: "NVDA".to_string(),
+            quantity: 500.3,
+            unit_valuation: Some(YearCurrencyValue {
+                year: 2020,
+                currency: 0,
+                value: 420.1,
+            }),
+            cost_basis: 140_000.0,
+            ..Default::default()
+        },
+    ];
+
+    let holdings = (0..1)
+        .map(|i| {
+            holdings.iter().map(move |h| Holding {
+                instrument_name: format!("{} -> {i}", h.instrument_name),
+                ..h.clone()
+            })
+        })
+        .flatten()
+        .collect::<Vec<_>>();
 
     view! { cx,
         <div style="
@@ -143,7 +187,7 @@ pub fn ComponentDisplayComponent(
                         updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
                         modification=Some(Modification::Prefix("$ ".to_string()))
                         placeholder=Some("dollars".to_string())
-                        size=15
+                        size=12
                     />
                 </div>
                 <div>
@@ -155,7 +199,7 @@ pub fn ComponentDisplayComponent(
                         updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
                         modification=Some(Modification::Prefix("€ ".to_string()))
                         placeholder=Some("euros".to_string())
-                        size=15
+                        size=12
                     />
                 </div>
                 <div>
@@ -172,7 +216,7 @@ pub fn ComponentDisplayComponent(
                         placeholder=Some("expense/yr".to_string())
                         range=Some(0.0..=5_000.0)
                         max_len=14
-                        size=15
+                        size=12
                     />
                 </div>
             </div>
@@ -424,31 +468,7 @@ pub fn ComponentDisplayComponent(
         <hr/>
         <h4>"Collection Grid Component<Holding>"</h4>
         <CollectionGridComponent updatable=Updatable::new(
-            vec! {
-                Holding { instrument_name : "SPY".to_string(), quantity : 755.3, unit_valuation :
-                Some(YearCurrencyValue { year : 2020, currency : 0, value : 440.1 }), cost_basis
-                : 320_000.0, ..Default::default() }, Holding { instrument_name : "IWM"
-                .to_string(), quantity : 1000.0, unit_valuation : Some(YearCurrencyValue { year :
-                2020, currency : 0, value : 180.1 }), cost_basis : 150_000.0,
-                ..Default::default() }, Holding { instrument_name : "NVDA".to_string(), quantity
-                : 500.3, unit_valuation : Some(YearCurrencyValue { year : 2020, currency : 0,
-                value : 420.1 }), cost_basis : 140_000.0, ..Default::default() },
-            },
-            move |holding_list| {
-                show_update(format!("Holding list updated -> {holding_list:?}"));
-            },
-        )/>
-        <hr/>
-        
-        /*
-        <h4>"Collection Grid Component<Holding>"</h4>
-        <TableComponent 
-        updatable=Updatable::new(
-            vec! {
-                Some(NormalBits {mean:Some(1.0), std_dev:Some(2.0), cdf_drawing_svg: " ".to_string(), pdf_drawing_svg: " ".to_string(), cdf_input:Some(1.0), cdf_output:Some(0.2)}),
-                
-                
-            },
+            holdings,
             move |holding_list| {
                 show_update(format!("Holding list updated -> {holding_list:?}"));
             },
@@ -456,8 +476,6 @@ pub fn ComponentDisplayComponent(
         read_only = false
         />
         <hr/>
-        */
-        
         <div style="margin: 2rem;">"Dispose Test"</div>
         <Show when=move || (read_count.get() % 2) == 0 fallback=|_| "Nothing">
             <DisposeTest/>

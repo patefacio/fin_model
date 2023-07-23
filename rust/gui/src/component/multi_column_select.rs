@@ -16,11 +16,12 @@ use leptos::{create_node_ref, create_rw_signal, store_value};
 use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use leptos_dom::ev::{focusin, mousedown};
 use leptos_dom::helpers::window_event_listener_untyped;
 use leptos_dom::html::{Button, Div};
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
-use web_sys::{Element, Event, KeyboardEvent, MouseEvent};
+use web_sys::{Element, Event, FocusEvent, KeyboardEvent, MouseEvent};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -130,6 +131,7 @@ where
     use leptos::html::Button;
     use leptos::NodeRef;
     use leptos::*;
+    use leptos_use::use_event_listener;
     let mut on_select = on_select;
 
     fn get_selection(element: Element) -> Option<(usize, String)> {
@@ -165,7 +167,7 @@ where
 
     impl<F> Drop for MCSData<F> {
         fn drop(&mut self) {
-            log!("DROPPING MCSData -> {self:?}");
+            //log!("DROPPING MCSData -> {self:?}");
         }
     }
 
@@ -361,9 +363,10 @@ where
         }
     });
 
-    let handle_global_mousedown = move |ev: Event| {
-        if !menu_is_hidden.get() {
-            if let Some(container_div) = mcs_grid_ref.get() {
+    #[cfg(not(feature = "ssr"))]
+    let _ = use_event_listener(cx, document(), mousedown, move |ev: MouseEvent| {
+        if let Some(container_div) = mcs_grid_ref.get_untracked() {
+            if !menu_is_hidden.get_untracked() {
                 let target_element = element_from_event(&ev);
                 let same_element =
                     container_div.is_equal_node(Some(target_element.unchecked_ref()));
@@ -372,18 +375,14 @@ where
                 }
             }
         }
-    };
+    });
 
     #[cfg(not(feature = "ssr"))]
-    window_event_listener_untyped("mousedown", handle_global_mousedown);
-
-    // Important that this reacts to focusin and not focus or blur.
-    // Focus and blur do not propagate!
-    let handle_global_focusin = move |ev: Event| {
-        if !menu_is_hidden.get() {
-            if let Some(container_div) = mcs_grid_ref.get() {
+    let _ = use_event_listener(cx, document(), focusin, move |ev: FocusEvent| {
+        if let Some(container_div) = mcs_grid_ref.get_untracked() {
+            if !menu_is_hidden.get_untracked() {
                 let target_element = element_from_event(&ev);
-                if let Some(main_button_ref) = main_button_ref.get() {
+                if let Some(main_button_ref) = main_button_ref.get_untracked() {
                     if main_button_ref.is_equal_node(Some(&target_element.unchecked_ref()))
                         && !container_div.contains(Some(&target_element))
                     {
@@ -392,10 +391,7 @@ where
                 }
             }
         }
-    };
-
-    #[cfg(not(feature = "ssr"))]
-    window_event_listener_untyped("focusin", handle_global_focusin);
+    });
 
     view! { cx,
         <div class="mcs-grid" disabled=move || { !menu_is_hidden.get() } node_ref=mcs_grid_ref>

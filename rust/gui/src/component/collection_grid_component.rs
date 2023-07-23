@@ -7,6 +7,7 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::RwSignal;
+use leptos::SignalGetUntracked;
 use leptos::View;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
@@ -54,7 +55,9 @@ pub trait CollectionGrid: Sized {
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * _return_ - The edit view
-    fn edit_element(cx: Scope, updatable: Updatable<Self>) -> View;
+    fn edit_element<F>(cx: Scope, updatable: Updatable<Self>, on_cancel: F) -> View
+    where
+        F: FnMut(&str) + 'static;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -92,12 +95,17 @@ where
     use leptos::IntoAttribute;
     use leptos::IntoView;
     use leptos::Show;
+    use leptos::SignalGet;
     use leptos::SignalUpdate;
+    use leptos::SignalUpdateUntracked;
     use leptos::SignalWith;
+    use leptos::SignalWithUntracked;
     use leptos::View;
     use leptos_dom::html::Div;
     use leptos_dom::Element;
     use leptos_dom::HtmlElement;
+    use std::collections::HashMap;
+    use std::rc::Rc;
 
     #[derive(Eq, PartialEq, Debug)]
     enum ComponentState {
@@ -111,7 +119,20 @@ where
         component_state: ComponentState,
     }
 
-    let cgc_data = create_rw_signal(
+    // Entry_signals is the map of keys to the signal associated with the index of the row,
+    // which enables update of view for specific row.
+    let signals = store_value(
+        cx,
+        updatable
+            .value
+            .iter()
+            .enumerate()
+            .map(|(i, row)| (row.get_key(), create_rw_signal(cx, i)))
+            .collect::<HashMap<String, RwSignal<usize>>>(),
+    );
+
+    // Component data containing the vector we manage and the current state
+    let cgc_data_signal = create_rw_signal(
         cx,
         CGCData {
             updatable,
@@ -119,9 +140,19 @@ where
         },
     );
 
-    let disabled =
-        move || cgc_data.with(|cgc_data| cgc_data.component_state != ComponentState::Display);
+    // If we are not in the _display_ state we are either editing a new entry or are editing
+    // a specific row. In either case we want the other rows to be disables
+    let is_disabled = move || {
+        cgc_data_signal.with(|cgc_data| cgc_data.component_state != ComponentState::Display)
+    };
 
+    let set_enabled = move || {
+        log!("Setting state back to display");
+        cgc_data_signal.update(|cgc_data| cgc_data.component_state = ComponentState::Display)
+    };
+
+    // A header for the component, including empty fields for our `Edit` and `Delete` buttons,
+    // so the shape matches that of the displayed rows
     let header = {
         let mut fields = <T as CollectionGrid>::get_header();
         if !read_only {
@@ -136,85 +167,188 @@ where
             .collect::<Vec<HtmlElement<Div>>>()
     };
 
+    // Reactive count of elements
+    let num_elements = move || cgc_data_signal.with(|cgc_data| cgc_data.updatable.value.len());
+
+    // Get the key associated with the row index into the vec
+    let nth_key = move |n: usize| {
+        cgc_data_signal.with_untracked(|cgc_data| {
+            cgc_data
+                .updatable
+                .value
+                .get(n)
+                .map(|row| row.get_key().clone())
+        })
+    };
+
+    // Signal to update the view of element identified by key
+    let key_signal =
+        move |key: &str| signals.with_value(|signals| signals.get(key).unwrap().clone());
+
+    // Delete the entry corresponding to the key.
+    let delete_by_key = move |key: &str| {
+        // Reach into the map of signals to get the index of the corresponding entry
+        if let Some(position) =
+            signals.with_value(|signals| signals.get(key).cloned().map(|signal| signal.get()))
+        {
+            // Call `update` since this removal of a row will need to be reflected in the
+            // <For... component that is tracking `cgc_data`
+            cgc_data_signal.update(|cgc_data| {
+                signals.update_value(|signals| {
+                    let rows = &mut cgc_data.updatable.value;
+                    rows.remove(position);
+                    let end = rows.len();
+                    // After removing the row we need to iterate over all subsequent
+                    // rows and decrement their index into the vector so they point
+                    // at the proper entry.
+                    let elements_after = &rows[position..end];
+                    for (i, row) in elements_after.iter().enumerate() {
+                        if let Some(row_signal) = signals.get_mut(&row.get_key()) {
+                            row_signal.update_untracked(|index| *index = position + i);
+                        }
+                    }
+                });
+            });
+        }
+    };
+
+    // Get the index into the vector of the row identified by key - **non-reactive**
+    let index_by_key =
+        move |key: &str| signals.with_value(|signals| signals.get(key).unwrap().get_untracked());
+
+    let make_edit_button = move |key: &str| {
+        let key = key.to_string();
+
+        view! { cx,
+            <button
+                on:click=move |_| {
+                    cgc_data_signal
+                        .update_untracked(|cgc_data| {
+                            log!("Updated component_state -> {:?}", cgc_data.component_state);
+                            log!("Edit clicked!");
+                            cgc_data
+                                .component_state = ComponentState::EditSelection {
+                                selection_key: key.clone(),
+                            };
+                        });
+                    key_signal(&key).update(|_| {});
+                }
+                disabled=is_disabled
+            >
+                "✍"
+            </button>
+        }
+        .into_view(cx)
+    };
+
+    let make_delete_button = move |key: &str| {
+        let key = key.to_string();
+        view! { cx,
+            <button
+                on:click=move |_| {
+                    log!("Trashcan clicked!");
+                    delete_by_key(&key);
+                }
+                disabled=is_disabled
+            >
+                "🗑"
+            </button>
+        }
+        .into_view(cx)
+    };
+
+    let is_this_row_edit = move |key: &str| {
+        signals.with_value(|signals| {
+            signals.get(&*key).unwrap().track();
+        });
+        cgc_data_signal.with_untracked(|cgc_data| {
+            match &cgc_data.component_state {
+                ComponentState::EditSelection { selection_key } => {
+                    selection_key == &*key
+                }
+                _ => false,
+            }
+        })
+    };
+
+    let this_row_updated = move |row: &T| {
+        let key_signal = key_signal(&row.get_key());
+        let index = key_signal.get_untracked();
+        cgc_data_signal.update_untracked(|cgc_data| {
+            if let Some(row_) = cgc_data.updatable.value.get_mut(index) {
+                *row_ = row.clone();
+            }
+        });
+        set_enabled();
+        key_signal.update(|i| log!("Signalling {i} for {row:?}"));
+    };
+
+    let this_row_canceled = move |key: &str| {
+        set_enabled();
+        key_signal(key).update(|_| {});
+    };
+
+    let row_cloned = move |key: &str| {
+        cgc_data_signal.with_untracked(move |cgc_data| {
+            cgc_data
+                .updatable
+                .value
+                .get(index_by_key(&*key))
+                .cloned()
+                .unwrap()
+        })
+    };
+
+    let show_row_editor = move |key: &str| {
+        let key = key.to_string();
+        let key2 = key.clone();
+       // log!("SHOWING ROW EDITOR! for `{key}`");
+       (0..10).for_each(|_| log!("SOMETEXT"));
+        view! { cx,
+            <Show when=move || { is_this_row_edit(&key) } fallback=|_| ()>
+                <div class="cgc-editable">
+                    {<T as CollectionGrid>::edit_element(
+                        cx,
+                        Updatable::new(row_cloned(&key2), this_row_updated),
+                        this_row_canceled,
+                    )}
+                </div>
+            </Show>
+        }
+    };
+
     view! { cx,
         <div style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;">
             {header}
             <For
-                each=move || cgc_data.with(|cgc_data| cgc_data.updatable.value.clone())
-                key=|item| { item.get_key() }
-                view=move |cx, item| {
-                    use std::rc::Rc;
-                    let item = Rc::new(item);
-                    let mut user_fields = item.get_fields(cx);
-                    let key = item.get_key();
-                    let this_row_updated = move |item: &_| {
-                        log!("Item updated {item:?}");
-                    };
-                    let this_row_edit = move || {
-                        cgc_data
-                            .with(|cgc_data| {
-                                let key = key.clone();
-                                log!("Checking on selection key vs `{key}`");
-                                match &cgc_data.component_state {
-                                    ComponentState::EditSelection { selection_key } => {
-                                        *selection_key == key
-                                    }
-                                    _ => false,
-                                }
-                            })
-                    };
-                    let key = item.get_key();
-                    let cloned_item = Rc::clone(&item);
+                each=move || 0..num_elements()
+                key=move |&i| nth_key(i)
+                view=move |cx, i| {
+                    let key_signal = key_signal(&nth_key(i).unwrap());
                     view! { cx,
-                        {
-                            if !read_only {
-                                user_fields
-                                    .insert(
-                                        0,
-                                        view! { cx,
-                                            <button on:click=|_| { log!("Trashcan clicked!") } disabled=disabled>
-                                                "🗑"
-                                            </button>
-                                        }
-                                            .into_view(cx),
-                                    );
-                                user_fields
-                                    .insert(
-                                        0,
-                                        view! { cx,
-                                            <button
-                                                on:click=move |_| {
-                                                    cgc_data
-                                                        .update(|cgc_data| {
-                                                            cgc_data
-                                                                .component_state = ComponentState::EditSelection {
-                                                                selection_key: key.clone(),
-                                                            };
-                                                            log!("Updated component_state -> {:?}", cgc_data.component_state);
-                                                        });
-                                                    log!("Edit clicked!");
+                        {move || {
+                            key_signal
+                                .with(move |&index| {
+                                    cgc_data_signal
+                                        .with_untracked(move |cgc_data| {
+                                            let key = nth_key(i).unwrap();
+                                            log!("Rerunning view for `{key}` tracking {key_signal:?}");
+                                            if let Some(row) = cgc_data.updatable.value.get(index) {
+                                                let mut user_fields = row.get_fields(cx);
+                                                if !read_only {
+                                                    user_fields.insert(0, make_delete_button(&key));
+                                                    user_fields.insert(0, make_edit_button(&key));
                                                 }
-                                                disabled=disabled
-                                            >
-                                                "✍"
-                                            </button>
-                                        }
-                                            .into_view(cx),
-                                    );
-                            }
-                            user_fields
-                        }
-                        <Show when=move || this_row_edit() fallback=|_| ()>
-                            <div class="cgc-editable">
-                                {<T as CollectionGrid>::edit_element(
-                                    cx,
-                                    Updatable::new((*item).clone(), this_row_updated),
-                                )}
-                            </div>
-                        </Show>
+                                                [user_fields.into_view(cx), show_row_editor(&key)].into_view(cx)
+                                            } else {
+                                                ().into_view(cx)
+                                            }
+                                        })
+                                })
+                        }}
                     }
                 }
-            /> <button>
+            /> <button disabled=is_disabled>
                 <strong>"+"</strong>
             </button>
             <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>

@@ -82,14 +82,17 @@ where
 {
     // α <fn holding_component>
 
+    use crate::CurrencyValueInput;
     use crate::EnumSelect;
     use crate::NormalSpecComponent;
+    use crate::NumericInput;
     use crate::OkCancel;
     use crate::OkCancelComponent;
     use crate::SymbolInput;
+    use crate::YearCurrencyValueInput;
     use crate::YearInput;
-    use crate::{Modification, NumericInput};
     use leptos::create_signal;
+    use leptos::store_value;
     use leptos::SignalGet;
     use leptos_dom::console_log;
     use plus_modeled::{
@@ -100,74 +103,65 @@ where
     use std::rc::Rc;
 
     let mut on_cancel = on_cancel;
-    let unit_valuation = updatable.value.unit_valuation;
-    let instrument_name = updatable.value.instrument_name.clone();
-    let updatable = Rc::new(RefCell::new(updatable));
+    let holding = &updatable.value;
+    let quantity = holding.quantity;
+    let unit_valuation = holding.unit_valuation;
+    let cost_basis = holding.cost_basis;
+    let instrument_name = holding.instrument_name.clone();
 
-    let symbol_updatable = Updatable::new(instrument_name.clone(), |symbol| {
-        console_log(&format!("Symbol is now {symbol:?}"));
+    log!("Showing HOLDING {holding:?} with yvc {unit_valuation:?}");
+
+    let updatable = store_value(cx, updatable);
+
+    let symbol_updatable = Updatable::new(instrument_name, move |symbol| {
+        updatable.update_value(|updatable| {
+            updatable.update(|holding| holding.instrument_name = symbol.clone())
+        });
+    });
+
+    let quantity_updatable = Updatable::new(Some(quantity), move |quantity| {
+        updatable.update_value(|updatable| {
+            updatable.update(|holding| {
+                if let Some(quantity) = quantity {
+                    holding.quantity = *quantity;
+                }
+            })
+        })
+    });
+
+    let unit_valuation_updatable = Updatable::new(unit_valuation, move |unit_valuation| {
+        log!("Unit value updated {unit_valuation:?}");
+        updatable.update_value(|updatable| {
+            updatable.update(|holding| holding.unit_valuation = *unit_valuation)
+        });
     });
 
     let (currency_symbol, set_currency_symbol) = create_signal(cx, String::from("$"));
-    let share_price_placeholder = Some(format!("e.g. {}50.00", currency_symbol.get()));
 
-    let updatable_for_price = updatable.clone();
-
-    let price_updatable = Updatable::new(
-        unit_valuation
-            // Map the YearValueCurrency to just the value part
-            .map(|year_value_currency| year_value_currency.value),
-        move |price: &Option<f64>| {
-            // No need to use it until ok/cancel
-        },
-    );
-
-    let updatable_for_quantity = updatable.clone();
-    let on_quantity_updated = move |quantity: f64| {
-        let mut current = updatable_for_quantity.borrow_mut();
-        current.update(|h| {
-            h.quantity = quantity;
+    let cost_basis_updatable = Updatable::new(Some(cost_basis), move |cost_basis| {
+        log!("Cost basis updated -> {cost_basis:?}");
+        updatable.update_value(|updatable| {
+            updatable.update(|holding| {
+                log!("Updating holding -> {holding:?}");
+                if let Some(cost_basis) = cost_basis {
+                    log!("Updating holding cost_basis -> {cost_basis:?}");
+                    holding.cost_basis = *cost_basis;
+                }
+            })
         });
-    };
-
-    let cost_basis_updatable = Updatable::new(0.0, |year| {
-        leptos_dom::console_log(&format!("Cost basis updated to {year}"));
     });
 
-    let year_updatable = Updatable::new(1929, |year| {
-        leptos_dom::console_log(&format!("Year updated to {year}"));
-    });
-
-    /*
-
-    let mappings_updatable_for_holding_type = mappings_updatable.clone();
-    let holdings_updatable_for_holding_type = updatable.clone();
-    let on_holding_type_updated = move |holding_type: &HoldingType| {
-        let mut current_mappings = mappings_updatable_for_holding_type.borrow_mut();
-        let current_holding = holdings_updatable_for_holding_type.borrow();
-        let instrument_name = &current_holding.value.instrument_name;
-        current_mappings.update(|mappings| {
-            mappings
-                .instrument_growth_map
-                .entry(instrument_name.clone())
-                .and_modify(|instrument_growth| {
-                    instrument_growth.item_growth.system_growth_id = Some(SystemGrowthId {
-                        system_id: Some(SystemId::HoldingItemId(*holding_type as i32 as u32)),
-                    });
-                });
-        })
-    };
-    */
-
+    // Get actual initial holding type from instrument mapping in balance sheet
     let initial_holding_type = HoldingType::UsEquityMarket;
-
     let holding_type_updatable = Updatable::new(initial_holding_type, |_| println!("Updated!"));
+
+
 
     let on_ok_cancel = move |ok_cancel| {
         log!("Ok/Cancel holding -> {ok_cancel:?}");
         match ok_cancel {
             OkCancel::Ok => {
-                updatable.as_ref().borrow_mut().signal();
+                updatable.update_value(|updatable| updatable.signal());
                 log!("Ok!");
             }
             OkCancel::Cancel => {
@@ -176,7 +170,7 @@ where
             }
         }
     };
-
+    
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
             <legend>"Holding"</legend>
@@ -189,6 +183,23 @@ where
                     <div>
                         <label>"Holding Type"</label>
                         <EnumSelect updatable=holding_type_updatable/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label for="quantity">"Quantity"</label>
+                        <NumericInput updatable=quantity_updatable/>
+                    </div>
+                    <div>
+                        <label for="unit-value">"Price"</label>
+                        <YearCurrencyValueInput 
+                        updatable=unit_valuation_updatable
+                        value_placeholder="price".to_string()
+                        />
+                    </div>
+                    <div>
+                        <label for="cost">"Cost"</label>
+                        <NumericInput updatable=cost_basis_updatable/>
                     </div>
                 </div>
                 <div class="form-row">

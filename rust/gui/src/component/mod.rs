@@ -32,7 +32,7 @@ pub mod year_currency_value_input;
 pub mod year_input;
 pub mod year_range_input;
 pub mod year_value_input;
-pub mod table_component;
 
 // α <mod-def component>
+pub mod table_component;
 // ω <mod-def component>

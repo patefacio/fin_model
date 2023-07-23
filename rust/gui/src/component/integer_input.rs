@@ -100,7 +100,7 @@ pub fn IntegerInput(
             max_len=max_len
             clear_input=clear_input
             size=size
-            range=range.map(|range| *range.start() as f64 ..= *range.end() as f64)
+            range=range.map(|range| *range.start() as f64..=*range.end() as f64)
             no_decimal=true
             align_left=align_left
             disabled = disabled
