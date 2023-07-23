@@ -7,7 +7,6 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::RwSignal;
-use leptos::SignalGetUntracked;
 use leptos::View;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
@@ -54,10 +53,11 @@ pub trait CollectionGrid: Sized {
     ///   * **updatable** - Read/write signal containing the element to edit.
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
+    ///   * **on_cancel** - Called if edit is canceled.
     ///   * _return_ - The edit view
     fn edit_element<F>(cx: Scope, updatable: Updatable<Self>, on_cancel: F) -> View
     where
-        F: FnMut(&str) + 'static;
+        F: 'static + FnMut(&str);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +96,7 @@ where
     use leptos::IntoView;
     use leptos::Show;
     use leptos::SignalGet;
+    use leptos::SignalGetUntracked;
     use leptos::SignalUpdate;
     use leptos::SignalUpdateUntracked;
     use leptos::SignalWith;

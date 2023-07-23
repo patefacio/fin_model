@@ -90,14 +90,17 @@ impl CollectionGrid for Holding {
     ///   * **updatable** - Read/write signal containing the element to edit.
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
+    ///   * **on_cancel** - Called if edit is canceled.
     ///   * _return_ - The edit view
-    fn edit_element<F>( cx: Scope, updatable: Updatable<Self>, mut on_cancel: F) -> View where F: FnMut(&str) + 'static {
+    fn edit_element<F>(cx: Scope, updatable: Updatable<Self>, on_cancel: F) -> View
+    where
+        F: 'static + FnMut(&str),
+    {
         // α <fn CollectionGrid::edit_element for Holding>
 
         use crate::HoldingComponent;
-
         let key = updatable.value.get_key();
-
+        let mut on_cancel = on_cancel;
         let on_cancel = move || {
             on_cancel(&key);
         };
