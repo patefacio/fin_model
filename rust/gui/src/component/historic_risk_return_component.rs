@@ -31,12 +31,15 @@ pub fn HistoricRiskReturnComponent(
     use crate::utils::historic_risk_return::HistoricRiskReturnPlot;
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use leptos::IntoAttribute;
-    use leptos::SignalGet;
+    use leptos::SignalWith;
 
-    let normal_spec = normal_spec.get();
-    let plot = normal_spec.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES);
+    let plot = move || normal_spec.with(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES));
+    view! {
+        cx,
 
-    view! { cx, <div inner_html=plot></div> }
+        <div inner_html=plot></div>
+
+    }
     // ω <fn historic_risk_return_component>
 }
 

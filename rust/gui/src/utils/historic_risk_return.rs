@@ -43,17 +43,24 @@ impl HistoricRiskReturnPlot for NormalSpec {
         use crate::utils::scale_by::scale_by;
         use plotters::prelude::*;
 
-        //let user_point =
+        let mut x_vec = historic_values
+            .iter()
+            .map(|hv| hv.risk_return.0)
+            .collect::<Vec<_>>();
 
-        // let mut x_vec = historic_values
-        //     .iter()
-        //     .map(|hv| hv.risk_return.0)
-        //     .collect::<Vec<_>>();
+        let mut y_vec = historic_values
+            .iter()
+            .map(|hv| hv.risk_return.1)
+            .collect::<Vec<_>>();
 
-        // let mut y_vec = historic_values
-        //     .iter()
-        //     .map(|hv| hv.risk_return.1)
-        //     .collect::<Vec<_>>();
+        let max_x = x_vec
+            .iter()
+            .max_by(|a, b| a.total_cmp(b))
+            .unwrap_or_else(|| &f64::MIN);
+        let max_y = y_vec
+            .iter()
+            .max_by(|a, b| a.total_cmp(b))
+            .unwrap_or_else(|| &f64::MIN);
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
@@ -69,7 +76,7 @@ impl HistoricRiskReturnPlot for NormalSpec {
                 .margin(4)
                 .x_label_area_size(30)
                 .y_label_area_size(60)
-                .build_cartesian_2d(0f64..0.5f64, 0f64..0.2f64)
+                .build_cartesian_2d(0f64..(max_x * 1.4), 0f64..(max_y * 1.1))
                 .unwrap();
 
             chart
@@ -81,13 +88,6 @@ impl HistoricRiskReturnPlot for NormalSpec {
                 .draw()
                 .unwrap();
 
-            // chart
-            //     .draw_series(LineSeries::new(
-
-            //         HISTORIC_RISK_RETURN_SAMPLES.iter().map(|hv| hv.risk_return),
-            //         &RED,
-            //     ))
-            //     .unwrap();
             let user_points = vec![(self.std_dev, self.mean)];
 
             chart

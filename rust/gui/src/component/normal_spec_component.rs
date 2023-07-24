@@ -47,6 +47,7 @@ pub fn NormalSpecComponent(
     use leptos::For;
     use leptos::IntoAttribute;
     use leptos::MaybeSignal;
+    use leptos::create_rw_signal;
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
