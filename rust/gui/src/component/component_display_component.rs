@@ -36,7 +36,6 @@ pub fn ComponentDisplayComponent(
     use crate::PercentInput;
     use crate::RateCurveComponent;
     use crate::SelectDirection;
-    use crate::TableComponent;
     use crate::Updatable;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
@@ -55,7 +54,6 @@ pub fn ComponentDisplayComponent(
     use plus_modeled::YearCurrencyValue;
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
-
 
     use crate::DateInput;
     use crate::IntegerInput;
@@ -467,13 +465,14 @@ pub fn ComponentDisplayComponent(
         )/>
         <hr/>
         <h4>"Collection Grid Component<Holding>"</h4>
-        <CollectionGridComponent updatable=Updatable::new(
-            holdings,
-            move |holding_list| {
-                show_update(format!("Holding list updated -> {holding_list:?}"));
-            },
-        )
-        read_only = false
+        <CollectionGridComponent
+            updatable=Updatable::new(
+                holdings,
+                move |holding_list| {
+                    show_update(format!("Holding list updated -> {holding_list:?}"));
+                },
+            )
+            read_only=false
         />
         <hr/>
         <div style="margin: 2rem;">"Dispose Test"</div>

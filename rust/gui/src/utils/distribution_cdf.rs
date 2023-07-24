@@ -36,6 +36,7 @@ impl DistributionCdf for NormalSpec {
     fn get_cdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionCdf::get_cdf_chart for NormalSpec>
 
+        use crate::utils::constants::plot_text_style;
         use crate::utils::scale_by::scale_by;
         use plotters::prelude::*;
 
@@ -50,8 +51,6 @@ impl DistributionCdf for NormalSpec {
 
         let mut x_vec = vec![0.0; num_points];
         let mut y_vec = vec![0.0; num_points];
-
-        
 
         let mut num_sigmas = max_sigma as f64;
         for i in 0..(num_points / 2) {
@@ -74,7 +73,6 @@ impl DistributionCdf for NormalSpec {
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
-            let text_style: TextStyle = ("sans-serif", 18).into();
             let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
                 .into_drawing_area()
                 .titled(
@@ -83,7 +81,7 @@ impl DistributionCdf for NormalSpec {
                         scale_by(self.mean, 2),
                         scale_by(self.std_dev, 2)
                     ),
-                    text_style.clone(),
+                    plot_text_style.clone(),
                 )
                 .expect("");
 

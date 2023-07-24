@@ -35,6 +35,7 @@ impl DistributionPdf for NormalSpec {
     ///   * _return_ - SVG image of distribution
     fn get_pdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionPdf::get_pdf_chart for NormalSpec>
+        use crate::utils::constants::plot_text_style;
         use crate::utils::scale_by::scale_by;
         use plotters::prelude::*;
 
@@ -72,7 +73,6 @@ impl DistributionPdf for NormalSpec {
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
-            let text_style: TextStyle = ("sans-serif", 18).into();
             let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
                 .into_drawing_area()
                 .titled(
@@ -81,7 +81,7 @@ impl DistributionPdf for NormalSpec {
                         scale_by(self.mean, 2),
                         scale_by(self.std_dev, 2)
                     ),
-                    text_style.clone(),
+                    plot_text_style.clone(),
                 )
                 .expect("");
 

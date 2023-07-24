@@ -291,7 +291,6 @@ pub fn NumericInput(
     };
 
     create_effect(cx, move |_| {
-
         let mut should_update = false;
         numeric_input_data.with_value(|numeric_input_data| {
             if let Some(Modification::ReactivePrefix(reactive)) =

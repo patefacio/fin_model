@@ -67,9 +67,6 @@ type Year = u32;
 
 // α <mod-def lib>
 
-pub use component::table_component::Table;
-pub use component::table_component::TableComponent;
-
 use cfg_if::cfg_if;
 use num_format::ToFormattedStr;
 

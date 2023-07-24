@@ -83,7 +83,7 @@ pub fn IntegerInput(
     let numeric_updatable = Updatable::new(float_value, move |new_float_value| {
         let actual_value = new_float_value.map(|v| v);
         updatable.update_and_then_signal(|new_value| {
-            *new_value = match actual_value{
+            *new_value = match actual_value {
                 Some(_) => Some(actual_value.unwrap() as u32),
                 None => None,
             };
@@ -103,10 +103,9 @@ pub fn IntegerInput(
             range=range.map(|range| *range.start() as f64..=*range.end() as f64)
             no_decimal=true
             align_left=align_left
-            disabled = disabled
+            disabled=disabled
         />
     }
-
 
     // ω <fn integer_input>
 }

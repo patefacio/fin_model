@@ -21,4 +21,10 @@ pub const UP_KEY: u32 = 38;
 pub const DOWN_KEY: u32 = 40;
 
 // α <mod-def constants>
+
+use once_cell::sync::Lazy;
+use plotters::prelude::*;
+
+pub const plot_text_style: Lazy<TextStyle> = Lazy::new(|| ("sans-serif", 18).into());
+
 // ω <mod-def constants>

@@ -155,8 +155,6 @@ where
     let initial_holding_type = HoldingType::UsEquityMarket;
     let holding_type_updatable = Updatable::new(initial_holding_type, |_| println!("Updated!"));
 
-
-
     let on_ok_cancel = move |ok_cancel| {
         log!("Ok/Cancel holding -> {ok_cancel:?}");
         match ok_cancel {
@@ -170,7 +168,7 @@ where
             }
         }
     };
-    
+
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
             <legend>"Holding"</legend>
@@ -192,9 +190,9 @@ where
                     </div>
                     <div>
                         <label for="unit-value">"Price"</label>
-                        <YearCurrencyValueInput 
-                        updatable=unit_valuation_updatable
-                        value_placeholder="price".to_string()
+                        <YearCurrencyValueInput
+                            updatable=unit_valuation_updatable
+                            value_placeholder="price".to_string()
                         />
                     </div>
                     <div>

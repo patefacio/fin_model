@@ -10,8 +10,8 @@ use leptos::create_signal;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView, Scope};
 use leptos::SignalGet;
+use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::ops::RangeInclusive;

@@ -105,8 +105,7 @@ impl CollectionGrid for Holding {
             on_cancel(&key);
         };
 
-        view! { cx, <HoldingComponent updatable=updatable on_cancel=on_cancel/> }
-        .into_view(cx)
+        view! { cx, <HoldingComponent updatable=updatable on_cancel=on_cancel/> }.into_view(cx)
 
         // ω <fn CollectionGrid::edit_element for Holding>
     }

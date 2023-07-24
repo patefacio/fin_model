@@ -4,8 +4,6 @@
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod holdings_impl;
-pub mod normal_spec_impl;
-//pub mod vector_impl;
 
 // α <mod-def collection_grid_impls>
 // ω <mod-def collection_grid_impls>

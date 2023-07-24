@@ -34,5 +34,4 @@ pub mod year_range_input;
 pub mod year_value_input;
 
 // α <mod-def component>
-pub mod table_component;
 // ω <mod-def component>

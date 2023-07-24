@@ -8,21 +8,20 @@ use crate::DistributionPdfComponent;
 use crate::Modification;
 use crate::NumericInput;
 use crate::Updatable;
-use leptos::WriteSignal;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::Show;
+use leptos::WriteSignal;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::core::NormalSpec;
-use leptos::Show;
 
 enum GraphDisplay {
     Pdf,
     Cdf,
-    Historic
+    Historic,
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -45,12 +44,12 @@ pub fn NormalSpecComponent(
 ) -> impl IntoView {
     // α <fn normal_spec_component>
 
+    use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use crate::DistributionCdf;
     use crate::DistributionPdf;
     use crate::HistoricRiskReturn;
     use crate::HistoricRiskReturnComponent;
     use crate::HistoricRiskReturnPlot;
-    use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use leptos::create_signal;
     use leptos::For;
     use leptos::IntoAttribute;
@@ -95,8 +94,10 @@ pub fn NormalSpecComponent(
         .map(|ns| ns.get_cdf_chart(200))
         .unwrap_or_default();
 
-    let (spec_signal, set_spec_signal) = create_signal(cx, updatable.value.as_ref().map(|ns| *ns).unwrap_or_default());
-
+    let (spec_signal, set_spec_signal) = create_signal(
+        cx,
+        updatable.value.as_ref().map(|ns| *ns).unwrap_or_default(),
+    );
 
     let (normal_spec, set_normal_spec) = create_signal(cx, updatable.value.unwrap_or_default());
 
@@ -120,27 +121,36 @@ pub fn NormalSpecComponent(
         },
     );
 
-    
-    let make_updates = move |normal_bits: &mut NormalBits, mut new_normal: NormalSpec, new_input: Option<f64>| {
-        new_normal.mean /= 100.0;
-        new_normal.std_dev /= 100.0;
-        normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
-        normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
-        set_spec_signal.update(|ns| {*ns = NormalSpec{mean: new_normal.mean, std_dev: new_normal.std_dev}; log!("New Specs to Graph") } );
-        new_normal.mean *= 100.0;
-        new_normal.std_dev *= 100.0;
-        // Before signalling undo the 100x
-        normal_bits
-            .updatable
-            .update_and_then_signal(move |normal_spec| *normal_spec = Some(new_normal));
-        match (new_input, normal_bits.updatable.value) {
-            (Some(_), Some(_)) => {
-                normal_bits.cdf_output =
-                    normal_bits.updatable.value.unwrap().cdf_sigmoid_approx(new_input.unwrap())
+    let make_updates =
+        move |normal_bits: &mut NormalBits, mut new_normal: NormalSpec, new_input: Option<f64>| {
+            new_normal.mean /= 100.0;
+            new_normal.std_dev /= 100.0;
+            normal_bits.pdf_drawing_svg = new_normal.get_pdf_chart(400);
+            normal_bits.cdf_drawing_svg = new_normal.get_cdf_chart(400);
+            set_spec_signal.update(|ns| {
+                *ns = NormalSpec {
+                    mean: new_normal.mean,
+                    std_dev: new_normal.std_dev,
+                };
+                log!("New Specs to Graph")
+            });
+            new_normal.mean *= 100.0;
+            new_normal.std_dev *= 100.0;
+            // Before signalling undo the 100x
+            normal_bits
+                .updatable
+                .update_and_then_signal(move |normal_spec| *normal_spec = Some(new_normal));
+            match (new_input, normal_bits.updatable.value) {
+                (Some(_), Some(_)) => {
+                    normal_bits.cdf_output = normal_bits
+                        .updatable
+                        .value
+                        .unwrap()
+                        .cdf_sigmoid_approx(new_input.unwrap())
+                }
+                _ => (),
             }
-            _ => (),
-        }
-    };
+        };
 
     let mean_updatable = Updatable::new(initial_mean, move |mean| {
         set_normal_bits.update(|normal_bits| {
@@ -168,9 +178,18 @@ pub fn NormalSpecComponent(
 
     let loss_updatable = Updatable::new(initial_loss, move |loss| {
         set_normal_bits.update(|normal_bits| {
-            match (loss, normal_bits.std_dev, normal_bits.mean, normal_bits.updatable.value) {
+            match (
+                loss,
+                normal_bits.std_dev,
+                normal_bits.mean,
+                normal_bits.updatable.value,
+            ) {
                 (Some(_), Some(_), Some(_), Some(_)) => {
-                    normal_bits.cdf_output = normal_bits.updatable.value.unwrap().cdf_sigmoid_approx(loss.unwrap());
+                    normal_bits.cdf_output = normal_bits
+                        .updatable
+                        .value
+                        .unwrap()
+                        .cdf_sigmoid_approx(loss.unwrap());
                     make_updates(
                         normal_bits,
                         NormalSpec {
@@ -190,52 +209,27 @@ pub fn NormalSpecComponent(
     });
 
     let (enable_graphs, set_disable_graphs) = create_signal(cx, GraphDisplay::Pdf);
-    let show_pdf = move |_| set_disable_graphs.update(|v| {*v = GraphDisplay::Pdf; log!("PDF Shown");} );
-    let show_cdf = move |_| set_disable_graphs.update(|v| {*v = GraphDisplay::Cdf; log!("CDF Shown");} );
-    let show_hist = move |_| set_disable_graphs.update(|v| {*v = GraphDisplay::Historic; log!("Historic Shown");} );
+    let show_pdf = move |_| {
+        set_disable_graphs.update(|v| {
+            *v = GraphDisplay::Pdf;
+            log!("PDF Shown");
+        })
+    };
+    let show_cdf = move |_| {
+        set_disable_graphs.update(|v| {
+            *v = GraphDisplay::Cdf;
+            log!("CDF Shown");
+        })
+    };
+    let show_hist = move |_| {
+        set_disable_graphs.update(|v| {
+            *v = GraphDisplay::Historic;
+            log!("Historic Shown");
+        })
+    };
 
     view! { cx,
         <fieldset class="nsg">
-            <div style="display: grid; grid-template-columns: 1fr 4fr;">
-                <div class="header">"Chance to gain(%)"</div>
-                <div class="header">"Amount(%)"</div>
-                <For
-                    each=move || loss_indices.get()
-                    key=|item| { format!("{item:?}") }
-                    view=move |cx, cdf_input| {
-                        view! { cx,
-                            <div inner_html=move || { format!("{:.2}%", cdf_input) }></div>
-                            <div inner_html=move || {
-                                normal_bits
-                                    .with(|normal_bits| match (
-                                        normal_bits.std_dev,
-                                        normal_bits.mean,
-                                        normal_bits.updatable.value,
-                                    ) {
-                                        (Some(_), Some(_), Some(_)) => {
-                                            format!(
-                                                "{:.2}%", normal_bits.updatable.value.unwrap()
-                                                .cdf_sigmoid_approx(cdf_input).unwrap() * 100.0
-                                            )
-                                        }
-                                        _ => format!("_"),
-                                    })
-                            }></div>
-                        }
-                    }
-                />
-                <NumericInput
-                    placeholder=Some("CDF Sample".to_string())
-                    modification=Some(Modification::PrefixAndSuffix {
-                        prefix: "gain= ".into(),
-                        suffix: "%".into(),
-                    })
-                    non_negative=non_negative_mean
-                    updatable=loss_updatable
-                    size=9
-                    max_len=14
-                />
-            </div>
             <div class="form">
                 <div style="display: grid">
                     "N("
@@ -263,34 +257,104 @@ pub fn NormalSpecComponent(
                     /> ")" <button style="margin-left: 0.2rem;">"…"</button>
                 </div>
             </div>
-            //<div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.pdf_drawing_svg.clone()) }></div>
-            //<div inner_html=move || { normal_bits.with(|normal_bits| normal_bits.cdf_drawing_svg.clone()) }></div>
-
-            //<div inner_html=move || { format!("disabled: {:?}",disable_graphs.with(|v| v[0])) } ></div>
-            <input on:click=show_pdf type = "radio" id="pdf" name="chart-select" value = "PDF"></input>
-            <label for ="pdf" >"PDF" </label>
-            <input on:click=show_cdf type = "radio" id="cdf" name="chart-select" value = "CDF"></input>
-            <label for ="cdf" >"CDF" </label>
-            <input on:click=show_hist type = "radio" id="historic" name="chart-select" value = "Historic"></input>
-            <label for ="historic" >"Historic" </label>
-
-            
-            <Show when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf)) fallback=|_| ()>
-                <DistributionPdfComponent
-                normal_spec = MaybeSignal::Dynamic(spec_signal.into())
+            <hr/>
+            <div style="display: grid; grid-template-columns: 1fr 1fr;">
+                <div style="text-align: right;" class="header">
+                    "Chance to gain(%)"
+                </div>
+                <div style="text-align: right;" class="header">
+                    "Amount(%)"
+                </div>
+                <For
+                    each=move || loss_indices.get()
+                    key=|item| { format!("{item:?}") }
+                    view=move |cx, cdf_input| {
+                        view! { cx,
+                            <div style="text-align: right;" inner_html=move || { format!("{:.2}%", cdf_input) }></div>
+                            <div
+                                style="text-align: right;"
+                                inner_html=move || {
+                                    normal_bits
+                                        .with(|normal_bits| match (
+                                            normal_bits.std_dev,
+                                            normal_bits.mean,
+                                            normal_bits.updatable.value,
+                                        ) {
+                                            (Some(_), Some(_), Some(_)) => {
+                                                format!(
+                                                    "{:.2}%", normal_bits.updatable.value.unwrap()
+                                                    .cdf_sigmoid_approx(cdf_input).unwrap() * 100.0
+                                                )
+                                            }
+                                            _ => format!("_"),
+                                        })
+                                }
+                            ></div>
+                        }
+                    }
                 />
-            </Show>
-            <Show when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf)) fallback=|_| ()>
-                <DistributionCdfComponent
-                normal_spec = MaybeSignal::Dynamic(spec_signal.into())
-                />
-            </Show>
-            <Show when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Historic)) fallback=|_| ()>
-                <HistoricRiskReturnComponent
-                normal_spec = MaybeSignal::Dynamic(spec_signal.into())
-                />
-            </Show>
-
+                <div>
+                    <hr/>
+                </div>
+                <div>
+                    <hr/>
+                </div>
+                <div style="text-align: right">
+                    <NumericInput
+                        placeholder=Some("CDF Sample".to_string())
+                        modification=Some(Modification::PrefixAndSuffix {
+                            prefix: "gain= ".into(),
+                            suffix: "%".into(),
+                        })
+                        non_negative=non_negative_mean
+                        updatable=loss_updatable
+                        size=12
+                        max_len=14
+                    />
+                </div>
+                <div style="text-align: right">"Loss for sample => "</div>
+            </div>
+            <hr/>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
+                <div>
+                    <input on:click=show_pdf type="radio" id="pdf" name="chart-select" value="PDF"/>
+                    <label for="pdf">"PDF"</label>
+                </div>
+                <div>
+                    <input on:click=show_cdf type="radio" id="cdf" name="chart-select" value="CDF"/>
+                    <label for="cdf">"CDF"</label>
+                </div>
+                <div>
+                    <input
+                        on:click=show_hist
+                        type="radio"
+                        id="historic"
+                        name="chart-select"
+                        value="Historic"
+                    />
+                    <label for="historic">"Historic"</label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <Show
+                    when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
+                    fallback=|_| ()
+                >
+                    <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
+                </Show>
+                <Show
+                    when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
+                    fallback=|_| ()
+                >
+                    <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
+                </Show>
+                <Show
+                    when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
+                    fallback=|_| ()
+                >
+                    <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
+                </Show>
+            </div>
             <output></output>
         </fieldset>
     }

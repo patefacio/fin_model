@@ -39,6 +39,7 @@ impl HistoricRiskReturnPlot for NormalSpec {
     ///   * _return_ - SVG image of the points on a plot.
     fn get_historic_plot(&self, historic_values: &[HistoricRiskReturn]) -> String {
         // α <fn HistoricRiskReturnPlot::get_historic_plot for NormalSpec>
+        use crate::utils::constants::plot_text_style;
         use crate::utils::scale_by::scale_by;
         use plotters::prelude::*;
 
@@ -56,13 +57,16 @@ impl HistoricRiskReturnPlot for NormalSpec {
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
-            let root = SVGBackend::with_string(&mut plot_buff, (400, 375)).into_drawing_area();
-            root.fill(&WHITE);
+            let root = SVGBackend::with_string(&mut plot_buff, (400, 375))
+                .into_drawing_area()
+                .titled("Historic Risk Return", plot_text_style.clone())
+                .expect("");
+
+            // root.fill(&WHITE);
             let root = root.margin(10, 10, 10, 10);
 
             let mut chart = ChartBuilder::on(&root)
                 .margin(4)
-                .caption("Historic Risk Return", ("sans-serif", 40).into_font())
                 .x_label_area_size(30)
                 .y_label_area_size(60)
                 .build_cartesian_2d(0f64..0.5f64, 0f64..0.2f64)

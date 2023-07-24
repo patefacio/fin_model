@@ -26,7 +26,7 @@ pub fn DistributionPdfComponent(
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
     /// Disable
-    #[prop(default=false)]
+    #[prop(default = false)]
     disabled: bool,
 ) -> impl IntoView {
     // α <fn distribution_pdf_component>
@@ -42,12 +42,9 @@ pub fn DistributionPdfComponent(
         } else {
             " ".to_string()
         }
-
     };
 
-
     view! { cx, <div inner_html=plot></div> }
-    
 
     // ω <fn distribution_pdf_component>
 }
