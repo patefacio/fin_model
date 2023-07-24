@@ -63,6 +63,7 @@ pub enum Modification {
 ///   * **on_enter** - Called if user hits enter, passes current input value.
 ///   * **clear_input** - Signal requesting to clear the input.
 ///   * **no_decimal** - Indicates decimals disallowed.
+///   * **disabled** - Signal allowing the disabling of the input.
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -101,12 +102,12 @@ pub fn NumericInput(
     /// Signal requesting to clear the input.
     #[prop(default=None)]
     clear_input: Option<ReadSignal<()>>,
-    /// Signal allowing the disabling of the input.
-    #[prop(default=None)]
-    disabled: Option<ReadSignal<bool>>,
     /// Indicates decimals disallowed.
     #[prop(default = false)]
     no_decimal: bool,
+    /// Signal allowing the disabling of the input.
+    #[prop(default=None)]
+    disabled: Option<ReadSignal<bool>>,
 ) -> impl IntoView {
     // α <fn numeric_input>
 

@@ -30,6 +30,7 @@ use std::ops::RangeInclusive;
 ///   * **on_enter** - Called if user hits enter, passes current input value.
 ///   * **clear_input** - Signal requesting to clear the input.
 ///   * **align_left** - If set, numeric text aligned to left.
+///   * **disabled** - Signal allowing the disabling of the input.
 ///   * _return_ - View for integer_input
 #[component]
 pub fn IntegerInput(

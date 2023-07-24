@@ -18,6 +18,7 @@ use plus_modeled::NormalSpec;
 ///
 ///   * **cx** - Context
 ///   * **normal_spec** - The normal to plot
+///   * **disabled** - Signal allowing the disabling of the input.
 ///   * _return_ - View for distribution_pdf_component
 #[component]
 pub fn DistributionPdfComponent(
@@ -25,7 +26,7 @@ pub fn DistributionPdfComponent(
     cx: Scope,
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
-    /// Disable
+    /// Signal allowing the disabling of the input.
     #[prop(default = false)]
     disabled: bool,
 ) -> impl IntoView {

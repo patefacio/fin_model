@@ -1,7 +1,5 @@
 //! Module for normal_spec_component leptos function/component
 
-use crate::DistributionCdfComponent;
-use crate::DistributionPdfComponent;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -11,17 +9,10 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::Show;
-use leptos::WriteSignal;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::core::NormalSpec;
-
-enum GraphDisplay {
-    Pdf,
-    Cdf,
-    Historic,
-}
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -45,6 +36,8 @@ pub fn NormalSpecComponent(
     // α <fn normal_spec_component>
 
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
+    use crate::DistributionCdfComponent;
+    use crate::DistributionPdfComponent;
     use crate::DistributionCdf;
     use crate::DistributionPdf;
     use crate::HistoricRiskReturn;
@@ -57,6 +50,13 @@ pub fn NormalSpecComponent(
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
+    use leptos::WriteSignal;
+
+    enum GraphDisplay {
+        Pdf,
+        Cdf,
+        Historic,
+    }
 
     struct NormalBits {
         mean: Option<f64>,

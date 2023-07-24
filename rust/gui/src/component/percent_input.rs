@@ -10,7 +10,6 @@ use leptos::create_signal;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
-use leptos::SignalGet;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -33,6 +32,7 @@ use std::ops::RangeInclusive;
 ///   * **non_negative** - If set, negative values are disallowed.
 ///   * **on_enter** - Called if user hits enter, passes current input value.
 ///   * **clear_input** - Signal requesting to clear the input.
+///   * **disabled** - Signal allowing the disabling of the input.
 ///   * _return_ - View for percent_input
 #[component]
 pub fn PercentInput(
