@@ -260,10 +260,10 @@ pub fn NormalSpecComponent(
             <hr/>
             <div style="display: grid; grid-template-columns: 1fr 1fr;">
                 <div style="text-align: right;" class="header">
-                    "Chance to gain(%)"
+                    "Gain Less Than(%)"
                 </div>
                 <div style="text-align: right;" class="header">
-                    "Amount(%)"
+                    "Probability(%)"
                 </div>
                 <For
                     each=move || loss_indices.get()
