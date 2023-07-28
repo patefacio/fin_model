@@ -299,8 +299,6 @@ where
     let show_row_editor = move |key: &str| {
         let key = key.to_string();
         let key2 = key.clone();
-        // log!("SHOWING ROW EDITOR! for `{key}`");
-        (0..10).for_each(|_| log!("SOMETEXT"));
         view! { cx,
             <Show when=move || { is_this_row_edit(&key) } fallback=|_| ()>
                 <div class="cgc-editable">
