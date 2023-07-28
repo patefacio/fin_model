@@ -32,7 +32,7 @@ message Person {
   /*
     Year of birth.
   */
-  uint32 birth_year = 3;
+  optional uint32 birth_year = 3;
   
   /*
     Important age data for the person.

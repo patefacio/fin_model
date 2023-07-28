@@ -36,10 +36,10 @@ pub fn NormalSpecComponent(
     // α <fn normal_spec_component>
 
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
-    use crate::DistributionCdfComponent;
-    use crate::DistributionPdfComponent;
     use crate::DistributionCdf;
+    use crate::DistributionCdfComponent;
     use crate::DistributionPdf;
+    use crate::DistributionPdfComponent;
     use crate::HistoricRiskReturn;
     use crate::HistoricRiskReturnComponent;
     use crate::HistoricRiskReturnPlot;

@@ -18,8 +18,8 @@ pub struct Person {
     pub person_type: i32,
     ///
     /// Year of birth.
-    #[prost(uint32, tag = "3")]
-    pub birth_year: u32,
+    #[prost(uint32, optional, tag = "3")]
+    pub birth_year: ::core::option::Option<u32>,
     ///
     /// Important age data for the person.
     #[prost(message, optional, tag = "4")]
