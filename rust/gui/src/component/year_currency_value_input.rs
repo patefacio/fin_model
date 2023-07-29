@@ -122,7 +122,9 @@ pub fn YearCurrencyValueInput(
         }
     });
 
-    let modification = Some(Modification::Prefix(MaybeSignal::Dynamic(currency_prefix.into())));
+    let modification = Some(Modification::Prefix(MaybeSignal::Dynamic(
+        currency_prefix.into(),
+    )));
 
     view! { cx,
         <div class="ycv" style="display: flex">

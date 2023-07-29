@@ -27,6 +27,7 @@ pub use component::multi_column_select::InitialValue;
 pub use component::multi_column_select::MultiColumnSelect;
 pub use component::multi_column_select::SelectDirection;
 pub use component::multi_column_select::SelectOption;
+pub use component::normal_loss_component::NormalLossComponent;
 pub use component::normal_spec_component::NormalSpecComponent;
 pub use component::numeric_input::Modification;
 pub use component::numeric_input::NumericInput;

@@ -292,9 +292,7 @@ where
         let key = key.to_string();
         let edit_key = key.clone();
         view! { cx,
-            <Show when=move || {
-                is_this_row_edit(&key)
-            } fallback=|_| ()>
+            <Show when=move || { is_this_row_edit(&key) } fallback=|_| ()>
                 <div class="cgc-editable">
                     {<T as CollectionGrid>::edit_element(
                         cx,
@@ -307,8 +305,7 @@ where
     };
 
     let show_new_row_editor = move || {
-        view! {
-            cx,
+        view! { cx,
             <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>
             <Show when=move || false fallback=|_| ()>
                 <div>"Foo"</div>
@@ -316,17 +313,12 @@ where
         }
     };
 
-
     view! { cx,
         <div style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;">
             {header}
             <For
-                each=move || {
-                    0..num_elements()
-                }
-                key=move |&i| {
-                    nth_key(i)
-                }
+                each=move || { 0..num_elements() }
+                key=move |&i| { nth_key(i) }
                 view=move |cx, i| {
                     let key = Rc::new(nth_key(i).unwrap());
                     let key_signal = key_signal(&key);
@@ -356,8 +348,7 @@ where
                 }
             /> <button disabled=move || is_disabled()>
                 <strong>"+"</strong>
-            </button>
-            {show_new_row_editor}
+            </button> {show_new_row_editor}
         </div>
     }
 

@@ -390,7 +390,9 @@ impl Modification {
         // α <fn Modification::prefix_count>
         use leptos::SignalWithUntracked;
         match &self {
-            Modification::Prefix(maybe_signal) => maybe_signal.with_untracked(|p| p.chars().count()),
+            Modification::Prefix(maybe_signal) => {
+                maybe_signal.with_untracked(|p| p.chars().count())
+            }
             Modification::PrefixAndSuffix { prefix, suffix: _ } => prefix.chars().count(),
             Modification::Suffix(_) => 0,
         }
@@ -477,8 +479,8 @@ pub mod unit_tests {
         }
 
         // α <mod-def test_modification>
-        use leptos::MaybeSignal;
         use crate::Modification;
+        use leptos::MaybeSignal;
         // ω <mod-def test_modification>
     }
 

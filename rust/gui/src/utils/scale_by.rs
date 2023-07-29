@@ -16,18 +16,20 @@
 pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
     // α <fn scale_by>
 
-    // TODO: Don't do it this way. Either use some math trickery or
-    // convert input to string up front, iterate through adjusting the
-    // number
-
     let mut s = n.to_string();
-    let temp = s.find('.');
-    let point: usize;
-    match temp {
-        Some(_) => point = temp.unwrap(),
+
+    let has_minus = if s.chars().next().unwrap() == '-' {
+        s.remove(0);
+        true
+    } else {
+        false
+    };
+
+    let point = match s.find('.') {
+        Some(point) => point,
         None => {
             s.push_str(".0");
-            point = s.len() - 2;
+            s.len() - 2
         }
     };
 
@@ -52,7 +54,7 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
         }
     }
 
-    let s = lhs + "." + &rhs;
+    let s = format!("{}{}.{}", if has_minus { "-" } else { "" }, lhs, rhs);
     return s.parse::<f64>().unwrap();
 
     // ω <fn scale_by>
@@ -74,6 +76,8 @@ pub mod unit_tests {
         assert_eq!(55.5, scale_by(555.0, -1));
         assert_eq!(55.5, scale_by(55.5, 0));
         assert_eq!(15.0, scale_by(0.15, 2));
+        assert_eq!(-0.1, scale_by(-10.0, -2));
+        assert_eq!(-0.01, scale_by(-1., -2));
 
         // ω <fn test_scale_by>
     }

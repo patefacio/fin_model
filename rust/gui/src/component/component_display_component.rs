@@ -29,6 +29,7 @@ pub fn ComponentDisplayComponent(
     use crate::DistributionPdfComponent;
     use crate::EnumSelect;
     use crate::Modification;
+    use crate::NormalLossComponent;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
     use crate::OkCancelComponent;
@@ -142,6 +143,7 @@ pub fn ComponentDisplayComponent(
             mean: 0.1,
             std_dev: 0.2,
         })/>
+        <NormalLossComponent normal_spec=MaybeSignal::Dynamic(pdf_normal.into())/>
         <h3>"Numbers"</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
             <div style="padding: 1em;">

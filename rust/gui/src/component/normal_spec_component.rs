@@ -35,30 +35,24 @@ pub fn NormalSpecComponent(
 ) -> impl IntoView {
     // α <fn normal_spec_component>
 
-    use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use crate::DistributionCdf;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdf;
     use crate::DistributionPdfComponent;
-    use crate::HistoricRiskReturn;
     use crate::HistoricRiskReturnComponent;
-    use crate::HistoricRiskReturnPlot;
     use leptos::create_signal;
     use leptos::For;
     use leptos::IntoAttribute;
     use leptos::MaybeSignal;
-    use leptos::create_rw_signal;
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
-    use leptos::WriteSignal;
 
     enum GraphDisplay {
         Pdf,
         Cdf,
         Historic,
     }
-
     struct NormalBits {
         mean: Option<f64>,
         std_dev: Option<f64>,

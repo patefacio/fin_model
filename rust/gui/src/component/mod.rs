@@ -21,6 +21,7 @@ pub mod historic_risk_return_component;
 pub mod holding_component;
 pub mod integer_input;
 pub mod multi_column_select;
+pub mod normal_loss_component;
 pub mod normal_spec_component;
 pub mod numeric_input;
 pub mod ok_cancel_component;
