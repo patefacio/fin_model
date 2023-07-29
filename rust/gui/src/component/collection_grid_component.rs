@@ -90,7 +90,6 @@ where
 
     use leptos::create_rw_signal;
     use leptos::store_value;
-    use leptos::Component;
     use leptos::For;
     use leptos::IntoAttribute;
     use leptos::IntoView;
@@ -101,9 +100,7 @@ where
     use leptos::SignalUpdateUntracked;
     use leptos::SignalWith;
     use leptos::SignalWithUntracked;
-    use leptos::View;
     use leptos_dom::html::Div;
-    use leptos_dom::Element;
     use leptos_dom::HtmlElement;
     use std::collections::HashMap;
     use std::rc::Rc;
@@ -224,9 +221,7 @@ where
             <button
                 on:click=move |_| {
                     cgc_data_signal
-                        .update_untracked(|cgc_data| {
-                            log!("Updated component_state -> {:?}", cgc_data.component_state);
-                            log!("Edit clicked!");
+                        .update(|cgc_data| {
                             cgc_data
                                 .component_state = ComponentState::EditSelection {
                                 selection_key: key.clone(),
@@ -234,7 +229,7 @@ where
                         });
                     key_signal(&key).update(|_| {});
                 }
-                disabled=is_disabled
+                disabled=move || is_disabled()
             >
                 "✍"
             </button>
@@ -250,7 +245,7 @@ where
                     log!("Trashcan clicked!");
                     delete_by_key(&key);
                 }
-                disabled=is_disabled
+                disabled=move || is_disabled()
             >
                 "🗑"
             </button>
@@ -259,9 +254,6 @@ where
     };
 
     let is_this_row_edit = move |key: &str| {
-        signals.with_value(|signals| {
-            signals.get(&*key).unwrap().track();
-        });
         cgc_data_signal.with_untracked(|cgc_data| match &cgc_data.component_state {
             ComponentState::EditSelection { selection_key } => selection_key == &*key,
             _ => false,
@@ -298,13 +290,15 @@ where
 
     let show_row_editor = move |key: &str| {
         let key = key.to_string();
-        let key2 = key.clone();
+        let edit_key = key.clone();
         view! { cx,
-            <Show when=move || { is_this_row_edit(&key) } fallback=|_| ()>
+            <Show when=move || {
+                is_this_row_edit(&key)
+            } fallback=|_| ()>
                 <div class="cgc-editable">
                     {<T as CollectionGrid>::edit_element(
                         cx,
-                        Updatable::new(row_cloned(&key2), this_row_updated),
+                        Updatable::new(row_cloned(&edit_key), this_row_updated),
                         this_row_canceled,
                     )}
                 </div>
@@ -312,22 +306,39 @@ where
         }
     };
 
+    let show_new_row_editor = move || {
+        view! {
+            cx,
+            <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>
+            <Show when=move || false fallback=|_| ()>
+                <div>"Foo"</div>
+            </Show>
+        }
+    };
+
+
     view! { cx,
         <div style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;">
             {header}
             <For
-                each=move || 0..num_elements()
-                key=move |&i| nth_key(i)
+                each=move || {
+                    0..num_elements()
+                }
+                key=move |&i| {
+                    nth_key(i)
+                }
                 view=move |cx, i| {
-                    let key_signal = key_signal(&nth_key(i).unwrap());
+                    let key = Rc::new(nth_key(i).unwrap());
+                    let key_signal = key_signal(&key);
                     view! { cx,
                         {move || {
+                            let key = Rc::clone(&key);
                             key_signal
                                 .with(move |&index| {
+                                    let key = Rc::clone(&key);
                                     cgc_data_signal
                                         .with_untracked(move |cgc_data| {
-                                            let key = nth_key(i).unwrap();
-                                            log!("Rerunning view for `{key}` tracking {key_signal:?}");
+                                            let key = Rc::clone(&key);
                                             if let Some(row) = cgc_data.updatable.value.get(index) {
                                                 let mut user_fields = row.get_fields(cx);
                                                 if !read_only {
@@ -343,10 +354,10 @@ where
                         }}
                     }
                 }
-            /> <button disabled=is_disabled>
+            /> <button disabled=move || is_disabled()>
                 <strong>"+"</strong>
             </button>
-            <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>
+            {show_new_row_editor}
         </div>
     }
 

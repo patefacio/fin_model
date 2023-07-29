@@ -8,6 +8,7 @@ use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::MaybeSignal;
 use leptos::{component, view, IntoView, Scope};
 use leptos::{create_effect, create_node_ref, create_signal, store_value, ReadSignal, SignalWith};
 #[allow(unused_imports)]
@@ -27,9 +28,7 @@ use web_sys::KeyboardEvent;
 #[derive(Debug, Clone)]
 pub enum Modification {
     /// A prefix for the number.
-    Prefix(String),
-    /// A reactive prefix for the number.
-    ReactivePrefix(ReadSignal<String>),
+    Prefix(MaybeSignal<String>),
     /// A suffix for the number.
     Suffix(String),
     /// A prefix and suffix for the number.
@@ -159,7 +158,7 @@ pub fn NumericInput(
 
     let numeric_input_data = store_value(cx, numeric_input_data);
 
-    let log_me = move |s: &str| {
+    let _log_me = move |s: &str| {
         numeric_input_data.with_value(|nid| {
             log!(
                 "`{s}` ({cx:?}) ->\n\tN:<{:?}>\n\tMod:<{:?}>\n\tRange:<{:?}>",
@@ -294,7 +293,7 @@ pub fn NumericInput(
     create_effect(cx, move |_| {
         let mut should_update = false;
         numeric_input_data.with_value(|numeric_input_data| {
-            if let Some(Modification::ReactivePrefix(reactive)) =
+            if let Some(Modification::Prefix(MaybeSignal::Dynamic(reactive))) =
                 numeric_input_data.modification.as_ref()
             {
                 reactive.track();
@@ -302,13 +301,9 @@ pub fn NumericInput(
             }
         });
 
-        /* TODO: The following works until a component is hidden and redisplayed
-        // **NOTE** Actual update occurs while not holding store or signal borrow
         if component_is_initialized() && should_update {
-            log_me(&format!("WHAT IS THIS?"));
             update_value.with_value(|update_value| update_value());
         }
-        */
     });
 
     view! { cx,
@@ -345,8 +340,9 @@ impl Modification {
         // α <fn Modification::position_in_number>
         debug_assert!(position <= input_len);
         let constrained = match &self {
-            Modification::ReactivePrefix(p) => p.with(|p| p.chars().count().max(position)),
-            Modification::Prefix(p) => p.chars().count().max(position),
+            Modification::Prefix(maybe_signal) => {
+                maybe_signal.with(|p| p.chars().count().max(position))
+            }
             Modification::Suffix(s) => (input_len - s.chars().count()).min(position),
             Modification::PrefixAndSuffix { prefix, suffix } => (input_len
                 - suffix.chars().count())
@@ -367,14 +363,9 @@ impl Modification {
         use leptos::SignalWithUntracked;
         let mut modified = input.to_string();
         let result = match &self {
-            Modification::ReactivePrefix(p) => p.with_untracked(|p| {
-                debug_assert!(!modified.contains(p));
-                modified.insert_str(0, p);
-                modified
-            }),
-            Modification::Prefix(p) => {
-                debug_assert!(!modified.contains(p));
-                modified.insert_str(0, p);
+            Modification::Prefix(maybe_signal) => {
+                maybe_signal.with_untracked(|p| debug_assert!(!modified.contains(p)));
+                maybe_signal.with_untracked(|p| modified.insert_str(0, &p));
                 modified
             }
             Modification::Suffix(s) => {
@@ -397,9 +388,9 @@ impl Modification {
     ///   * _return_ - Number of characters in prefix
     pub fn prefix_count(&self) -> usize {
         // α <fn Modification::prefix_count>
+        use leptos::SignalWithUntracked;
         match &self {
-            Modification::ReactivePrefix(p) => p.with(|p| p.chars().count()),
-            Modification::Prefix(p) => p.chars().count(),
+            Modification::Prefix(maybe_signal) => maybe_signal.with_untracked(|p| p.chars().count()),
             Modification::PrefixAndSuffix { prefix, suffix: _ } => prefix.chars().count(),
             Modification::Suffix(_) => 0,
         }
@@ -425,7 +416,7 @@ pub mod unit_tests {
         fn position_in_number() {
             // α <fn test Modification::position_in_number>
 
-            let prefix_modification = Modification::Prefix("USD:".to_string());
+            let prefix_modification = Modification::Prefix(MaybeSignal::Static("USD:".to_string()));
             assert_eq!(5, prefix_modification.position_in_number(8, 5));
             assert_eq!(4, prefix_modification.position_in_number(8, 1));
 
@@ -439,7 +430,7 @@ pub mod unit_tests {
         #[test]
         fn modify() {
             // α <fn test Modification::modify>
-            let prefix_modification = Modification::Prefix("$".to_string());
+            let prefix_modification = Modification::Prefix(MaybeSignal::Static("$".to_string()));
             assert_eq!(
                 "$123,456".to_string(),
                 prefix_modification.modify("123,456")
@@ -486,6 +477,7 @@ pub mod unit_tests {
         }
 
         // α <mod-def test_modification>
+        use leptos::MaybeSignal;
         use crate::Modification;
         // ω <mod-def test_modification>
     }

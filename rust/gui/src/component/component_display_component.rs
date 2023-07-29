@@ -27,7 +27,6 @@ pub fn ComponentDisplayComponent(
     use crate::DisposeTest;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
-    use crate::DossierCorrelationMatrixComponent;
     use crate::EnumSelect;
     use crate::Modification;
     use crate::NormalSpecComponent;
@@ -41,11 +40,9 @@ pub fn ComponentDisplayComponent(
     use crate::YearInput;
     use crate::YearRangeInput;
     use crate::YearValueInput;
-    use crate::{InitialValue, MultiColumnSelect, SelectOption};
     use leptos::*;
     use leptos_dom::console_log;
 
-    use plus_modeled::core::dossier_item_index::ItemIndex;
     use plus_modeled::Currency;
     use plus_modeled::Holding;
     use plus_modeled::NormalSpec;
@@ -113,7 +110,7 @@ pub fn ComponentDisplayComponent(
         },
     ];
 
-    let holdings = (0..1)
+    let holdings = (0..10)
         .map(|i| {
             holdings.iter().map(move |h| Holding {
                 instrument_name: format!("{} -> {i}", h.instrument_name),
@@ -183,7 +180,7 @@ pub fn ComponentDisplayComponent(
                     "></p>
                     <NumericInput
                         updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
-                        modification=Some(Modification::Prefix("$ ".to_string()))
+                        modification=Some(Modification::Prefix(MaybeSignal::Static("$ ".to_string())))
                         placeholder=Some("dollars".to_string())
                         size=12
                     />
@@ -195,7 +192,7 @@ pub fn ComponentDisplayComponent(
                     "></p>
                     <NumericInput
                         updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
-                        modification=Some(Modification::Prefix("€ ".to_string()))
+                        modification=Some(Modification::Prefix(MaybeSignal::Static("€ ".to_string())))
                         placeholder=Some("euros".to_string())
                         size=12
                     />

@@ -143,16 +143,14 @@ pub fn DateInput(
                                 update_value();
                                 ev.prevent_default();
                             }
-                        } else {
-                            if position < 3 {
-                                _ = input_ref.set_selection_range(3, 3);
-                                update_value();
-                                ev.prevent_default();
-                            } else if position < 6 {
-                                _ = input_ref.set_selection_range(6, 6);
-                                update_value();
-                                ev.prevent_default();
-                            }
+                        } else if position < 3 {
+                            _ = input_ref.set_selection_range(3, 3);
+                            update_value();
+                            ev.prevent_default();
+                        } else if position < 6 {
+                            _ = input_ref.set_selection_range(6, 6);
+                            update_value();
+                            ev.prevent_default();
                         }
                     }
                     RIGHT_KEY => {

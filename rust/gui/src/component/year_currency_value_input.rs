@@ -48,6 +48,7 @@ pub fn YearCurrencyValueInput(
     use crate::YearInput;
     use leptos::create_signal;
     use leptos::store_value;
+    use leptos::MaybeSignal;
     use leptos::SignalUpdate;
     use plus_modeled::Currency;
 
@@ -121,7 +122,7 @@ pub fn YearCurrencyValueInput(
         }
     });
 
-    let modification = Some(Modification::ReactivePrefix(currency_prefix));
+    let modification = Some(Modification::Prefix(MaybeSignal::Dynamic(currency_prefix.into())));
 
     view! { cx,
         <div class="ycv" style="display: flex">

@@ -82,7 +82,6 @@ where
 {
     // α <fn holding_component>
 
-    use crate::CurrencyValueInput;
     use crate::EnumSelect;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
@@ -90,7 +89,6 @@ where
     use crate::OkCancelComponent;
     use crate::SymbolInput;
     use crate::YearCurrencyValueInput;
-    use crate::YearInput;
     use leptos::create_signal;
     use leptos::store_value;
     use leptos::SignalGet;
@@ -99,8 +97,6 @@ where
         core_enums::HoldingType,
         growth::{system_growth_id::SystemId, SystemGrowthId},
     };
-    use std::cell::RefCell;
-    use std::rc::Rc;
 
     let mut on_cancel = on_cancel;
     let holding = &updatable.value;
@@ -109,7 +105,7 @@ where
     let cost_basis = holding.cost_basis;
     let instrument_name = holding.instrument_name.clone();
 
-    log!("Showing HOLDING {holding:?} with yvc {unit_valuation:?}");
+    log!("Showing HOLDING {cx:?} {holding:?} with yvc {unit_valuation:?}");
 
     let updatable = store_value(cx, updatable);
 
@@ -142,9 +138,7 @@ where
         log!("Cost basis updated -> {cost_basis:?}");
         updatable.update_value(|updatable| {
             updatable.update(|holding| {
-                log!("Updating holding -> {holding:?}");
                 if let Some(cost_basis) = cost_basis {
-                    log!("Updating holding cost_basis -> {cost_basis:?}");
                     holding.cost_basis = *cost_basis;
                 }
             })

@@ -7,7 +7,6 @@ use crate::CollectionGrid;
 use crate::Updatable;
 use leptos::view;
 use leptos::IntoView;
-use leptos::RwSignal;
 use leptos::Scope;
 use leptos_dom::View;
 use plus_modeled::Holding;
