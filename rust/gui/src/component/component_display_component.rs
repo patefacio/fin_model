@@ -67,14 +67,6 @@ pub fn ComponentDisplayComponent(
         });
     };
 
-    let (pdf_normal, set_pdf_normal) = create_signal(
-        cx,
-        NormalSpec {
-            mean: 0.05,
-            std_dev: 0.1,
-        },
-    );
-
     let holdings = vec![
         Holding {
             instrument_name: "SPY".to_string(),
@@ -137,13 +129,6 @@ pub fn ComponentDisplayComponent(
             <h4>"Last Update"</h4>
             <p>{last_update}</p>
         </div>
-        <h3>"Distributions/Plots"</h3>
-        <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(pdf_normal.into())/>
-        <DistributionCdfComponent normal_spec=MaybeSignal::Static(NormalSpec {
-            mean: 0.1,
-            std_dev: 0.2,
-        })/>
-        <NormalLossComponent normal_spec=MaybeSignal::Dynamic(pdf_normal.into())/>
         <h3>"Numbers"</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
             <div style="padding: 1em;">
@@ -483,10 +468,6 @@ pub fn ComponentDisplayComponent(
             <br/>
         </p>
         <button on:click=move |_| {
-            set_pdf_normal
-                .update(|normal| {
-                    normal.mean *= 1.1;
-                });
             write_count.update(|c| *c = *c + 1);
         }>{move || format!("Inc({})", read_count.get())}</button>
     }

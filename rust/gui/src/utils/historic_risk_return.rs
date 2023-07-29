@@ -104,7 +104,7 @@ impl HistoricRiskReturnPlot for NormalSpec {
                                     c.label,
                                     (scale_by(c.risk_return.0, 2), scale_by(c.risk_return.1, 2))
                                 ),
-                                (15, -10),
+                                (10, -5),
                                 ("sans-serif", 10).into_font(),
                             );
                     },
@@ -121,7 +121,7 @@ impl HistoricRiskReturnPlot for NormalSpec {
                             + Cross::new((0, 0), s, st.filled())
                             + Text::new(
                                 format!("{:?}", (scale_by(c.0, 2), scale_by(c.1, 2))),
-                                (15, -10),
+                                (10, -5),
                                 ("sans-serif", 10).into_font(),
                             );
                     },
