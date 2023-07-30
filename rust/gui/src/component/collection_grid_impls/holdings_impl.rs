@@ -31,9 +31,9 @@ impl CollectionGrid for Holding {
         // α <fn CollectionGrid::get_header for Holding>
         [
             "Symbol".to_string(),
-            "Quantity".to_string(),
-            "Price".to_string(),
-            "Cost".to_string(),
+            "Market Value".to_string(),
+            "Cost Basis".to_string(),
+            "Unrealized (G/L)".to_string(),
         ]
         .into_iter()
         .collect()
@@ -48,16 +48,62 @@ impl CollectionGrid for Holding {
         // α <fn CollectionGrid::get_fields for Holding>
 
         use leptos::IntoStyle;
+        use plus_modeled::CurrencyValue;
+        use plus_modeled::YearCurrencyValue;
+
+        let (market_value, cost_basis, gain_loss) =
+            if let Some(unit_valuation) = self.unit_valuation {
+                let year = unit_valuation.year;
+                let currency = unit_valuation.currency;
+                let market_value = unit_valuation.value * self.quantity;
+                (
+                    format!(
+                        "{}",
+                        YearCurrencyValue {
+                            year,
+                            currency,
+                            value: market_value
+                        }
+                    ),
+                    format!(
+                        "{}",
+                        CurrencyValue {
+                            currency,
+                            value: self.cost_basis
+                        }
+                    ),
+                    format!(
+                        "{}",
+                        CurrencyValue {
+                            currency,
+                            value: market_value - self.cost_basis
+                        }
+                    ),
+                )
+            } else {
+                (
+                    String::default(),
+                    format!("{:.2}", self.cost_basis),
+                    String::default(),
+                )
+            };
 
         [
             view! { cx, <div style:text-align="right">{self.instrument_name.clone()}</div> },
-            view! { cx, <div style:text-align="right">{self.quantity}</div> },
             view! { cx,
                 <div style:text-align="right">
-                    {self.unit_valuation.as_ref().map(|uv| uv.value).unwrap_or_default()}
+                    {market_value
+                    }
                 </div>
             },
-            view! { cx, <div style:text-align="right">{self.cost_basis}</div> },
+            view! { cx, <div style:text-align="right">{
+                cost_basis
+            }</div>
+            },
+            view! { cx, <div style:text-align="right">{
+                gain_loss
+            }</div>
+            },
         ]
         .into_iter()
         .map(|item| item.into_view(cx))

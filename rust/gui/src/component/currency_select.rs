@@ -67,22 +67,7 @@ pub fn CurrencySelect(
 pub fn to_currency_symbol(currency: Currency) -> &'static str {
     // α <fn to_currency_symbol>
 
-    match currency {
-        Currency::Usd => "$",
-        Currency::Eur => "€",
-        Currency::Jpy => "¥",
-        Currency::Gbp => "£",
-        Currency::Aud => "A$",
-        Currency::Cad => "C$",
-        Currency::Chf => "CHF",
-        Currency::Cny => "¥",
-        Currency::Hkd => "HK$",
-        Currency::Nzd => "NZ$",
-        Currency::Crc => "₡",
-        Currency::Rub => "₽",
-        Currency::Krw => "₩",
-        Currency::Sek => "kr",
-    }
+    currency.to_currency_symbol()
 
     // ω <fn to_currency_symbol>
 }
@@ -94,23 +79,9 @@ pub fn to_currency_symbol(currency: Currency) -> &'static str {
 #[inline]
 pub fn currency_from_symbol(currency_symbol: &str) -> Option<Currency> {
     // α <fn currency_from_symbol>
-    match currency_symbol {
-        "$" => Some(Currency::Usd),
-        "€" => Some(Currency::Eur),
-        "¥" => Some(Currency::Jpy),
-        "£" => Some(Currency::Gbp),
-        "A$" => Some(Currency::Aud),
-        "C$" => Some(Currency::Cad),
-        "CHF" => Some(Currency::Chf),
-        "¥" => Some(Currency::Cny),
-        "HK$" => Some(Currency::Hkd),
-        "NZ$" => Some(Currency::Nzd),
-        "₡" => Some(Currency::Crc),
-        "₽" => Some(Currency::Rub),
-        "₩" => Some(Currency::Krw),
-        "kr" => Some(Currency::Sek),
-        _ => None,
-    }
+
+    Currency::from_currency_symbol(currency_symbol)
+
     // ω <fn currency_from_symbol>
 }
 

@@ -37,7 +37,7 @@ impl DistributionCdf for NormalSpec {
         // α <fn DistributionCdf::get_cdf_chart for NormalSpec>
 
         use crate::utils::constants::plot_text_style;
-        use crate::utils::scale_by::scale_by;
+        use crate::scale_by;
         use plotters::prelude::*;
 
         // Cap the number of points to range (32, 1024)
@@ -75,14 +75,7 @@ impl DistributionCdf for NormalSpec {
         {
             let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
                 .into_drawing_area()
-                .titled(
-                    &format!(
-                        "CDF N(μ={}%, σ={}%)",
-                        scale_by(self.mean, 2),
-                        scale_by(self.std_dev, 2)
-                    ),
-                    plot_text_style.clone(),
-                )
+                .titled(&format!("CDF {}", self), plot_text_style.clone())
                 .expect("");
 
             let mut chart = ChartBuilder::on(&root)

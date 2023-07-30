@@ -68,7 +68,7 @@ pub fn PercentInput(
 ) -> impl IntoView {
     // α <fn percent_input>
 
-    use crate::utils::scale_by::scale_by;
+    use crate::scale_by;
 
     let scaled_value = updatable.value.map(|value| scale_by(value, 2));
     let mut updatable = updatable;

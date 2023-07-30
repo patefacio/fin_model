@@ -40,15 +40,15 @@ impl HistoricRiskReturnPlot for NormalSpec {
     fn get_historic_plot(&self, historic_values: &[HistoricRiskReturn]) -> String {
         // α <fn HistoricRiskReturnPlot::get_historic_plot for NormalSpec>
         use crate::utils::constants::plot_text_style;
-        use crate::utils::scale_by::scale_by;
+        use crate::scale_by;
         use plotters::prelude::*;
 
-        let mut x_vec = historic_values
+        let x_vec = historic_values
             .iter()
             .map(|hv| hv.risk_return.0)
             .collect::<Vec<_>>();
 
-        let mut y_vec = historic_values
+        let y_vec = historic_values
             .iter()
             .map(|hv| hv.risk_return.1)
             .collect::<Vec<_>>();

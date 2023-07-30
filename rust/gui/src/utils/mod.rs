@@ -24,7 +24,6 @@ pub mod modeled_impls;
 pub mod numeric_text;
 pub mod parsed_num;
 pub mod plot_data;
-pub mod scale_by;
 pub mod updatable;
 
 ////////////////////////////////////////////////////////////////////////////////////

@@ -2637,6 +2637,7 @@ name = "plus_modeled"
 version = "0.0.1"
 dependencies = [
  "criterion",
+ "num-format",
  "prost",
  "serde",
  "serde_derive",

@@ -103,7 +103,7 @@ pub fn ComponentDisplayComponent(
         },
     ];
 
-    let holdings = (0..10)
+    let holdings = (0..3)
         .map(|i| {
             holdings.iter().map(move |h| Holding {
                 instrument_name: format!("{} -> {i}", h.instrument_name),
@@ -130,7 +130,7 @@ pub fn ComponentDisplayComponent(
             <p>{last_update}</p>
         </div>
         <h3>"Numbers"</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
             <div style="padding: 1em;">
                 <h4>"Numeric Input Range(-5.0,5.0)"</h4>
                 <p>"Models a single floating point number."</p>
@@ -203,33 +203,35 @@ pub fn ComponentDisplayComponent(
                 </div>
             </div>
             <div style="padding: 1em;">
-                <h4>"Integer Input"</h4>
-                <p inner_html="Models a single integer with similar features to <em>Numeric Input</em> without decimals.
-                <ul>
-                <li>Special characters ('k', 'm', 'b')</li>
-                <li>Optional commify</li>
-                </ul>
-                "></p>
-                <IntegerInput
-                    updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
-                    placeholder=Some("Integer".to_string())
-                    range=Some(0..=5000)
-                />
-            </div>
-            <div style="padding: 1em;">
-                <h4 inner_html="Percent Input (i.e. suffix `%`) <strong>max_len=8</strong> RangeInclusive(0% to 40%)"></h4>
-                <p inner_html="
-                Provides a <em>NumericInput<em> with a percent suffix modification.
-                "></p>
-                <PercentInput
-                    updatable=Updatable::new(
-                        Some(0.0315),
-                        move |n| { show_update(format!("Percent updated -> {n:?}")) },
-                    )
-                    placeholder=Some("pct complete".to_string())
-                    max_len=8
-                    range=Some(0.0..=0.4)
-                />
+                <div>
+                    <h4>"Integer Input"</h4>
+                    <p inner_html="Models a single integer with similar features to <em>Numeric Input</em> without decimals.
+                    <ul>
+                    <li>Special characters ('k', 'm', 'b')</li>
+                    <li>Optional commify</li>
+                    </ul>
+                    "></p>
+                    <IntegerInput
+                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        placeholder=Some("Integer".to_string())
+                        range=Some(0..=5000)
+                    />
+                </div>
+                <div>
+                    <h4 inner_html="Percent Input (i.e. suffix `%`) <strong>max_len=8</strong> RangeInclusive(0% to 40%)"></h4>
+                    <p inner_html="
+                    Provides a <em>NumericInput<em> with a percent suffix modification.
+                    "></p>
+                    <PercentInput
+                        updatable=Updatable::new(
+                            Some(0.0315),
+                            move |n| { show_update(format!("Percent updated -> {n:?}")) },
+                        )
+                        placeholder=Some("pct complete".to_string())
+                        max_len=8
+                        range=Some(0.0..=0.4)
+                    />
+                </div>
             </div>
             <hr/>
         </div>

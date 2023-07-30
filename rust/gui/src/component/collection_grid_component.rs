@@ -149,6 +149,15 @@ where
         cgc_data_signal.update(|cgc_data| cgc_data.component_state = ComponentState::Display)
     };
 
+    let set_new_item_edit = move || {
+        log!("Setting state back to display");
+        cgc_data_signal.update(|cgc_data| cgc_data.component_state = ComponentState::EditNew)
+    };
+
+    let is_new_item_edit = move || {
+        cgc_data_signal.with(|cgc_data| cgc_data.component_state == ComponentState::EditNew)
+    };
+
     // A header for the component, including empty fields for our `Edit` and `Delete` buttons,
     // so the shape matches that of the displayed rows
     let header = {
@@ -181,7 +190,9 @@ where
 
     // Signal to update the view of element identified by key
     let key_signal =
-        move |key: &str| signals.with_value(|signals| signals.get(key).unwrap().clone());
+        move |key: &str| signals.with_value(|signals| {
+            signals.get(key).cloned()
+        });
 
     // Delete the entry corresponding to the key.
     let delete_by_key = move |key: &str| {
@@ -227,7 +238,9 @@ where
                                 selection_key: key.clone(),
                             };
                         });
-                    key_signal(&key).update(|_| {});
+                    if let Some(signal) = key_signal(&key) {
+                        signal.update(|_| {});
+                    }
                 }
                 disabled=move || is_disabled()
             >
@@ -261,20 +274,23 @@ where
     };
 
     let this_row_updated = move |row: &T| {
-        let key_signal = key_signal(&row.get_key());
-        let index = key_signal.get_untracked();
-        cgc_data_signal.update_untracked(|cgc_data| {
-            if let Some(row_) = cgc_data.updatable.value.get_mut(index) {
-                *row_ = row.clone();
-            }
-        });
-        set_enabled();
-        key_signal.update(|i| log!("Signalling {i} for {row:?}"));
+        if let Some(key_signal) = key_signal(&row.get_key()) {
+            let index = key_signal.get_untracked();
+            cgc_data_signal.update_untracked(|cgc_data| {
+                if let Some(row_) = cgc_data.updatable.value.get_mut(index) {
+                    *row_ = row.clone();
+                }
+            });
+            set_enabled();
+            key_signal.update(|i| log!("Signalling {i} for {row:?}"));
+        }
     };
 
     let this_row_canceled = move |key: &str| {
         set_enabled();
-        key_signal(key).update(|_| {});
+        if let Some(signal) = key_signal(key) {
+            signal.update(|_| {});
+        }
     };
 
     let row_cloned = move |key: &str| {
@@ -307,8 +323,14 @@ where
     let show_new_row_editor = move || {
         view! { cx,
             <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>
-            <Show when=move || false fallback=|_| ()>
-                <div>"Foo"</div>
+            <Show when=move || is_new_item_edit() fallback=|_| ()>
+                <div class="cgc-editable">
+                    {<T as CollectionGrid>::edit_element(
+                        cx,
+                        Updatable::new(<T as CollectionGrid>::new(), this_row_updated),
+                        this_row_canceled,
+                    )}
+                </div>
             </Show>
         }
     };
@@ -321,32 +343,38 @@ where
                 key=move |&i| { nth_key(i) }
                 view=move |cx, i| {
                     let key = Rc::new(nth_key(i).unwrap());
-                    let key_signal = key_signal(&key);
-                    view! { cx,
-                        {move || {
-                            let key = Rc::clone(&key);
-                            key_signal
-                                .with(move |&index| {
-                                    let key = Rc::clone(&key);
-                                    cgc_data_signal
-                                        .with_untracked(move |cgc_data| {
-                                            let key = Rc::clone(&key);
-                                            if let Some(row) = cgc_data.updatable.value.get(index) {
-                                                let mut user_fields = row.get_fields(cx);
-                                                if !read_only {
-                                                    user_fields.insert(0, make_delete_button(&key));
-                                                    user_fields.insert(0, make_edit_button(&key));
+                    if let Some(key_signal) = key_signal(&key) {
+                        view! { cx,
+                            {move || {
+                                let key = Rc::clone(&key);
+                                key_signal
+                                    .with(move |&index| {
+                                        let key = Rc::clone(&key);
+                                        cgc_data_signal
+                                            .with_untracked(move |cgc_data| {
+                                                let key = Rc::clone(&key);
+                                                if let Some(row) = cgc_data.updatable.value.get(index) {
+                                                    let mut user_fields = row.get_fields(cx);
+                                                    if !read_only {
+                                                        user_fields.insert(0, make_delete_button(&key));
+                                                        user_fields.insert(0, make_edit_button(&key));
+                                                    }
+                                                    [user_fields.into_view(cx), show_row_editor(&key)].into_view(cx)
+                                                } else {
+                                                    ().into_view(cx)
                                                 }
-                                                [user_fields.into_view(cx), show_row_editor(&key)].into_view(cx)
-                                            } else {
-                                                ().into_view(cx)
-                                            }
-                                        })
-                                })
-                        }}
+                                            })
+                                    })
+                            }}
+                        }.into_view(cx)
+                    } else {
+                        ().into_view(cx)
                     }
+
                 }
-            /> <button disabled=move || is_disabled()>
+            /> <button 
+            on:click = move |_| {set_new_item_edit()}
+            disabled=move || is_disabled()>
                 <strong>"+"</strong>
             </button> {show_new_row_editor}
         </div>

@@ -41,6 +41,7 @@ pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;
 pub use component::year_range_input::YearRangeInput;
 pub use component::year_value_input::YearValueInput;
+pub use plus_modeled::scale_by;
 pub use utils::distribution_cdf::DistributionCdf;
 pub use utils::distribution_pdf::DistributionPdf;
 pub use utils::historic_risk_return::HistoricRiskReturn;
@@ -51,7 +52,6 @@ pub use utils::leptos_helpers::make_shared_data;
 pub use utils::leptos_helpers::SharedData;
 pub use utils::live_parsed_date::LiveParsedDate;
 pub use utils::parsed_num::ParsedNum;
-pub use utils::scale_by::scale_by;
 pub use utils::updatable::Updatable;
 
 ////////////////////////////////////////////////////////////////////////////////////

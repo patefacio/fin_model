@@ -20,7 +20,7 @@ strum = "0.24"
 strum_macros = "0.24"
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
-
+num-format = "0.4.3"
 
 # ω <dependencies>
 

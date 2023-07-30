@@ -69,20 +69,33 @@ pub use crate::growth::SystemCorrelationMatrix;
 pub use crate::growth::SystemGrowthId;
 pub use crate::person::Person;
 pub use crate::worth::Worth;
+pub use scale_by::scale_by;
+pub use system_unicodes::SystemUnicodes;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod account;
+pub mod account_display;
 pub mod age_assumptions;
+pub mod age_assumptions_display;
 pub mod balance_sheet;
+pub mod balance_sheet_display;
 pub mod core;
+pub mod core_display;
 pub mod core_enums;
 pub mod distributions;
+pub mod distributions_display;
 pub mod flow_specs;
+pub mod flow_specs_display;
 pub mod growth;
+pub mod growth_display;
 pub mod person;
+pub mod person_display;
+pub mod scale_by;
+pub mod system_unicodes;
 pub mod worth;
+pub mod worth_display;
 
 // α <mod-def lib>
 // ω <mod-def lib>

@@ -60,10 +60,7 @@ pub fn NormalLossComponent(
                     {move || {
                         normal_spec
                             .with(|normal_spec| {
-                                format!(
-                                    "Loss Table For N({:.2}%,{:.2}%)", scale_by(normal_spec.mean, 2),
-                                    scale_by(normal_spec.std_dev, 2)
-                                )
+                                format!("Loss Table For {}", normal_spec)
                             })
                     }}
                 </h4>
@@ -78,11 +75,6 @@ pub fn NormalLossComponent(
                 each=move || loss_vec.get()
                 key=|item| { format!("{item:?}") }
                 view=move |cx, cdf_input| {
-                    log!(
-                        "{}", normal_spec.with(| normal_spec | {
-                        format!("Getting cdf of {cdf_input} -> {:?} -> {:?}", normal_spec, normal_spec
-                        .cdf_sigmoid_approx(cdf_input)) })
-                    );
                     view! { cx,
                         <div style="text-align: right;">
                             {move || { format!("{:.2}%", scale_by(cdf_input, 2)) }}
@@ -135,8 +127,8 @@ pub fn NormalLossComponent(
                                             || String::default(),
                                             |probability| {
                                                 format!(
-                                                    "Probability({:.2}%) => {:.2}%", loss, scale_by(probability,
-                                                    2)
+                                                    "Probability({:.2}%) => {:.2}%", scale_by(loss, 2),
+                                                    scale_by(probability, 2)
                                                 )
                                             },
                                         )
