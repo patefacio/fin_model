@@ -58,7 +58,7 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
     }
 
     let s = format!("{}{}.{}", if has_minus { "-" } else { "" }, lhs, rhs);
-    return s.parse::<f64>().unwrap();
+    s.parse::<f64>().unwrap()
 
     // ω <fn scale_by>
 }
