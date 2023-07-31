@@ -131,29 +131,6 @@ impl PlotData for RateCurve {
 /// Unit tests for `plot_data`
 #[cfg(test)]
 pub mod unit_tests {
-
-    /// Test trait plot_data on RateCurve
-    pub mod test_plot_data_on_rate_curve {
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- module uses ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        use test_log::test;
-
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- functions ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        #[test]
-        fn plot() {
-            // α <fn test PlotData::plot on RateCurve>
-
-            todo!("Test plot")
-            // ω <fn test PlotData::plot on RateCurve>
-        }
-
-        // α <mod-def test_plot_data_on_rate_curve>
-        // ω <mod-def test_plot_data_on_rate_curve>
-    }
-
     // α <mod-def unit_tests>
     // ω <mod-def unit_tests>
 }

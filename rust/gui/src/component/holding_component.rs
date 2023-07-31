@@ -16,49 +16,6 @@ use plus_modeled::ItemGrowth;
 use std::collections::HashMap;
 
 ////////////////////////////////////////////////////////////////////////////////////
-// --- type aliases ---
-////////////////////////////////////////////////////////////////////////////////////
-pub(crate) type InstrumentGrowthMappings = HashMap<String, InstrumentGrowth>;
-
-////////////////////////////////////////////////////////////////////////////////////
-// --- structs ---
-////////////////////////////////////////////////////////////////////////////////////
-#[derive(Debug, Clone)]
-pub struct InstrumentGrowth {
-    /// The modeled growth for the holding
-    pub item_growth: ItemGrowth,
-    /// Set to false for all instrument names not being edited
-    pub only_editable: bool,
-}
-
-/// Contains the mapping of {instrument_name -> growth} for all holdings in the balance sheet.
-/// This struct is used to keep the growth of all symbols in sync while editing a *single*
-/// holding. The growth of symbols can be _shared_ across accounts. If a component is editing
-/// the growth of a holding named IBM in a particular account and the user also has that symbol in
-/// a different account, it is important that the growth of those two be linked. This is enforced  
-/// by the BalanceSheet datatype which stores the growths for all holdings in a map indexed
-/// by the instrument name (i.e. String).
-///
-/// When editing a single Holding we have to allow for the holding to have an _instrument name_
-/// change. Suppose they have a holding they are editing named "IBM" and they change the name
-/// to "MSFT". Maybe they were confused and did not realize they had already edited the "IBM" holding
-/// and decided to change the current holding being edited to "MSFT" - because they also have some
-/// "MSFT" in the account. At this point you have to decide how to treat the "IBM" entry in the map.
-/// Should it stay or should it be deleted? If there were another holding besides the one being
-/// edited that had been modeled then the "IBM" entry should stay. If however, there were no other
-/// "IBM" named holding in the balance sheet, then it should be removed. So, to satisfy this
-/// requirement of only removing a mapping if no other holding has that name we need to snapshot
-/// the set of holding names of all holdings **that are not being edited**.
-///
-/// This is achieved by keeping the set of symbol names for all holdings excluding the one
-/// being edited.
-#[derive(Debug, Clone)]
-pub struct InstrumentGrowthSync {
-    /// The mapping of **all** instrument names to their current growths.
-    pub instrument_growth_map: InstrumentGrowthMappings,
-}
-
-////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// A single holding in an account.
@@ -211,51 +168,6 @@ where
         </fieldset>
     }
     // ω <fn holding_component>
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-// --- type impls ---
-////////////////////////////////////////////////////////////////////////////////////
-impl InstrumentGrowthSync {
-    /// Create new sync object
-    ///
-    ///   * **balance_sheet** - The balance sheet.
-    ///   * **edit_holding_index** - Index of holding being edited
-    ///   * _return_ - The new sync instance.
-    pub fn new(balance_sheet: &BalanceSheet, edit_holding_index: DossierHoldingIndex) -> Self {
-        // α <fn InstrumentGrowthSync::new>
-        todo!("Implement `new`")
-        // ω <fn InstrumentGrowthSync::new>
-    }
-}
-
-/// Unit tests for `holding_component`
-#[cfg(test)]
-pub mod unit_tests {
-
-    /// Test type InstrumentGrowthSync
-    mod test_instrument_growth_sync {
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- module uses ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        use test_log::test;
-
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- functions ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        #[test]
-        fn new() {
-            // α <fn test InstrumentGrowthSync::new>
-            todo!("Test new")
-            // ω <fn test InstrumentGrowthSync::new>
-        }
-
-        // α <mod-def test_instrument_growth_sync>
-        // ω <mod-def test_instrument_growth_sync>
-    }
-
-    // α <mod-def unit_tests>
-    // ω <mod-def unit_tests>
 }
 
 // α <mod-def holding_component>
