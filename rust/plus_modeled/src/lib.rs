@@ -69,7 +69,7 @@ pub use crate::growth::SystemCorrelationMatrix;
 pub use crate::growth::SystemGrowthId;
 pub use crate::person::Person;
 pub use crate::worth::Worth;
-pub use system_unicodes::SystemUnicodes;
+pub use plus_utils::SystemUnicodes;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---
@@ -91,7 +91,6 @@ pub mod growth;
 pub mod growth_display;
 pub mod person;
 pub mod person_display;
-pub mod system_unicodes;
 pub mod worth;
 pub mod worth_display;
 

@@ -2655,6 +2655,10 @@ dependencies = [
 [[package]]
 name = "plus_utils"
 version = "0.0.1"
+dependencies = [
+ "env_logger",
+ "test-log",
+]
 
 [[package]]
 name = "png"

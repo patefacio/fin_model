@@ -163,15 +163,19 @@ pub mod unit_tests {
         #[test]
         fn as_unicode() {
             // α <fn test SystemUnicodes::as_unicode>
-            todo!("Test as_unicode")
+            assert_eq!("σ", SystemUnicodes::MathSigma.as_unicode());
+            assert_eq!("μ", SystemUnicodes::MathMu.as_unicode());
+            assert_eq!("ρ", SystemUnicodes::MathRho.as_unicode());
             // ω <fn test SystemUnicodes::as_unicode>
         }
 
         // α <mod-def test_system_unicodes>
+        use super::*;
         // ω <mod-def test_system_unicodes>
     }
 
     // α <mod-def unit_tests>
+    use super::*;
     // ω <mod-def unit_tests>
 }
 

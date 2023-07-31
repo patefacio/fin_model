@@ -13,6 +13,8 @@ keywords = []
 
 [dependencies]
 # α <dependencies>
+test-log = "0.2.11"
+env_logger = "0.9.1"
 # ω <dependencies>
 
 [build-dependencies]

@@ -78,15 +78,9 @@ impl Display for CurrencyValue {
                 "?"
             },
             match self.value {
-                value if value < -10.0 => format!(
-                    "{}",
-                    (-value.round() as i64).to_formatted_string(&Locale::en)
-                ),
+                value if value < -10.0 => (-value.round() as i64).to_formatted_string(&Locale::en),
                 value if value < 10.0 => format!("{:.2}", -value),
-                value => format!(
-                    "{}",
-                    (value.round() as i64).to_formatted_string(&Locale::en)
-                ),
+                value => (value.round() as i64).to_formatted_string(&Locale::en),
             }
         );
 

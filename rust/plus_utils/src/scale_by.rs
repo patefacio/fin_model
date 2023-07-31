@@ -21,7 +21,7 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
 
     let mut s = n.to_string();
 
-    let has_minus = if s.chars().next().unwrap() == '-' {
+    let has_minus = if s.starts_with('-') {
         s.remove(0);
         true
     } else {
@@ -36,12 +36,12 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
         }
     };
 
-    let mut lhs = (&s[0..point]).to_string();
-    let mut rhs = (&s[point + 1..s.len()]).to_string();
+    let mut lhs = (s[0..point]).to_string();
+    let mut rhs = (s[point + 1..s.len()]).to_string();
 
     if scale_factor > 0 {
         for _i in 0..scale_factor {
-            if rhs.len() != 0 {
+            if !rhs.is_empty() {
                 lhs.push(rhs.remove(0));
             } else {
                 lhs.push('0');
@@ -49,7 +49,7 @@ pub fn scale_by(n: f64, scale_factor: i32) -> f64 {
         }
     } else if scale_factor < 0 {
         for _i in scale_factor..0 {
-            if lhs.len() != 0 {
+            if !lhs.is_empty() {
                 rhs.insert(0, lhs.pop().unwrap());
             } else {
                 rhs.insert(0, '0');
