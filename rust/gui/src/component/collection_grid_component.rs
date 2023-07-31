@@ -189,10 +189,7 @@ where
     };
 
     // Signal to update the view of element identified by key
-    let key_signal =
-        move |key: &str| signals.with_value(|signals| {
-            signals.get(key).cloned()
-        });
+    let key_signal = move |key: &str| signals.with_value(|signals| signals.get(key).cloned());
 
     // Delete the entry corresponding to the key.
     let delete_by_key = move |key: &str| {
@@ -366,15 +363,13 @@ where
                                             })
                                     })
                             }}
-                        }.into_view(cx)
+                        }
+                            .into_view(cx)
                     } else {
                         ().into_view(cx)
                     }
-
                 }
-            /> <button 
-            on:click = move |_| {set_new_item_edit()}
-            disabled=move || is_disabled()>
+            /> <button on:click=move |_| { set_new_item_edit() } disabled=move || is_disabled()>
                 <strong>"+"</strong>
             </button> {show_new_row_editor}
         </div>

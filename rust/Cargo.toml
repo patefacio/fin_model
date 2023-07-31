@@ -1,8 +1,9 @@
 [workspace]
 resolver = "1"
 members = [
-    "model",
     "gui",
+    "plus_modeled",
+    "plus_utils"
 ]
 
 [profile.release]

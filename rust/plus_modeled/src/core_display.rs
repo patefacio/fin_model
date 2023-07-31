@@ -141,8 +141,8 @@ impl Display for NormalSpec {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for NormalSpec>
-        use crate::scale_by;
         use crate::SystemUnicodes;
+        use plus_utils::scale_by;
 
         let precision = 2usize;
 
@@ -255,6 +255,7 @@ impl Display for PeriodBalance {
 }
 
 // α <mod-def core_display>
+
 use crate::Currency;
 
 impl Currency {

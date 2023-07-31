@@ -1180,6 +1180,7 @@ dependencies = [
  "plotters",
  "plotters-svg",
  "plus_modeled",
+ "plus_utils",
  "strum",
  "test-log",
  "tracing",
@@ -2637,16 +2638,23 @@ name = "plus_modeled"
 version = "0.0.1"
 dependencies = [
  "criterion",
+ "env_logger",
  "num-format",
+ "plus_utils",
  "prost",
  "serde",
  "serde_derive",
  "strum",
  "strum_macros",
+ "test-log",
  "tonic-build",
  "tracing",
  "tracing-subscriber",
 ]
+
+[[package]]
+name = "plus_utils"
+version = "0.0.1"
 
 [[package]]
 name = "png"

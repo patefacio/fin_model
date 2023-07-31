@@ -14,21 +14,13 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 # α <dependencies>
-
-plus_modeled = { path = "../model" }
+plus_modeled = { path = "../plus_modeled" }
+plus_utils = { path = "../plus_utils" }
 chrono = "0.4"
 actix-files = { version = "0.6", optional = true }
 actix-web = { version = "4", optional = true, features = ["macros"] }
 console_error_panic_hook = "0.1"
 cfg-if = "1"
-
-### TODO: Switching to this branch until released
-# leptos = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false, features = [ "serde"] }
-# leptos_meta = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false }
-# leptos_actix = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", optional = true }
-# leptos_router = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix", default-features = false }
-# leptos_dom = { git = "https://github.com/leptos-rs/leptos", branch="stored-value-panic-fix" }
-
 leptos = { version = "0.4", default-features = false, features = [
   "serde",
 ] }

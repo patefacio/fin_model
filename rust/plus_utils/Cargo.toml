@@ -1,0 +1,26 @@
+[package]
+edition = "2021"
+name = "plus_utils"
+version = "0.0.1"
+description = """TODO: Describe cargo project(plus_utils)"""
+license = "MIT"
+keywords = []
+
+
+[lib]
+# α <lib>
+# ω <lib>
+
+[dependencies]
+# α <dependencies>
+# ω <dependencies>
+
+[build-dependencies]
+# α <build-dependencies>
+# ω <build-dependencies>
+
+[features]
+# α <features>
+# ω <features>
+# α <additional>
+# ω <additional>

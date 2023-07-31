@@ -72,23 +72,15 @@ pub fn IntegerInput(
 ) -> impl IntoView {
     // α <fn integer_input>
 
-    use leptos::create_signal;
-    use leptos::IntoAttribute;
-    use leptos::IntoClass;
-    use leptos::IntoStyle;
-    use leptos::SignalGet;
-    use leptos::SignalSet;
-
     let float_value = updatable.value.map(|value| value as f64);
     let mut updatable = updatable;
     let numeric_updatable = Updatable::new(float_value, move |new_float_value| {
         let actual_value = new_float_value.map(|v| v);
-        updatable.update_and_then_signal(|new_value| {
-            *new_value = match actual_value {
-                Some(_) => Some(actual_value.unwrap() as u32),
-                None => None,
-            };
-        });
+        if actual_value.is_some() {
+            updatable.update_and_then_signal(|current_value| {
+                *current_value = actual_value.map(|v| v as u32)
+            });
+        };
     });
 
     view! { cx,

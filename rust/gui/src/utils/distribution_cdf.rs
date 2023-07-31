@@ -36,8 +36,8 @@ impl DistributionCdf for NormalSpec {
     fn get_cdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionCdf::get_cdf_chart for NormalSpec>
 
-        use crate::utils::constants::plot_text_style;
         use crate::scale_by;
+        use crate::utils::constants::plot_text_style;
         use plotters::prelude::*;
 
         // Cap the number of points to range (32, 1024)

@@ -35,8 +35,8 @@ impl DistributionPdf for NormalSpec {
     ///   * _return_ - SVG image of distribution
     fn get_pdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionPdf::get_pdf_chart for NormalSpec>
-        use crate::utils::constants::plot_text_style;
         use crate::scale_by;
+        use crate::utils::constants::plot_text_style;
         use plotters::prelude::*;
 
         // Cap the number of points to range (32, 1024)

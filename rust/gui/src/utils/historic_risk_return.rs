@@ -39,8 +39,8 @@ impl HistoricRiskReturnPlot for NormalSpec {
     ///   * _return_ - SVG image of the points on a plot.
     fn get_historic_plot(&self, historic_values: &[HistoricRiskReturn]) -> String {
         // α <fn HistoricRiskReturnPlot::get_historic_plot for NormalSpec>
-        use crate::utils::constants::plot_text_style;
         use crate::scale_by;
+        use crate::utils::constants::plot_text_style;
         use plotters::prelude::*;
 
         let x_vec = historic_values
