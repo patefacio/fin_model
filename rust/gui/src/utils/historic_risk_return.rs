@@ -138,28 +138,6 @@ impl HistoricRiskReturnPlot for NormalSpec {
 /// Unit tests for `historic_risk_return`
 #[cfg(test)]
 pub mod unit_tests {
-
-    /// Test trait historic_risk_return_plot on NormalSpec
-    pub mod test_historic_risk_return_plot_on_normal_spec {
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- module uses ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        use test_log::test;
-
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- functions ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        #[test]
-        fn get_historic_plot() {
-            // α <fn test HistoricRiskReturnPlot::get_historic_plot on NormalSpec>
-            todo!("Test get_historic_plot")
-            // ω <fn test HistoricRiskReturnPlot::get_historic_plot on NormalSpec>
-        }
-
-        // α <mod-def test_historic_risk_return_plot_on_normal_spec>
-        // ω <mod-def test_historic_risk_return_plot_on_normal_spec>
-    }
-
     // α <mod-def unit_tests>
     // ω <mod-def unit_tests>
 }

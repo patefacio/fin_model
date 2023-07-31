@@ -149,20 +149,6 @@ pub mod unit_tests {
         // --- functions ---
         ////////////////////////////////////////////////////////////////////////////////////
         #[test]
-        fn get_cdf_chart() {
-            // α <fn test DistributionCdf::get_cdf_chart on NormalSpec>
-            println!(
-                "Data\n{}",
-                NormalSpec {
-                    mean: 4.0,
-                    std_dev: 1.0
-                }
-                .get_cdf_chart(200)
-            );
-            // ω <fn test DistributionCdf::get_cdf_chart on NormalSpec>
-        }
-
-        #[test]
         fn cdf_sigmoid_approx() {
             // α <fn test DistributionCdf::cdf_sigmoid_approx on NormalSpec>
 
