@@ -64,11 +64,6 @@ impl Display for CurrencyValue {
         // α <fn Display::fmt for CurrencyValue>
 
         use num_format::{Locale, ToFormattedString};
-        // let minus_sign = if self.value < 0.0 {
-        //     "-"
-        // } else {
-        //     ""
-        // };
 
         let unsigned = format!(
             "{}{}",
@@ -79,7 +74,7 @@ impl Display for CurrencyValue {
             },
             match self.value {
                 value if value < -10.0 => (-value.round() as i64).to_formatted_string(&Locale::en),
-                value if value < 10.0 => format!("{:.2}", -value),
+                value if value < 10.0 => format!("{:.2}", value.abs()),
                 value => (value.round() as i64).to_formatted_string(&Locale::en),
             }
         );

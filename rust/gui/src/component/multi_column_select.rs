@@ -178,7 +178,8 @@ where
     };
 
     // Signal the resolved initial value
-    on_select(initial_value.clone());
+    // TODO: Determine if this is necessary/helpful
+    //on_select(initial_value.clone());
 
     let mcs_data = create_rw_signal(
         cx,

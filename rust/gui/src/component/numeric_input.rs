@@ -152,6 +152,8 @@ pub fn NumericInput(
         })
         .unwrap_or_default();
 
+    log!("Creating with initial `{initial_value}` {cx:?}");
+
     let (is_valid, set_is_valid) = create_signal(cx, is_valid);
 
     struct NumericInputData {
@@ -197,8 +199,7 @@ pub fn NumericInput(
 
     let update_value = move || {
         numeric_input_data.update_value(|numeric_input_data| {
-            let modification = &numeric_input_data.modification;
-            let input_ref = node_ref.get().expect("Input node");
+            let input_ref = node_ref.get_untracked().expect("Input node");
             let mut selection_start = input_ref
                 .selection_start()
                 .unwrap_or_default()
@@ -230,15 +231,8 @@ pub fn NumericInput(
                 new_value = new_value.split('.').collect::<Vec<_>>()[0].to_string();
             }
 
-            if let Some(modification) = modification.as_ref() {
-                if new_value.is_empty() {
-                    // User has possibly deleted all text except prefix or suffix
-                    // so set input to empty string (i.e. no prefix or suffix)
-                    // which will allow display of placeholder
-                    _ = input_ref.set_value(&String::default());
-                } else {
-                    // `new_value` has any requisite separator chars (i.e. ',')
-                    // but does not have prefix/suffix - so fix that
+            if let Some(modification) = numeric_input_data.modification.as_ref() {
+                if !new_value.is_empty() {
                     new_value = modification.modify(&new_value);
 
                     // Update the input with the improved value
@@ -270,9 +264,11 @@ pub fn NumericInput(
 
             set_is_valid.set(custom_valid && is_in_range);
 
-            numeric_input_data
+            if value.is_some() {
+                numeric_input_data
                 .updatable
                 .update_and_then_signal(|number| *number = value);
+            }
         });
     };
 
@@ -315,10 +311,9 @@ pub fn NumericInput(
     create_effect(cx, move |_| {
         let mut should_update = false;
         numeric_input_data.with_value(|numeric_input_data| {
-            if let Some(Modification::Prefix(MaybeSignal::Dynamic(reactive))) =
+            if let Some(Modification::Prefix(MaybeSignal::Dynamic(_))) =
                 numeric_input_data.modification.as_ref()
             {
-                reactive.track();
                 should_update = true;
             }
         });
@@ -335,7 +330,23 @@ pub fn NumericInput(
             style:text-align=move || { if align_left { "left" } else { "right" } }
             node_ref=node_ref
             on:keydown=key_movement
-            on:input=move |_| update_value.update_value(|update_value| update_value())
+            on:input=move |_| {
+                if let Some(input_ref) = node_ref.get_untracked() {
+                    let input_value = input_ref.value();
+                    let is_effectively_empty = numeric_input_data.with_value(|numeric_input_data| {
+                            numeric_input_data.modification.as_ref().map(|modification|  {
+                                let modified_value = modification.modify("");
+                                 modified_value == input_value  
+                            }).unwrap_or_default() 
+                        });
+
+                    if is_effectively_empty {
+                        input_ref.set_value("");
+                    }    else {
+                        update_value.update_value(|update_value| update_value());
+                    } 
+                } 
+            }
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
             maxlength=max_len
