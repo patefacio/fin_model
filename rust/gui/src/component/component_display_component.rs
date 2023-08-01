@@ -201,6 +201,18 @@ pub fn ComponentDisplayComponent(
                         size=12
                     />
                 </div>
+                <div>
+                <h4>"Numeric Input (Valid when 42.0)"</h4>
+                <p inner_html="
+                Provides a <em>NumericInput<em> which is only valid via custom validator requiring value to be 42.
+                "></p>
+                <NumericInput
+                    updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                    validator=Some(Box::new(|v| v == 42.0))
+                    max_len=14
+                    size=12
+                />
+            </div>
             </div>
             <div style="padding: 1em;">
                 <div>
@@ -217,6 +229,15 @@ pub fn ComponentDisplayComponent(
                         range=Some(0..=5000)
                     />
                 </div>
+                <div>
+                <h4>"Integer Input With Validator"</h4>
+                <p inner_html="Integer input with validator requiring value to be even"></p>
+                <IntegerInput
+                    updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                    placeholder=Some("Integer".to_string())
+                    validator=Some(Box::new(|v| v%2 == 0))
+                />
+            </div>
                 <div>
                     <h4 inner_html="Percent Input (i.e. suffix `%`) <strong>max_len=8</strong> RangeInclusive(0% to 40%)"></h4>
                     <p inner_html="

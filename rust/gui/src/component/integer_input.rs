@@ -31,6 +31,7 @@ use std::ops::RangeInclusive;
 ///   * **clear_input** - Signal requesting to clear the input.
 ///   * **align_left** - If set, numeric text aligned to left.
 ///   * **disabled** - Signal allowing the disabling of the input.
+///   * **validator** - Called on update to check if value is valid.
 ///   * _return_ - View for integer_input
 #[component]
 pub fn IntegerInput(
@@ -69,6 +70,9 @@ pub fn IntegerInput(
     /// Signal allowing the disabling of the input.
     #[prop(default=None)]
     disabled: Option<ReadSignal<bool>>,
+    /// Called on update to check if value is valid.
+    #[prop(default=None)]
+    validator: Option<Box<dyn FnMut(i32) -> bool>>,
 ) -> impl IntoView {
     // α <fn integer_input>
 
@@ -81,6 +85,11 @@ pub fn IntegerInput(
                 *current_value = actual_value.map(|v| v as u32)
             });
         };
+    });
+
+    let casting_validator = validator.map(|mut validator| {
+        let new_validator = move |v: f64| validator(v as i32);
+        Box::new(new_validator) as Box<dyn FnMut(f64) -> bool>
     });
 
     view! { cx,
@@ -96,6 +105,7 @@ pub fn IntegerInput(
             range=range.map(|range| *range.start() as f64..=*range.end() as f64)
             no_decimal=true
             align_left=align_left
+            validator=casting_validator
             disabled=disabled
         />
     }

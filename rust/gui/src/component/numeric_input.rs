@@ -63,6 +63,7 @@ pub enum Modification {
 ///   * **clear_input** - Signal requesting to clear the input.
 ///   * **no_decimal** - Indicates decimals disallowed.
 ///   * **disabled** - Signal allowing the disabling of the input.
+///   * **validator** - Called on update to check if value is valid.
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -107,6 +108,9 @@ pub fn NumericInput(
     /// Signal allowing the disabling of the input.
     #[prop(default=None)]
     disabled: Option<ReadSignal<bool>>,
+    /// Called on update to check if value is valid.
+    #[prop(default=None)]
+    validator: Option<Box<dyn FnMut(f64) -> bool>>,
 ) -> impl IntoView {
     // α <fn numeric_input>
 
@@ -118,7 +122,9 @@ pub fn NumericInput(
     use std::cell::RefCell;
     use std::rc::Rc;
 
-    let mut is_in_range = true;
+    let mut is_valid = true;
+
+    let mut validator = validator;
 
     // Get the initial value for the year if provided. Set to empty string if
     // not provided.
@@ -126,10 +132,16 @@ pub fn NumericInput(
         .value
         .as_ref()
         .map(|initial_value| {
-            is_in_range = range
-                .as_ref()
-                .map(|range| range.contains(&initial_value))
+            let custom_valid = validator
+                .as_mut()
+                .map(|validator| (validator.as_mut())(*initial_value))
                 .unwrap_or(true);
+
+            is_valid = custom_valid
+                && range
+                    .as_ref()
+                    .map(|range| range.contains(&initial_value))
+                    .unwrap_or(true);
             modification
                 .as_ref()
                 .map(|modification| modification.modify(&initial_value.to_string()))
@@ -140,13 +152,14 @@ pub fn NumericInput(
         })
         .unwrap_or_default();
 
-    let (is_in_range, set_is_in_range) = create_signal(cx, is_in_range);
+    let (is_valid, set_is_valid) = create_signal(cx, is_valid);
 
     struct NumericInputData {
         updatable: Updatable<Option<f64>>,
         modification: Option<Modification>,
         range: Option<RangeInclusive<f64>>,
         on_enter: Option<Rc<RefCell<Box<dyn FnMut(String)>>>>,
+        validator: Option<Rc<RefCell<Box<dyn FnMut(f64) -> bool>>>>,
     }
 
     let numeric_input_data = NumericInputData {
@@ -154,6 +167,7 @@ pub fn NumericInput(
         modification,
         range,
         on_enter: on_enter.map(|on_enter| Rc::new(RefCell::new(on_enter))),
+        validator: validator.map(|validator| Rc::new(RefCell::new(validator))),
     };
 
     let numeric_input_data = store_value(cx, numeric_input_data);
@@ -240,13 +254,21 @@ pub fn NumericInput(
                 input_ref.set_value(&new_value);
             }
 
-            set_is_in_range.set(
-                numeric_input_data
-                    .range
-                    .as_ref()
-                    .map(move |range| value.map(|value| range.contains(&value)).unwrap_or(true))
-                    .unwrap_or(true),
-            );
+            let custom_valid = numeric_input_data
+                .validator
+                .as_mut()
+                .and_then(|validator| {
+                    value.map(|value| (validator.borrow_mut().as_mut())(value))
+                })
+                .unwrap_or(true);
+
+            let is_in_range = numeric_input_data
+                .range
+                .as_ref()
+                .map(move |range| value.map(|value| range.contains(&value)).unwrap_or(true))
+                .unwrap_or(true);
+
+            set_is_valid.set(custom_valid && is_in_range);
 
             numeric_input_data
                 .updatable
@@ -309,7 +331,7 @@ pub fn NumericInput(
     view! { cx,
         <input
             class=input_class
-            class:invalid=move || { !is_in_range.get() }
+            class:invalid=move || { !is_valid.get() }
             style:text-align=move || { if align_left { "left" } else { "right" } }
             node_ref=node_ref
             on:keydown=key_movement
