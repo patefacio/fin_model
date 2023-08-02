@@ -45,13 +45,19 @@ pub fn RateCurveComponent(
     use leptos::create_rw_signal;
     use leptos::create_signal;
     use leptos::log;
+    use leptos::store_value;
     use leptos::For;
     use leptos::IntoAttribute;
+    use leptos::RwSignal;
     use leptos::SignalGet;
+    use leptos::SignalGetUntracked;
     use leptos::SignalUpdate;
+    use leptos::SignalUpdateUntracked;
     use leptos::SignalWith;
     use leptos::SignalWithUntracked;
     use plus_modeled::YearValue;
+    use std::collections::HashMap;
+    use std::rc::Rc;
 
     let mut updatable = updatable;
     clean_curve(&mut updatable.value.curve);
@@ -75,8 +81,6 @@ pub fn RateCurveComponent(
             set_updatable.update(|updatable| {
                 updatable.update_and_then_signal(|client_curve| {
                     client_curve.curve = curve.clone();
-                    log!("Client curve inside signal_parent -> {client_curve:?}");
-                    log!("Curve = inside signal_parent {curve:?}");
                 })
             })
         })
@@ -100,6 +104,48 @@ pub fn RateCurveComponent(
     };
     let on_accept_evt = move |_| on_accept();
 
+    ///////////New Stuff Faith
+
+    //curve needs to be a rw signal, not just read
+    let signals = store_value(
+        cx,
+        curve
+            .get()
+            .iter()
+            .enumerate()
+            .map(|(i, year_value)| (year_value.year.to_owned(), create_rw_signal(cx, i)))
+            .collect::<HashMap<u32, RwSignal<usize>>>(),
+    );
+
+    let num_elements = move || curve.with(|curve| curve.len());
+    let nth_key = move |n: usize| {
+        curve.with_untracked(|curve| curve.get(n).map(|year_value| year_value.year))
+    };
+
+    let key_signal =
+        move |key: &u32| signals.with_value(|signals| signals.get(key).unwrap().clone());
+
+    let delete_by_key = move |key: &u32| {
+        if let Some(position) =
+            signals.with_value(|signals| signals.get(key).cloned().map(|signal| signal.get()))
+        {
+            set_curve.update(|curve| {
+                signals.update_value(|signals| {
+                    let _removed_value = curve.remove(position);
+                    let end = curve.len();
+                    let elements_after = &curve[position..end];
+                    for (i, year_value) in elements_after.iter().enumerate() {
+                        let key = year_value.year;
+                        let new_index = position + i;
+                        if let Some(keyed_signal) = signals.get_mut(&key) {
+                            keyed_signal.update(|index| *index = new_index)
+                        }
+                    }
+                });
+            });
+        }
+    };
+
     view! { cx,
         <div class="rate-curve-data">
             <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
@@ -107,27 +153,20 @@ pub fn RateCurveComponent(
                 <div class="header">"Year"</div>
                 <div class="header">"Rate(%)"</div>
                 <For
-                    each=move || curve.get()
-                    key=|year_value| { year_value.year }
-                    view=move |cx, year_value| {
+                    each=move || 0..num_elements()
+                    key= move |&i| nth_key(i)
+                    view=move |cx, i| {
+                        let key = nth_key(i).unwrap();
+                        let key_signal = key_signal(&key);
+                        let year_value_index = key_signal.get();
+                        let year_value = curve.with(|curve| curve.get(year_value_index).cloned().unwrap());
                         let (disabled, _set_disabled) = create_signal(cx, true);
-                        let remove_me = move |_event| {
-                            set_curve
-                                .update(|curve| {
-                                    if let Some(found_index)
-                                        = curve
-                                            .iter()
-                                            .position(|elm_year_value| {
-                                                elm_year_value.year == year_value.year
-                                            })
-                                    {
-                                        curve.remove(found_index);
-                                    }
-                                });
+                        let delete_row = move |_event| {
+                            delete_by_key(&key);
                             signal_parent_update();
-                        };
+                       };
                         view! { cx,
-                            <button on:click=remove_me>"🗑"</button>
+                            <button on:click=delete_row>"🗑"</button>
                             <YearInput
                                 input_class=Some("rcc-yi".to_string())
                                 disabled=Some(disabled)
@@ -169,8 +208,8 @@ pub fn RateCurveComponent(
                                     }),
                                 )
                             />
-                        }
-                    }
+                           }   }
+
                 />
                 <button disabled=move || !add_enabled.get() on:click=on_accept_evt>
                     "+"
@@ -221,9 +260,10 @@ pub fn RateCurveComponent(
         </div>
         <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
     }
-
-    // ω <fn rate_curve_component>
 }
+
+// ω <fn rate_curve_component>
+//}
 
 /// Sorts the [YearValue] entries by year and removes any duplicates
 ///
