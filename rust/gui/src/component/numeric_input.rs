@@ -333,19 +333,23 @@ pub fn NumericInput(
             on:input=move |_| {
                 if let Some(input_ref) = node_ref.get_untracked() {
                     let input_value = input_ref.value();
-                    let is_effectively_empty = numeric_input_data.with_value(|numeric_input_data| {
-                            numeric_input_data.modification.as_ref().map(|modification|  {
-                                let modified_value = modification.modify("");
-                                 modified_value == input_value  
-                            }).unwrap_or_default() 
+                    let is_effectively_empty = numeric_input_data
+                        .with_value(|numeric_input_data| {
+                            numeric_input_data
+                                .modification
+                                .as_ref()
+                                .map(|modification| {
+                                    let modified_value = modification.modify("");
+                                    modified_value == input_value
+                                })
+                                .unwrap_or_default()
                         });
-
                     if is_effectively_empty {
                         input_ref.set_value("");
-                    }    else {
+                    } else {
                         update_value.update_value(|update_value| update_value());
-                    } 
-                } 
+                    }
+                }
             }
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
