@@ -132,6 +132,9 @@ pub fn NumericInput(
         .value
         .as_ref()
         .map(|initial_value| {
+            let initial_value_string = initial_value.to_string();
+            let (_, new_value, _) = format_number_lenient(&initial_value_string, 0);
+
             let custom_valid = validator
                 .as_mut()
                 .map(|validator| (validator.as_mut())(*initial_value))
@@ -144,8 +147,8 @@ pub fn NumericInput(
                     .unwrap_or(true);
             modification
                 .as_ref()
-                .map(|modification| modification.modify(&initial_value.to_string()))
-                .unwrap_or_else(|| initial_value.to_string())
+                .map(|modification| modification.modify(&new_value))
+                .unwrap_or_else(|| new_value)
                 .chars()
                 .take(max_len as usize)
                 .collect::<String>()
@@ -249,9 +252,7 @@ pub fn NumericInput(
             let custom_valid = numeric_input_data
                 .validator
                 .as_mut()
-                .and_then(|validator| {
-                    value.map(|value| (validator.borrow_mut().as_mut())(value))
-                })
+                .and_then(|validator| value.map(|value| (validator.borrow_mut().as_mut())(value)))
                 .unwrap_or(true);
 
             let is_in_range = numeric_input_data
@@ -264,8 +265,8 @@ pub fn NumericInput(
 
             if value.is_some() {
                 numeric_input_data
-                .updatable
-                .update_and_then_signal(|number| *number = value);
+                    .updatable
+                    .update_and_then_signal(|number| *number = value);
             }
         });
     };

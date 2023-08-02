@@ -1,7 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use fin_model_gui::utils::integer_clamp::{IntegerClamp, IntegerClampStrings};
 
-
 pub fn clamp_integer_range_benchmark(c: &mut Criterion) {
     let year_clamp = IntegerClamp::new(1900..=2300);
 

@@ -39,17 +39,24 @@ where
 {
     // α <fn holding_component>
 
+    use crate::to_currency_symbol;
     use crate::EnumSelect;
+    use crate::Modification;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
     use crate::OkCancel;
     use crate::OkCancelComponent;
     use crate::SymbolInput;
     use crate::YearCurrencyValueInput;
+    use leptos::create_rw_signal;
     use leptos::create_signal;
     use leptos::store_value;
+    use leptos::MaybeSignal;
     use leptos::SignalGet;
+    use leptos::SignalUpdate;
+    use leptos::SignalWith;
     use leptos_dom::console_log;
+    use plus_modeled::Currency;
     use plus_modeled::{
         core_enums::HoldingType,
         growth::{system_growth_id::SystemId, SystemGrowthId},
@@ -82,17 +89,35 @@ where
         })
     });
 
+    let currency_rw_signal = create_rw_signal(
+        cx,
+        to_currency_symbol(
+            unit_valuation
+                .map(|ycv| Currency::from_i32(ycv.currency).unwrap())
+                .unwrap_or(Currency::Usd),
+        )
+        .to_string(),
+    );
+
     let unit_valuation_updatable = Updatable::new(unit_valuation, move |unit_valuation| {
         log!("Unit value updated {unit_valuation:?}");
+        currency_rw_signal.update(|currency_string| {
+            log!("UPDATING UV -> {unit_valuation:?}");
+            *currency_string = to_currency_symbol(
+                unit_valuation
+                    .map(|ycv| Currency::from_i32(ycv.currency).unwrap_or_default())
+                    .unwrap_or_default(),
+            )
+            .to_string()
+        });
         updatable.update_value(|updatable| {
             updatable.update(|holding| holding.unit_valuation = *unit_valuation)
         });
     });
 
-    let (currency_symbol, set_currency_symbol) = create_signal(cx, String::from("$"));
-
     let cost_basis_updatable = Updatable::new(Some(cost_basis), move |cost_basis| {
         log!("Cost basis updated -> {cost_basis:?}");
+        currency_rw_signal.track();
         updatable.update_value(|updatable| {
             updatable.update(|holding| {
                 if let Some(cost_basis) = cost_basis {
@@ -148,7 +173,10 @@ where
                     </div>
                     <div>
                         <label for="cost">"Cost"</label>
-                        <NumericInput updatable=cost_basis_updatable/>
+                        <NumericInput
+                            updatable=cost_basis_updatable
+                            modification=Some(Modification::Prefix(MaybeSignal::Dynamic(currency_rw_signal.into())))
+                        />
                     </div>
                 </div>
                 <div class="form-row">
