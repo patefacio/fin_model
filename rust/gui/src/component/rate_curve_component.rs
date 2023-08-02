@@ -228,18 +228,21 @@ pub fn RateCurveComponent(
 /// Sorts the [YearValue] entries by year and removes any duplicates
 ///
 ///   * **points** - Curve points to sort and dedup.
-pub fn clean_curve(points: &mut Vec<YearValue>) {
+///   * _return_ - Vector of year's that were combined due to duplication.
+pub fn clean_curve(points: &mut Vec<YearValue>) -> Vec<u32> {
     // α <fn clean_curve>
     // First sort the data by year to ensure points are ordered
     points.sort_by(|a, b| a.year.cmp(&b.year));
     let mut last_inserted: Option<Year> = None;
     let mut deduped = Vec::with_capacity(points.len());
+    let mut removed_keys = Vec::with_capacity(2);
 
     points.iter().for_each(|year_value| {
         if let Some(last_inserted) = last_inserted {
             if last_inserted == year_value.year {
                 let last_value_ref: &mut YearValue = deduped.last_mut().unwrap();
                 last_value_ref.value = year_value.value;
+                removed_keys.push(year_value.year);
             } else {
                 deduped.push(*year_value);
             }
@@ -250,6 +253,8 @@ pub fn clean_curve(points: &mut Vec<YearValue>) {
     });
 
     *points = deduped;
+
+    removed_keys
     // ω <fn clean_curve>
 }
 
@@ -277,7 +282,7 @@ pub mod unit_tests {
                 value: 4.0,
             },
         ];
-        clean_curve(&mut dirty_curve);
+        let values_removed =clean_curve(&mut dirty_curve);
         assert_eq!(
             vec![
                 YearValue {
@@ -290,7 +295,9 @@ pub mod unit_tests {
                 }
             ],
             dirty_curve
-        )
+        );
+
+        assert_eq!(vec![2020], values_removed);
 
         // ω <fn test_clean_curve>
     }
