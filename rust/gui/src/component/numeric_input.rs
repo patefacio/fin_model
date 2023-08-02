@@ -152,8 +152,6 @@ pub fn NumericInput(
         })
         .unwrap_or_default();
 
-    log!("Creating with initial `{initial_value}` {cx:?}");
-
     let (is_valid, set_is_valid) = create_signal(cx, is_valid);
 
     struct NumericInputData {
