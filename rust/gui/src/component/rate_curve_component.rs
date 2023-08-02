@@ -57,7 +57,7 @@ pub fn RateCurveComponent(
     use leptos::SignalWithUntracked;
     use plus_modeled::YearValue;
     use std::collections::HashMap;
-    use std::rc::Rc;
+    use std::ops::Range;
 
     let mut updatable = updatable;
     clean_curve(&mut updatable.value.curve);
@@ -97,37 +97,41 @@ pub fn RateCurveComponent(
     );
 
     let on_accept = move || {
-        set_curve.update(move |curve| {
-            entry_complete.with(|entry_complete| {
-                log!("Accessing entry complete {entry_complete:?}");
-                let new_year = entry_complete.0.unwrap();
+        if let (Some(new_year), Some(new_value)) = entry_complete.get() {
+            set_curve.update_untracked(move |curve| {
                 curve.push(YearValue {
                     year: new_year,
-                    value: entry_complete.1.unwrap(),
+                    value: new_value,
                 });
-                signals.update_value(|signals_map| {
-                    let _prev_value =
-                        signals_map.insert(new_year, create_rw_signal(cx, curve.len() - 1));
-                    log!("Previous value at year {new_year} is -> {_prev_value:?}");
-                });
-                let deduped_years = clean_curve(curve);
-                deduped_years.iter().for_each(|year| {
-                    signals.with_value(|signals_map| {
-                        signals_map.get(&year).unwrap().update(|_index| {});
-                    })
-                });
-                set_clear_fields.update(|_| {});
-                set_year_input_focus.update(|_| {});
-                set_add_enabled.update(|enabled| *enabled = false);
+                let _deduped_years = clean_curve(curve);
             });
-        });
-        signal_parent_update()
+            let position = curve.with(|curve| {
+                curve
+                    .iter()
+                    .enumerate()
+                    .find(|(_, year_value)| year_value.year == new_year)
+                    .unwrap()
+                    .0
+            });
+
+            signals.update_value(|signals_map| {
+                if let Some(current_signal) = signals_map.get(&new_year) {
+                    log!("Replacing new year -> {new_year} at position-> {position:?}");
+                    current_signal.update(|index| *index = position);
+                } else {
+                    log!("Inserting new year -> {new_year} at position-> {position:?}");
+                    signals_map.insert(new_year, create_rw_signal(cx, position));
+                }
+            });
+            set_curve.update(|_curve| {});
+            set_clear_fields.update(|_| {});
+            set_year_input_focus.update(|_| {});
+            set_add_enabled.update(|enabled| *enabled = false);
+
+            signal_parent_update()
+        };
     };
     let on_accept_evt = move |_| on_accept();
-
-    ///////////New Stuff Faith
-
-    //curve needs to be a rw signal, not just read
 
     let num_elements = move || curve.with(|curve| curve.len());
     let nth_key = move |n: usize| {
@@ -141,20 +145,83 @@ pub fn RateCurveComponent(
         if let Some(position) =
             signals.with_value(|signals| signals.get(key).cloned().map(|signal| signal.get()))
         {
+            log!("Delete before curve update -> {key}");
+            let mut position_to_end_range: Option<Range<usize>> = None;
             set_curve.update(|curve| {
-                signals.update_value(|signals| {
-                    let _removed_value = curve.remove(position);
-                    let end = curve.len();
-                    let elements_after = &curve[position..end];
+                log!("Delete after curve update -> {key}");
+                let _removed_value = curve.remove(position);
+                let end = curve.len();
+                position_to_end_range = Some(position..end);
+            });
+
+            signals.update_value(|signals| {
+                curve.with(|curve| {
+                    let elements_after = &curve[position_to_end_range.unwrap()];
                     for (i, year_value) in elements_after.iter().enumerate() {
                         let key = year_value.year;
                         let new_index = position + i;
                         if let Some(keyed_signal) = signals.get_mut(&key) {
-                            keyed_signal.update(|index| *index = new_index)
+                            keyed_signal.update(|index| {
+                                log!("Updating key index -> {key}");
+                                *index = new_index;
+                            });
                         }
                     }
                 });
             });
+        }
+    };
+
+    let (disabled, _set_disabled) = create_signal(cx, true);
+    let year_input = move |year_value: YearValue| {
+        view! { cx,
+            <YearInput
+                input_class=Some("rcc-yi".to_string())
+                disabled=Some(disabled)
+                updatable=Updatable::new(
+                    Some(year_value.year),
+                    move |year| {
+                        set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
+                        set_add_enabled
+                            .update(|add_enabled| {
+                                *add_enabled = entry_complete
+                                    .with(|entry_complete| {
+                                        entry_complete.0.is_some() && entry_complete.1.is_some()
+                                    });
+                            });
+                    },
+                )
+                placeholder=Some("year".to_string())
+            />
+        }
+    };
+
+    let percent_input = move |year_value: YearValue| {
+        log!("Percent input changing for year value to {year_value:?}");
+        view! { cx,
+            <PercentInput
+                disabled=Some(disabled)
+                updatable=Updatable::new(
+                    Some(year_value.value),
+                    move |percent| {
+                        log!("Percent is updating => {percent:?}");
+                        set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
+                        set_add_enabled
+                            .update(|add_enabled| {
+                                *add_enabled = entry_complete
+                                    .with(|entry_complete| {
+                                        entry_complete.0.is_some() && entry_complete.1.is_some()
+                                    });
+                            });
+                    },
+                )
+                placeholder=Some("rate".to_string())
+                on_enter=Some(
+                    Box::new(move |_| {
+                        on_accept();
+                    }),
+                )
+            />
         }
     };
 
@@ -170,71 +237,25 @@ pub fn RateCurveComponent(
                     view=move |cx, i| {
                         let key = nth_key(i).unwrap();
                         let key_signal = key_signal(&key);
-                        //if let Some(key_signal) = key_signal(&key){};
                         let year_value = move || {
                             let year_value_index = key_signal.get();
-                            curve.with(|curve| curve.get(year_value_index).cloned().unwrap())
+                            curve
+                                .with_untracked(|curve| {
+                                    if let Some(year_value) = curve.get(year_value_index).cloned() {
+                                        year_value
+                                    } else {
+                                        panic!("Can't find year_value for {year_value_index:?}");
+                                    }
+                                })
                         };
-                        let (disabled, _set_disabled) = create_signal(cx, true);
                         let delete_row = move |_event| {
                             delete_by_key(&key);
                             signal_parent_update();
                         };
-                        let year_input = move || {
-                            view! { cx,
-                                <YearInput
-                                    input_class=Some("rcc-yi".to_string())
-                                    disabled=Some(disabled)
-                                    updatable=Updatable::new(
-                                        Some(year_value().year),
-                                        move |year| {
-                                            set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
-                                            set_add_enabled
-                                                .update(|add_enabled| {
-                                                    *add_enabled = entry_complete
-                                                        .with(|entry_complete| {
-                                                            entry_complete.0.is_some() && entry_complete.1.is_some()
-                                                        });
-                                                });
-                                        },
-                                    )
-                                    placeholder=Some("year".to_string())
-                                />
-                            }
-                        };
-                        let percent_input = move || {
-                            let year_value = year_value();
-                            log!("Percent input changing for year value to {year_value:?}");
-                            view! { cx,
-                                <PercentInput
-                                    disabled=Some(disabled)
-                                    updatable=Updatable::new(
-                                        Some(year_value.value),
-                                        move |percent| {
-                                            log!("Percent is updating => {percent:?}");
-                                            set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
-                                            set_add_enabled
-                                                .update(|add_enabled| {
-                                                    *add_enabled = entry_complete
-                                                        .with(|entry_complete| {
-                                                            entry_complete.0.is_some() && entry_complete.1.is_some()
-                                                        });
-                                                });
-                                        },
-                                    )
-                                    placeholder=Some("rate".to_string())
-                                    on_enter=Some(
-                                        Box::new(move |_| {
-                                            on_accept();
-                                        }),
-                                    )
-                                />
-                            }
-                        };
                         view! { cx,
                             <button on:click=delete_row>"🗑"</button>
-                            {year_input()}
-                            {percent_input()}
+                            {move || year_input(year_value())}
+                            {move || percent_input(year_value())}
                         }
                     }
                 />
@@ -290,7 +311,7 @@ pub fn RateCurveComponent(
 }
 
 // ω <fn rate_curve_component>
-//}
+
 
 /// Sorts the [YearValue] entries by year and removes any duplicates
 ///
