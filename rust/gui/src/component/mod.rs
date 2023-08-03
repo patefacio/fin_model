@@ -17,6 +17,7 @@ pub mod dossier_correlation_matrix_component;
 pub mod dossier_holding_index_input;
 pub mod dossier_item_index_component;
 pub mod enum_select;
+pub mod expandable_rate_component;
 pub mod historic_risk_return_component;
 pub mod holding_component;
 pub mod integer_input;

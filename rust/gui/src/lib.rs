@@ -20,6 +20,7 @@ pub use component::dossier_correlation_matrix_component::DossierCorrelationMatri
 pub use component::dossier_holding_index_input::DossierHoldingIndexInput;
 pub use component::dossier_item_index_component::DossierItemIndexComponent;
 pub use component::enum_select::EnumSelect;
+pub use component::expandable_rate_component::ExpandableRateComponent;
 pub use component::historic_risk_return_component::HistoricRiskReturnComponent;
 pub use component::holding_component::HoldingComponent;
 pub use component::integer_input::IntegerInput;
