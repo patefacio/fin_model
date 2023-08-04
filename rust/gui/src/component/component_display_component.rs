@@ -28,6 +28,8 @@ pub fn ComponentDisplayComponent(
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
     use crate::EnumSelect;
+    use crate::HoldingSharedContext;
+    use crate::ItemGrowth;
     use crate::Modification;
     use crate::NormalLossComponent;
     use crate::NormalSpecComponent;
@@ -37,12 +39,16 @@ pub fn ComponentDisplayComponent(
     use crate::RateCurveComponent;
     use crate::SelectDirection;
     use crate::Updatable;
+    use crate::UpdatablePair;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
     use crate::YearRangeInput;
     use crate::YearValueInput;
+    use crate::SymbolGrowthMap;
     use leptos::*;
     use leptos_dom::console_log;
+    use std::collections::HashMap;
+    use std::collections::HashSet;
 
     use plus_modeled::Currency;
     use plus_modeled::Holding;
@@ -55,6 +61,8 @@ pub fn ComponentDisplayComponent(
 
     use crate::DateInput;
     use crate::IntegerInput;
+    use std::rc::Rc;
+    use std::cell::RefCell;
 
     let (read_count, write_count) = create_signal(cx, 0);
     leptos_dom::console_log(&format!("App cx({cx:?}"));
@@ -473,8 +481,17 @@ pub fn ComponentDisplayComponent(
         <hr/>
         <h4>"Collection Grid Component<Holding>"</h4>
         <CollectionGridComponent
-            updatable=Updatable::new(
+            updatable=UpdatablePair::new(
                 holdings,
+                HoldingSharedContext{
+                    symbol_growth_map: HashMap::from([
+                        ("IBM".into(), ItemGrowth::default()),
+                        ("MSFT".into(), ItemGrowth::default())
+                    ]),
+                    symbol_names: HashSet::from([
+                        "IBM".into(), "MSFT".into()
+                    ])
+                },
                 move |holding_list| {
                     show_update(format!("Holding list updated -> {holding_list:?}"));
                 },

@@ -3,7 +3,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::HoldingSharedContext;
+use crate::SymbolGrowthMap;
 use crate::Updatable;
+use crate::UpdatablePair;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::{component, view, IntoView, Scope};
@@ -22,15 +25,15 @@ use std::collections::HashMap;
 ///
 ///
 ///   * **cx** - Context
-///   * **updatable** - The holding being edited by this component
+///   * **updatable** - The holding being edited by this component with shared context
 ///   * **on_cancel** - Called if edit is canceled.
 ///   * _return_ - View for holding_component
 #[component]
 pub fn HoldingComponent<F>(
     /// Context
     cx: Scope,
-    /// The holding being edited by this component
-    updatable: Updatable<Holding>,
+    /// The holding being edited by this component with shared context
+    updatable: UpdatablePair<Holding, HoldingSharedContext>,
     /// Called if edit is canceled.
     on_cancel: F,
 ) -> impl IntoView
@@ -48,6 +51,7 @@ where
     use crate::OkCancelComponent;
     use crate::SymbolInput;
     use crate::YearCurrencyValueInput;
+    use crate::UpdatePairType;
     use leptos::create_rw_signal;
     use leptos::create_signal;
     use leptos::store_value;
@@ -63,7 +67,7 @@ where
     };
 
     let mut on_cancel = on_cancel;
-    let holding = &updatable.value;
+    let holding = &updatable.first_value;
     let quantity = holding.quantity;
     let unit_valuation = holding.unit_valuation;
     let cost_basis = holding.cost_basis;
@@ -75,15 +79,21 @@ where
 
     let symbol_updatable = Updatable::new(instrument_name, move |symbol| {
         updatable.update_value(|updatable| {
-            updatable.update(|holding| holding.instrument_name = symbol.clone())
+            updatable.update(|(holding, shared_context)| {
+                holding.instrument_name = symbol.clone();
+                crate::UpdatePairType::UpdateFirst
+            })
         });
     });
 
     let quantity_updatable = Updatable::new(Some(quantity), move |quantity| {
         updatable.update_value(|updatable| {
-            updatable.update(|holding| {
+            updatable.update(|(holding, shared_context)| {
                 if let Some(quantity) = quantity {
                     holding.quantity = *quantity;
+                    UpdatePairType::UpdateFirst
+                } else {
+                    UpdatePairType::UpdateNone
                 }
             })
         })
@@ -111,7 +121,10 @@ where
             .to_string()
         });
         updatable.update_value(|updatable| {
-            updatable.update(|holding| holding.unit_valuation = *unit_valuation)
+            updatable.update(|(holding, shared_context)| {
+                holding.unit_valuation = *unit_valuation;
+                UpdatePairType::UpdateFirst
+            }) 
         });
     });
 
@@ -119,9 +132,12 @@ where
         log!("Cost basis updated -> {cost_basis:?}");
         currency_rw_signal.track();
         updatable.update_value(|updatable| {
-            updatable.update(|holding| {
+            updatable.update(|(holding, shared_context)| {
                 if let Some(cost_basis) = cost_basis {
                     holding.cost_basis = *cost_basis;
+                    UpdatePairType::UpdateFirst
+                } else {
+                    UpdatePairType::UpdateNone
                 }
             })
         });

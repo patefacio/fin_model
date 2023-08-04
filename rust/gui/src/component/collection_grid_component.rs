@@ -4,6 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+use crate::UpdatablePair;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::RwSignal;
@@ -12,7 +13,9 @@ use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::boxed::Box;
+use std::cell::RefCell;
 use std::fmt::Debug;
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- traits ---
@@ -21,6 +24,9 @@ use std::fmt::Debug;
 /// Supports adding and removing entries and displaying as many _fields_ of
 /// each element as the trait implementation dictates.
 pub trait CollectionGrid: Sized {
+    /// Data shared among all edited items.
+    type SharedContext: Debug;
+
     /// Get the number of columns.
     ///
     ///   * _return_ - Number of columns
@@ -50,12 +56,16 @@ pub trait CollectionGrid: Sized {
     /// Create a view to edit the element
     ///
     ///   * **cx** - Context
-    ///   * **updatable** - Read/write signal containing the element to edit.
+    ///   * **updatable** - Updatable containing the element to edit.
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * **on_cancel** - Called if edit is canceled.
     ///   * _return_ - The edit view
-    fn edit_element<F>(cx: Scope, updatable: Updatable<Self>, on_cancel: F) -> View
+    fn edit_element<F>(
+        cx: Scope,
+        updatable: UpdatablePair<Self, Self::SharedContext>,
+        on_cancel: F,
+    ) -> View
     where
         F: 'static + FnMut(&str);
 }
@@ -74,17 +84,18 @@ pub trait CollectionGrid: Sized {
 ///   * **read_only** - If true just display (default false)
 ///   * _return_ - View for collection_grid_component
 #[component]
-pub fn CollectionGridComponent<T>(
+pub fn CollectionGridComponent<T, S>(
     /// Context
     cx: Scope,
     /// Items to show
-    updatable: Updatable<Vec<T>>,
+    updatable: UpdatablePair<Vec<T>, S>,
     /// If true just display (default false)
     #[prop(default = false)]
     read_only: bool,
 ) -> impl IntoView
 where
-    T: 'static + Clone + Debug + CollectionGrid,
+    T: 'static + Clone + Debug + CollectionGrid<SharedContext = S>,
+    S: 'static + Clone + Debug,
 {
     // α <fn collection_grid_component>
 
@@ -112,8 +123,8 @@ where
         EditSelection { selection_key: String },
     }
 
-    struct CGCData<T> {
-        updatable: Updatable<Vec<T>>,
+    struct CGCData<T, S> {
+        updatable: UpdatablePair<Vec<T>, S>,
         component_state: ComponentState,
     }
 
@@ -122,7 +133,7 @@ where
     let signals = store_value(
         cx,
         updatable
-            .value
+            .first_value
             .iter()
             .enumerate()
             .map(|(i, row)| (row.get_key(), create_rw_signal(cx, i)))
@@ -175,14 +186,15 @@ where
     };
 
     // Reactive count of elements
-    let num_elements = move || cgc_data_signal.with(|cgc_data| cgc_data.updatable.value.len());
+    let num_elements =
+        move || cgc_data_signal.with(|cgc_data| cgc_data.updatable.first_value.len());
 
     // Get the key associated with the row index into the vec
     let nth_key = move |n: usize| {
         cgc_data_signal.with_untracked(|cgc_data| {
             cgc_data
                 .updatable
-                .value
+                .first_value
                 .get(n)
                 .map(|row| row.get_key().clone())
         })
@@ -201,7 +213,7 @@ where
             // <For... component that is tracking `cgc_data`
             cgc_data_signal.update(|cgc_data| {
                 signals.update_value(|signals| {
-                    let rows = &mut cgc_data.updatable.value;
+                    let rows = &mut cgc_data.updatable.first_value;
                     rows.remove(position);
                     let end = rows.len();
                     // After removing the row we need to iterate over all subsequent
@@ -270,18 +282,19 @@ where
         })
     };
 
-    let this_row_updated = move |row: &T| {
-        if let Some(key_signal) = key_signal(&row.get_key()) {
-            let index = key_signal.get_untracked();
-            cgc_data_signal.update_untracked(|cgc_data| {
-                if let Some(row_) = cgc_data.updatable.value.get_mut(index) {
-                    *row_ = row.clone();
-                }
-            });
-            set_enabled();
-            key_signal.update(|i| log!("Signalling {i} for {row:?}"));
-        }
-    };
+    let this_row_updated =
+        move |(row, shared_context, update_type): (&T, &S, crate::UpdatePairType)| {
+            if let Some(key_signal) = key_signal(&row.get_key()) {
+                let index = key_signal.get_untracked();
+                cgc_data_signal.update_untracked(|cgc_data| {
+                    if let Some(row_) = cgc_data.updatable.first_value.get_mut(index) {
+                        *row_ = row.clone();
+                    }
+                });
+                set_enabled();
+                key_signal.update(|i| log!("Signalling {i} for {row:?}"));
+            }
+        };
 
     let this_row_canceled = move |key: &str| {
         set_enabled();
@@ -294,12 +307,15 @@ where
         cgc_data_signal.with_untracked(move |cgc_data| {
             cgc_data
                 .updatable
-                .value
+                .first_value
                 .get(index_by_key(&*key))
                 .cloned()
                 .unwrap()
         })
     };
+
+    let shared_context_cloned =
+        move || cgc_data_signal.with_untracked(|cgc_data| cgc_data.updatable.second_value.clone());
 
     let show_row_editor = move |key: &str| {
         let key = key.to_string();
@@ -309,7 +325,7 @@ where
                 <div class="cgc-editable">
                     {<T as CollectionGrid>::edit_element(
                         cx,
-                        Updatable::new(row_cloned(&edit_key), this_row_updated),
+                        UpdatablePair::new(row_cloned(&edit_key), shared_context_cloned(), this_row_updated),
                         this_row_canceled,
                     )}
                 </div>
@@ -324,7 +340,7 @@ where
                 <div class="cgc-editable">
                     {<T as CollectionGrid>::edit_element(
                         cx,
-                        Updatable::new(<T as CollectionGrid>::new(), this_row_updated),
+                        UpdatablePair::new(<T as CollectionGrid>::new(), shared_context_cloned(), this_row_updated),
                         this_row_canceled,
                     )}
                 </div>
@@ -350,7 +366,7 @@ where
                                         cgc_data_signal
                                             .with_untracked(move |cgc_data| {
                                                 let key = Rc::clone(&key);
-                                                if let Some(row) = cgc_data.updatable.value.get(index) {
+                                                if let Some(row) = cgc_data.updatable.first_value.get(index) {
                                                     let mut user_fields = row.get_fields(cx);
                                                     if !read_only {
                                                         user_fields.insert(0, make_delete_button(&key));

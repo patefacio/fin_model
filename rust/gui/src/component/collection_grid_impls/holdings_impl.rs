@@ -4,17 +4,48 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::CollectionGrid;
+use crate::SymbolGrowthMap;
 use crate::Updatable;
+use crate::UpdatablePair;
 use leptos::view;
 use leptos::IntoView;
 use leptos::Scope;
 use leptos_dom::View;
 use plus_modeled::Holding;
+use std::cell::RefCell;
+use std::collections::HashSet;
+use std::rc::Rc;
+
+////////////////////////////////////////////////////////////////////////////////////
+// --- structs ---
+////////////////////////////////////////////////////////////////////////////////////
+/// The shared context required to edit a single holding in a collection of holdings
+/// within an account. The [Holding](plus_modeled::Holding) contains a symbol
+/// name. which may be shared among many holdings in different accounts. In fact,
+/// the [Holding] does not contain the growth of the symbol it refers to.
+/// Rather the symbol name is the key to the growth that is stored in the
+/// [BalanceSheet](plus_modeled::BalanceSheet). This relationship implies that
+/// when editing the growth of a holding that it is really editing the growth
+/// of the symbol it refers to (which may be shared). In order to edit a holding
+/// **and** allow for the symbol growth of that holding's symbol to be updated
+/// this context needs to have that mapping of all symbols. In addition, we want
+/// to prevent creating a new holding with the same symbol name in the same account.
+/// The `symbol_names` set enables the component to prevent either creating a new
+/// holding that is already present or changing the name of holding being edited
+/// to another symbol.
+#[derive(Debug, Clone, Default)]
+pub struct HoldingSharedContext {
+    /// Map of symbols to their growths
+    pub symbol_growth_map: SymbolGrowthMap,
+    /// Set of already taken symbol names
+    pub symbol_names: HashSet<String>,
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
 impl CollectionGrid for Holding {
+    type SharedContext = HoldingSharedContext;
     /// Get the number of columns.
     ///
     ///   * _return_ - Number of columns
@@ -121,25 +152,41 @@ impl CollectionGrid for Holding {
     /// Create a view to edit the element
     ///
     ///   * **cx** - Context
-    ///   * **updatable** - Read/write signal containing the element to edit.
+    ///   * **updatable** - Updatable containing the element to edit.
     /// This component will update the vector whenever the element is signaled
     /// by finding the proper element in the vector and replacing it with the update.
     ///   * **on_cancel** - Called if edit is canceled.
     ///   * _return_ - The edit view
-    fn edit_element<F>(cx: Scope, updatable: Updatable<Self>, on_cancel: F) -> View
+    fn edit_element<F>(
+        cx: Scope,
+        updatable: UpdatablePair<Self, Self::SharedContext>,
+        on_cancel: F,
+    ) -> View
     where
         F: 'static + FnMut(&str),
     {
         // α <fn CollectionGrid::edit_element for Holding>
 
         use crate::HoldingComponent;
-        let key = updatable.value.get_key();
+        let key = updatable.first_value.get_key();
         let mut on_cancel = on_cancel;
         let on_cancel = move || {
             on_cancel(&key);
         };
 
-        view! { cx, <HoldingComponent updatable=updatable on_cancel=on_cancel/> }.into_view(cx)
+        leptos::log!(
+            "EDITING element -> `{:?}` with shared: -> {:?}",
+            updatable.first_value,
+            updatable.second_value
+        );
+
+        view! { cx,
+            <HoldingComponent
+                updatable=updatable
+                on_cancel=on_cancel
+            />
+        }
+        .into_view(cx)
 
         // ω <fn CollectionGrid::edit_element for Holding>
     }

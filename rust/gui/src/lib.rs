@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub use component::collection_grid_component::CollectionGrid;
 pub use component::collection_grid_component::CollectionGridComponent;
+pub use component::collection_grid_impls::holdings_impl::HoldingSharedContext;
 pub use component::component_display_component::ComponentDisplayComponent;
 pub use component::currency_select::currency_from_symbol;
 pub use component::currency_select::to_currency_symbol;
@@ -42,6 +43,8 @@ pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;
 pub use component::year_range_input::YearRangeInput;
 pub use component::year_value_input::YearValueInput;
+pub use component::SymbolGrowthMap;
+pub use plus_modeled::ItemGrowth;
 pub use plus_utils::scale_by;
 pub use utils::distribution_cdf::DistributionCdf;
 pub use utils::distribution_pdf::DistributionPdf;
@@ -54,6 +57,8 @@ pub use utils::leptos_helpers::SharedData;
 pub use utils::live_parsed_date::LiveParsedDate;
 pub use utils::parsed_num::ParsedNum;
 pub use utils::updatable::Updatable;
+pub use utils::updatable::UpdatablePair;
+pub use utils::updatable::UpdatePairType;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---

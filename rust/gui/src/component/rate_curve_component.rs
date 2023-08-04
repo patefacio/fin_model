@@ -308,10 +308,9 @@ pub fn RateCurveComponent(
         </div>
         <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
     }
-}
 
 // ω <fn rate_curve_component>
-
+}
 
 /// Sorts the [YearValue] entries by year and removes any duplicates
 ///
