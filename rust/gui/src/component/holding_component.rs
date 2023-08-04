@@ -205,8 +205,10 @@ where
                         <button>"🚀"</button>
                     </div>
                 </div>
-                <div class="form-row">
-                    <OkCancelComponent on_ok_cancel=on_ok_cancel/>
+                <div style="display: flex; justify-content: center; background-color: lightgray;">
+                    <div class="display: grid; grid-template-columns: 1fr 1fr; ">
+                        <OkCancelComponent on_ok_cancel=on_ok_cancel/>
+                    </div>
                 </div>
             </div>
         </fieldset>

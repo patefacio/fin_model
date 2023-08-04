@@ -483,14 +483,12 @@ pub fn ComponentDisplayComponent(
         <CollectionGridComponent
             updatable=UpdatablePair::new(
                 holdings,
-                HoldingSharedContext{
+                HoldingSharedContext {
                     symbol_growth_map: HashMap::from([
                         ("IBM".into(), ItemGrowth::default()),
-                        ("MSFT".into(), ItemGrowth::default())
+                        ("MSFT".into(), ItemGrowth::default()),
                     ]),
-                    symbol_names: HashSet::from([
-                        "IBM".into(), "MSFT".into()
-                    ])
+                    symbol_names: HashSet::from(["IBM".into(), "MSFT".into()]),
                 },
                 move |holding_list| {
                     show_update(format!("Holding list updated -> {holding_list:?}"));

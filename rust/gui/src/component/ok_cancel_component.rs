@@ -43,11 +43,19 @@ where
 
     use leptos::store_value;
 
-    let mut on_ok_cancel = store_value(cx, on_ok_cancel);
+    let on_ok_cancel = store_value(cx, on_ok_cancel);
 
     view! { cx,
-        <button on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }>"Ok"</button>
-        <button on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }>
+        <button
+            class="ok-button"
+            on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }
+        >
+            "Ok"
+        </button>
+        <button
+            class="cancel-button"
+            on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }
+        >
             "Cancel"
         </button>
     }

@@ -47,6 +47,10 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("HoldingLinks", "#[derive(Serialize, Deserialize)]")
         .type_attribute("FlowSpec", "#[derive(Serialize, Deserialize)]")
         .type_attribute("Person", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("RetirementContribution", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("EmployerMatchProgram", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("RetirementContributionLimit", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("SystemDefaults", "#[derive(Serialize, Deserialize)]")
         .type_attribute("Currency", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("AccountType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("BasicAllocationType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
@@ -83,7 +87,9 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
           "core_enums.proto",
           "worth.proto",
           "flow_specs.proto",
-          "person.proto"
+          "person.proto",
+          "retirement.proto",
+          "system_defaults.proto"
         ], &["../../protobuf"])?;
     Ok(())
     

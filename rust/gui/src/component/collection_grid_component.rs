@@ -3,7 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::Updatable;
 use crate::UpdatablePair;
 #[allow(unused_imports)]
 use leptos::log;
@@ -13,9 +12,7 @@ use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::boxed::Box;
-use std::cell::RefCell;
 use std::fmt::Debug;
-use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- traits ---
@@ -340,7 +337,11 @@ where
                 <div class="cgc-editable">
                     {<T as CollectionGrid>::edit_element(
                         cx,
-                        UpdatablePair::new(<T as CollectionGrid>::new(), shared_context_cloned(), this_row_updated),
+                        UpdatablePair::new(
+                            <T as CollectionGrid>::new(),
+                            shared_context_cloned(),
+                            this_row_updated,
+                        ),
                         this_row_canceled,
                     )}
                 </div>
