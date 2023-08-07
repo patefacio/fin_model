@@ -320,8 +320,6 @@ pub fn RateCurveComponent(
     // ω <fn rate_curve_component>
 }
 
-// ω <fn rate_curve_component>
-
 /// Sorts the [YearValue] entries by year and removes any duplicates
 ///
 ///   * **points** - Curve points to sort and dedup.

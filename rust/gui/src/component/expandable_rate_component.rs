@@ -1,6 +1,5 @@
 //! Module for expandable_rate_component leptos function/component
 
-use crate::RateCurveComponent;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -11,7 +10,6 @@ use leptos::log;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use leptos_dom::svg::view;
 use plus_modeled::RateCurve;
 use plus_modeled::YearRange;
 use plus_modeled::YearValue;
@@ -45,6 +43,7 @@ pub fn ExpandableRateComponent(
 ) -> impl IntoView {
     // α <fn expandable_rate_component>
     use crate::PercentInput;
+    use crate::RateCurveComponent;
     use leptos::create_rw_signal;
     use leptos::store_value;
     use leptos::Show;

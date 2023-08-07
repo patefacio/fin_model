@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use plotters::prelude::RGBColor;
 use plus_modeled::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -26,6 +27,8 @@ pub struct HistoricRiskReturn {
     pub risk_return: (f64, f64),
     /// The label for the value (e.g. EquityMarket)
     pub label: String,
+    /// Color in the legend
+    pub color: RGBColor,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -145,28 +148,36 @@ pub mod unit_tests {
 // α <mod-def historic_risk_return>
 
 use once_cell::sync::Lazy;
-
-use crate::utils::historic_risk_return;
+use plotters::prelude::{GREEN, RED, YELLOW, BLUE, MAGENTA };
 
 pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::new(|| {
     vec![
-        // Samples pulled from here: https://www.visualcapitalist.com/historical-returns-by-asset-class/
+        // Samples pulled from here: https://www.bogleheads.org/wiki/Historical_and_expected_returns
         //x ->risk/ st. dev y -> return/ mean
         HistoricRiskReturn {
-            risk_return: (0.161, 0.096),
+            risk_return: (0.202, 0.123),
             label: "US Large Cap".into(),
+            color: GREEN
         },
         HistoricRiskReturn {
-            risk_return: (0.051, 0.041),
+            risk_return: (0.329, 0.174),
+            label: "US Small Cap".into(),
+            color: MAGENTA
+        },
+        HistoricRiskReturn {
+            risk_return: (0.057, 0.055),
             label: "US Bonds".into(),
+            color: YELLOW
         },
         HistoricRiskReturn {
             risk_return: (0.171, 0.085),
             label: "REITS".into(),
+            color: BLUE
         },
         HistoricRiskReturn {
             risk_return: (0.288, 0.1212),
             label: "Emerging Mkts".into(),
+            color: RED
         },
     ]
 });

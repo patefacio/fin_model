@@ -9,8 +9,6 @@ use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
-use crate::ExpandableRateComponent;
-
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +27,7 @@ pub fn ComponentDisplayComponent(
     use crate::DisposeTest;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
+    use crate::ExpandableRateComponent;
     use crate::EnumSelect;
     use crate::HoldingSharedContext;
     use crate::ItemGrowth;
