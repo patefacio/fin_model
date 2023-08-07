@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub use scale_by::scale_by;
 pub use system_unicodes::SystemUnicodes;
+pub use text_utils::with_max_precision;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---
@@ -12,6 +13,7 @@ pub use system_unicodes::SystemUnicodes;
 pub mod plus_constants;
 pub mod scale_by;
 pub mod system_unicodes;
+pub mod text_utils;
 
 // α <mod-def lib>
 // ω <mod-def lib>

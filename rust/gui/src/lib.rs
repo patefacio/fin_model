@@ -22,9 +22,12 @@ pub use component::dossier_holding_index_input::DossierHoldingIndexInput;
 pub use component::dossier_item_index_component::DossierItemIndexComponent;
 pub use component::enum_select::EnumSelect;
 pub use component::expandable_rate_component::ExpandableRateComponent;
+pub use component::growth_assumption_component::GrowthAssumptionComponent;
 pub use component::historic_risk_return_component::HistoricRiskReturnComponent;
 pub use component::holding_component::HoldingComponent;
 pub use component::integer_input::IntegerInput;
+pub use component::item_growth_component::ItemGrowthComponent;
+pub use component::item_growth_select::ItemGrowthSelect;
 pub use component::multi_column_select::InitialValue;
 pub use component::multi_column_select::MultiColumnSelect;
 pub use component::multi_column_select::SelectDirection;
@@ -100,6 +103,7 @@ if #[cfg(feature = "hydrate")] {
         .with_target(false)
         .with_writer(tracing_subscriber_wasm::MakeConsoleWriter::default())
         .with_ansi(false)
+        .compact()
         .pretty()
         .finish()
         .init();

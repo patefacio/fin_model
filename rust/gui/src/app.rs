@@ -21,6 +21,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                             view! { cx, <ComponentDisplayComponent/> }
                         }
                     />
+
                 </Routes>
             </main>
         </Router>

@@ -350,6 +350,7 @@ pub fn NumericInput(
                     }
                 }
             }
+
             placeholder=placeholder.unwrap_or_default()
             value=initial_value
             maxlength=max_len

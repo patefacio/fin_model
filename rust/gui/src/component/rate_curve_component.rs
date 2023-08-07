@@ -191,6 +191,7 @@ pub fn RateCurveComponent(
                             });
                     },
                 )
+
                 placeholder=Some("year".to_string())
             />
         }
@@ -215,6 +216,7 @@ pub fn RateCurveComponent(
                             });
                     },
                 )
+
                 placeholder=Some("rate".to_string())
                 on_enter=Some(
                     Box::new(move |_| {
@@ -252,6 +254,7 @@ pub fn RateCurveComponent(
                             delete_by_key(&key);
                             signal_parent_update();
                         };
+
                         view! { cx,
                             <button on:click=delete_row>"🗑"</button>
                             {move || year_input(year_value())}
@@ -259,6 +262,7 @@ pub fn RateCurveComponent(
                         }
                     }
                 />
+
                 <button disabled=move || !add_enabled.get() on:click=on_accept_evt>
                     "+"
                 </button>
@@ -276,6 +280,7 @@ pub fn RateCurveComponent(
                                 });
                         },
                     )
+
                     placeholder=Some("year".to_string())
                     clear_input=Some(clear_fields)
                     set_focus=Some(year_input_focus)
@@ -296,6 +301,7 @@ pub fn RateCurveComponent(
                                 });
                         },
                     )
+
                     placeholder=Some("rate".to_string())
                     clear_input=Some(clear_fields)
                     on_enter=Some(
@@ -304,12 +310,13 @@ pub fn RateCurveComponent(
                         }),
                     )
                 />
+
             </div>
         </div>
         <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
     }
 
-// ω <fn rate_curve_component>
+    // ω <fn rate_curve_component>
 }
 
 /// Sorts the [YearValue] entries by year and removes any duplicates

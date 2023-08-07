@@ -326,7 +326,10 @@ where
                         SelectOption::KeyLabel { key, label } => (
                             key,
                             view! { cx,
-                                <div class="icon-label">
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr;"
+                                    class="icon-label"
+                                >
                                     <div class="icon">{key}</div>
                                     <div class="label">{label}</div>
                                 </div>

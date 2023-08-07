@@ -132,6 +132,7 @@ impl Display for NormalSpec {
         // α <fn Display::fmt for NormalSpec>
         use crate::SystemUnicodes;
         use plus_utils::scale_by;
+        use plus_utils::with_max_precision;
 
         let precision = 2usize;
 
@@ -139,9 +140,9 @@ impl Display for NormalSpec {
             f,
             "𝑁({}={:.precision$}%,{}={:.precision$}%)",
             SystemUnicodes::MathMu.as_unicode(),
-            scale_by(self.mean, 2),
+            with_max_precision(scale_by(self.mean, 2), precision),
             SystemUnicodes::MathSigma.as_unicode(),
-            scale_by(self.std_dev, 2)
+            with_max_precision(scale_by(self.std_dev, 2), precision)
         )
         // ω <fn Display::fmt for NormalSpec>
     }

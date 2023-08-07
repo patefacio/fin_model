@@ -143,42 +143,52 @@ pub fn NormalSpecComponent(
 
     view! { cx,
         <fieldset class="nsg">
-            <div class="form">
-                <div style="display: grid">
-                    "N("
-                    <NumericInput
-                        placeholder=Some("mean".to_string())
-                        modification=Some(Modification::PrefixAndSuffix {
-                            prefix: "μ=".into(),
-                            suffix: "%".into(),
-                        })
-                        non_negative=non_negative_mean
-                        updatable=mean_updatable
-                        size=9
-                        max_len=9
-                    /> ", "
-                    <NumericInput
-                        placeholder=Some("std. dev".to_string())
-                        modification=Some(Modification::PrefixAndSuffix {
-                            prefix: "σ=".into(),
-                            suffix: "%".into(),
-                        })
-                        non_negative=true
-                        updatable=std_dev_updatable
-                        size=9
-                        max_len=9
-                    /> ")"
-                    <button
-                        on:click=move |_| {
-                            show_advanced_rw_signal
-                                .update(|val| {
-                                    *val = !*val;
-                                })
-                        }
-                        style="margin-left: 0.2rem;"
-                    >
-                        {move || { if show_advanced_rw_signal.get() { "...-" } else { "...+" } }}
-                    </button>
+            <div class="form" style="overflow-x: scroll;">
+                <div style="display: grid;">
+                    // *IMPORTANT* The following <em> has the effect of turning the following into
+                    // a single line
+                    <em>
+                        "N("
+                        <NumericInput
+                            placeholder=Some("mean".to_string())
+                            modification=Some(Modification::PrefixAndSuffix {
+                                prefix: "μ=".into(),
+                                suffix: "%".into(),
+                            })
+
+                            non_negative=non_negative_mean
+                            updatable=mean_updatable
+                            size=9
+                            max_len=9
+                        /> ", "
+                        <NumericInput
+                            placeholder=Some("std. dev".to_string())
+                            modification=Some(Modification::PrefixAndSuffix {
+                                prefix: "σ=".into(),
+                                suffix: "%".into(),
+                            })
+
+                            non_negative=true
+                            updatable=std_dev_updatable
+                            size=9
+                            max_len=9
+                        /> ")"
+                        <button
+                            on:click=move |_| {
+                                show_advanced_rw_signal
+                                    .update(|val| {
+                                        *val = !*val;
+                                    })
+                            }
+
+                            style="margin-left: 0.2rem;"
+                        >
+                            {move || {
+                                if show_advanced_rw_signal.get() { "...-" } else { "...+" }
+                            }}
+
+                        </button>
+                    </em>
                 </div>
             </div>
             <Show when=move || { show_advanced_rw_signal.get() } fallback=|_| ()>
@@ -223,19 +233,25 @@ pub fn NormalSpecComponent(
                         when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
                         fallback=|_| ()
                     >
-                        <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
+                        <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(
+                            spec_signal.into(),
+                        )/>
                     </Show>
                     <Show
                         when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
                         fallback=|_| ()
                     >
-                        <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
+                        <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(
+                            spec_signal.into(),
+                        )/>
                     </Show>
                     <Show
                         when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
                         fallback=|_| ()
                     >
-                        <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
+                        <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(
+                            spec_signal.into(),
+                        )/>
                     </Show>
                 </div>
                 <output></output>

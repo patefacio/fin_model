@@ -248,6 +248,7 @@ where
                         signal.update(|_| {});
                     }
                 }
+
                 disabled=move || is_disabled()
             >
                 "✍"
@@ -264,6 +265,7 @@ where
                     log!("Trashcan clicked!");
                     delete_by_key(&key);
                 }
+
                 disabled=move || is_disabled()
             >
                 "🗑"
@@ -322,9 +324,14 @@ where
                 <div class="cgc-editable">
                     {<T as CollectionGrid>::edit_element(
                         cx,
-                        UpdatablePair::new(row_cloned(&edit_key), shared_context_cloned(), this_row_updated),
+                        UpdatablePair::new(
+                            row_cloned(&edit_key),
+                            shared_context_cloned(),
+                            this_row_updated,
+                        ),
                         this_row_canceled,
                     )}
+
                 </div>
             </Show>
         }
@@ -344,6 +351,7 @@ where
                         ),
                         this_row_canceled,
                     )}
+
                 </div>
             </Show>
         }
@@ -367,13 +375,15 @@ where
                                         cgc_data_signal
                                             .with_untracked(move |cgc_data| {
                                                 let key = Rc::clone(&key);
-                                                if let Some(row) = cgc_data.updatable.first_value.get(index) {
+                                                if let Some(row) = cgc_data.updatable.first_value.get(index)
+                                                {
                                                     let mut user_fields = row.get_fields(cx);
                                                     if !read_only {
                                                         user_fields.insert(0, make_delete_button(&key));
                                                         user_fields.insert(0, make_edit_button(&key));
                                                     }
-                                                    [user_fields.into_view(cx), show_row_editor(&key)].into_view(cx)
+                                                    [user_fields.into_view(cx), show_row_editor(&key)]
+                                                        .into_view(cx)
                                                 } else {
                                                     ().into_view(cx)
                                                 }
@@ -386,7 +396,8 @@ where
                         ().into_view(cx)
                     }
                 }
-            /> <button on:click=move |_| { set_new_item_edit() } disabled=move || is_disabled()>
+            />
+            <button on:click=move |_| { set_new_item_edit() } disabled=move || is_disabled()>
                 <strong>"+"</strong>
             </button> {show_new_row_editor}
         </div>

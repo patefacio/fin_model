@@ -65,6 +65,7 @@ pub fn DossierCorrelationMatrixComponent(
                     })
                     .unwrap();
                 let correlation = element.correlation;
+
                 view! { cx,
                     <div style="display: inline-flex">
                         <div inner_html=format!("row: {row_index} [ ")></div>
@@ -75,6 +76,7 @@ pub fn DossierCorrelationMatrixComponent(
                 }
             }
         />
+
         <h5>"The matrix"</h5>
     }
 

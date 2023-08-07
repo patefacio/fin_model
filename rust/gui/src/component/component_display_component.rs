@@ -30,6 +30,7 @@ pub fn ComponentDisplayComponent(
     use crate::EnumSelect;
     use crate::HoldingSharedContext;
     use crate::ItemGrowth;
+    use crate::ItemGrowthComponent;
     use crate::Modification;
     use crate::NormalLossComponent;
     use crate::NormalSpecComponent;
@@ -44,25 +45,28 @@ pub fn ComponentDisplayComponent(
     use crate::YearInput;
     use crate::YearRangeInput;
     use crate::YearValueInput;
-    use crate::SymbolGrowthMap;
     use leptos::*;
     use leptos_dom::console_log;
     use std::collections::HashMap;
     use std::collections::HashSet;
 
+    use plus_modeled::growth::system_growth_id::SystemId;
     use plus_modeled::Currency;
+    use plus_modeled::DossierItemType;
+    use plus_modeled::GrowthAssumption;
+    use plus_modeled::GrowthItemMappings;
     use plus_modeled::Holding;
+    use plus_modeled::HoldingType;
     use plus_modeled::NormalSpec;
     use plus_modeled::RateCurve;
     use plus_modeled::StateOfResidence;
+    use plus_modeled::SystemGrowthId;
     use plus_modeled::YearCurrencyValue;
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
 
     use crate::DateInput;
     use crate::IntegerInput;
-    use std::rc::Rc;
-    use std::cell::RefCell;
 
     let (read_count, write_count) = create_signal(cx, 0);
     leptos_dom::console_log(&format!("App cx({cx:?}"));
@@ -137,6 +141,31 @@ pub fn ComponentDisplayComponent(
             <h4>"Last Update"</h4>
             <p>{last_update}</p>
         </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr;">
+            <ItemGrowthComponent
+                updatable=Updatable::new(
+                    ItemGrowth {
+                        system_growth_id: Some(SystemGrowthId {
+                            system_id: Some(
+                                SystemId::HoldingItemId(HoldingType::UsEquityMarket as u32),
+                            ),
+                        }),
+                        growth_assumption: Some(GrowthAssumption {
+                            normal_spec: Some(NormalSpec {
+                                mean: 0.11,
+                                std_dev: 0.2,
+                            }),
+                            pinned_growth: None,
+                        }),
+                    },
+                    move |item_growth| show_update(format!("ItemGrowth -> {item_growth:?}")),
+                )
+
+                dossier_item_type=DossierItemType::Holding
+                growth_item_mappings=&GrowthItemMappings::default()
+            />
+        </div>
         <h3>"Numbers"</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
             <div style="padding: 1em;">
@@ -161,7 +190,11 @@ pub fn ComponentDisplayComponent(
                 </ul>
                 "></p>
                 <NumericInput
-                    updatable=Updatable::new(Some(32.3), move |n| { show_update(format!("Number updated -> {n:?}")) })
+                    updatable=Updatable::new(
+                        Some(32.3),
+                        move |n| { show_update(format!("Number updated -> {n:?}")) },
+                    )
+
                     range=Some(-5.0..=5.0)
                     placeholder=Some("temp".to_string())
                     size=13
@@ -171,11 +204,18 @@ pub fn ComponentDisplayComponent(
                 <div>
                     <h4>"Numeric Input With Prefix"</h4>
                     <p inner_html="
-                    Provides a <em>NumericInput<em> with <em>prefix</em>.
+                    Provides a <em>NumericInput</em> with <em>prefix</em>.
                     "></p>
                     <NumericInput
-                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
-                        modification=Some(Modification::Prefix(MaybeSignal::Static("$ ".to_string())))
+                        updatable=Updatable::new(
+                            None,
+                            move |n| { show_update(format!("Input updated -> {n:?}")) },
+                        )
+
+                        modification=Some(
+                            Modification::Prefix(MaybeSignal::Static("$ ".to_string())),
+                        )
+
                         placeholder=Some("dollars".to_string())
                         size=12
                     />
@@ -183,11 +223,18 @@ pub fn ComponentDisplayComponent(
                 <div>
                     <h4>"Numeric Input With Prefix Unicode"</h4>
                     <p inner_html="
-                    Provides a <em>NumericInput<em> with <em>prefix</em>.
+                    Provides a <em>NumericInput</em> with <em>prefix</em>.
                     "></p>
                     <NumericInput
-                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
-                        modification=Some(Modification::Prefix(MaybeSignal::Static("€ ".to_string())))
+                        updatable=Updatable::new(
+                            None,
+                            move |n| { show_update(format!("Input updated -> {n:?}")) },
+                        )
+
+                        modification=Some(
+                            Modification::Prefix(MaybeSignal::Static("€ ".to_string())),
+                        )
+
                         placeholder=Some("euros".to_string())
                         size=12
                     />
@@ -195,14 +242,19 @@ pub fn ComponentDisplayComponent(
                 <div>
                     <h4>"Numeric Input Prefix & Suffix RangeInclusive(0 to 5,000)"</h4>
                     <p inner_html="
-                    Provides a <em>NumericInput<em> with <em>prefix</em> and <em>suffix</em>.
+                    Provides a <em>NumericInput</em> with <em>prefix</em> and <em>suffix</em>.
                     "></p>
                     <NumericInput
-                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        updatable=Updatable::new(
+                            None,
+                            move |n| { show_update(format!("Input updated -> {n:?}")) },
+                        )
+
                         modification=Some(Modification::PrefixAndSuffix {
                             prefix: "€ ".into(),
                             suffix: "/yr".into(),
                         })
+
                         placeholder=Some("expense/yr".to_string())
                         range=Some(0.0..=5_000.0)
                         max_len=14
@@ -212,10 +264,14 @@ pub fn ComponentDisplayComponent(
                 <div>
                     <h4>"Numeric Input (Valid when 42.0)"</h4>
                     <p inner_html="
-                    Provides a <em>NumericInput<em> which is only valid via custom validator requiring value to be 42.
+                    Provides a <em>NumericInput</em> which is only valid via custom validator requiring value to be 42.
                     "></p>
                     <NumericInput
-                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        updatable=Updatable::new(
+                            None,
+                            move |n| { show_update(format!("Input updated -> {n:?}")) },
+                        )
+
                         validator=Some(Box::new(|v| v == 42.0))
                         max_len=14
                         size=12
@@ -232,7 +288,11 @@ pub fn ComponentDisplayComponent(
                     </ul>
                     "></p>
                     <IntegerInput
-                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        updatable=Updatable::new(
+                            None,
+                            move |n| { show_update(format!("Input updated -> {n:?}")) },
+                        )
+
                         placeholder=Some("Integer".to_string())
                         range=Some(0..=5000)
                     />
@@ -241,7 +301,11 @@ pub fn ComponentDisplayComponent(
                     <h4>"Integer Input With Validator"</h4>
                     <p inner_html="Integer input with validator requiring value to be even"></p>
                     <IntegerInput
-                        updatable=Updatable::new(None, move |n| { show_update(format!("Input updated -> {n:?}")) })
+                        updatable=Updatable::new(
+                            None,
+                            move |n| { show_update(format!("Input updated -> {n:?}")) },
+                        )
+
                         placeholder=Some("Integer".to_string())
                         validator=Some(Box::new(|v| v % 2 == 0))
                     />
@@ -249,13 +313,14 @@ pub fn ComponentDisplayComponent(
                 <div>
                     <h4 inner_html="Percent Input (i.e. suffix `%`) <strong>max_len=8</strong> RangeInclusive(0% to 40%)"></h4>
                     <p inner_html="
-                    Provides a <em>NumericInput<em> with a percent suffix modification.
+                    Provides a <em>NumericInput</em> with a percent suffix modification.
                     "></p>
                     <PercentInput
                         updatable=Updatable::new(
                             Some(0.0315),
                             move |n| { show_update(format!("Percent updated -> {n:?}")) },
                         )
+
                         placeholder=Some("pct complete".to_string())
                         max_len=8
                         range=Some(0.0..=0.4)
@@ -277,7 +342,11 @@ pub fn ComponentDisplayComponent(
                 <div>
                     <h5>"With Clamp, RangeInclusive(1900 to 2300)"</h5>
                     <YearInput
-                        updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
+                        updatable=Updatable::new(
+                            None,
+                            move |y| { show_update(format!("Year updated -> {y:?}")) },
+                        )
+
                         placeholder=Some("year".to_string())
                         live_clamp=true
                         year_range=YearRange {
@@ -285,28 +354,39 @@ pub fn ComponentDisplayComponent(
                             end: 2300,
                         }
                     />
+
                 </div>
                 <div>
                     <h5>"Without Clamp, RangeInclusive(1900 to 2300)"</h5>
                     <YearInput
-                        updatable=Updatable::new(None, move |y| { show_update(format!("Year updated -> {y:?}")) })
+                        updatable=Updatable::new(
+                            None,
+                            move |y| { show_update(format!("Year updated -> {y:?}")) },
+                        )
+
                         placeholder=Some("year".to_string())
                         year_range=YearRange {
                             start: 1900,
                             end: 2300,
                         }
                     />
+
                 </div>
                 <div>
                     <h4>"Without Clamp, RangeInclusive(2020 to 2030) With Initial Valid Year"</h4>
                     <YearInput
-                        updatable=Updatable::new(Some(2030), move |y| { show_update(format!("Year updated -> {y:?}")) })
+                        updatable=Updatable::new(
+                            Some(2030),
+                            move |y| { show_update(format!("Year updated -> {y:?}")) },
+                        )
+
                         placeholder=Some("year".to_string())
                         year_range=YearRange {
                             start: 2020,
                             end: 2030,
                         }
                     />
+
                 </div>
             </div>
             <div style="padding: 1em;">
@@ -330,12 +410,14 @@ pub fn ComponentDisplayComponent(
                             show_update(format!("Date updated -> {n:?}"));
                         },
                     )
+
                     placeholder=Some("MM/DD/YYYY".to_string())
                     year_range=Some(YearRange {
                         start: 1990,
                         end: 2070,
                     })
                 />
+
             </div>
         </div>
         <hr/>
@@ -364,6 +446,7 @@ pub fn ComponentDisplayComponent(
                         StateOfResidence::Fl,
                         move |state| { show_update(format!("State updated -> {state:?}")) },
                     )
+
                     direction=SelectDirection::TopToBottom
                     column_count=5
                 />
@@ -375,6 +458,7 @@ pub fn ComponentDisplayComponent(
                         StateOfResidence::Fl,
                         move |state| { show_update(format!("State updated -> {state:?}")) },
                     )
+
                     direction=SelectDirection::LeftToRight
                     column_count=5
                 />
@@ -396,7 +480,10 @@ pub fn ComponentDisplayComponent(
         <div style="display: grid; grid-template-columns: 1fr 1fr">
             <div>
                 <h4>"Year Currency Value Input Without Values"</h4>
-                <YearCurrencyValueInput updatable=Updatable::new(None, move |ycv| show_update(format!("YearCurrencyValue set to {ycv:?}")))/>
+                <YearCurrencyValueInput updatable=Updatable::new(
+                    None,
+                    move |ycv| show_update(format!("YearCurrencyValue set to {ycv:?}")),
+                )/>
             </div>
             <div>
                 <h4>"Year Currency Value Input With Values"</h4>
@@ -434,7 +521,9 @@ pub fn ComponentDisplayComponent(
         </div>
         <hr/>
         <h4>"Ok/Cancel"</h4>
-        <OkCancelComponent on_ok_cancel=move |ok_cancel| { show_update("Ok/Cancel -> {ok_cancel:?}".into()) }/>
+        <OkCancelComponent on_ok_cancel=move |ok_cancel| {
+            show_update("Ok/Cancel -> {ok_cancel:?}".into())
+        }/>
         <hr/>
         <div style="display: grid; grid-template-columns: 1fr 1fr">
             <div>
@@ -469,9 +558,9 @@ pub fn ComponentDisplayComponent(
         <RateCurveComponent updatable=Updatable::new(
             RateCurve {
                 curve: vec![
-                    YearValue { year : 2002, value : 0.045 }, YearValue { year : 2000, value :
-                    0.06 }, YearValue { year : 1980, value : 0.025, }, YearValue { year : 2000,
-                    value : - 0.0334 }
+                    YearValue { year : 2002, value : 0.045 }, YearValue { year : 2000, value : 0.06
+                    }, YearValue { year : 1980, value : 0.025, }, YearValue { year : 2000, value : -
+                    0.0334 }
                 ],
             },
             move |rc| {
@@ -494,6 +583,7 @@ pub fn ComponentDisplayComponent(
                     show_update(format!("Holding list updated -> {holding_list:?}"));
                 },
             )
+
             read_only=false
         />
         <hr/>

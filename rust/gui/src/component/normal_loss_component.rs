@@ -57,7 +57,11 @@ pub fn NormalLossComponent(
         <div style="display: grid; grid-template-columns: 1fr 1fr">
             <div style="grid-column-start: 1; grid-column-end: 3; text-align: center">
                 <h4>
-                    {move || { normal_spec.with(|normal_spec| { format!("Loss Table For {}", normal_spec) }) }}
+                    {move || {
+                        normal_spec
+                            .with(|normal_spec| { format!("Loss Table For {}", normal_spec) })
+                    }}
+
                 </h4>
             </div>
             <div style="text-align: right;" class="header">
@@ -86,10 +90,12 @@ pub fn NormalLossComponent(
                                             )
                                     })
                             }}
+
                         </div>
                     }
                 }
             />
+
             <div>
                 <hr/>
             </div>
@@ -103,6 +109,7 @@ pub fn NormalLossComponent(
                         prefix: "gain < ".into(),
                         suffix: "%".into(),
                     })
+
                     updatable=sample_loss_updatable
                     size=12
                     max_len=14
@@ -130,6 +137,7 @@ pub fn NormalLossComponent(
                                 })
                         })
                 }}
+
             </div>
         </div>
     }
