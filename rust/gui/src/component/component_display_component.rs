@@ -9,6 +9,8 @@ use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
+use crate::ExpandableRateComponent;
+
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -565,6 +567,13 @@ pub fn ComponentDisplayComponent(
             },
             move |rc| {
                 show_update(format!("Rate Curve -> {rc:?}"));
+            },
+        )/>
+        <h4>"Rate Curve with Expandable View"</h4>
+        <ExpandableRateComponent updatable=Updatable::new(
+            RateCurve::default(),
+            move |rc| {
+                show_update(format!("RateCurve updated -> {rc:?}"));
             },
         )/>
         <hr/>

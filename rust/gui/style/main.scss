@@ -13,59 +13,61 @@
 	--plus-label-margin: 0 0.5rem 0.5rem 0;
 	--plus-form-bg: white;
 	--plus-sm-fnt: 0.75rem;
-  }
-  
-  *,
-  ::before,
-  ::after {
+}
+
+*,
+::before,
+::after {
 	box-sizing: inherit;
-  }
-  
-  body {
+}
+
+body {
 	// background-color: #709b90;
-	 font-family: Helvetica, Arial, sans-serif;
-	 font-family: sans-serif;
-	 font-size: 14px;
-   }
-  
-  
-  button {
+	font-family: Helvetica, Arial, sans-serif;
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
+
+button {
 	background-color: var(--plus-btn-color);
 	border-radius: 0.25em;
 	border: 1px solid;
 	font-size: var(--plus-sm-fnt);
-  }
-  
-  .form {
+}
+
+.form {
 	background: #fff;
-  }
-  
-  form {
+}
+
+form {
 	//display: grid;
 	//grid-template-columns: 1fr 1fr;
 	//grid-gap: 20px;
 	//width: 300px;
 	display: inline-block;
-  }
-  
-  
-  form label {
+}
+
+
+form label {
 	// This pushes the entries onto separate line
 	display: block;
-  }
-  form p {
+}
+
+form p {
 	margin: 0;
-  }
-  
-  //////////////////////////////
-  
-  div.mcs-grid {
+}
+
+//////////////////////////////
+
+div.mcs-grid {
 	position: relative;
 	//float: left;
 	//overflow-x: hidden;
 	// overflow-y: visible;
-  }
-  .mcs-grid .main-button {
+}
+
+.mcs-grid .main-button {
 	background-color: var(--plus-btn-color);
 	width: fit-content;
 	width: -moz-fit-content;
@@ -73,9 +75,9 @@
 	border-radius: 0.3rem;
 	padding: var(--plus-btn-padding);
 	margin-top: var(--plus-btn-margin);
-  }
-  
-  .mcs-grid .container {
+}
+
+.mcs-grid .container {
 	position: absolute;
 	top: 10px;
 	left: 10px;
@@ -85,141 +87,142 @@
 	z-index: 1;
 	background-color: white;
 	overflow-x: scroll;
-  }
-  
-  .mcs-grid .select-button {
+}
+
+.mcs-grid .select-button {
 	background-color: hsl(120, 50%, 98%);
 	white-space: nowrap;
 	font-size: 0.8em;
 	border: none;
 	margin: 3px;
 	padding: var(--plus-btn-padding);
-  }
-  
-  .mcs-grid .select-button.using-mouse:hover {
+}
+
+.mcs-grid .select-button.using-mouse:hover {
 	background-color: hsl(120, 50%, 90%);
-  }
-  
-  .mcs-grid .select-button:focus {
+}
+
+.mcs-grid .select-button:focus {
 	background-color: hsl(120, 50%, 90%);
-  }
-  
-  .mcs-grid .container.hidden {
+}
+
+.mcs-grid .container.hidden {
 	visibility: hidden;
-  }
-  
-  .mcs-grid .icon-label {
+}
+
+.mcs-grid .icon-label {
 	display: grid;
 	grid-template-columns: 2.5em 1fr;
 	padding: 2px;
-  }
-  
-  .mcs-grid .icon {
-   // background-color: lightcyan;
+}
+
+.mcs-grid .icon {
+	// background-color: lightcyan;
 	text-align: left;
-  }
-  
-  .mcs-grid .select-button:not(.using-mouse) {
+}
+
+.mcs-grid .select-button:not(.using-mouse) {
 	//background-color: lightyellow;
 	cursor: none;
-  }
-  
-  .mcs-label {
+}
+
+.mcs-label {
 	text-align: left;
 	padding: 2px;
-  }
-  
-  //// Holding
-  
-  .holding {
+}
+
+//// Holding
+
+.holding {
 	border-radius: 5px;
-  }
-  
-  .holding input {
+}
+
+.holding input {
 	display: flex;
 	font-size: var(--plus-sm-fnt);
 	width: 8em;
 	// has no effect since input is not an inline element: vertical-align: middle;
 	align-items: center;
 	margin-top: 3px;
-  }
-  
-  .holding .form {
+}
+
+.holding .form {
 	background-color: var(--plus-form-bg);
-  }
-  
-  .holding .form-row {
+}
+
+.holding .form-row {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	margin-top: 1rem;
 	margin-left: 1rem;
 	margin-bottom: 1rem;
-  }
-  
-  .holding .currency-button {
+}
+
+.holding .currency-button {
 	margin-top: -0.5rem;
 	vertical-align: top;
-  }
-  
-  .holding .cost-basis-wrapper {
+}
+
+.holding .cost-basis-wrapper {
 	// Using flex keeps the _cost basis_ and _as of_ together.
 	display: flex;
-  }
-  
-  .holding .cost-basis {
+}
+
+.holding .cost-basis {
 	font-size: var(--plus-sm-fnt);
 	display: flex;
 	// This aligns the currency symbol text with the input
 	align-items: baseline;
-  }
-  
-  .holding .button-and-price {
+}
+
+.holding .button-and-price {
 	display: flex;
-  }
-  
-  .holding .input-share-price {
+}
+
+.holding .input-share-price {
 	width: 5rem;
-  }
-  
-  .holding .input-share-count {
+}
+
+.holding .input-share-count {
 	width: 6rem;
-  }
-  
-  .holding .currency-symbol {
+}
+
+.holding .currency-symbol {
 	padding-right: 2px;
-  }
-  
-  .holding input.as-of {
+}
+
+.holding input.as-of {
 	width: 4rem;
-  }
-  
-  .holding .as-of-group {
+}
+
+.holding .as-of-group {
 	margin-left: 1rem;
-  }
-  
-  .holding label {
+}
+
+.holding label {
 	text-align: left;
 	white-space: nowrap;
 	background-color: var(--plus-label-bg);
 	margin: var(--plus-label-margin);
 	display: block;
 	//font-weight: 550;
-  }
-  
-  .holding .mcs-grid {
+}
+
+.holding .mcs-grid {
 	// Allows the price input associated with currency to appear next to it, instead of below it
 	float: left;
 	// Adds a bit of space beside right of the currency button, left of its input
 	margin-right: 3px;
-  }
-  
+}
 
-  ///////// ItemGrowthComponent
+
+///////// ItemGrowthComponent
 .icg-select {
 	padding: 5px;
 }
 
-.invalid, textarea  {
+.invalid,
+textarea {
 	background-color: rgb(237, 199, 199);
 	box-sizing: content-box;
 }
@@ -236,6 +239,7 @@ input.invalid:focus {
 	align-self: flex-end;
 	margin-left: 0.25rem;
 }
+
 .ycv-as-of {
 	align-self: flex-end;
 	padding: 2px 7px;
@@ -248,8 +252,11 @@ input.invalid:focus {
 .rate-curve-data {
 	width: 250px;
 }
-  
-.yri-start, .yri-end, .yvi-year, .yvi-value {
+
+.yri-start,
+.yri-end,
+.yvi-year,
+.yvi-value {
 	margin-left: 0.25em
 }
 
@@ -264,8 +271,69 @@ input.invalid:focus {
 }
 
 .cgc-editable {
-	grid-column-start: 1; 
+	grid-column-start: 1;
 	grid-column-end: 7;
+}
+
+
+
+.tooltip {
+	position: relative;
+	border-bottom: 1px dashed #000;
+}
+
+.tooltip:before {
+	content: attr(data-text);
+	position: absolute;
+
+	top: 50%;
+	transform: translateY(-150%);
+	left: 100%;
+	margin-left: 15px;
+	width: 200px;
+	padding: 10px;
+	background: #000;
+	color: #fff;
+	text-align: center;
+
+	display: none;
+	opacity: 0;
+	transition: .3s opacity;
+
+}
+
+.tooltip:hover:before {
+	display: block;
+	opacity: 1;
+}
+
+.tooltip:hover:after {
+	opacity: 1;
+}
+
+.tooltip.left:before {
+	left: initial;
+	margin: inital;
+
+}
+
+.tooltip:after {
+	content: "";
+	position: absolute;
+	left: 100%;
+	margin-left: -5px;
+	top: 50%;
+	transform: translateY(-50%);
+	border: 10px solid #000;
+	border-color: transparent black transparent transparent;
+	display: none;
+	opacity: 0;
+	transition: .3s;
+}
+
+.tooltip:hover:before,
+.tooltip:hover:after {
+	display: block;
 }
 
 .ok-button {

@@ -192,6 +192,7 @@ pub fn RateCurveComponent(
                     },
                 )
 
+
                 placeholder=Some("year".to_string())
             />
         }
@@ -318,6 +319,8 @@ pub fn RateCurveComponent(
 
     // ω <fn rate_curve_component>
 }
+
+// ω <fn rate_curve_component>
 
 /// Sorts the [YearValue] entries by year and removes any duplicates
 ///
