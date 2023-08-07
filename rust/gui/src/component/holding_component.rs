@@ -44,9 +44,8 @@ where
 
     use crate::to_currency_symbol;
     use crate::EnumSelect;
-    use crate::Modification;
     use crate::ItemGrowthComponent;
-    use plus_modeled::DossierItemType;
+    use crate::Modification;
     use crate::NumericInput;
     use crate::OkCancel;
     use crate::OkCancelComponent;
@@ -62,9 +61,10 @@ where
     use leptos::SignalWith;
     use leptos_dom::console_log;
     use plus_modeled::Currency;
-    use plus_modeled::NormalSpec;
+    use plus_modeled::DossierItemType;
     use plus_modeled::GrowthAssumption;
     use plus_modeled::GrowthItemMappings;
+    use plus_modeled::NormalSpec;
     use plus_modeled::{
         core_enums::HoldingType,
         growth::{system_growth_id::SystemId, SystemGrowthId},
@@ -168,9 +168,7 @@ where
     let item_growth_updatable = Updatable::new(
         ItemGrowth {
             system_growth_id: Some(SystemGrowthId {
-                system_id: Some(
-                    SystemId::HoldingItemId(HoldingType::UsEquityMarket as u32),
-                ),
+                system_id: Some(SystemId::HoldingItemId(HoldingType::UsEquityMarket as u32)),
             }),
             growth_assumption: Some(GrowthAssumption {
                 normal_spec: Some(NormalSpec {
@@ -182,7 +180,6 @@ where
         },
         move |item_growth| log!("ItemGrowth -> {item_growth:?}"),
     );
-
 
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
