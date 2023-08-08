@@ -111,9 +111,6 @@ pub fn GrowthAssumptionComponent(
     view! { cx,
         <fieldset style="margin: 0.5rem;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; margin: 3px">
-                <div style="grid-column-start: 1; grid-column-end: 3;">
-                    <em>"Specify Growth as Normal Spec Or Pinned Rate Curve"</em>
-                </div>
                 <div style="display: flex; grid-column-start: 1; grid-column-end: 2;">
                     <div>
                         <input
