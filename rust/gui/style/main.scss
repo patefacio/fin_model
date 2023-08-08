@@ -339,3 +339,11 @@ input.invalid:focus {
 .ok-button {
 	margin-right: 0.4em;
 }
+
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;	
+}

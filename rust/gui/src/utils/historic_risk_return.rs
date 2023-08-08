@@ -67,12 +67,11 @@ impl HistoricRiskReturnPlot for NormalSpec {
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
-            let root = SVGBackend::with_string(&mut plot_buff, (400, 375))
+            let root = SVGBackend::with_string(&mut plot_buff, (470, 470))
                 .into_drawing_area()
                 .titled("Historic Risk Return", plot_text_style.clone())
                 .expect("");
 
-            // root.fill(&WHITE);
             let root = root.margin(10, 10, 10, 10);
 
             let mut chart = ChartBuilder::on(&root)
@@ -93,26 +92,51 @@ impl HistoricRiskReturnPlot for NormalSpec {
 
             let user_points = vec![(self.std_dev, self.mean)];
 
-            chart
+            for hrr in HISTORIC_RISK_RETURN_SAMPLES.iter() {
+                chart
                 .draw_series(PointSeries::of_element(
-                    HISTORIC_RISK_RETURN_SAMPLES.iter(),
+                    vec![hrr].iter(),
                     5,
-                    &RED,
+                    &hrr.color,
                     &|c, s, st| {
                         return EmptyElement::at(c.risk_return)
                             + Circle::new((0, 0), s, st.filled())
                             + Text::new(
                                 format!(
-                                    "{}\n{:?}",
-                                    c.label,
-                                    (scale_by(c.risk_return.0, 2), scale_by(c.risk_return.1, 2))
+                                    "{}",
+                                    NormalSpec {
+                                        mean: c.risk_return.1,
+                                        std_dev: c.risk_return.0,
+                                    }
                                 ),
-                                (10, -5),
-                                ("sans-serif", 10).into_font(),
+                                (5, -5),
+                                ("sans-serif", 9).into_font(),
                             );
                     },
                 ))
                 .unwrap();
+
+            }
+            // chart
+            //     .draw_series(PointSeries::of_element(
+            //         HISTORIC_RISK_RETURN_SAMPLES.iter(),
+            //         5,
+            //         &HISTORIC_RISK_RETURN_SAMPLES.color,
+            //         &|c, s, st| {
+            //             return EmptyElement::at(c.risk_return)
+            //                 + Circle::new((0, 0), s, st.filled())
+            //                 /*+ Text::new(
+            //                     format!(
+            //                         "{}\n{:?}",
+            //                         c.label,
+            //                         (scale_by(c.risk_return.0, 2), scale_by(c.risk_return.1, 2))
+            //                     ),
+            //                     (10, -5),
+            //                     ("sans-serif", 10).into_font(),
+            //                 );*/
+            //         },
+            //     ))
+            //     .unwrap();
 
             chart
                 .draw_series(PointSeries::of_element(
@@ -123,9 +147,9 @@ impl HistoricRiskReturnPlot for NormalSpec {
                         return EmptyElement::at(c)
                             + Cross::new((0, 0), s, st.filled())
                             + Text::new(
-                                format!("{:?}", (scale_by(c.0, 2), scale_by(c.1, 2))),
-                                (10, -5),
-                                ("sans-serif", 10).into_font(),
+                                format!("{:?}, {:?}", (c.0 ), (c.1) ),
+                                (5, -5),
+                                ("sans-serif", 9).into_font(),
                             );
                     },
                 ))

@@ -192,7 +192,6 @@ pub fn RateCurveComponent(
                     },
                 )
 
-
                 placeholder=Some("year".to_string())
             />
         }

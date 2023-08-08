@@ -138,7 +138,7 @@ impl Display for NormalSpec {
 
         write!(
             f,
-            "𝑁({}={:.precision$}%,{}={:.precision$}%)",
+            "𝑁({}={}%,{}={}%)",
             SystemUnicodes::MathMu.as_unicode(),
             with_max_precision(scale_by(self.mean, 2), precision),
             SystemUnicodes::MathSigma.as_unicode(),

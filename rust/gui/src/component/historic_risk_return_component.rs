@@ -5,8 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::MaybeSignal;
 use leptos::{component, view, IntoView, Scope};
+use leptos::{For, MaybeSignal};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::NormalSpec;
@@ -28,13 +28,64 @@ pub fn HistoricRiskReturnComponent(
     normal_spec: MaybeSignal<NormalSpec>,
 ) -> impl IntoView {
     // α <fn historic_risk_return_component>
+    use crate::utils::historic_risk_return::HistoricRiskReturn;
     use crate::utils::historic_risk_return::HistoricRiskReturnPlot;
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
+    use leptos::For;
     use leptos::IntoAttribute;
     use leptos::SignalWith;
 
+    let holding_color_list = HISTORIC_RISK_RETURN_SAMPLES
+        .iter()
+        .map(|hv| (hv.color.clone(), hv.label.clone()))
+        .collect::<Vec<_>>();
+
+    // let color_list = HISTORIC_RISK_RETURN_SAMPLES
+    //     .iter()
+    //     .map(|hv| hv.clone().color)
+    //     .collect::<Vec<_>>();
+
     let plot = move || normal_spec.with(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES));
-    view! { cx, <div inner_html=plot></div> }
+    view! { cx,
+        <div style = "display:grid; grid-template-rows: 1fr 3fr 1fr">
+            <div style = "grid-row-start:2; grid-row-end:4;">
+                <div style="display: grid; grid-template-columns: 1fr">
+                    <div style="text-align: center;" class="header">
+                        "Holding Type"
+                    </div>
+                    <For
+                        each=move || holding_color_list.clone()
+                        key=|hrr| hrr.1.clone()
+                        view=move |cx, (color, label)| {
+                            view! { cx,
+                                <div style="display:flex; text-align: right;">
+                                    <div style=format!(
+                                        "height: 15px;
+                                                width: 15px;
+                                                margin: 0.5em;
+                                                text-align:right;
+                                                bottom:0;
+                                                background-color: rgb({}, {}, {});
+                                                border-radius: 50%;
+                                                display: inline-block;",
+                                        color.0, color.1, color.2
+                                    )></div>
+                                    <div>
+                                        <div style="white-space:nowrap;">
+                                            {move || label.clone()}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                    />
+
+                </div>
+            </div>
+            <div style = "grid-row-start:1; grid-row-end:4;" inner_html=plot></div>
+        </div>
+    }
     // ω <fn historic_risk_return_component>
 }
 

@@ -16,6 +16,7 @@ pub fn with_max_precision(value: f64, precision: usize) -> String {
 
     format!("{:.prec$}", value, prec = precision)
         .trim_matches('0')
+        .trim_matches('.')
         .to_string()
 
     // ω <fn with_max_precision>
