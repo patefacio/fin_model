@@ -56,11 +56,13 @@ where
     use leptos::create_signal;
     use leptos::store_value;
     use leptos::MaybeSignal;
+    use leptos::RwSignal;
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
     use leptos_dom::console_log;
     use plus_modeled::Currency;
+    use plus_modeled::CurrencyValue;
     use plus_modeled::DossierItemType;
     use plus_modeled::GrowthAssumption;
     use plus_modeled::GrowthItemMappings;
@@ -77,13 +79,45 @@ where
     let cost_basis = holding.cost_basis;
     let instrument_name = holding.instrument_name.clone();
 
-    log!("Showing HOLDING {cx:?} {holding:?} with yvc {unit_valuation:?}");
+    fn market_value_with_unrealized(holding: &Holding) -> (Option<String>, Option<String>) {
+        if let Some(unit_valuation) = holding.unit_valuation.as_ref() {
+            let mv = holding.quantity * unit_valuation.value;
+            let market_value = CurrencyValue {
+                currency: unit_valuation.currency,
+                value: mv,
+            };
+            let gain_loss = CurrencyValue {
+                currency: unit_valuation.currency,
+                value: mv - holding.cost_basis,
+            };
+            (Some(market_value.to_string()), Some(gain_loss.to_string()))
+        } else {
+            (None, None)
+        }
+    }
+
+    let (market_value_signal, unrealized_gl_signal) = {
+        let (mv, gl) = market_value_with_unrealized(&updatable.first_value);
+        (create_rw_signal(cx, mv), create_rw_signal(cx, gl))
+    };
 
     let updatable = store_value(cx, updatable);
 
+    let update_market_value_and_unrealized = move || {
+        log!("Rerunning market value and unrealized");
+        updatable.with_value(move |updatable| {
+            let holding = &updatable.first_value;
+            if holding.unit_valuation.is_some() {
+                let (market_value, gain_loss) = market_value_with_unrealized(holding);
+                market_value_signal.update(|mv| *mv = market_value);
+                unrealized_gl_signal.update(|gl| *gl = gain_loss);
+            }
+        })
+    };
+
     let symbol_updatable = Updatable::new(instrument_name, move |symbol| {
         updatable.update_value(|updatable| {
-            updatable.update(|(holding, shared_context)| {
+            updatable.update(|(holding, _shared_context)| {
                 holding.instrument_name = symbol.clone();
                 crate::UpdatePairType::UpdateFirst
             })
@@ -92,7 +126,7 @@ where
 
     let quantity_updatable = Updatable::new(Some(quantity), move |quantity| {
         updatable.update_value(|updatable| {
-            updatable.update(|(holding, shared_context)| {
+            updatable.update(|(holding, _shared_context)| {
                 if let Some(quantity) = quantity {
                     holding.quantity = *quantity;
                     UpdatePairType::UpdateFirst
@@ -100,7 +134,8 @@ where
                     UpdatePairType::UpdateNone
                 }
             })
-        })
+        });
+        update_market_value_and_unrealized();
     });
 
     let currency_rw_signal = create_rw_signal(
@@ -124,12 +159,14 @@ where
             )
             .to_string()
         });
+        log!("Updating main updatable with borrow");
         updatable.update_value(|updatable| {
             updatable.update(|(holding, shared_context)| {
                 holding.unit_valuation = *unit_valuation;
                 UpdatePairType::UpdateFirst
             })
         });
+        update_market_value_and_unrealized();
     });
 
     let cost_basis_updatable = Updatable::new(Some(cost_basis), move |cost_basis| {
@@ -145,11 +182,8 @@ where
                 }
             })
         });
+        update_market_value_and_unrealized();
     });
-
-    // Get actual initial holding type from instrument mapping in balance sheet
-    let initial_holding_type = HoldingType::UsEquityMarket;
-    let holding_type_updatable = Updatable::new(initial_holding_type, |_| println!("Updated!"));
 
     let on_ok_cancel = move |ok_cancel| {
         log!("Ok/Cancel holding -> {ok_cancel:?}");
@@ -181,38 +215,45 @@ where
         move |item_growth| log!("ItemGrowth -> {item_growth:?}"),
     );
 
+    let market_value = move || {
+        log!("Market value reactive updated!");
+        if let Some(mv) = market_value_signal.get() {
+            format!("Market Value: {mv}")
+        } else {
+            String::default()
+        }
+    };
+
+    let unrealized_gain_loss = move || {
+        if let Some(gl) = unrealized_gl_signal.get() {
+            format!("Unrealized G/L: {}", gl)
+        } else {
+            String::default()
+        }
+    };
+
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
-            <legend>"Holding"</legend>
+            <legend><strong>"Holding"</strong></legend>
             <div class="form">
                 <div class="form-row">
-                    <div>
-                        <label for="symbol">"Symbol"</label>
-                        <SymbolInput symbol_updatable=symbol_updatable/>
-                    </div>
-                    <div>
-                        <label>"Holding Growth"</label>
-                        <ItemGrowthComponent
-                            updatable=item_growth_updatable
-                            dossier_item_type=DossierItemType::Holding
-                            growth_item_mappings=&GrowthItemMappings::default()
-                        />
-                    </div>
+                    <label for="symbol">
+                        "Symbol" <SymbolInput symbol_updatable=symbol_updatable/>
+                    </label>
+                    <label>
+                        "Price" <div style="display: inline-block; margin-left: 0.45em;">
+                            <YearCurrencyValueInput
+                                updatable=unit_valuation_updatable
+                                value_placeholder="price".to_string()
+                            />
+                        </div>
+                    </label>
+
                 </div>
                 <div class="form-row">
-                    <div>
-                        <label for="quantity">"Quantity"</label>
-                        <NumericInput updatable=quantity_updatable/>
-                    </div>
-                    <div>
-                        <label for="unit-value">"Price"</label>
-                        <YearCurrencyValueInput
-                            updatable=unit_valuation_updatable
-                            value_placeholder="price".to_string()
-                        />
-                    </div>
-                    <div>
-                        <label for="cost">"Cost"</label>
+                    <label>"Quantity" <NumericInput updatable=quantity_updatable/></label>
+                    <label for="cost">
+                        "Cost"
                         <NumericInput
                             updatable=cost_basis_updatable
                             modification=Some(
@@ -222,17 +263,35 @@ where
                             )
                         />
 
-                    </div>
+                    </label>
                 </div>
                 <div class="form-row">
-                    <div>
-                        <label>"Growth"</label>
-                        <label>"N(10.31%, 20.32%)"</label>
-                    </div>
-                    <div>
-                        <label>"Override (Advanced)"</label>
-                        <button>"🚀"</button>
-                    </div>
+                    <span>
+                        <strong>
+                            <em>{move || market_value()}</em>
+                        </strong>
+                    </span>
+                    <span>
+                        <strong>
+                            <em>{move || unrealized_gain_loss()}</em>
+                        </strong>
+                    </span>
+
+                </div>
+                <div class="form-row">
+                    // <div style="grid-column-start: 1; grid-column-end: 2;">
+                    <fieldset>
+                    <legend><strong>"Growth"</strong></legend>
+                    <ItemGrowthComponent
+                        updatable=item_growth_updatable
+                        dossier_item_type=DossierItemType::Holding
+                        growth_item_mappings=&GrowthItemMappings::default()
+                    />
+                    </fieldset>
+                    <fieldset>
+                    <legend><strong>"Distributions"</strong></legend>
+                    <div>"TODO"</div>
+                    </fieldset>
                 </div>
                 <div style="display: flex; justify-content: center; background-color: lightgray;">
                     <div class="display: grid; grid-template-columns: 1fr 1fr; ">

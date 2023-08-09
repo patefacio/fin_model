@@ -499,16 +499,7 @@ pub fn ComponentDisplayComponent(
             </div>
         </div>
         <hr/>
-        <div style="display: grid; grid-template-columns: 1fr 1fr">
-            <div>
-                <h4>"Normal Spec Without Values"</h4>
-                <NormalSpecComponent updatable=Updatable::new(
-                    None,
-                    move |ns| {
-                        show_update(format!("NS Updated to -> {ns:?}"));
-                    },
-                )/>
-            </div>
+        <div style="display: grid; grid-template-columns: 1fr">
             <div>
                 <h4>"Normal Spec With Values"</h4>
                 <NormalSpecComponent updatable=Updatable::new(

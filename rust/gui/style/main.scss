@@ -6,7 +6,7 @@
 	--mcs-btn-color: cyan;
 	--mcs-tbl-color: white;
 	--plus-btn-color: hsl(120, 50%, 90%);
-	--plus-btn-padding: 0.2rem;
+	--plus-btn-padding: 0.15rem;
 	--plus-btn-margin: 0.15rem;
 	--plus-background: white;
 	--plus-label-bg: white;
@@ -49,13 +49,21 @@ form {
 }
 
 
-form label {
+.form label {
 	// This pushes the entries onto separate line
 	display: block;
+	white-space: nowrap;
+	background-color: white;
+	color: blue;
 }
 
 form p {
 	margin: 0;
+}
+
+// Whenever nesting input in label, space between text and input
+label > input {
+	margin-left: 5px;
 }
 
 //////////////////////////////
@@ -138,12 +146,14 @@ div.mcs-grid {
 }
 
 .holding input {
-	display: flex;
 	font-size: var(--plus-sm-fnt);
-	width: 8em;
 	// has no effect since input is not an inline element: vertical-align: middle;
-	align-items: center;
 	margin-top: 3px;
+	//margin-left: 0.5em;
+}
+
+.holding label {
+	vertical-align: bottom;
 }
 
 .holding .form {
@@ -163,57 +173,57 @@ div.mcs-grid {
 	vertical-align: top;
 }
 
-.holding .cost-basis-wrapper {
-	// Using flex keeps the _cost basis_ and _as of_ together.
-	display: flex;
-}
+// .holding .cost-basis-wrapper {
+// 	// Using flex keeps the _cost basis_ and _as of_ together.
+// 	display: flex;
+// }
 
-.holding .cost-basis {
-	font-size: var(--plus-sm-fnt);
-	display: flex;
-	// This aligns the currency symbol text with the input
-	align-items: baseline;
-}
+// .holding .cost-basis {
+// 	font-size: var(--plus-sm-fnt);
+// 	display: flex;
+// 	// This aligns the currency symbol text with the input
+// 	align-items: baseline;
+// }
 
-.holding .button-and-price {
-	display: flex;
-}
+// .holding .button-and-price {
+// 	display: flex;
+// }
 
-.holding .input-share-price {
-	width: 5rem;
-}
+// .holding .input-share-price {
+// 	width: 5rem;
+// }
 
-.holding .input-share-count {
-	width: 6rem;
-}
+// .holding .input-share-count {
+// 	width: 6rem;
+// }
 
-.holding .currency-symbol {
-	padding-right: 2px;
-}
+// .holding .currency-symbol {
+// 	padding-right: 2px;
+// }
 
-.holding input.as-of {
-	width: 4rem;
-}
+// .holding input.as-of {
+// 	width: 4rem;
+// }
 
-.holding .as-of-group {
-	margin-left: 1rem;
-}
+// .holding .as-of-group {
+// 	margin-left: 1rem;
+// }
 
-.holding label {
-	text-align: left;
-	white-space: nowrap;
-	background-color: var(--plus-label-bg);
-	margin: var(--plus-label-margin);
-	display: block;
-	//font-weight: 550;
-}
+// .holding label {
+// 	text-align: left;
+// 	white-space: nowrap;
+// 	background-color: var(--plus-label-bg);
+// 	margin: var(--plus-label-margin);
+// 	display: block;
+// 	//font-weight: 550;
+// }
 
-.holding .mcs-grid {
-	// Allows the price input associated with currency to appear next to it, instead of below it
-	float: left;
-	// Adds a bit of space beside right of the currency button, left of its input
-	margin-right: 3px;
-}
+// .holding .mcs-grid {
+// 	// Allows the price input associated with currency to appear next to it, instead of below it
+// 	float: left;
+// 	// Adds a bit of space beside right of the currency button, left of its input
+// 	margin-right: 3px;
+// }
 
 
 ///////// ItemGrowthComponent

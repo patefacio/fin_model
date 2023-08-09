@@ -47,10 +47,10 @@ pub fn HistoricRiskReturnComponent(
 
     let plot = move || normal_spec.with(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES));
     view! { cx,
-        <div style = "display:grid; grid-template-rows: 1fr 3fr 1fr">
-            <div style = "grid-row-start:2; grid-row-end:4;">
+        <div style="display:grid; grid-template-rows: 1fr 3fr 1fr; max-width: 600px">
+            <div style="grid-row-start:2; grid-row-end:4;">
                 <div style="display: grid; grid-template-columns: 1fr">
-                    <div style="text-align: center;" class="header">
+                    <div style="text-align: center; margin-bottom: 0.75em;" class="header">
                         "Holding Type"
                     </div>
                     <For
@@ -62,28 +62,28 @@ pub fn HistoricRiskReturnComponent(
                                     <div style=format!(
                                         "height: 15px;
                                                 width: 15px;
-                                                margin: 0.5em;
+                                                margin: 0.35em;
                                                 text-align:right;
                                                 bottom:0;
+                                                left: 0;
                                                 background-color: rgb({}, {}, {});
                                                 border-radius: 50%;
                                                 display: inline-block;",
                                         color.0, color.1, color.2
                                     )></div>
-                                    <div>
-                                        <div style="white-space:nowrap;">
+                                    <div style="position: relative;">
+                                        <div style="position: absolute; bottom: 16.5%; left: 0; white-space:nowrap;">
                                             {move || label.clone()}
                                         </div>
                                     </div>
                                 </div>
-
                             }
                         }
                     />
 
                 </div>
             </div>
-            <div style = "grid-row-start:1; grid-row-end:4;" inner_html=plot></div>
+            <div style="grid-row-start:1; grid-row-end:4;" inner_html=plot></div>
         </div>
     }
     // ω <fn historic_risk_return_component>

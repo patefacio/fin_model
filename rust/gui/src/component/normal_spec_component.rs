@@ -141,14 +141,14 @@ pub fn NormalSpecComponent(
         })
     };
 
+    const input_size: u32 = 7;
+
     view! { cx,
-        <fieldset class="nsg">
-            <div class="form" style="overflow-x: scroll;">
-                <div style="display: grid;">
-                    // *IMPORTANT* The following <em> has the effect of turning the following into
-                    // a single line
-                    <em>
-                        "N("
+        <div style="max-width: 700px">
+            <fieldset class="nsg">
+                <div class="form" style="overflow-x: scroll;">
+                    <div style="display: inline;">
+                        <span>"N("</span>
                         <NumericInput
                             placeholder=Some("mean".to_string())
                             modification=Some(Modification::PrefixAndSuffix {
@@ -158,9 +158,10 @@ pub fn NormalSpecComponent(
 
                             non_negative=non_negative_mean
                             updatable=mean_updatable
-                            size=9
-                            max_len=9
-                        /> ", "
+                            size=input_size
+                            max_len=input_size
+                        />
+                        <span>", "</span>
                         <NumericInput
                             placeholder=Some("std. dev".to_string())
                             modification=Some(Modification::PrefixAndSuffix {
@@ -170,9 +171,10 @@ pub fn NormalSpecComponent(
 
                             non_negative=true
                             updatable=std_dev_updatable
-                            size=9
-                            max_len=9
-                        /> ")"
+                            size=input_size
+                            max_len=input_size
+                        />
+                        <span>")"</span>
                         <button
                             on:click=move |_| {
                                 show_advanced_rw_signal
@@ -188,75 +190,75 @@ pub fn NormalSpecComponent(
                             }}
 
                         </button>
-                    </em>
-                </div>
-            </div>
-            <Show when=move || { show_advanced_rw_signal.get() } fallback=|_| ()>
-                <hr/>
-                <NormalLossComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
-                <hr/>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 10px">
-                    <div>
-                        <input
-                            on:click=show_hist
-                            type="radio"
-                            id="historic"
-                            name="chart-select"
-                            value="Historic"
-                            checked
-                        />
-                        <label for="historic">"Historic"</label>
-                    </div>
-                    <div>
-                        <input
-                            on:click=show_pdf
-                            type="radio"
-                            id="pdf"
-                            name="chart-select"
-                            value="PDF"
-                        />
-                        <label for="pdf">"PDF"</label>
-                    </div>
-                    <div>
-                        <input
-                            on:click=show_cdf
-                            type="radio"
-                            id="cdf"
-                            name="chart-select"
-                            value="CDF"
-                        />
-                        <label for="cdf">"CDF"</label>
                     </div>
                 </div>
-                <div style="margin-top: 10px">
-                    <Show
-                        when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
-                        fallback=|_| ()
-                    >
-                        <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(
-                            spec_signal.into(),
-                        )/>
-                    </Show>
-                    <Show
-                        when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
-                        fallback=|_| ()
-                    >
-                        <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(
-                            spec_signal.into(),
-                        )/>
-                    </Show>
-                    <Show
-                        when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
-                        fallback=|_| ()
-                    >
-                        <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(
-                            spec_signal.into(),
-                        )/>
-                    </Show>
-                </div>
-                <output></output>
-            </Show>
-        </fieldset>
+                <Show when=move || { show_advanced_rw_signal.get() } fallback=|_| ()>
+                    <hr/>
+                    <NormalLossComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
+                    <hr/>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 10px">
+                        <div>
+                            <input
+                                on:click=show_hist
+                                type="radio"
+                                id="historic"
+                                name="chart-select"
+                                value="Historic"
+                                checked
+                            />
+                            <label for="historic">"Historic"</label>
+                        </div>
+                        <div>
+                            <input
+                                on:click=show_pdf
+                                type="radio"
+                                id="pdf"
+                                name="chart-select"
+                                value="PDF"
+                            />
+                            <label for="pdf">"PDF"</label>
+                        </div>
+                        <div>
+                            <input
+                                on:click=show_cdf
+                                type="radio"
+                                id="cdf"
+                                name="chart-select"
+                                value="CDF"
+                            />
+                            <label for="cdf">"CDF"</label>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <Show
+                            when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
+                            fallback=|_| ()
+                        >
+                            <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(
+                                spec_signal.into(),
+                            )/>
+                        </Show>
+                        <Show
+                            when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
+                            fallback=|_| ()
+                        >
+                            <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(
+                                spec_signal.into(),
+                            )/>
+                        </Show>
+                        <Show
+                            when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
+                            fallback=|_| ()
+                        >
+                            <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(
+                                spec_signal.into(),
+                            )/>
+                        </Show>
+                    </div>
+                    <output></output>
+                </Show>
+            </fieldset>
+        </div>
     }
 
     // ω <fn normal_spec_component>

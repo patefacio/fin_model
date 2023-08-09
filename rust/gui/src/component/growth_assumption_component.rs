@@ -111,9 +111,12 @@ pub fn GrowthAssumptionComponent(
     view! { cx,
         <fieldset style="margin: 0.5rem;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; margin: 3px">
-                <div style="display: flex; grid-column-start: 1; grid-column-end: 2;">
-                    <div>
+                <div style="margin-bottom: 0.3em;">
+                    // *NOTE* Putting <input> in <label> for better alignment
+                    // https:
+                    <label>
                         <input
+                            style="vertical-align: baseline;"
                             id="normal"
                             on:click=move |_| {
                                 growth_type
@@ -125,13 +128,11 @@ pub fn GrowthAssumptionComponent(
                             value="normal"
                             checked=move || { growth_type.get() == GrowthType::UseNormal }
                         />
-                    </div>
-                    <div>
-                        <label for="normal">"Normal Spec"</label>
-                    </div>
+                        "Normal Spec"
+                    </label>
                 </div>
-                <div style="display: inline-flex; grid-column-start: 2; grid-column-end: 3;">
-                    <div>
+                <div style="margin-bottom: 0.3em;">
+                    <label style="white-space: no-wrap">
                         <input
                             id="pinned"
                             on:click=move |_| {
@@ -144,10 +145,8 @@ pub fn GrowthAssumptionComponent(
                             value="pinned"
                             checked=move || { growth_type.get() == GrowthType::UsePinned }
                         />
-                    </div>
-                    <div>
-                        <label for="pinned">"Pinned Curve"</label>
-                    </div>
+                        "Pinned Curve"
+                    </label>
                 </div>
                 <div style="grid-column-start: 1; grid-column-end: 3">
                     {move || show_normal_spec()}
