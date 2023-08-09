@@ -189,6 +189,15 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
             "0.00000" => {
                 return (None, "0.00000".into(), 7);
             }
+            "000" => {
+                return(None, "000".into(), 0)
+            }
+            "000000" => {
+                return(None, "000,000".into(), 0)
+            }
+            "000000000" => {
+                return(None, "000,000,000".into(), 0)
+            }
             _ => (),
         }
     }
@@ -279,6 +288,7 @@ pub mod unit_tests {
             ("-", 1, (None, String::from("-"), 1)),
             ("-0", 2, (None, String::from("-0"), 2)),
             ("-0.", 3, (None, String::from("-0."), 3)),
+            ("$,000", 1, (None, String::from("000"), 1)),
         ] {
             let (n, current_caret, expected) = ele;
             assert_eq!(expected, format_number_lenient(n, current_caret));
