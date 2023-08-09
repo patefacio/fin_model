@@ -17,6 +17,11 @@ use leptos_dom::console_log;
 ///
 ///   * **cx** - Context
 ///   * **symbol_updatable** - The symbol name.
+///   * **size** - The size attribute, which one hopes would make the size of the
+/// input field roughly that number of characters. But YMMV.
+///
+///   * **max_len** - The maximum number of characters for the input.
+///
 ///   * _return_ - View for symbol_input
 #[component]
 pub fn SymbolInput(
@@ -24,6 +29,13 @@ pub fn SymbolInput(
     cx: Scope,
     /// The symbol name.
     symbol_updatable: Updatable<String>,
+    /// The size attribute, which one hopes would make the size of the
+    /// input field roughly that number of characters. But YMMV.
+    #[prop(default = 7)]
+    size: u32,
+    /// The maximum number of characters for the input.
+    #[prop(default = 9)]
+    max_len: u32,
 ) -> impl IntoView {
     // α <fn symbol_input>
     use leptos::IntoAttribute;
@@ -57,6 +69,8 @@ pub fn SymbolInput(
             style="text-transform:uppercase"
             type="text"
             value=initial_value
+            size=size
+            maxlength=max_len
         />
     }
 

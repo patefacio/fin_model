@@ -60,7 +60,6 @@ where
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
-    use leptos_dom::console_log;
     use plus_modeled::Currency;
     use plus_modeled::CurrencyValue;
     use plus_modeled::DossierItemType;
@@ -161,7 +160,7 @@ where
         });
         log!("Updating main updatable with borrow");
         updatable.update_value(|updatable| {
-            updatable.update(|(holding, shared_context)| {
+            updatable.update(|(holding, _shared_context)| {
                 holding.unit_valuation = *unit_valuation;
                 UpdatePairType::UpdateFirst
             })
@@ -173,7 +172,7 @@ where
         log!("Cost basis updated -> {cost_basis:?}");
         currency_rw_signal.track();
         updatable.update_value(|updatable| {
-            updatable.update(|(holding, shared_context)| {
+            updatable.update(|(holding, _shared_context)| {
                 if let Some(cost_basis) = cost_basis {
                     holding.cost_basis = *cost_basis;
                     UpdatePairType::UpdateFirst
@@ -234,7 +233,9 @@ where
 
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
-            <legend><strong>"Holding"</strong></legend>
+            <legend>
+                <strong>"Holding"</strong>
+            </legend>
             <div class="form">
                 <div class="form-row">
                     <label for="symbol">
@@ -281,16 +282,20 @@ where
                 <div class="form-row">
                     // <div style="grid-column-start: 1; grid-column-end: 2;">
                     <fieldset>
-                    <legend><strong>"Growth"</strong></legend>
-                    <ItemGrowthComponent
-                        updatable=item_growth_updatable
-                        dossier_item_type=DossierItemType::Holding
-                        growth_item_mappings=&GrowthItemMappings::default()
-                    />
+                        <legend>
+                            <strong>"Growth"</strong>
+                        </legend>
+                        <ItemGrowthComponent
+                            updatable=item_growth_updatable
+                            dossier_item_type=DossierItemType::Holding
+                            growth_item_mappings=&GrowthItemMappings::default()
+                        />
                     </fieldset>
                     <fieldset>
-                    <legend><strong>"Distributions"</strong></legend>
-                    <div>"TODO"</div>
+                        <legend>
+                            <strong>"Distributions"</strong>
+                        </legend>
+                        <div>"TODO"</div>
                     </fieldset>
                 </div>
                 <div style="display: flex; justify-content: center; background-color: lightgray;">
