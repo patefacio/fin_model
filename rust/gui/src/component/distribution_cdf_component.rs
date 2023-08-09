@@ -37,7 +37,7 @@ pub fn DistributionCdfComponent(
         normal_spec.get_cdf_chart(200)
     };
 
-    view! { cx, <div inner_html=plot></div> }
+    view! { cx, <div style="display: flex; justify-content: center;" inner_html=plot></div> }
 
     // ω <fn distribution_cdf_component>
 }

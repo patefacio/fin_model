@@ -309,3 +309,10 @@ input.invalid:focus {
   border-radius: 50%;
   display: inline-block;	
 }
+
+.historic-legend {
+	font-size: var(--plus-sm-fnt);
+}
+.inactive-edit {
+	background-color: lightgrey;
+}

@@ -43,7 +43,7 @@ where
     // α <fn holding_component>
 
     use crate::to_currency_symbol;
-    use crate::EnumSelect;
+    use crate::DistributionSpecComponent;
     use crate::ItemGrowthComponent;
     use crate::Modification;
     use crate::NumericInput;
@@ -53,7 +53,6 @@ where
     use crate::UpdatePairType;
     use crate::YearCurrencyValueInput;
     use leptos::create_rw_signal;
-    use leptos::create_signal;
     use leptos::store_value;
     use leptos::MaybeSignal;
     use leptos::RwSignal;
@@ -62,6 +61,7 @@ where
     use leptos::SignalWith;
     use plus_modeled::Currency;
     use plus_modeled::CurrencyValue;
+    use plus_modeled::DistributionSpec;
     use plus_modeled::DossierItemType;
     use plus_modeled::GrowthAssumption;
     use plus_modeled::GrowthItemMappings;
@@ -278,9 +278,7 @@ where
                 <div class="form-row">
                     // <div style="grid-column-start: 1; grid-column-end: 2;">
                     <fieldset>
-                        <legend>
-                            <strong>"Growth"</strong>
-                        </legend>
+                        <legend>"Growth"</legend>
                         <ItemGrowthComponent
                             updatable=item_growth_updatable
                             dossier_item_type=DossierItemType::Holding
@@ -288,10 +286,14 @@ where
                         />
                     </fieldset>
                     <fieldset>
-                        <legend>
-                            <strong>"Distributions"</strong>
-                        </legend>
-                        <div>"TODO"</div>
+                        <legend>"Distributions"</legend>
+                        <DistributionSpecComponent updatable=Updatable::new(
+                            Some(DistributionSpec::default()),
+                            move |distribution_spec| {
+                                log!("DistributionSpec updated {distribution_spec:?}");
+                            },
+                        )/>
+
                     </fieldset>
                 </div>
                 <div style="display: flex; justify-content: center; background-color: lightgray;">

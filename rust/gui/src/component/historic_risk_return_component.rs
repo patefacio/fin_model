@@ -35,28 +35,22 @@ pub fn HistoricRiskReturnComponent(
     use leptos::IntoAttribute;
     use leptos::SignalWith;
 
-    let holding_color_list = HISTORIC_RISK_RETURN_SAMPLES
-        .iter()
-        .map(|hv| (hv.color.clone(), hv.label.clone()))
-        .collect::<Vec<_>>();
-
-    // let color_list = HISTORIC_RISK_RETURN_SAMPLES
-    //     .iter()
-    //     .map(|hv| hv.clone().color)
-    //     .collect::<Vec<_>>();
-
-    let plot = move || normal_spec.with(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES));
+    let plot =
+        move || normal_spec.with(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES, false));
     view! { cx,
-        <div style="display:grid; grid-template-rows: 1fr 3fr 1fr; max-width: 600px">
-            <div style="grid-row-start:2; grid-row-end:4;">
-                <div style="display: grid; grid-template-columns: 1fr">
+        <div
+            class="historic-legend"
+            style="display:grid; grid-template-rows: 1fr 3fr 1fr; grid-template-columns: 1fr; max-width: 600px"
+        >
+            <div style="grid-row-start:2; grid-row-end:4; grid-column-start:0; grid-column-end:2; overflow: hidden;">
+                <div>
                     <div style="text-align: center; margin-bottom: 0.75em;" class="header">
                         "Holding Type"
                     </div>
                     <For
-                        each=move || holding_color_list.clone()
-                        key=|hrr| hrr.1.clone()
-                        view=move |cx, (color, label)| {
+                        each=move || HISTORIC_RISK_RETURN_SAMPLES.clone()
+                        key=|hrr| hrr.label.clone()
+                        view=move |cx, hrr| {
                             view! { cx,
                                 <div style="display:flex; text-align: right;">
                                     <div style=format!(
@@ -69,11 +63,17 @@ pub fn HistoricRiskReturnComponent(
                                                 background-color: rgb({}, {}, {});
                                                 border-radius: 50%;
                                                 display: inline-block;",
-                                        color.0, color.1, color.2
+                                        hrr.color.0, hrr.color.1, hrr.color.2
                                     )></div>
                                     <div style="position: relative;">
                                         <div style="position: absolute; bottom: 16.5%; left: 0; white-space:nowrap;">
-                                            {move || label.clone()}
+                                            {move || {
+                                                format!(
+                                                    "{} - {}", hrr.label.clone(), NormalSpec { mean : hrr
+                                                    .risk_return.1, std_dev : hrr.risk_return.0 }
+                                                )
+                                            }}
+
                                         </div>
                                     </div>
                                 </div>

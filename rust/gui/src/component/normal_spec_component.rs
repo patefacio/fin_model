@@ -198,35 +198,41 @@ pub fn NormalSpecComponent(
                     <hr/>
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 10px">
                         <div>
-                            <input
-                                on:click=show_hist
-                                type="radio"
-                                id="historic"
-                                name="chart-select"
-                                value="Historic"
-                                checked
-                            />
-                            <label for="historic">"Historic"</label>
+                            <label>
+                                <input
+                                    on:click=show_hist
+                                    type="radio"
+                                    id="historic"
+                                    name="chart-select"
+                                    value="Historic"
+                                    checked
+                                />
+                                "Historic"
+                            </label>
                         </div>
                         <div>
-                            <input
-                                on:click=show_pdf
-                                type="radio"
-                                id="pdf"
-                                name="chart-select"
-                                value="PDF"
-                            />
-                            <label for="pdf">"PDF"</label>
+                            <label>
+                                <input
+                                    on:click=show_pdf
+                                    type="radio"
+                                    id="pdf"
+                                    name="chart-select"
+                                    value="PDF"
+                                />
+                                "PDF"
+                            </label>
                         </div>
                         <div>
-                            <input
-                                on:click=show_cdf
-                                type="radio"
-                                id="cdf"
-                                name="chart-select"
-                                value="CDF"
-                            />
-                            <label for="cdf">"CDF"</label>
+                            <label>
+                                <input
+                                    on:click=show_cdf
+                                    type="radio"
+                                    id="cdf"
+                                    name="chart-select"
+                                    value="CDF"
+                                />
+                                "CDF"
+                            </label>
                         </div>
                     </div>
                     <div style="margin-top: 10px">

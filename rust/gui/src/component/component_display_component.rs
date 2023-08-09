@@ -27,8 +27,9 @@ pub fn ComponentDisplayComponent(
     use crate::DisposeTest;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
-    use crate::ExpandableRateComponent;
+    use crate::DistributionSpecComponent;
     use crate::EnumSelect;
+    use crate::ExpandableRateComponent;
     use crate::HoldingSharedContext;
     use crate::ItemGrowth;
     use crate::ItemGrowthComponent;
@@ -53,6 +54,7 @@ pub fn ComponentDisplayComponent(
 
     use plus_modeled::growth::system_growth_id::SystemId;
     use plus_modeled::Currency;
+    use plus_modeled::DistributionSpec;
     use plus_modeled::DossierItemType;
     use plus_modeled::GrowthAssumption;
     use plus_modeled::GrowthItemMappings;
@@ -144,6 +146,12 @@ pub fn ComponentDisplayComponent(
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr;">
+            <DistributionSpecComponent updatable=Updatable::new(
+                Some(DistributionSpec::default()),
+                move |distribution_spec| {
+                    log!("Distribution Spec -> {distribution_spec:?}");
+                },
+            )/>
             <ItemGrowthComponent
                 updatable=Updatable::new(
                     ItemGrowth {

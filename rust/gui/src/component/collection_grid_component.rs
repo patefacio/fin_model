@@ -97,6 +97,7 @@ where
     // α <fn collection_grid_component>
 
     use leptos::create_rw_signal;
+    use leptos::html::ElementDescriptor;
     use leptos::store_value;
     use leptos::For;
     use leptos::IntoAttribute;
@@ -358,7 +359,10 @@ where
     };
 
     view! { cx,
-        <div style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;">
+        <div
+            class="collection-grid"
+            style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;"
+        >
             {header}
             <For
                 each=move || { 0..num_elements() }
@@ -378,11 +382,28 @@ where
                                                 if let Some(row) = cgc_data.updatable.first_value.get(index)
                                                 {
                                                     let mut user_fields = row.get_fields(cx);
+                                                    for user_field in user_fields.iter() {
+                                                        let inactive_edit_key = Rc::clone(&key);
+                                                        if let Some(element) = user_field.as_element().cloned() {
+                                                            let html_element = element.into_html_element(cx);
+                                                            html_element
+                                                                .class(
+                                                                    "inactive-edit",
+                                                                    move || {
+                                                                        is_disabled() && !is_this_row_edit(&inactive_edit_key)
+                                                                    },
+                                                                );
+                                                        }
+                                                    }
                                                     if !read_only {
                                                         user_fields.insert(0, make_delete_button(&key));
                                                         user_fields.insert(0, make_edit_button(&key));
                                                     }
-                                                    [user_fields.into_view(cx), show_row_editor(&key)]
+
+                                                    view! { cx,
+                                                        {user_fields.into_view(cx)}
+                                                        {show_row_editor(&key)}
+                                                    }
                                                         .into_view(cx)
                                                 } else {
                                                     ().into_view(cx)
@@ -397,9 +418,11 @@ where
                     }
                 }
             />
+
             <button on:click=move |_| { set_new_item_edit() } disabled=move || is_disabled()>
                 <strong>"+"</strong>
-            </button> {show_new_row_editor}
+            </button>
+            {show_new_row_editor}
         </div>
     }
 

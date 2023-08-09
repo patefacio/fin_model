@@ -37,46 +37,46 @@ pub fn DistributionSpecComponent(
         <div class="form">
             <div class="form-row">
                 <label>
-                    "Qualified Dividend"
-                    <ExpandableRateComponent updatable=Updatable::new(
-                        i.qualified_dividend.unwrap_or_default(),
-                        move |rc| {
-                            log!("Rate Curve -> {rc:?}");
-                        },
-                    )/>
+                    "Qualified Div." <div style="display: inline-block;">
+                        <ExpandableRateComponent updatable=Updatable::new(
+                            i.qualified_dividend.unwrap_or_default(),
+                            move |rc| {
+                                log!("Rate Curve -> {rc:?}");
+                            },
+                        )/>
+                    </div>
+                </label>
+                <label>
+                    "Unqualified Div." <div style="display: inline-block;">
+                        <ExpandableRateComponent updatable=Updatable::new(
+                            i.unqualified_dividend.unwrap_or_default(),
+                            move |rc| {
+                                log!("Rate Curve -> {rc:?}");
+                            },
+                        )/>
+                    </div>
                 </label>
             </div>
             <div class="form-row">
                 <label>
-                    "Unqualified Dividend"
-                    <ExpandableRateComponent updatable=Updatable::new(
-                        i.unqualified_dividend.unwrap_or_default(),
-                        move |rc| {
-                            log!("Rate Curve -> {rc:?}");
-                        },
-                    )/>
+                    "Capital Gain" <div style="display: inline-block;">
+                        <ExpandableRateComponent updatable=Updatable::new(
+                            i.capital_gain.unwrap_or_default(),
+                            move |rc| {
+                                log!("Rate Curve -> {rc:?}");
+                            },
+                        )/>
+                    </div>
                 </label>
-            </div>
-            <div class="form-row">
                 <label>
-                    "Capital Gain"
-                    <ExpandableRateComponent updatable=Updatable::new(
-                        i.capital_gain.unwrap_or_default(),
-                        move |rc| {
-                            log!("Rate Curve -> {rc:?}");
-                        },
-                    )/>
-                </label>
-            </div>
-            <div class="form-row">
-                <label>
-                    "Interest"
-                    <ExpandableRateComponent updatable=Updatable::new(
-                        i.interest.unwrap_or_default(),
-                        move |rc| {
-                            log!("Rate Curve -> {rc:?}");
-                        },
-                    )/>
+                    "Interest" <div style="display: inline-block;">
+                        <ExpandableRateComponent updatable=Updatable::new(
+                            i.interest.unwrap_or_default(),
+                            move |rc| {
+                                log!("Rate Curve -> {rc:?}");
+                            },
+                        )/>
+                    </div>
                 </label>
             </div>
         </div>

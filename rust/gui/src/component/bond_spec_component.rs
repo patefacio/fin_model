@@ -32,7 +32,7 @@ pub fn BondSpecComponent(
     // α <fn bond_spec_component>
 
     let i = updatable.value.unwrap();
-    
+
     view! { cx,
         <h2>"BOND SPEC"</h2>
         <h3>"Face Value"</h3>

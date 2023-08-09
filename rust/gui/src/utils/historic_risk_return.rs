@@ -13,8 +13,13 @@ pub trait HistoricRiskReturnPlot {
     /// plotted together.
     ///
     ///   * **historic_values** - Set of historic risk return values.
+    ///   * **include_labels** - If set will include labels with the dots.
     ///   * _return_ - SVG image of the points on a plot.
-    fn get_historic_plot(&self, historic_values: &[HistoricRiskReturn]) -> String;
+    fn get_historic_plot(
+        &self,
+        historic_values: &[HistoricRiskReturn],
+        include_labels: bool,
+    ) -> String;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -39,12 +44,19 @@ impl HistoricRiskReturnPlot for NormalSpec {
     /// plotted together.
     ///
     ///   * **historic_values** - Set of historic risk return values.
+    ///   * **include_labels** - If set will include labels with the dots.
     ///   * _return_ - SVG image of the points on a plot.
-    fn get_historic_plot(&self, historic_values: &[HistoricRiskReturn]) -> String {
+    fn get_historic_plot(
+        &self,
+        historic_values: &[HistoricRiskReturn],
+        include_labels: bool,
+    ) -> String {
         // α <fn HistoricRiskReturnPlot::get_historic_plot for NormalSpec>
         use crate::scale_by;
         use crate::utils::constants::plot_text_style;
         use plotters::prelude::*;
+
+        const FONT_SIZE: u32 = 10;
 
         let x_vec = historic_values
             .iter()
@@ -67,7 +79,7 @@ impl HistoricRiskReturnPlot for NormalSpec {
 
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
-            let root = SVGBackend::with_string(&mut plot_buff, (470, 470))
+            let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
                 .into_drawing_area()
                 .titled("Historic Risk Return", plot_text_style.clone())
                 .expect("");
@@ -94,49 +106,32 @@ impl HistoricRiskReturnPlot for NormalSpec {
 
             for hrr in HISTORIC_RISK_RETURN_SAMPLES.iter() {
                 chart
-                .draw_series(PointSeries::of_element(
-                    vec![hrr].iter(),
-                    5,
-                    &hrr.color,
-                    &|c, s, st| {
-                        return EmptyElement::at(c.risk_return)
-                            + Circle::new((0, 0), s, st.filled())
-                            + Text::new(
-                                format!(
-                                    "{}",
-                                    NormalSpec {
-                                        mean: c.risk_return.1,
-                                        std_dev: c.risk_return.0,
-                                    }
-                                ),
-                                (5, -5),
-                                ("sans-serif", 9).into_font(),
-                            );
-                    },
-                ))
-                .unwrap();
-
+                    .draw_series(PointSeries::of_element(
+                        vec![hrr].iter(),
+                        5,
+                        &hrr.color,
+                        &|c, s, st| {
+                            return EmptyElement::at(c.risk_return)
+                                + Circle::new((0, 0), s, st.filled())
+                                + Text::new(
+                                    if include_labels {
+                                        format!(
+                                            "{}",
+                                            NormalSpec {
+                                                mean: c.risk_return.1,
+                                                std_dev: c.risk_return.0,
+                                            }
+                                        )
+                                    } else {
+                                        String::default()
+                                    },
+                                    (5, -5),
+                                    ("sans-serif", FONT_SIZE).into_font(),
+                                );
+                        },
+                    ))
+                    .unwrap();
             }
-            // chart
-            //     .draw_series(PointSeries::of_element(
-            //         HISTORIC_RISK_RETURN_SAMPLES.iter(),
-            //         5,
-            //         &HISTORIC_RISK_RETURN_SAMPLES.color,
-            //         &|c, s, st| {
-            //             return EmptyElement::at(c.risk_return)
-            //                 + Circle::new((0, 0), s, st.filled())
-            //                 /*+ Text::new(
-            //                     format!(
-            //                         "{}\n{:?}",
-            //                         c.label,
-            //                         (scale_by(c.risk_return.0, 2), scale_by(c.risk_return.1, 2))
-            //                     ),
-            //                     (10, -5),
-            //                     ("sans-serif", 10).into_font(),
-            //                 );*/
-            //         },
-            //     ))
-            //     .unwrap();
 
             chart
                 .draw_series(PointSeries::of_element(
@@ -147,9 +142,13 @@ impl HistoricRiskReturnPlot for NormalSpec {
                         return EmptyElement::at(c)
                             + Cross::new((0, 0), s, st.filled())
                             + Text::new(
-                                format!("{:?}, {:?}", (c.0 ), (c.1) ),
-                                (5, -5),
-                                ("sans-serif", 9).into_font(),
+                                NormalSpec {
+                                    mean: c.1,
+                                    std_dev: c.0,
+                                }
+                                .to_string(),
+                                (5, 0),
+                                ("sans-serif", FONT_SIZE).into_font(),
                             );
                     },
                 ))
@@ -172,7 +171,7 @@ pub mod unit_tests {
 // α <mod-def historic_risk_return>
 
 use once_cell::sync::Lazy;
-use plotters::prelude::{GREEN, RED, YELLOW, BLUE, MAGENTA };
+use plotters::prelude::{BLUE, GREEN, MAGENTA, RED, YELLOW};
 
 pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::new(|| {
     vec![
@@ -181,27 +180,27 @@ pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::n
         HistoricRiskReturn {
             risk_return: (0.202, 0.123),
             label: "US Large Cap".into(),
-            color: GREEN
+            color: GREEN,
         },
         HistoricRiskReturn {
             risk_return: (0.329, 0.174),
             label: "US Small Cap".into(),
-            color: MAGENTA
+            color: MAGENTA,
         },
         HistoricRiskReturn {
             risk_return: (0.057, 0.055),
             label: "US Bonds".into(),
-            color: YELLOW
+            color: YELLOW,
         },
         HistoricRiskReturn {
             risk_return: (0.171, 0.085),
             label: "REITS".into(),
-            color: BLUE
+            color: BLUE,
         },
         HistoricRiskReturn {
             risk_return: (0.288, 0.1212),
             label: "Emerging Mkts".into(),
-            color: RED
+            color: RED,
         },
     ]
 });

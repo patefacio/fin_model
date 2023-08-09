@@ -31,7 +31,7 @@ pub fn SymbolInput(
     symbol_updatable: Updatable<String>,
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
-    #[prop(default = 7)]
+    #[prop(default = 9)]
     size: u32,
     /// The maximum number of characters for the input.
     #[prop(default = 9)]
