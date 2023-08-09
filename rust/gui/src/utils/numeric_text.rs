@@ -35,6 +35,7 @@ pub fn digit_position(s: &str, mut numeric_count: u32) -> u32 {
         if numeric_count == 0 {
             break;
         }
+        
 
         if match c {
             '-' | '.' => true,
@@ -212,6 +213,7 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
         "-0." => {
             return (None, "-0.".into(), 3);
         }
+        
         _ => (),
     }
 
@@ -258,6 +260,8 @@ pub mod unit_tests {
             //
             ("", 1, 1),
             ("foo234,343.00", 3, 6),
+            (",000", 0, 0 ),
+            
             //0123456     This is the position values
             //...123      These are the numeric characters
         ] {
@@ -288,7 +292,10 @@ pub mod unit_tests {
             ("-", 1, (None, String::from("-"), 1)),
             ("-0", 2, (None, String::from("-0"), 2)),
             ("-0.", 3, (None, String::from("-0."), 3)),
-            ("$,000", 1, (None, String::from("000"), 1)),
+            ("$,000", 0, (None, String::from("000"), 0)),
+            ("$,000,000", 0, (None, String::from("000,000"), 0)),
+            ("$,000,000,000", 0, (None, String::from("000,000,000"), 0)),
+            (",000", 0, (None, String::from("000"), 0)),
         ] {
             let (n, current_caret, expected) = ele;
             assert_eq!(expected, format_number_lenient(n, current_caret));
