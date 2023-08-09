@@ -41,15 +41,11 @@ button {
 }
 
 form {
-	//display: grid;
-	//grid-template-columns: 1fr 1fr;
-	//grid-gap: 20px;
-	//width: 300px;
 	display: inline-block;
 }
 
 
-.form label {
+label {
 	// This pushes the entries onto separate line
 	display: block;
 	white-space: nowrap;
@@ -57,14 +53,19 @@ form {
 	color: blue;
 }
 
+label > * {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
 form p {
 	margin: 0;
 }
 
 // Whenever nesting input in label, space between text and input
-label > input {
-	margin-left: 5px;
-}
+// label > input {
+// 	margin-left: 5px;
+// }
 
 //////////////////////////////
 
@@ -141,18 +142,22 @@ div.mcs-grid {
 
 //// Holding
 
-.holding {
+fieldset {
 	border-radius: 5px;
 }
 
-.holding input {
+legend {
+	font-weight: bold;
+}
+
+input {
 	font-size: var(--plus-sm-fnt);
 	// has no effect since input is not an inline element: vertical-align: middle;
 	margin-top: 3px;
 	//margin-left: 0.5em;
 }
 
-.holding label {
+label {
 	vertical-align: bottom;
 }
 
@@ -160,7 +165,7 @@ div.mcs-grid {
 	background-color: var(--plus-form-bg);
 }
 
-.holding .form-row {
+.form-row {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	margin-top: 1rem;
@@ -172,59 +177,6 @@ div.mcs-grid {
 	margin-top: -0.5rem;
 	vertical-align: top;
 }
-
-// .holding .cost-basis-wrapper {
-// 	// Using flex keeps the _cost basis_ and _as of_ together.
-// 	display: flex;
-// }
-
-// .holding .cost-basis {
-// 	font-size: var(--plus-sm-fnt);
-// 	display: flex;
-// 	// This aligns the currency symbol text with the input
-// 	align-items: baseline;
-// }
-
-// .holding .button-and-price {
-// 	display: flex;
-// }
-
-// .holding .input-share-price {
-// 	width: 5rem;
-// }
-
-// .holding .input-share-count {
-// 	width: 6rem;
-// }
-
-// .holding .currency-symbol {
-// 	padding-right: 2px;
-// }
-
-// .holding input.as-of {
-// 	width: 4rem;
-// }
-
-// .holding .as-of-group {
-// 	margin-left: 1rem;
-// }
-
-// .holding label {
-// 	text-align: left;
-// 	white-space: nowrap;
-// 	background-color: var(--plus-label-bg);
-// 	margin: var(--plus-label-margin);
-// 	display: block;
-// 	//font-weight: 550;
-// }
-
-// .holding .mcs-grid {
-// 	// Allows the price input associated with currency to appear next to it, instead of below it
-// 	float: left;
-// 	// Adds a bit of space beside right of the currency button, left of its input
-// 	margin-right: 3px;
-// }
-
 
 ///////// ItemGrowthComponent
 .icg-select {

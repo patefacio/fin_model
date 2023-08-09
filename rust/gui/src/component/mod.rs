@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
+pub mod bond_spec_component;
 pub mod collection_grid_component;
 pub mod collection_grid_impls;
 pub mod component_display_component;
@@ -12,6 +13,7 @@ pub mod date_input;
 pub mod dispose_test;
 pub mod distribution_cdf_component;
 pub mod distribution_pdf_component;
+pub mod distribution_spec_component;
 pub mod dossier_correlation_entry_component;
 pub mod dossier_correlation_matrix_component;
 pub mod dossier_holding_index_input;

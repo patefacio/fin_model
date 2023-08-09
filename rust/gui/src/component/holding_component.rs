@@ -233,16 +233,12 @@ where
 
     view! { cx,
         <fieldset class="holding" style="margin: 0.5rem;">
-            <legend>
-                <strong>"Holding"</strong>
-            </legend>
+            <legend>"Holding"</legend>
             <div class="form">
                 <div class="form-row">
-                    <label for="symbol">
-                        "Symbol" <SymbolInput symbol_updatable=symbol_updatable/>
-                    </label>
+                    <label>"Symbol" <SymbolInput symbol_updatable=symbol_updatable/></label>
                     <label>
-                        "Price" <div style="display: inline-block; margin-left: 0.45em;">
+                        "Current Price" <div style="display: inline-block; margin-left: 0.45em;">
                             <YearCurrencyValueInput
                                 updatable=unit_valuation_updatable
                                 value_placeholder="price".to_string()
@@ -253,7 +249,7 @@ where
                 </div>
                 <div class="form-row">
                     <label>"Quantity" <NumericInput updatable=quantity_updatable/></label>
-                    <label for="cost">
+                    <label>
                         "Cost"
                         <NumericInput
                             updatable=cost_basis_updatable

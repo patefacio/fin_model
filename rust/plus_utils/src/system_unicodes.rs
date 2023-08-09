@@ -89,6 +89,10 @@ pub enum SystemUnicodes {
     InFlow,
     /// Character(⬇) - Out flow
     OutFlow,
+    /// Character(🪦) - Tombstone
+    Tombstone,
+    /// Character(🏖) - Beach Umbrella
+    BeachUmbrella,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +146,8 @@ impl SystemUnicodes {
             SystemUnicodes::LeftArrowFat => "⬅",
             SystemUnicodes::InFlow => "⬆",
             SystemUnicodes::OutFlow => "⬇",
+            SystemUnicodes::Tombstone => "🪦",
+            SystemUnicodes::BeachUmbrella => "🏖",
         }
     }
 }

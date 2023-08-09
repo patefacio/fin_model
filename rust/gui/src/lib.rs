@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+pub use component::bond_spec_component::BondSpecComponent;
 pub use component::collection_grid_component::CollectionGrid;
 pub use component::collection_grid_component::CollectionGridComponent;
 pub use component::collection_grid_impls::holdings_impl::HoldingSharedContext;
@@ -16,6 +17,7 @@ pub use component::date_input::DateInput;
 pub use component::dispose_test::DisposeTest;
 pub use component::distribution_cdf_component::DistributionCdfComponent;
 pub use component::distribution_pdf_component::DistributionPdfComponent;
+pub use component::distribution_spec_component::DistributionSpecComponent;
 pub use component::dossier_correlation_entry_component::DossierCorrelationEntryComponent;
 pub use component::dossier_correlation_matrix_component::DossierCorrelationMatrixComponent;
 pub use component::dossier_holding_index_input::DossierHoldingIndexInput;
