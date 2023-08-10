@@ -6,13 +6,17 @@
 	--mcs-btn-color: cyan;
 	--mcs-tbl-color: white;
 	--plus-btn-color: hsl(120, 50%, 90%);
-	--plus-btn-padding: 0.15rem;
+	--plus-btn-padding: 0.20rem;
 	--plus-btn-margin: 0.15rem;
 	--plus-background: white;
 	--plus-label-bg: white;
 	--plus-label-margin: 0 0.5rem 0.5rem 0;
 	--plus-form-bg: white;
 	--plus-sm-fnt: 0.75rem;
+	--plus-label-margin-top: 0.3rem;
+	--plus-label-margin-bottom: 0.3rem;
+	--plus-label-margin-left: 0.3rem;
+	--plus-label-margin-right: 0.3rem;
 }
 
 *,
@@ -66,6 +70,15 @@ form p {
 // label > input {
 // 	margin-left: 5px;
 // }
+
+.info-label {
+	font-weight: bold;
+	color: green;
+	margin-top: var(--plus-label-margin-top);
+	margin-bottom: var(--plus-label-margin-bottom);
+	margin-left: var(--plus-label-margin-left);
+	margin-right: var(--plus-label-margin-right);
+}
 
 //////////////////////////////
 
@@ -144,6 +157,8 @@ div.mcs-grid {
 
 fieldset {
 	border-radius: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 legend {
@@ -168,9 +183,15 @@ label {
 .form-row {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	margin-top: 1rem;
 	margin-left: 1rem;
-	margin-bottom: 1rem;
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.form-row label {
+	margin-bottom: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 
 .holding .currency-button {
@@ -181,6 +202,14 @@ label {
 ///////// ItemGrowthComponent
 .icg-select {
 	padding: 5px;
+}
+
+.ig {
+	display: flex;
+}
+
+.ig-growth-label {
+	//background-color: yellow;
 }
 
 .invalid,
@@ -212,7 +241,7 @@ input.invalid:focus {
 }
 
 .rate-curve-data {
-	width: 250px;
+	width: 10rem;
 }
 
 .yri-start,
@@ -315,4 +344,19 @@ input.invalid:focus {
 }
 .inactive-edit {
 	background-color: lightgrey;
+}
+
+.collapse-button {
+	margin-left: 0.3rem;
+}
+
+.ok-cancel-bar {
+	display: flex; 
+	margin-top: 3px;
+	justify-content: center; 
+	background-color: hsl(120, 50%, 95%);
+	border: 1px solid green;
+	border-radius: 3px;
+	margin-inline-start: 2px;
+	margin-inline-end: 2px;
 }

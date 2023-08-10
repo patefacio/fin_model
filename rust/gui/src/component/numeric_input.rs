@@ -239,14 +239,16 @@ pub fn NumericInput(
                     // Update the input with the improved value
                     _ = input_ref.set_value(&new_value);
                     // find out where the cursor should go
-                    let new_position = modification.position_in_number(
+                    let final_position = modification.position_in_number(
                         new_value.len(),
                         digit_position(&new_value, numeric_to_caret) as usize,
                     ) as u32;
-                    _ = input_ref.set_selection_range(new_position, new_position);
+                    _ = input_ref.set_selection_range(final_position, final_position);
                 }
             } else {
+                let final_position = digit_position(&new_value, numeric_to_caret);
                 input_ref.set_value(&new_value);
+                _ = input_ref.set_selection_range(final_position, final_position);
             }
 
             let custom_valid = numeric_input_data

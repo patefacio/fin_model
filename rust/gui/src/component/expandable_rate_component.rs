@@ -129,8 +129,6 @@ pub fn ExpandableRateComponent(
                                 *value = !*value;
                             })
                     }
-
-                    style="margin-left: 0.2rem;"
                 >
                     {move || { if is_expanded.get() { "...-" } else { "...+" } }}
                 </button>

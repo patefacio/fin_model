@@ -144,7 +144,7 @@ pub fn NormalSpecComponent(
     const input_size: u32 = 7;
 
     view! { cx,
-        <div style="max-width: 700px">
+        <div class="ns">
             <fieldset class="nsg">
                 <div class="form" style="overflow-x: scroll;">
                     <div style="display: inline;">

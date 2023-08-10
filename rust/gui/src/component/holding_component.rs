@@ -263,20 +263,16 @@ where
                     </label>
                 </div>
                 <div class="form-row">
-                    <span>
-                        <strong>
-                            <em>{move || market_value()}</em>
-                        </strong>
-                    </span>
-                    <span>
-                        <strong>
-                            <em>{move || unrealized_gain_loss()}</em>
-                        </strong>
-                    </span>
+                    <div class="info-label">
+                            {move || market_value()}
+                    </div>
+                    <div class="info-label">
+                            {move || unrealized_gain_loss()}
+                    </div>
 
                 </div>
-                <div class="form-row">
-                    // <div style="grid-column-start: 1; grid-column-end: 2;">
+               // <div class="form-row">
+                    <div style="grid-column-start: 1; grid-column-end: 2;">
                     <fieldset>
                         <legend>"Growth"</legend>
                         <ItemGrowthComponent
@@ -296,10 +292,8 @@ where
 
                     </fieldset>
                 </div>
-                <div style="display: flex; justify-content: center; background-color: lightgray;">
-                    <div class="display: grid; grid-template-columns: 1fr 1fr; ">
+                <div class="ok-cancel-bar">
                         <OkCancelComponent on_ok_cancel=on_ok_cancel/>
-                    </div>
                 </div>
             </div>
         </fieldset>

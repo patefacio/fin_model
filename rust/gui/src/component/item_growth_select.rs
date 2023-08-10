@@ -89,7 +89,7 @@ where
     };
 
     view! { cx,
-        <div style="display: grid; grid-template-columns: 1fr 1.5fr">
+        <div class="ig">
             <MultiColumnSelect
                 options=options
                 column_count=column_count
@@ -97,15 +97,14 @@ where
                 on_select=menu_select
                 direction=direction
             />
-            <div style="position: relative">
-                <div style="position: absolute; bottom: 0.2em;">
-                    <span>
+            <div>
+            <div class="ig-growth-label">
+                <div class="info-label">
                         {move || {
-                            format!("System Growth: {}", NormalSpec { mean : 0.1, std_dev : 0.2 })
+                            format!("Growth: {}", NormalSpec { mean : 0.1, std_dev : 0.2 })
                         }}
-
-                    </span>
                 </div>
+            </div>
             </div>
         </div>
     }

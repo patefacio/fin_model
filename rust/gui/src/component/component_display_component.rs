@@ -145,36 +145,6 @@ pub fn ComponentDisplayComponent(
             <p>{last_update}</p>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr;">
-            <DistributionSpecComponent updatable=Updatable::new(
-                Some(DistributionSpec::default()),
-                move |distribution_spec| {
-                    log!("Distribution Spec -> {distribution_spec:?}");
-                },
-            )/>
-            <ItemGrowthComponent
-                updatable=Updatable::new(
-                    ItemGrowth {
-                        system_growth_id: Some(SystemGrowthId {
-                            system_id: Some(
-                                SystemId::HoldingItemId(HoldingType::UsEquityMarket as u32),
-                            ),
-                        }),
-                        growth_assumption: Some(GrowthAssumption {
-                            normal_spec: Some(NormalSpec {
-                                mean: 0.11,
-                                std_dev: 0.2,
-                            }),
-                            pinned_growth: None,
-                        }),
-                    },
-                    move |item_growth| show_update(format!("ItemGrowth -> {item_growth:?}")),
-                )
-
-                dossier_item_type=DossierItemType::Holding
-                growth_item_mappings=&GrowthItemMappings::default()
-            />
-        </div>
         <h3>"Numbers"</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
             <div style="padding: 1em;">
