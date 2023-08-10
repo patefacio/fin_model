@@ -248,7 +248,9 @@ pub fn NumericInput(
             } else {
                 let final_position = digit_position(&new_value, numeric_to_caret);
                 input_ref.set_value(&new_value);
-                _ = input_ref.set_selection_range(final_position, final_position);
+                if value==None {
+                    _ = input_ref.set_selection_range(numeric_to_caret, numeric_to_caret);
+                }
             }
 
             let custom_valid = numeric_input_data
