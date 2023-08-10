@@ -246,11 +246,13 @@ pub fn NumericInput(
                     _ = input_ref.set_selection_range(final_position, final_position);
                 }
             } else {
-                let final_position = digit_position(&new_value, numeric_to_caret);
+                let mut final_position = digit_position(&new_value, numeric_to_caret);
                 input_ref.set_value(&new_value);
-                if value==None {
-                    _ = input_ref.set_selection_range(numeric_to_caret, numeric_to_caret);
+                if value == None {
+                    final_position -= 1;
                 }
+
+                _ = input_ref.set_selection_range(final_position, final_position);
             }
 
             let custom_valid = numeric_input_data
