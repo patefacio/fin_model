@@ -30,6 +30,12 @@ pub enum FormatConstraint {
 ///   * _return_ - Position **after** _numeric_count_ characters encountered.
 pub fn digit_position(s: &str, mut numeric_count: u32) -> u32 {
     // α <fn digit_position>
+    debug_assert!(numeric_count <= s.len() as u32);
+
+    if numeric_count == 0 {
+        return 0;
+    }
+
     let mut pos = 0;
     for (i, c) in s.chars().enumerate() {
         if numeric_count == 0 {
@@ -189,16 +195,17 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> (Option<f64>, Strin
             "0.00000" => {
                 return (None, "0.00000".into(), 7);
             }
-            "000" => {
-                return (None, "000".into(), 0);
+
+            _ => {
+                if "" == numeric.trim_matches('0') {
+                    let num_zero = numeric.len();
+                    let quotient = num_zero / 3;
+                    let remainder = num_zero % 3;
+                    let mut result = "0".repeat(remainder);
+                    result.push_str(&",000".repeat(quotient));
+                    return (None, result, 0);
+                }
             }
-            "000000" => {
-                return (None, "000,000".into(), 0);
-            }
-            "000000000" => { 
-                return (None, "000,000,000".into(), 0);
-            }
-            _ => (),
         }
     }
 
@@ -255,11 +262,17 @@ pub mod unit_tests {
     #[test]
     fn test_digit_position() {
         // α <fn test_digit_position>
+        let should_panic = || digit_position("", 1);
+        assert!(std::panic::catch_unwind(should_panic).is_err());
+
         for ele in [
-            //
-            ("", 1, 1),
             ("foo234,343.00", 3, 6),
+            ("1", 1, 1),
+            ("1", 0, 0),
+            ("123", 0, 0),
+            ("EUR 1,275,400", 5, 11),
             ("000", 0, 0),
+            ("234", 0, 0),
             //0123456     This is the position values
             //...123      These are the numeric characters
         ] {
@@ -296,6 +309,7 @@ pub mod unit_tests {
             (",000", 0, (None, String::from("000"), 0)),
             (",000,000", 0, (None, String::from("000,000"), 0)),
             (",000,000,000", 0, (None, String::from("000,000,000"), 0)),
+            (",122,345", 1, (Some(122345.0), String::from("122,345"), 0)),
         ] {
             let (n, current_caret, expected) = ele;
             assert_eq!(expected, format_number_lenient(n, current_caret));

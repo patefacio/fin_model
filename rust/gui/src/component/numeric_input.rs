@@ -249,9 +249,11 @@ pub fn NumericInput(
                 let mut final_position = digit_position(&new_value, numeric_to_caret);
                 input_ref.set_value(&new_value);
                 if value == None {
-                    final_position -= 1;
+                    if final_position >= 1 {
+                        final_position -= 1;
+                    }
                 }
-
+                log!("V {value:?} NV {new_value:?} NC {numeric_to_caret:?} FP {final_position:?}");
                 _ = input_ref.set_selection_range(final_position, final_position);
             }
 
@@ -387,10 +389,16 @@ impl Modification {
                 maybe_signal.with(|p| p.chars().count().max(position))
             }
             Modification::Suffix(s) => (input_len - s.chars().count()).min(position),
-            Modification::PrefixAndSuffix { prefix, suffix } => (input_len
-                - suffix.chars().count())
-            .min(position)
-            .max(prefix.chars().count()),
+            Modification::PrefixAndSuffix { prefix, suffix } => {
+                let suffix_len = suffix.chars().count();
+                if input_len < suffix_len {
+                    suffix_len
+                } else {
+                    input_len - suffix.chars().count()
+                }
+                .min(position)
+                .max(prefix.chars().count())
+            }
         };
         constrained
 
