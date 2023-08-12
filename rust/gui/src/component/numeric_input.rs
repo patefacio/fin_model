@@ -362,7 +362,6 @@ pub fn NumericInput(
                     if let Some(c) = value.chars().nth(digit_index) {
                         if c.is_ascii_digit() {
                             let digit = c.to_digit(10).unwrap();
-                            log!("Converting `{c}` {digit}");
                             let new_digit = char::from_digit(
                                 if key_code == UP_KEY {
                                     digit + 1
