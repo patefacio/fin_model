@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::utils::constants::{ENTER_KEY, LEFT_KEY, RIGHT_KEY};
+use crate::utils::constants::{BACKSPACE_KEY, DELETE_KEY, ENTER_KEY, LEFT_KEY, RIGHT_KEY};
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
 #[allow(unused_imports)]
@@ -114,6 +114,7 @@ pub fn NumericInput(
 ) -> impl IntoView {
     // α <fn numeric_input>
 
+    use crate::LenientFormatted;
     use leptos::IntoAttribute;
     use leptos::IntoClass;
     use leptos::IntoStyle;
@@ -126,18 +127,22 @@ pub fn NumericInput(
 
     let mut validator = validator;
 
-    // Get the initial value for the year if provided. Set to empty string if
-    // not provided.
     let initial_value = updatable
         .value
         .as_ref()
         .map(|initial_value| {
             let initial_value_string = initial_value.to_string();
-            let (_, new_value, _) = format_number_lenient(&initial_value_string, 0);
+
+            let (initial_value, mut initial_value_txt) =
+                match format_number_lenient(&initial_value_string, 0) {
+                    LenientFormatted::Zero(new_value, _) => (0.0, new_value),
+                    LenientFormatted::NonZeroValue(value, new_value, _) => (value, new_value),
+                    _ => (*initial_value, initial_value_string),
+                };
 
             let custom_valid = validator
                 .as_mut()
-                .map(|validator| (validator.as_mut())(*initial_value))
+                .map(|validator| (validator.as_mut())(initial_value))
                 .unwrap_or(true);
 
             is_valid = custom_valid
@@ -147,8 +152,8 @@ pub fn NumericInput(
                     .unwrap_or(true);
             modification
                 .as_ref()
-                .map(|modification| modification.modify(&new_value))
-                .unwrap_or_else(|| new_value)
+                .map(|modification| modification.modify(&initial_value_txt))
+                .unwrap_or_else(|| initial_value_txt)
                 .chars()
                 .take(max_len as usize)
                 .collect::<String>()
@@ -157,12 +162,20 @@ pub fn NumericInput(
 
     let (is_valid, set_is_valid) = create_signal(cx, is_valid);
 
+    #[derive(Debug, Copy, Clone)]
+    enum TrackedKey {
+        DeleteKey,
+        BackspaceKey,
+        Other(u32),
+    }
+
     struct NumericInputData {
         updatable: Updatable<Option<f64>>,
         modification: Option<Modification>,
         range: Option<RangeInclusive<f64>>,
         on_enter: Option<Rc<RefCell<Box<dyn FnMut(String)>>>>,
         validator: Option<Rc<RefCell<Box<dyn FnMut(f64) -> bool>>>>,
+        tracked_key: Option<TrackedKey>,
     }
 
     let numeric_input_data = NumericInputData {
@@ -171,6 +184,7 @@ pub fn NumericInput(
         range,
         on_enter: on_enter.map(|on_enter| Rc::new(RefCell::new(on_enter))),
         validator: validator.map(|validator| Rc::new(RefCell::new(validator))),
+        tracked_key: None,
     };
 
     let numeric_input_data = store_value(cx, numeric_input_data);
@@ -217,20 +231,33 @@ pub fn NumericInput(
                 }
             }
 
+            if no_decimal {
+                if let Some(dot_pos) = value.find('.') {
+                    value.replace_range(dot_pos.., "");
+                    selection_start = selection_start.min(value.len() as u32);
+                }
+            }
+
             // `format_number_lenient` will return the input with all non-digit
             // characters stripped in `new_value` excluding separator (',').
             // The value passed in will likely have a prefix or suffix which
             // is now *not present* in `new_value`
-            let (mut value, mut new_value, numeric_to_caret) =
-                format_number_lenient(&value, selection_start);
+            let lenient_formatted = format_number_lenient(&value, selection_start);
 
-            if no_decimal {
-                value = match value {
-                    Some(_) => Some(value.unwrap().round()),
-                    None => None,
-                };
-                new_value = new_value.split('.').collect::<Vec<_>>()[0].to_string();
+            if let LenientFormatted::Incomplete(_text, _position) = &lenient_formatted {
+                log!("Incomplete number -> {lenient_formatted:?}");
+                return;
             }
+
+            let (value, mut new_value, numeric_to_caret) = match lenient_formatted {
+                LenientFormatted::Zero(new_value, numeric_to_caret) => {
+                    (0.0, new_value, numeric_to_caret)
+                }
+                LenientFormatted::NonZeroValue(value, new_value, numeric_to_caret) => {
+                    (value, new_value, numeric_to_caret)
+                }
+                _ => unreachable!("Early exited for incomplete number"),
+            };
 
             if let Some(modification) = numeric_input_data.modification.as_ref() {
                 if !new_value.is_empty() {
@@ -246,36 +273,28 @@ pub fn NumericInput(
                     _ = input_ref.set_selection_range(final_position, final_position);
                 }
             } else {
-                let mut final_position = digit_position(&new_value, numeric_to_caret);
+                let final_position = digit_position(&new_value, numeric_to_caret);
                 input_ref.set_value(&new_value);
-                if value == None {
-                    if final_position >= 1 {
-                        final_position -= 1;
-                    }
-                }
-                log!("V {value:?} NV {new_value:?} NC {numeric_to_caret:?} FP {final_position:?}");
                 _ = input_ref.set_selection_range(final_position, final_position);
             }
 
             let custom_valid = numeric_input_data
                 .validator
                 .as_mut()
-                .and_then(|validator| value.map(|value| (validator.borrow_mut().as_mut())(value)))
+                .map(|validator| (validator.borrow_mut().as_mut())(value))
                 .unwrap_or(true);
 
             let is_in_range = numeric_input_data
                 .range
                 .as_ref()
-                .map(move |range| value.map(|value| range.contains(&value)).unwrap_or(true))
+                .map(move |range| range.contains(&value))
                 .unwrap_or(true);
 
             set_is_valid.set(custom_valid && is_in_range);
 
-            if value.is_some() {
-                numeric_input_data
-                    .updatable
-                    .update_and_then_signal(|number| *number = value);
-            }
+            numeric_input_data
+                .updatable
+                .update_and_then_signal(|number| *number = Some(value));
         });
     };
 
@@ -283,6 +302,22 @@ pub fn NumericInput(
 
     let key_movement = move |ev: KeyboardEvent| {
         let key_code = ev.key_code();
+
+        match key_code {
+            DELETE_KEY => numeric_input_data.update_value(|numeric_input_data| {
+                numeric_input_data.tracked_key = Some(TrackedKey::DeleteKey);
+            }),
+
+            BACKSPACE_KEY => numeric_input_data.update_value(|numeric_input_data| {
+                numeric_input_data.tracked_key = Some(TrackedKey::BackspaceKey);
+            }),
+            _ => {
+                numeric_input_data.update_value(|numeric_input_data| {
+                    numeric_input_data.tracked_key = Some(TrackedKey::Other(key_code))
+                });
+            }
+        };
+
         match key_code {
             LEFT_KEY | RIGHT_KEY => numeric_input_data.with_value(|numeric_input_data| {
                 if let Some(modification) = numeric_input_data.modification.as_ref() {
@@ -311,6 +346,7 @@ pub fn NumericInput(
                     }
                 });
             }
+
             _ => (),
         }
     };

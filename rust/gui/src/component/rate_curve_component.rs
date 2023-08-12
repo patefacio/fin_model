@@ -145,10 +145,8 @@ pub fn RateCurveComponent(
         if let Some(position) =
             signals.with_value(|signals| signals.get(key).cloned().map(|signal| signal.get()))
         {
-            log!("Delete before curve update -> {key}");
             let mut position_to_end_range: Option<Range<usize>> = None;
             set_curve.update(|curve| {
-                log!("Delete after curve update -> {key}");
                 let _removed_value = curve.remove(position);
                 let end = curve.len();
                 position_to_end_range = Some(position..end);
@@ -162,7 +160,6 @@ pub fn RateCurveComponent(
                         let new_index = position + i;
                         if let Some(keyed_signal) = signals.get_mut(&key) {
                             keyed_signal.update(|index| {
-                                log!("Updating key index -> {key}");
                                 *index = new_index;
                             });
                         }
@@ -198,14 +195,12 @@ pub fn RateCurveComponent(
     };
 
     let percent_input = move |year_value: YearValue| {
-        log!("Percent input changing for year value to {year_value:?}");
         view! { cx,
             <PercentInput
                 disabled=Some(disabled)
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |percent| {
-                        log!("Percent is updating => {percent:?}");
                         set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
                         set_add_enabled
                             .update(|add_enabled| {

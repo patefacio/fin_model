@@ -148,9 +148,7 @@ where
     );
 
     let unit_valuation_updatable = Updatable::new(unit_valuation, move |unit_valuation| {
-        log!("Unit value updated {unit_valuation:?}");
         currency_rw_signal.update(|currency_string| {
-            log!("UPDATING UV -> {unit_valuation:?}");
             *currency_string = to_currency_symbol(
                 unit_valuation
                     .map(|ycv| Currency::from_i32(ycv.currency).unwrap_or_default())
@@ -158,7 +156,6 @@ where
             )
             .to_string()
         });
-        log!("Updating main updatable with borrow");
         updatable.update_value(|updatable| {
             updatable.update(|(holding, _shared_context)| {
                 holding.unit_valuation = *unit_valuation;
@@ -169,7 +166,6 @@ where
     });
 
     let cost_basis_updatable = Updatable::new(Some(cost_basis), move |cost_basis| {
-        log!("Cost basis updated -> {cost_basis:?}");
         currency_rw_signal.track();
         updatable.update_value(|updatable| {
             updatable.update(|(holding, _shared_context)| {

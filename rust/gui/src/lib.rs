@@ -60,6 +60,7 @@ pub use utils::integer_clamp::IntegerClamp;
 pub use utils::leptos_helpers::make_shared_data;
 pub use utils::leptos_helpers::SharedData;
 pub use utils::live_parsed_date::LiveParsedDate;
+pub use utils::numeric_text::LenientFormatted;
 pub use utils::parsed_num::ParsedNum;
 pub use utils::updatable::Updatable;
 pub use utils::updatable::UpdatablePair;

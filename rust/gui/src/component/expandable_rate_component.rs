@@ -71,13 +71,8 @@ pub fn ExpandableRateComponent(
                 year: MIN_DATE,
                 value: value.unwrap(),
             };
-            log!("Percent is updating => {new_first_year_value:?}");
             stored_updatable
                 .update_value(|updatable| updatable.value.curve = vec![new_first_year_value]);
-            log!(
-                "Latest curve is => {:?}",
-                stored_updatable.with_value(|u| u.value.clone())
-            );
         })
     };
 
@@ -98,8 +93,6 @@ pub fn ExpandableRateComponent(
             <RateCurveComponent updatable=Updatable::new(
                 stored_updatable.with_value(|updatable| updatable.value.clone()),
                 move |new_rc| {
-                    log!("Rate Curve -> {new_rc:?}");
-                    {
                         stored_updatable
                             .update_value(move |updatable| {
                                 updatable
@@ -108,7 +101,6 @@ pub fn ExpandableRateComponent(
                                         *rc = new_rc;
                                     })
                             })
-                    }
                 },
             )/>
         }

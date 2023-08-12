@@ -69,8 +69,6 @@ impl DistributionPdf for NormalSpec {
         tracing::debug!("{self:?} -> X -> {x_vec:?}");
         tracing::debug!("Y -> {y_vec:?}");
 
-        leptos::log!("Creating pdf for `{self:?}`");
-
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
             let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
