@@ -155,7 +155,11 @@ impl Display for RateCurve {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for RateCurve>
-        todo!("Implement `fmt`")
+        write!(
+            f,
+            "RateCurve({} entries)",
+            self.curve.len()
+        )
         // ω <fn Display::fmt for RateCurve>
     }
 }

@@ -3,7 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::utils::constants::{BACKSPACE_KEY, DELETE_KEY, ENTER_KEY, LEFT_KEY, RIGHT_KEY};
+use crate::utils::constants::{
+    BACKSPACE_KEY, DELETE_KEY, DOWN_KEY, ENTER_KEY, LEFT_KEY, RIGHT_KEY, UP_KEY,
+};
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
 #[allow(unused_imports)]
@@ -345,6 +347,51 @@ pub fn NumericInput(
                         }
                     }
                 });
+            }
+
+            UP_KEY | DOWN_KEY => {
+                let input_ref = node_ref.get().expect("Input node");
+                let mut value = input_ref.value();
+                let selection_start = input_ref
+                    .selection_start()
+                    .unwrap_or_default()
+                    .unwrap_or_default();
+
+                if selection_start > 0 {
+                    let digit_index = (selection_start - 1) as usize;
+                    if let Some(c) = value.chars().nth(digit_index) {
+                        if c.is_ascii_digit() {
+                            let digit = c.to_digit(10).unwrap();
+                            log!("Converting `{c}` {digit}");
+                            let new_digit = char::from_digit(
+                                if key_code == UP_KEY {
+                                    digit + 1
+                                } else {
+                                    if digit == 0 {
+                                        9
+                                    } else {
+                                        digit - 1
+                                    }
+                                } % 10,
+                                10,
+                            )
+                            .unwrap();
+                            value.replace_range(
+                                value
+                                    .char_indices()
+                                    .nth(digit_index)
+                                    .map(|(pos, _ch)| (pos..pos + 1))
+                                    .unwrap(),
+                                &new_digit.to_string(),
+                            );
+
+                            input_ref.set_value(&value);
+                            let _ = input_ref.set_selection_range(selection_start, selection_start);
+                            update_value.with_value(|update_value| update_value());
+                        }
+                    }
+                }
+                ev.prevent_default();
             }
 
             _ => (),

@@ -21,7 +21,14 @@ impl Display for BondSpec {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for BondSpec>
-        todo!("Implement `fmt`")
+        write!(
+            f,
+            "Bond(Mat:{})",
+            self.maturity
+                .as_ref()
+                .map(|maturity| maturity.to_string())
+                .unwrap_or_default()
+        )
         // ω <fn Display::fmt for BondSpec>
     }
 }
@@ -33,7 +40,7 @@ impl Display for Holding {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for Holding>
-        todo!("Implement `fmt`")
+        write!(f, "Symbol({})", self.instrument_name)
         // ω <fn Display::fmt for Holding>
     }
 }
@@ -45,7 +52,15 @@ impl Display for Account {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for Account>
-        todo!("Implement `fmt`")
+        use crate::AccountType;
+        write!(
+            f,
+            "Acc({}:{})",
+            self.name,
+            AccountType::from_i32(self.account_type)
+                .unwrap()
+                .as_str_name()
+        )
         // ω <fn Display::fmt for Account>
     }
 }
@@ -57,7 +72,8 @@ impl Display for RequiredMinimumDistribution {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for RequiredMinimumDistribution>
-        todo!("Implement `fmt`")
+
+        write!(f, "Penalty({})", self.penalty)
         // ω <fn Display::fmt for RequiredMinimumDistribution>
     }
 }
@@ -69,7 +85,24 @@ impl Display for AccountTreatment {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for AccountTreatment>
-        todo!("Implement `fmt`")
+
+        use crate::account::account_treatment::WithdrawalTreatment;
+
+        write!(
+            f,
+            "AccountType({})/Withdrawal({})",
+            self.account_type().as_str_name(),
+            self.withdrawal_treatment.as_ref().map(|wt| format!(
+                "{}",
+                match wt {
+                    WithdrawalTreatment::EarlyWithdrawalPenalty(p) => format!("Early Withdrawal({p})"),
+                    WithdrawalTreatment::CollegeIrs529Penalty(p) => format!("College Fund Penalty({p})"),
+                    WithdrawalTreatment::HealthSavingsPenalty(p) => format!("Health Saving Penalty({p})"),
+                    WithdrawalTreatment::RequiredMinimumDistribution(p) => format!("RMD Penalty({p})"),
+                }
+            )).unwrap_or_default()
+        )
+
         // ω <fn Display::fmt for AccountTreatment>
     }
 }

@@ -513,62 +513,6 @@ pub mod unit_tests {
         // ω <fn test_format_number_lenient>
     }
 
-    /// Test type CharState
-    mod test_char_state {
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- module uses ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        use test_log::test;
-
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- functions ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        #[test]
-        fn new() {
-            // α <fn test CharState::new>
-            todo!("Test new")
-            // ω <fn test CharState::new>
-        }
-
-        #[test]
-        fn next_char() {
-            // α <fn test CharState::next_char>
-            todo!("Test next_char")
-            // ω <fn test CharState::next_char>
-        }
-
-        #[test]
-        fn advance_position() {
-            // α <fn test CharState::advance_position>
-            todo!("Test advance_position")
-            // ω <fn test CharState::advance_position>
-        }
-
-        #[test]
-        fn process_digit_shift() {
-            // α <fn test CharState::process_digit_shift>
-            todo!("Test process_digit_shift")
-            // ω <fn test CharState::process_digit_shift>
-        }
-
-        #[test]
-        fn check_for_zero() {
-            // α <fn test CharState::check_for_zero>
-            todo!("Test check_for_zero")
-            // ω <fn test CharState::check_for_zero>
-        }
-
-        #[test]
-        fn finalize_number() {
-            // α <fn test CharState::finalize_number>
-            todo!("Test finalize_number")
-            // ω <fn test CharState::finalize_number>
-        }
-
-        // α <mod-def test_char_state>
-        // ω <mod-def test_char_state>
-    }
-
     // α <mod-def unit_tests>
     use super::*;
     // ω <mod-def unit_tests>

@@ -17,7 +17,12 @@ impl Display for AgeAssumptions {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for AgeAssumptions>
-        todo!("Implement `fmt`")
+        write!(
+            f,
+            "Ages(Retirement({}), Death({}))",
+            self.retirement_age,
+            self.death_age
+        )
         // ω <fn Display::fmt for AgeAssumptions>
     }
 }

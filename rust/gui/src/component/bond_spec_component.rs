@@ -31,27 +31,29 @@ pub fn BondSpecComponent(
 ) -> impl IntoView {
     // α <fn bond_spec_component>
 
-    let i = updatable.value.unwrap();
+    let bond_spec = updatable.value.unwrap();
+
+    log!("Creating bond spec component for {bond_spec}");
 
     view! { cx,
         <h2>"BOND SPEC"</h2>
         <h3>"Face Value"</h3>
         <NumericInput updatable=Updatable::new(
-            Some(i.face_value),
+            Some(bond_spec.face_value),
             move |rc| {
                 log!("Rate Curve -> {rc:?}");
             },
         )/>
         <h3>"Annual Coupon"</h3>
         <RateCurveComponent updatable=Updatable::new(
-            i.annual_coupon.unwrap_or_default(),
+            bond_spec.annual_coupon.unwrap_or_default(),
             move |rc| {
                 log!("Rate Curve -> {rc:?}");
             },
         )/>
         <h3>"Maturity Date"</h3>
         <DateInput updatable=Updatable::new(
-            i.maturity,
+            bond_spec.maturity,
             move |rc| {
                 log!("Date -> {rc:?}");
             },
