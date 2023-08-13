@@ -28,13 +28,10 @@ impl PlotData for RateCurve {
     fn plot(&self) -> String {
         // α <fn PlotData::plot for RateCurve>
 
-        use crate::Year;
         use plotters::prelude::*;
-        use plus_modeled::RateCurve;
-        use plus_modeled::YearValue;
-        use std::slice::Windows;
 
-        //Check to see if the curve is empty -> no values can be plotted if the user hasn't given any input
+        // Check to see if the curve is empty -> no values can be plotted if the user 
+        // hasn't given any input
         if self.curve.is_empty() {
             return String::default();
         }
@@ -51,7 +48,7 @@ impl PlotData for RateCurve {
             min_y = left.value.min(min_y);
             max_y = left.value.max(max_y);
         }
-        let mut min_x = self.curve.first().unwrap().year;
+        let min_x = self.curve.first().unwrap().year;
         let mut max_x = self.curve.last().unwrap().year;
         vec_slice.push(
             self.curve
@@ -66,7 +63,8 @@ impl PlotData for RateCurve {
         min_y = min_y.min(last_y);
         max_y = max_y.max(last_y);
 
-        //Extend rate_curve line to start at zero dollars and extend at the same value "infinitely" at the last year_value pair
+        // Extend rate_curve line to start at zero dollars and extend at the same value 
+        // "infinitely" at the last year_value pair
         let delta = ((max_x - min_x) as f64 * 0.1) as u32;
 
         vec_slice.push(
@@ -82,7 +80,7 @@ impl PlotData for RateCurve {
             0,
             vec_slice
                 .first()
-                .map(|first_point| (min_x as f64, 0.0))
+                .map(|_| (min_x as f64, 0.0))
                 .unwrap(),
         );
 
