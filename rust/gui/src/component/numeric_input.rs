@@ -362,16 +362,49 @@ pub fn NumericInput(
                     if let Some(c) = value.chars().nth(digit_index) {
                         if c.is_ascii_digit() {
                             let digit = c.to_digit(10).unwrap();
+                            let first_digit_pos = value.chars().position(|c| c.is_ascii_digit());
+
+                            // If the first digit is the digit in question we may need to protect from
+                            // rolling to 0
+                            let c_is_first_digit = first_digit_pos
+                                .map(|p| p == digit_index)
+                                .unwrap_or_default();
+
+                            // Protect when first digit is the digit in question *and* the following digit
+                            // is not a decimal point. If the following digit is a decimal point then scrolling
+                            // through 0 makes sense. If it is not then we protect against the first digit going
+                            // to 0.
+                            let protect_range = c_is_first_digit
+                                && first_digit_pos
+                                    .and_then(|fdp| value.chars().nth(fdp + 1).map(|c| c != '.'))
+                                    .unwrap_or_default();
+
                             let new_digit = char::from_digit(
-                                if key_code == UP_KEY {
-                                    digit + 1
-                                } else {
-                                    if digit == 0 {
-                                        9
-                                    } else {
-                                        digit - 1
+                                match key_code {
+                                    UP_KEY => {
+                                        if digit == 9 {
+                                            if protect_range {
+                                                9
+                                            } else {
+                                                0
+                                            }
+                                        } else {
+                                            digit + 1
+                                        }
                                     }
-                                } % 10,
+                                    DOWN_KEY => {
+                                        if digit == 0 {
+                                            9
+                                        } else {
+                                            if protect_range && digit == 1 {
+                                                1
+                                            } else {
+                                                digit - 1
+                                            }
+                                        }
+                                    }
+                                    _ => panic!("Is a digit"),
+                                },
                                 10,
                             )
                             .unwrap();
