@@ -65,7 +65,7 @@ pub fn NormalLossComponent(
                 </h4>
             </div>
             <div style="text-align: right;" class="header">
-                "Gain Less Than(%)"
+                "Gain < (%)"
             </div>
             <div style="text-align: right;" class="header">
                 "Probability(%)"
@@ -129,7 +129,7 @@ pub fn NormalLossComponent(
                                             || String::default(),
                                             |probability| {
                                                 format!(
-                                                    "Probability({:.2}%) => {:.2}%", scale_by(loss, 2),
+                                                    "Prob({:.2}%) => {:.2}%", scale_by(loss, 2),
                                                     scale_by(probability, 2)
                                                 )
                                             },

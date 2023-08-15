@@ -104,8 +104,8 @@ pub fn YearCurrencyValueInput(
         }
     });
 
-    let value_updatable = Updatable::new(initial_value, move |new_input| {
-        if let Some(new_input) = new_input.clone() {
+    let value_updatable = Updatable::new(initial_value, move |new_value| {
+        if let Some(new_input) = new_value.clone() {
             updatable.update_value(|updatable| {
                 updatable.update_and_then_signal(|ycv| {
                     if let Some(ycv) = ycv {

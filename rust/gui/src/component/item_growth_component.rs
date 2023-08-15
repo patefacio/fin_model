@@ -61,19 +61,13 @@ pub fn ItemGrowthComponent<'a>(
 ) -> impl IntoView {
     // α <fn item_growth_component>
 
+    use crate::CollapsibleComponent;
     use crate::GrowthAssumptionComponent;
     use crate::ItemGrowthSelect;
-    use leptos::create_rw_signal;
     use leptos::store_value;
-    use leptos::Show;
-    use leptos::SignalGet;
-    use leptos::SignalUpdate;
-    use plus_utils::SystemUnicodes;
     use std::collections::BTreeMap;
 
     let column_count = 2;
-
-    let override_growth = create_rw_signal(cx, false);
 
     let category_select = match dossier_item_type {
         DossierItemType::Holding => view! { cx,
@@ -153,45 +147,12 @@ pub fn ItemGrowthComponent<'a>(
         )
     };
 
-    let show_assumption_view = move || {
-        view! { cx,
-            <Show when=move || override_growth.get() fallback=|_| ()>
-                <GrowthAssumptionComponent updatable=growth_assumption_updatable()/>
-            </Show>
-        }
-    };
-
     view! { cx,
         <div>
             <div class="icg-select">{category_select}</div>
-            <div style="display: flex">
-                <div>
-                    <strong>
-                        {move || {
-                            if override_growth.get() {
-                                format!(
-                                    "{} - Overriding System Growth",
-                                    SystemUnicodes::UserAssumptionSourced.as_unicode()
-                                )
-                            } else {
-                                format!(
-                                    "{} - Using System Growth",
-                                    SystemUnicodes::UserAssumptionSourced.as_unicode()
-                                )
-                            }
-                        }}
-
-                    </strong>
-                </div>
-                <button
-                    style="margin-left: 0.5rem;"
-                    on:click=move |_| { override_growth.update(|v| *v = !*v) }
-                >
-                    {move || if override_growth.get() { "...-" } else { "...+" }}
-
-                </button>
-            </div>
-            {move || show_assumption_view()}
+            <CollapsibleComponent header="Override System Growth".to_string() is_expanded=false>
+                <GrowthAssumptionComponent updatable=growth_assumption_updatable()/>
+            </CollapsibleComponent>
         </div>
     }
 

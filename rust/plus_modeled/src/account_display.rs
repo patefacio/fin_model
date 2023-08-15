@@ -92,15 +92,22 @@ impl Display for AccountTreatment {
             f,
             "AccountType({})/Withdrawal({})",
             self.account_type().as_str_name(),
-            self.withdrawal_treatment.as_ref().map(|wt| format!(
-                "{}",
-                match wt {
-                    WithdrawalTreatment::EarlyWithdrawalPenalty(p) => format!("Early Withdrawal({p})"),
-                    WithdrawalTreatment::CollegeIrs529Penalty(p) => format!("College Fund Penalty({p})"),
-                    WithdrawalTreatment::HealthSavingsPenalty(p) => format!("Health Saving Penalty({p})"),
-                    WithdrawalTreatment::RequiredMinimumDistribution(p) => format!("RMD Penalty({p})"),
-                }
-            )).unwrap_or_default()
+            self.withdrawal_treatment
+                .as_ref()
+                .map(|wt| format!(
+                    "{}",
+                    match wt {
+                        WithdrawalTreatment::EarlyWithdrawalPenalty(p) =>
+                            format!("Early Withdrawal({p})"),
+                        WithdrawalTreatment::CollegeIrs529Penalty(p) =>
+                            format!("College Fund Penalty({p})"),
+                        WithdrawalTreatment::HealthSavingsPenalty(p) =>
+                            format!("Health Saving Penalty({p})"),
+                        WithdrawalTreatment::RequiredMinimumDistribution(p) =>
+                            format!("RMD Penalty({p})"),
+                    }
+                ))
+                .unwrap_or_default()
         )
 
         // ω <fn Display::fmt for AccountTreatment>

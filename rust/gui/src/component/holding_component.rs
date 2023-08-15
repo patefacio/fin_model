@@ -55,7 +55,6 @@ where
     use leptos::create_rw_signal;
     use leptos::store_value;
     use leptos::MaybeSignal;
-    use leptos::RwSignal;
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
@@ -78,6 +77,8 @@ where
     let cost_basis = holding.cost_basis;
     let instrument_name = holding.instrument_name.clone();
 
+    log!("Creating view for {cx:?} -> {:?}", holding);
+
     fn market_value_with_unrealized(holding: &Holding) -> (Option<String>, Option<String>) {
         if let Some(unit_valuation) = holding.unit_valuation.as_ref() {
             let mv = holding.quantity * unit_valuation.value;
@@ -91,6 +92,7 @@ where
             };
             (Some(market_value.to_string()), Some(gain_loss.to_string()))
         } else {
+            log!("MARKET VALUE CAME UP EMPTY!");
             (None, None)
         }
     }
@@ -106,6 +108,7 @@ where
         log!("Rerunning market value and unrealized");
         updatable.with_value(move |updatable| {
             let holding = &updatable.first_value;
+            log!("Rerunning market value and unrealized -> {holding:?}");
             if holding.unit_valuation.is_some() {
                 let (market_value, gain_loss) = market_value_with_unrealized(holding);
                 market_value_signal.update(|mv| *mv = market_value);
@@ -148,6 +151,7 @@ where
     );
 
     let unit_valuation_updatable = Updatable::new(unit_valuation, move |unit_valuation| {
+        log!("YVC Updated -> {unit_valuation:?}");
         currency_rw_signal.update(|currency_string| {
             *currency_string = to_currency_symbol(
                 unit_valuation
@@ -158,6 +162,7 @@ where
         });
         updatable.update_value(|updatable| {
             updatable.update(|(holding, _shared_context)| {
+                log!("Updating yvc!!! -> {unit_valuation:?}");
                 holding.unit_valuation = *unit_valuation;
                 UpdatePairType::UpdateFirst
             })
@@ -259,16 +264,10 @@ where
                     </label>
                 </div>
                 <div class="form-row">
-                    <div class="info-label">
-                            {move || market_value()}
-                    </div>
-                    <div class="info-label">
-                            {move || unrealized_gain_loss()}
-                    </div>
-
+                    <div class="info-label">{move || market_value()}</div>
+                    <div class="info-label">{move || unrealized_gain_loss()}</div>
                 </div>
-               // <div class="form-row">
-                    <div style="grid-column-start: 1; grid-column-end: 2;">
+                <div style="grid-column-start: 1; grid-column-end: 2;">
                     <fieldset>
                         <legend>"Growth"</legend>
                         <ItemGrowthComponent
@@ -289,7 +288,7 @@ where
                     </fieldset>
                 </div>
                 <div class="ok-cancel-bar">
-                        <OkCancelComponent on_ok_cancel=on_ok_cancel/>
+                    <OkCancelComponent on_ok_cancel=on_ok_cancel/>
                 </div>
             </div>
         </fieldset>

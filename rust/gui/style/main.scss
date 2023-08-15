@@ -71,6 +71,10 @@ form p {
 // 	margin-left: 5px;
 // }
 
+.explore-normal {
+	vertical-align: bottom;
+}
+
 .info-label {
 	font-weight: bold;
 	color: green;
@@ -178,6 +182,13 @@ label {
 
 .holding .form {
 	background-color: var(--plus-form-bg);
+}
+
+.collapsible-header {
+	margin: 0.35rem;
+	background-color: lightgray;
+	font-weight: bold;
+	//font-size: 1.2rem;
 }
 
 .form-row {

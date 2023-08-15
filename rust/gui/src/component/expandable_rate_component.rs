@@ -93,14 +93,14 @@ pub fn ExpandableRateComponent(
             <RateCurveComponent updatable=Updatable::new(
                 stored_updatable.with_value(|updatable| updatable.value.clone()),
                 move |new_rc| {
-                        stored_updatable
-                            .update_value(move |updatable| {
-                                updatable
-                                    .update_and_then_signal(move |rc| {
-                                        let new_rc = new_rc.clone();
-                                        *rc = new_rc;
-                                    })
-                            })
+                    stored_updatable
+                        .update_value(move |updatable| {
+                            updatable
+                                .update_and_then_signal(move |rc| {
+                                    let new_rc = new_rc.clone();
+                                    *rc = new_rc;
+                                })
+                        })
                 },
             )/>
         }
@@ -122,6 +122,7 @@ pub fn ExpandableRateComponent(
                             })
                     }
                 >
+
                     {move || { if is_expanded.get() { "...-" } else { "...+" } }}
                 </button>
             </span>

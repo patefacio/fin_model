@@ -20,8 +20,7 @@ impl Display for AgeAssumptions {
         write!(
             f,
             "Ages(Retirement({}), Death({}))",
-            self.retirement_age,
-            self.death_age
+            self.retirement_age, self.death_age
         )
         // ω <fn Display::fmt for AgeAssumptions>
     }

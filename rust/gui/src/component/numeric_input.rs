@@ -129,13 +129,17 @@ pub fn NumericInput(
 
     let mut validator = validator;
 
+    let dynamic_prefix_signal = match modification {
+        Some(Modification::Prefix(MaybeSignal::Dynamic(signal))) => Some(signal),
+        _ => None,
+    };
+
     let initial_value = updatable
         .value
         .as_ref()
         .map(|initial_value| {
             let initial_value_string = initial_value.to_string();
-
-            let (initial_value, mut initial_value_txt) =
+            let (initial_value, initial_value_txt) =
                 match format_number_lenient(&initial_value_string, 0) {
                     LenientFormatted::Zero(new_value, _) => (0.0, new_value),
                     LenientFormatted::NonZeroValue(value, new_value, _) => (value, new_value),
@@ -203,7 +207,6 @@ pub fn NumericInput(
     };
 
     let node_ref = create_node_ref::<Input>(cx);
-    let component_is_initialized = move || node_ref.get().is_some();
 
     create_effect(cx, move |_| {
         if let Some(clear_input) = clear_input {
@@ -214,90 +217,89 @@ pub fn NumericInput(
         };
     });
 
-    let update_value = move || {
-        numeric_input_data.update_value(|numeric_input_data| {
-            let input_ref = node_ref.get_untracked().expect("Input node");
-            let mut selection_start = input_ref
-                .selection_start()
-                .unwrap_or_default()
-                .unwrap_or_default();
+    let update_value = move |mut value: String| {
+        if let Some(input_ref) = node_ref.get_untracked() {
+            numeric_input_data.update_value(|numeric_input_data| {
+                let mut selection_start = input_ref
+                    .selection_start()
+                    .unwrap_or_default()
+                    .unwrap_or_default();
 
-            let mut value = input_ref.value();
-
-            if non_negative {
-                while let Some(neg_pos) = value.find('-') {
-                    if neg_pos < selection_start as usize {
-                        selection_start -= 1;
+                if non_negative {
+                    while let Some(neg_pos) = value.find('-') {
+                        if neg_pos < selection_start as usize {
+                            selection_start -= 1;
+                        }
+                        value.remove(neg_pos);
                     }
-                    value.remove(neg_pos);
                 }
-            }
 
-            if no_decimal {
-                if let Some(dot_pos) = value.find('.') {
-                    value.replace_range(dot_pos.., "");
-                    selection_start = selection_start.min(value.len() as u32);
+                if no_decimal {
+                    if let Some(dot_pos) = value.find('.') {
+                        value.replace_range(dot_pos.., "");
+                        selection_start = selection_start.min(value.len() as u32);
+                    }
                 }
-            }
 
-            // `format_number_lenient` will return the input with all non-digit
-            // characters stripped in `new_value` excluding separator (',').
-            // The value passed in will likely have a prefix or suffix which
-            // is now *not present* in `new_value`
-            let lenient_formatted = format_number_lenient(&value, selection_start);
+                // `format_number_lenient` will return the input with all non-digit
+                // characters stripped in `new_value` excluding separator (',').
+                // The value passed in will likely have a prefix or suffix which
+                // is now *not present* in `new_value`
+                let lenient_formatted = format_number_lenient(&value, selection_start);
 
-            if let LenientFormatted::Incomplete(_text, _position) = &lenient_formatted {
-                log!("Incomplete number -> {lenient_formatted:?}");
-                return;
-            }
-
-            let (value, mut new_value, numeric_to_caret) = match lenient_formatted {
-                LenientFormatted::Zero(new_value, numeric_to_caret) => {
-                    (0.0, new_value, numeric_to_caret)
+                if let LenientFormatted::Incomplete(_text, _position) = &lenient_formatted {
+                    log!("Incomplete number -> {lenient_formatted:?}");
+                    return;
                 }
-                LenientFormatted::NonZeroValue(value, new_value, numeric_to_caret) => {
-                    (value, new_value, numeric_to_caret)
-                }
-                _ => unreachable!("Early exited for incomplete number"),
-            };
 
-            if let Some(modification) = numeric_input_data.modification.as_ref() {
-                if !new_value.is_empty() {
-                    new_value = modification.modify(&new_value);
+                let (value, mut new_value, numeric_to_caret) = match lenient_formatted {
+                    LenientFormatted::Zero(new_value, numeric_to_caret) => {
+                        (0.0, new_value, numeric_to_caret)
+                    }
+                    LenientFormatted::NonZeroValue(value, new_value, numeric_to_caret) => {
+                        (value, new_value, numeric_to_caret)
+                    }
+                    _ => unreachable!("Early exited for incomplete number"),
+                };
 
-                    // Update the input with the improved value
-                    _ = input_ref.set_value(&new_value);
-                    // find out where the cursor should go
-                    let final_position = modification.position_in_number(
-                        new_value.len(),
-                        digit_position(&new_value, numeric_to_caret) as usize,
-                    ) as u32;
+                if let Some(modification) = numeric_input_data.modification.as_ref() {
+                    if !new_value.is_empty() {
+                        new_value = modification.modify(&new_value);
+
+                        // Update the input with the improved value
+                        _ = input_ref.set_value(&new_value);
+                        // find out where the cursor should go
+                        let final_position = modification.position_in_number(
+                            new_value.len(),
+                            digit_position(&new_value, numeric_to_caret) as usize,
+                        ) as u32;
+                        _ = input_ref.set_selection_range(final_position, final_position);
+                    }
+                } else {
+                    let final_position = digit_position(&new_value, numeric_to_caret);
+                    input_ref.set_value(&new_value);
                     _ = input_ref.set_selection_range(final_position, final_position);
                 }
-            } else {
-                let final_position = digit_position(&new_value, numeric_to_caret);
-                input_ref.set_value(&new_value);
-                _ = input_ref.set_selection_range(final_position, final_position);
-            }
 
-            let custom_valid = numeric_input_data
-                .validator
-                .as_mut()
-                .map(|validator| (validator.borrow_mut().as_mut())(value))
-                .unwrap_or(true);
+                let custom_valid = numeric_input_data
+                    .validator
+                    .as_mut()
+                    .map(|validator| (validator.borrow_mut().as_mut())(value))
+                    .unwrap_or(true);
 
-            let is_in_range = numeric_input_data
-                .range
-                .as_ref()
-                .map(move |range| range.contains(&value))
-                .unwrap_or(true);
+                let is_in_range = numeric_input_data
+                    .range
+                    .as_ref()
+                    .map(move |range| range.contains(&value))
+                    .unwrap_or(true);
 
-            set_is_valid.set(custom_valid && is_in_range);
+                set_is_valid.set(custom_valid && is_in_range);
 
-            numeric_input_data
-                .updatable
-                .update_and_then_signal(|number| *number = Some(value));
-        });
+                numeric_input_data
+                    .updatable
+                    .update_and_then_signal(|number| *number = Some(value));
+            });
+        }
     };
 
     let update_value = leptos::store_value(cx, update_value);
@@ -417,9 +419,7 @@ pub fn NumericInput(
                                 &new_digit.to_string(),
                             );
 
-                            input_ref.set_value(&value);
-                            let _ = input_ref.set_selection_range(selection_start, selection_start);
-                            update_value.with_value(|update_value| update_value());
+                            update_value.with_value(|update_value| update_value(value));
                         }
                     }
                 }
@@ -430,20 +430,14 @@ pub fn NumericInput(
         }
     };
 
-    create_effect(cx, move |_| {
-        let mut should_update = false;
-        numeric_input_data.with_value(|numeric_input_data| {
-            if let Some(Modification::Prefix(MaybeSignal::Dynamic(_))) =
-                numeric_input_data.modification.as_ref()
-            {
-                should_update = true;
+    if let Some(signal) = dynamic_prefix_signal {
+        create_effect(cx, move |_| {
+            signal.track();
+            if let Some(input_ref) = node_ref.get_untracked() {
+                update_value.with_value(|update_value| update_value(input_ref.value()));
             }
-        });
-
-        if component_is_initialized() && should_update {
-            update_value.with_value(|update_value| update_value());
-        }
-    });
+        })
+    };
 
     view! { cx,
         <input
@@ -469,7 +463,7 @@ pub fn NumericInput(
                     if is_effectively_empty {
                         input_ref.set_value("");
                     } else {
-                        update_value.update_value(|update_value| update_value());
+                        update_value.update_value(|update_value| update_value(input_ref.value()));
                     }
                 }
             }

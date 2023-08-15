@@ -41,8 +41,6 @@ pub fn YearRangeInput(
     use crate::YearInput;
     use leptos::store_value;
 
-    console_log(&format!("Creating YearRangeInput -> {cx:?}"));
-
     let start = updatable
         .value
         .as_ref()

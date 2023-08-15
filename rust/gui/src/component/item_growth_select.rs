@@ -98,13 +98,14 @@ where
                 direction=direction
             />
             <div>
-            <div class="ig-growth-label">
-                <div class="info-label">
+                <div class="ig-growth-label">
+                    <div class="info-label">
                         {move || {
                             format!("Growth: {}", NormalSpec { mean : 0.1, std_dev : 0.2 })
                         }}
+
+                    </div>
                 </div>
-            </div>
             </div>
         </div>
     }

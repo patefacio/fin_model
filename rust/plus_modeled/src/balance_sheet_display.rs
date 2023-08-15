@@ -17,11 +17,7 @@ impl Display for BalanceSheet {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for BalanceSheet>
-        write!(
-            f,
-            "BalanceSheet({} Accounts)",
-            self.accounts.len()
-        )
+        write!(f, "BalanceSheet({} Accounts)", self.accounts.len())
         // ω <fn Display::fmt for BalanceSheet>
     }
 }

@@ -93,6 +93,10 @@ pub enum SystemUnicodes {
     Tombstone,
     /// Character(🏖) - Beach Umbrella
     BeachUmbrella,
+    /// Character(▼) - Down Triangle
+    DownTriangle,
+    /// Character(▲) - Up Triangle
+    UpTriangle,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +152,8 @@ impl SystemUnicodes {
             SystemUnicodes::OutFlow => "⬇",
             SystemUnicodes::Tombstone => "🪦",
             SystemUnicodes::BeachUmbrella => "🏖",
+            SystemUnicodes::DownTriangle => "▼",
+            SystemUnicodes::UpTriangle => "▲",
         }
     }
 }

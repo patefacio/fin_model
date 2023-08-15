@@ -4,6 +4,7 @@
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod bond_spec_component;
+pub mod collapsible_component;
 pub mod collection_grid_component;
 pub mod collection_grid_impls;
 pub mod component_display_component;

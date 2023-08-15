@@ -22,19 +22,15 @@ pub fn ComponentDisplayComponent(
     cx: Scope,
 ) -> impl IntoView {
     // α <fn component_display_component>
+    use crate::CollapsibleComponent;
     use crate::CollectionGridComponent;
     use crate::CurrencySelect;
     use crate::DisposeTest;
-    use crate::DistributionCdfComponent;
-    use crate::DistributionPdfComponent;
-    use crate::DistributionSpecComponent;
     use crate::EnumSelect;
     use crate::ExpandableRateComponent;
     use crate::HoldingSharedContext;
     use crate::ItemGrowth;
-    use crate::ItemGrowthComponent;
     use crate::Modification;
-    use crate::NormalLossComponent;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
     use crate::OkCancelComponent;
@@ -52,18 +48,11 @@ pub fn ComponentDisplayComponent(
     use std::collections::HashMap;
     use std::collections::HashSet;
 
-    use plus_modeled::growth::system_growth_id::SystemId;
     use plus_modeled::Currency;
-    use plus_modeled::DistributionSpec;
-    use plus_modeled::DossierItemType;
-    use plus_modeled::GrowthAssumption;
-    use plus_modeled::GrowthItemMappings;
     use plus_modeled::Holding;
-    use plus_modeled::HoldingType;
     use plus_modeled::NormalSpec;
     use plus_modeled::RateCurve;
     use plus_modeled::StateOfResidence;
-    use plus_modeled::SystemGrowthId;
     use plus_modeled::YearCurrencyValue;
     use plus_modeled::YearRange;
     use plus_modeled::YearValue;
@@ -144,6 +133,17 @@ pub fn ComponentDisplayComponent(
             <h4>"Last Update"</h4>
             <p>{last_update}</p>
         </div>
+
+        <CollapsibleComponent header="Explore Selected Normal".to_string()>
+            <NormalSpecComponent updatable=Updatable::new(
+                Some(NormalSpec {
+                    mean: 0.1,
+                    std_dev: 0.2,
+                }),
+                move |ns| show_update(format!("New ns -> {ns:?}")),
+            )/>
+
+        </CollapsibleComponent>
 
         <h3>"Numbers"</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">

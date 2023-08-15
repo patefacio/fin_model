@@ -36,18 +36,16 @@ pub fn NormalSpecComponent(
     // α <fn normal_spec_component>
 
     use crate::scale_by;
+    use crate::CollapsibleComponent;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
     use crate::HistoricRiskReturnComponent;
     use crate::NormalLossComponent;
-    use leptos::create_rw_signal;
     use leptos::create_signal;
     use leptos::store_value;
     use leptos::MaybeSignal;
     use leptos::Show;
-    use leptos::SignalGet;
     use leptos::SignalUpdate;
-    use leptos::SignalUpdateUntracked;
     use leptos::SignalWith;
 
     enum GraphDisplay {
@@ -75,8 +73,6 @@ pub fn NormalSpecComponent(
         cx,
         updatable.value.as_ref().map(|ns| *ns).unwrap_or_default(),
     );
-
-    let show_advanced_rw_signal = create_rw_signal(cx, false);
 
     let normal_bits_store_value = store_value(
         cx,
@@ -146,7 +142,7 @@ pub fn NormalSpecComponent(
     view! { cx,
         <div class="ns">
             <fieldset class="nsg">
-                <div class="form" style="overflow-x: scroll;">
+                <div style="display: flex;">
                     <div style="display: inline;">
                         <span>"N("</span>
                         <NumericInput
@@ -175,94 +171,95 @@ pub fn NormalSpecComponent(
                             max_len=input_size
                         />
                         <span>")"</span>
-                        <button
-                            on:click=move |_| {
-                                show_advanced_rw_signal
-                                    .update(|val| {
-                                        *val = !*val;
-                                    })
-                            }
+                        <div class="explore-normal">
+                            <CollapsibleComponent
+                                header="Explore Normal".to_string()
+                                is_expanded=false
+                            >
+                                <NormalLossComponent normal_spec=MaybeSignal::Dynamic(
+                                    spec_signal.into(),
+                                )/>
+                                <hr/>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 10px">
+                                    <div>
+                                        <label>
+                                            <input
+                                                on:click=show_hist
+                                                type="radio"
+                                                id="historic"
+                                                name="chart-select"
+                                                value="Historic"
+                                                checked
+                                            />
+                                            "Historic"
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input
+                                                on:click=show_pdf
+                                                type="radio"
+                                                id="pdf"
+                                                name="chart-select"
+                                                value="PDF"
+                                            />
+                                            "PDF"
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input
+                                                on:click=show_cdf
+                                                type="radio"
+                                                id="cdf"
+                                                name="chart-select"
+                                                value="CDF"
+                                            />
+                                            "CDF"
+                                        </label>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <Show
+                                        when=move || {
+                                            enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
+                                        }
 
-                            style="margin-left: 0.2rem;"
-                        >
-                            {move || {
-                                if show_advanced_rw_signal.get() { "...-" } else { "...+" }
-                            }}
+                                        fallback=|_| ()
+                                    >
+                                        <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(
+                                            spec_signal.into(),
+                                        )/>
+                                    </Show>
+                                    <Show
+                                        when=move || {
+                                            enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
+                                        }
 
-                        </button>
+                                        fallback=|_| ()
+                                    >
+                                        <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(
+                                            spec_signal.into(),
+                                        )/>
+                                    </Show>
+                                    <Show
+                                        when=move || {
+                                            enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
+                                        }
+
+                                        fallback=|_| ()
+                                    >
+                                        <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(
+                                            spec_signal.into(),
+                                        )/>
+                                    </Show>
+                                </div>
+
+                            </CollapsibleComponent>
+                        </div>
                     </div>
+
                 </div>
-                <Show when=move || { show_advanced_rw_signal.get() } fallback=|_| ()>
-                    <hr/>
-                    <NormalLossComponent normal_spec=MaybeSignal::Dynamic(spec_signal.into())/>
-                    <hr/>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 10px">
-                        <div>
-                            <label>
-                                <input
-                                    on:click=show_hist
-                                    type="radio"
-                                    id="historic"
-                                    name="chart-select"
-                                    value="Historic"
-                                    checked
-                                />
-                                "Historic"
-                            </label>
-                        </div>
-                        <div>
-                            <label>
-                                <input
-                                    on:click=show_pdf
-                                    type="radio"
-                                    id="pdf"
-                                    name="chart-select"
-                                    value="PDF"
-                                />
-                                "PDF"
-                            </label>
-                        </div>
-                        <div>
-                            <label>
-                                <input
-                                    on:click=show_cdf
-                                    type="radio"
-                                    id="cdf"
-                                    name="chart-select"
-                                    value="CDF"
-                                />
-                                "CDF"
-                            </label>
-                        </div>
-                    </div>
-                    <div style="margin-top: 10px">
-                        <Show
-                            when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
-                            fallback=|_| ()
-                        >
-                            <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(
-                                spec_signal.into(),
-                            )/>
-                        </Show>
-                        <Show
-                            when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
-                            fallback=|_| ()
-                        >
-                            <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(
-                                spec_signal.into(),
-                            )/>
-                        </Show>
-                        <Show
-                            when=move || enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
-                            fallback=|_| ()
-                        >
-                            <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(
-                                spec_signal.into(),
-                            )/>
-                        </Show>
-                    </div>
-                    <output></output>
-                </Show>
             </fieldset>
         </div>
     }

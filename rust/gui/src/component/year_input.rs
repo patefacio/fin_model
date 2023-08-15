@@ -72,16 +72,12 @@ pub fn YearInput(
     use crate::ParsedNum;
     use leptos::create_effect;
     use leptos::create_signal;
-    use leptos::log;
     use leptos::IntoAttribute;
     use leptos::SignalGet;
     use leptos::*;
 
     // Determine if year is in the provided range
-    let year_is_valid = move |year| {
-        log!("YearInput<{cx:?}>: Checking {year} against {year_range:?}");
-        year >= year_range.start && year <= year_range.end
-    };
+    let year_is_valid = move |year| year >= year_range.start && year <= year_range.end;
 
     // Track whether year is valid to give hint to user - reactive to update class
     let (is_in_range, set_is_in_range) = create_signal(
@@ -99,8 +95,6 @@ pub fn YearInput(
     } else {
         String::default()
     };
-
-    log!("YearInput<{cx:?}>: InitialValue({initial_value:?}) on {year_range:?}");
 
     let node_ref = create_node_ref::<Input>(cx);
     let mut updatable = updatable;

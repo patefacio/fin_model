@@ -30,7 +30,7 @@ impl PlotData for RateCurve {
 
         use plotters::prelude::*;
 
-        // Check to see if the curve is empty -> no values can be plotted if the user 
+        // Check to see if the curve is empty -> no values can be plotted if the user
         // hasn't given any input
         if self.curve.is_empty() {
             return String::default();
@@ -63,7 +63,7 @@ impl PlotData for RateCurve {
         min_y = min_y.min(last_y);
         max_y = max_y.max(last_y);
 
-        // Extend rate_curve line to start at zero dollars and extend at the same value 
+        // Extend rate_curve line to start at zero dollars and extend at the same value
         // "infinitely" at the last year_value pair
         let delta = ((max_x - min_x) as f64 * 0.1) as u32;
 
@@ -76,13 +76,7 @@ impl PlotData for RateCurve {
                 })
                 .unwrap(),
         );
-        vec_slice.insert(
-            0,
-            vec_slice
-                .first()
-                .map(|_| (min_x as f64, 0.0))
-                .unwrap(),
-        );
+        vec_slice.insert(0, vec_slice.first().map(|_| (min_x as f64, 0.0)).unwrap());
 
         //This is all code for the writing and styling of the graph from the plotters library
         let mut plot_buff = String::with_capacity(2 ^ 11);

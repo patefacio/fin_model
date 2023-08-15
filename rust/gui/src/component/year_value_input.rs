@@ -38,8 +38,6 @@ pub fn YearValueInput(
     use crate::YearInput;
     use leptos::store_value;
 
-    console_log(&format!("Creating YearValueInput -> {cx:?}"));
-
     let year = updatable.value.as_ref().map(|year_value| year_value.year);
     let value = updatable.value.as_ref().map(|year_value| year_value.value);
 

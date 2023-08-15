@@ -38,9 +38,9 @@ pub fn RateCurveComponent(
 ) -> impl IntoView {
     // α <fn rate_curve_component>
     use crate::utils::plot_data::PlotData;
+    use crate::CollapsibleComponent;
     use crate::PercentInput;
     use crate::Updatable;
-    use crate::Year;
     use crate::YearInput;
     use leptos::create_rw_signal;
     use leptos::create_signal;
@@ -64,11 +64,7 @@ pub fn RateCurveComponent(
 
     let (updatable, set_updatable) = create_signal(cx, updatable);
     let (curve, set_curve) = create_signal(cx, {
-        let curve = updatable.with_untracked(|updatable| updatable.value.curve.clone());
-        set_updatable.update(|updatable| {
-            updatable.value.curve.clear();
-        });
-        curve
+        updatable.with_untracked(|updatable| updatable.value.curve.clone())
     });
 
     let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
@@ -308,7 +304,9 @@ pub fn RateCurveComponent(
 
             </div>
         </div>
-        <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
+        <CollapsibleComponent header="Show Rate Curve".to_string() is_expanded=false>
+            <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
+        </CollapsibleComponent>
     }
 
     // ω <fn rate_curve_component>

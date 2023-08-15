@@ -5,6 +5,7 @@
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub use component::bond_spec_component::BondSpecComponent;
+pub use component::collapsible_component::CollapsibleComponent;
 pub use component::collection_grid_component::CollectionGrid;
 pub use component::collection_grid_component::CollectionGridComponent;
 pub use component::collection_grid_impls::holdings_impl::HoldingSharedContext;
