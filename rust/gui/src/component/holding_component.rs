@@ -12,11 +12,8 @@ use leptos::log;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
-use plus_modeled::BalanceSheet;
-use plus_modeled::DossierHoldingIndex;
 use plus_modeled::Holding;
 use plus_modeled::ItemGrowth;
-use std::collections::HashMap;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -77,8 +74,6 @@ where
     let cost_basis = holding.cost_basis;
     let instrument_name = holding.instrument_name.clone();
 
-    log!("Creating view for {cx:?} -> {:?}", holding);
-
     fn market_value_with_unrealized(holding: &Holding) -> (Option<String>, Option<String>) {
         if let Some(unit_valuation) = holding.unit_valuation.as_ref() {
             let mv = holding.quantity * unit_valuation.value;
@@ -92,7 +87,6 @@ where
             };
             (Some(market_value.to_string()), Some(gain_loss.to_string()))
         } else {
-            log!("MARKET VALUE CAME UP EMPTY!");
             (None, None)
         }
     }
@@ -105,10 +99,8 @@ where
     let updatable = store_value(cx, updatable);
 
     let update_market_value_and_unrealized = move || {
-        log!("Rerunning market value and unrealized");
         updatable.with_value(move |updatable| {
             let holding = &updatable.first_value;
-            log!("Rerunning market value and unrealized -> {holding:?}");
             if holding.unit_valuation.is_some() {
                 let (market_value, gain_loss) = market_value_with_unrealized(holding);
                 market_value_signal.update(|mv| *mv = market_value);
@@ -151,7 +143,6 @@ where
     );
 
     let unit_valuation_updatable = Updatable::new(unit_valuation, move |unit_valuation| {
-        log!("YVC Updated -> {unit_valuation:?}");
         currency_rw_signal.update(|currency_string| {
             *currency_string = to_currency_symbol(
                 unit_valuation
@@ -162,7 +153,6 @@ where
         });
         updatable.update_value(|updatable| {
             updatable.update(|(holding, _shared_context)| {
-                log!("Updating yvc!!! -> {unit_valuation:?}");
                 holding.unit_valuation = *unit_valuation;
                 UpdatePairType::UpdateFirst
             })
@@ -185,17 +175,12 @@ where
         update_market_value_and_unrealized();
     });
 
-    let on_ok_cancel = move |ok_cancel| {
-        log!("Ok/Cancel holding -> {ok_cancel:?}");
-        match ok_cancel {
-            OkCancel::Ok => {
-                updatable.update_value(|updatable| updatable.signal());
-                log!("Ok!");
-            }
-            OkCancel::Cancel => {
-                on_cancel();
-                log!("Cancel");
-            }
+    let on_ok_cancel = move |ok_cancel| match ok_cancel {
+        OkCancel::Ok => {
+            updatable.update_value(|updatable| updatable.signal());
+        }
+        OkCancel::Cancel => {
+            on_cancel();
         }
     };
 
@@ -216,7 +201,6 @@ where
     );
 
     let market_value = move || {
-        log!("Market value reactive updated!");
         if let Some(mv) = market_value_signal.get() {
             format!("Market Value: {mv}")
         } else {

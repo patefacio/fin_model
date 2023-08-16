@@ -7,12 +7,31 @@ use crate::UpdatablePair;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::RwSignal;
+use leptos::SignalUpdate;
 use leptos::View;
+use leptos::WriteSignal;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::boxed::Box;
 use std::fmt::Debug;
+
+////////////////////////////////////////////////////////////////////////////////////
+// --- enums ---
+////////////////////////////////////////////////////////////////////////////////////
+/// The state of the [GridCollectionComponent]
+#[derive(Eq, PartialEq, Debug, Clone)]
+pub enum CollectionGridState {
+    /// The component is showing the entries as rows in a _grid_.
+    Display,
+    /// The component is editing a new item.
+    EditNew,
+    /// Currently editing row identified by `selection_key`.
+    EditSelection {
+        /// Key of item being edited
+        selection_key: String,
+    },
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- traits ---
@@ -79,6 +98,9 @@ pub trait CollectionGrid: Sized {
 ///   * **cx** - Context
 ///   * **updatable** - Items to show
 ///   * **read_only** - If true just display (default false)
+///   * **on_state_change** - Enables parent to track state changes.
+/// For example, parent may want different behavior when editing an entry
+/// versus just displaying the rows.
 ///   * _return_ - View for collection_grid_component
 #[component]
 pub fn CollectionGridComponent<T, S>(
@@ -89,6 +111,11 @@ pub fn CollectionGridComponent<T, S>(
     /// If true just display (default false)
     #[prop(default = false)]
     read_only: bool,
+    /// Enables parent to track state changes.
+    /// For example, parent may want different behavior when editing an entry
+    /// versus just displaying the rows.
+    #[prop(default=None)]
+    on_state_change: Option<WriteSignal<CollectionGridState>>,
 ) -> impl IntoView
 where
     T: 'static + Clone + Debug + CollectionGrid<SharedContext = S>,
@@ -96,8 +123,8 @@ where
 {
     // α <fn collection_grid_component>
 
+    use crate::UpdatePairType;
     use leptos::create_rw_signal;
-    use leptos::html::ElementDescriptor;
     use leptos::store_value;
     use leptos::For;
     use leptos::IntoAttribute;
@@ -114,16 +141,9 @@ where
     use std::collections::HashMap;
     use std::rc::Rc;
 
-    #[derive(Eq, PartialEq, Debug)]
-    enum ComponentState {
-        Display,
-        EditNew,
-        EditSelection { selection_key: String },
-    }
-
     struct CGCData<T, S> {
         updatable: UpdatablePair<Vec<T>, S>,
-        component_state: ComponentState,
+        component_state: CollectionGridState,
     }
 
     // Entry_signals is the map of keys to the signal associated with the index of the row,
@@ -143,28 +163,36 @@ where
         cx,
         CGCData {
             updatable,
-            component_state: ComponentState::Display,
+            component_state: CollectionGridState::Display,
         },
     );
 
     // If we are not in the _display_ state we are either editing a new entry or are editing
     // a specific row. In either case we want the other rows to be disables
     let is_disabled = move || {
-        cgc_data_signal.with(|cgc_data| cgc_data.component_state != ComponentState::Display)
+        cgc_data_signal.with(|cgc_data| cgc_data.component_state != CollectionGridState::Display)
+    };
+
+    let signal_state_change = move |new_state: CollectionGridState| {
+        if let Some(on_state_change) = on_state_change {
+            on_state_change.update(|state| *state = new_state)
+        }
     };
 
     let set_enabled = move || {
         log!("Setting state back to display");
-        cgc_data_signal.update(|cgc_data| cgc_data.component_state = ComponentState::Display)
+        cgc_data_signal.update(|cgc_data| cgc_data.component_state = CollectionGridState::Display);
+        signal_state_change(CollectionGridState::Display);
     };
 
     let set_new_item_edit = move || {
         log!("Setting state back to display");
-        cgc_data_signal.update(|cgc_data| cgc_data.component_state = ComponentState::EditNew)
+        cgc_data_signal.update(|cgc_data| cgc_data.component_state = CollectionGridState::EditNew);
+        signal_state_change(CollectionGridState::EditNew);
     };
 
     let is_new_item_edit = move || {
-        cgc_data_signal.with(|cgc_data| cgc_data.component_state == ComponentState::EditNew)
+        cgc_data_signal.with(|cgc_data| cgc_data.component_state == CollectionGridState::EditNew)
     };
 
     // A header for the component, including empty fields for our `Edit` and `Delete` buttons,
@@ -182,6 +210,11 @@ where
             })
             .collect::<Vec<HtmlElement<Div>>>()
     };
+
+    // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
+    let grid_column_end = 3 + T::get_column_count();
+    let editable_style =
+        move || format!("grid-column-start: 1; grid-column-end: {grid_column_end}");
 
     // Reactive count of elements
     let num_elements =
@@ -240,10 +273,11 @@ where
                 on:click=move |_| {
                     cgc_data_signal
                         .update(|cgc_data| {
-                            cgc_data
-                                .component_state = ComponentState::EditSelection {
+                            let new_state = CollectionGridState::EditSelection {
                                 selection_key: key.clone(),
                             };
+                            cgc_data.component_state = new_state.clone();
+                            signal_state_change(new_state);
                         });
                     if let Some(signal) = key_signal(&key) {
                         signal.update(|_| {});
@@ -277,7 +311,7 @@ where
 
     let is_this_row_edit = move |key: &str| {
         cgc_data_signal.with_untracked(|cgc_data| match &cgc_data.component_state {
-            ComponentState::EditSelection { selection_key } => selection_key == &*key,
+            CollectionGridState::EditSelection { selection_key } => selection_key == &*key,
             _ => false,
         })
     };
@@ -287,12 +321,23 @@ where
             if let Some(key_signal) = key_signal(&row.get_key()) {
                 let index = key_signal.get_untracked();
                 cgc_data_signal.update_untracked(|cgc_data| {
-                    if let Some(row_) = cgc_data.updatable.first_value.get_mut(index) {
-                        *row_ = row.clone();
-                    }
+                    cgc_data.updatable.update_and_then_signal(|(rows, shared)| {
+                        if let Some(row_) = rows.get_mut(index) {
+                            log!(
+                                "Collection grid updating row {index} -> `{}` with\n{row:?}",
+                                row.get_key()
+                            );
+                            *row_ = row.clone();
+                            update_type
+                        } else {
+                            UpdatePairType::UpdateNone
+                        }
+                    });
                 });
                 set_enabled();
                 key_signal.update(|i| log!("Signalling {i} for {row:?}"));
+            } else {
+                panic!("No signal for row `{}`", row.get_key());
             }
         };
 
@@ -322,7 +367,7 @@ where
         let edit_key = key.clone();
         view! { cx,
             <Show when=move || { is_this_row_edit(&key) } fallback=|_| ()>
-                <div class="cgc-editable">
+                <div class="cgc-editable" style=editable_style>
                     {<T as CollectionGrid>::edit_element(
                         cx,
                         UpdatablePair::new(
@@ -340,9 +385,12 @@ where
 
     let show_new_row_editor = move || {
         view! { cx,
-            <div class="cgc-insert" style="grid-column-start: 2; grid-column-end: 7;"></div>
+            <div
+                class="cgc-insert"
+                style=format!("grid-column-start: 2; grid-column-end: {};", grid_column_end)
+            ></div>
             <Show when=move || is_new_item_edit() fallback=|_| ()>
-                <div class="cgc-editable">
+                <div class="cgc-editable" style=editable_style>
                     {<T as CollectionGrid>::edit_element(
                         cx,
                         UpdatablePair::new(
@@ -358,10 +406,12 @@ where
         }
     };
 
+    let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", T::get_column_count());
+
     view! { cx,
         <div
             class="collection-grid"
-            style="display: grid; grid-template-columns: 1.8rem 1.8rem 1fr 1fr 1fr 1fr;"
+            style=format!("display: grid; grid-template-columns: {grid_template_columns}")
         >
             {header}
             <For

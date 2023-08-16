@@ -173,7 +173,8 @@ pub fn NormalSpecComponent(
                         <span>")"</span>
                         <div class="explore-normal">
                             <CollapsibleComponent
-                                header="Explore Normal".to_string()
+                                collapsed_header="Explore Normal Detail".to_string()
+                                expanded_header=Some("Hide Normal Detail".to_string())
                                 is_expanded=false
                             >
                                 <NormalLossComponent normal_spec=MaybeSignal::Dynamic(

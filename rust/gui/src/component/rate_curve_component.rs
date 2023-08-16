@@ -49,6 +49,7 @@ pub fn RateCurveComponent(
     use leptos::For;
     use leptos::IntoAttribute;
     use leptos::RwSignal;
+    use leptos::Show;
     use leptos::SignalGet;
     use leptos::SignalGetUntracked;
     use leptos::SignalUpdate;
@@ -304,9 +305,17 @@ pub fn RateCurveComponent(
 
             </div>
         </div>
-        <CollapsibleComponent header="Show Rate Curve".to_string() is_expanded=false>
-            <div inner_html=move || { updatable.with(|updatable| updatable.value.plot()) }></div>
-        </CollapsibleComponent>
+        <Show when=move || curve.with(|curve| curve.len() > 1) fallback=|_| ()>
+            <CollapsibleComponent
+                collapsed_header="Show Rate Curve".to_string()
+                expanded_header=Some("Hide Curve".to_string())
+                is_expanded=false
+            >
+                <div inner_html=move || {
+                    updatable.with(|updatable| updatable.value.plot())
+                }></div>
+            </CollapsibleComponent>
+        </Show>
     }
 
     // ω <fn rate_curve_component>

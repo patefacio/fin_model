@@ -13,16 +13,23 @@ use leptos_dom::View;
 use plus_modeled::Account;
 
 ////////////////////////////////////////////////////////////////////////////////////
+// --- structs ---
+////////////////////////////////////////////////////////////////////////////////////
+/// TODO: Document Struct(account_shared_context)
+#[derive(Debug, Clone, Default)]
+pub struct AccountSharedContext {}
+
+////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
 impl CollectionGrid for Account {
-    type SharedContext = ();
+    type SharedContext = AccountSharedContext;
     /// Get the number of columns.
     ///
     ///   * _return_ - Number of columns
     fn get_column_count() -> usize {
         // α <fn CollectionGrid::get_column_count for Account>
-        todo!("Implement `get_column_count`")
+        3
         // ω <fn CollectionGrid::get_column_count for Account>
     }
 
@@ -31,7 +38,11 @@ impl CollectionGrid for Account {
     ///   * _return_ - The header as a list of elements
     fn get_header() -> Vec<String> {
         // α <fn CollectionGrid::get_header for Account>
-        todo!("Implement `get_header`")
+        vec![
+            "Account".to_string(),
+            "Type".to_string(),
+            "Market Value".to_string(),
+        ]
         // ω <fn CollectionGrid::get_header for Account>
     }
 
@@ -41,7 +52,16 @@ impl CollectionGrid for Account {
     ///   * _return_ - The fields as elements
     fn get_fields(&self, cx: Scope) -> Vec<View> {
         // α <fn CollectionGrid::get_fields for Account>
-        todo!("Implement `get_fields`")
+
+        use leptos::IntoStyle;
+        use plus_modeled::AccountType;
+
+        vec![
+            view! { cx, <div class="account-header-cell" style:text-align="right">{self.name.clone()}</div> }.into_view(cx),
+            view! { cx, <div class="account-header-cell" style:text-align="right">{AccountType::from_i32(self.account_type).unwrap().as_str_name().to_string()}</div> }.into_view(cx),
+            view! { cx, <div class="account-header-cell" style:text-align="right">{"MV".to_string()}</div> }.into_view(cx),
+        ]
+
         // ω <fn CollectionGrid::get_fields for Account>
     }
 
@@ -50,7 +70,7 @@ impl CollectionGrid for Account {
     ///   * _return_ - The key for the element
     fn get_key(&self) -> String {
         // α <fn CollectionGrid::get_key for Account>
-        todo!("Implement `get_key`")
+        self.name.clone()
         // ω <fn CollectionGrid::get_key for Account>
     }
 
@@ -59,7 +79,7 @@ impl CollectionGrid for Account {
     ///   * _return_ - New element
     fn new() -> Self {
         // α <fn CollectionGrid::new for Account>
-        todo!("Implement `new`")
+        Account::default()
         // ω <fn CollectionGrid::new for Account>
     }
 
@@ -80,7 +100,15 @@ impl CollectionGrid for Account {
         F: 'static + FnMut(&str),
     {
         // α <fn CollectionGrid::edit_element for Account>
-        todo!("Implement `edit_element`")
+
+        use crate::AccountComponent;
+        let key = updatable.first_value.get_key();
+        let mut on_cancel = on_cancel;
+        let on_cancel = move || on_cancel(&key);
+
+        view! { cx, <AccountComponent updatable=updatable on_cancel=on_cancel/> }
+        .into_view(cx)
+
         // ω <fn CollectionGrid::edit_element for Account>
     }
 }

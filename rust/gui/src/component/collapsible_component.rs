@@ -5,8 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::ChildrenFn;
 use leptos::{component, view, IntoView, Scope};
-use leptos::{ChildrenFn, SignalUpdate};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -16,7 +16,9 @@ use leptos_dom::console_log;
 /// Provides a bar with a label to expand/collapse contained content.
 ///
 ///   * **cx** - Context
-///   * **header** - Content of the header bar
+///   * **collapsed_header** - Content of the header bar when collapsed
+///   * **expanded_header** - Content of the header bar when expanded.
+/// If `None` will be same as `collapsed_header`
 ///   * **children** - Children to show when expanded
 ///   * **is_expanded** - Is the item expanded
 ///   * _return_ - View for collapsible_component
@@ -24,8 +26,12 @@ use leptos_dom::console_log;
 pub fn CollapsibleComponent(
     /// Context
     cx: Scope,
-    /// Content of the header bar
-    header: String,
+    /// Content of the header bar when collapsed
+    collapsed_header: String,
+    /// Content of the header bar when expanded.
+    /// If `None` will be same as `collapsed_header`
+    #[prop(default=None)]
+    expanded_header: Option<String>,
     /// Children to show when expanded
     children: ChildrenFn,
     /// Is the item expanded
@@ -37,12 +43,22 @@ pub fn CollapsibleComponent(
     use leptos::create_rw_signal;
     use leptos::Show;
     use leptos::SignalGet;
+    use leptos::SignalUpdate;
     use plus_utils::SystemUnicodes;
     let is_expanded = create_rw_signal(cx, is_expanded);
+    let expanded_header = expanded_header.unwrap_or_else(|| collapsed_header.clone());
+
+    let header = move || {
+        if is_expanded.get() {
+            expanded_header.clone()
+        } else {
+            collapsed_header.clone()
+        }
+    };
 
     view! { cx,
         <div class="collapsible-header" style="display: flex; justify-content: space-between;">
-            <div>{move || header.clone()}</div>
+            <div>{move || header()}</div>
             <button on:click=move |_| {
                 is_expanded.update(|is_expanded| *is_expanded = !*is_expanded)
             }>

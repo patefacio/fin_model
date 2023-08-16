@@ -169,6 +169,10 @@ legend {
 	font-weight: bold;
 }
 
+fieldset.disabled {
+	background-color: lightgray;
+}
+
 input {
 	font-size: var(--plus-sm-fnt);
 	// has no effect since input is not an inline element: vertical-align: middle;
@@ -272,12 +276,15 @@ input.invalid:focus {
 	background-color: hsl(120, 50%, 90%);
 }
 
-.cgc-editable {
-	grid-column-start: 1;
-	grid-column-end: 7;
+.account-holdings {
+	//margin: 2rem;
+	margin-left: 1%;
+	margin-right: 1%;
 }
 
-
+.account-header-cell {
+	padding-left: 1rem;
+}
 
 .tooltip {
 	position: relative;

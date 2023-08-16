@@ -82,18 +82,15 @@ impl PlotData for RateCurve {
         let mut plot_buff = String::with_capacity(2 ^ 11);
         {
             let text_style: TextStyle = ("sans-serif", 20).into();
-            let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
-                .into_drawing_area()
-                .titled("Rate Curve", text_style.clone())
-                .expect("");
+            let root = SVGBackend::with_string(&mut plot_buff, (300, 275)).into_drawing_area();
 
             let mut chart = ChartBuilder::on(&root)
                 .margin(4)
                 .set_label_area_size(LabelAreaPosition::Left, 40)
                 .set_label_area_size(LabelAreaPosition::Bottom, 40)
                 .set_label_area_size(LabelAreaPosition::Right, 0)
-                .caption("Rate Curve", ("sans-serif", 30))
-                .build_cartesian_2d((min_x as f64..max_x as f64), (min_y..max_y))
+                .caption("Rate Curve", text_style)
+                .build_cartesian_2d(min_x as f64..max_x as f64, min_y..max_y)
                 .unwrap();
 
             chart

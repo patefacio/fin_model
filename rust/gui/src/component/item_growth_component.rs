@@ -150,7 +150,11 @@ pub fn ItemGrowthComponent<'a>(
     view! { cx,
         <div>
             <div class="icg-select">{category_select}</div>
-            <CollapsibleComponent header="Override System Growth".to_string() is_expanded=false>
+            <CollapsibleComponent
+                collapsed_header="Override System Growth".to_string()
+                expanded_header=Some("Use System Growth".to_string())
+                is_expanded=false
+            >
                 <GrowthAssumptionComponent updatable=growth_assumption_updatable()/>
             </CollapsibleComponent>
         </div>

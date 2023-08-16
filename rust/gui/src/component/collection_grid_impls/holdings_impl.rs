@@ -119,15 +119,30 @@ impl CollectionGrid for Holding {
                 )
             };
 
-        [
-            view! { cx, <div style:text-align="right">{self.instrument_name.clone()}</div> },
-            view! { cx, <div style:text-align="right">{market_value}</div> },
-            view! { cx, <div style:text-align="right">{cost_basis}</div> },
-            view! { cx, <div style:text-align="right">{gain_loss}</div> },
+        vec![
+            view! { cx,
+
+                <div class="holding-header-cell"
+                style:text-align="right">{self.instrument_name.clone()}</div>
+            }
+            .into_view(cx),
+            view! { cx,
+                <div class="holding-header-cell"
+                style:text-align="right">{market_value}</div>
+            }
+            .into_view(cx),
+            view! { cx,
+                <div class="holding-header-cell"
+                style:text-align="right">{cost_basis}</div>
+            }
+            .into_view(cx),
+            view! { cx,
+                <div
+                class="holding-header-cell"
+                style:text-align="right">{gain_loss}</div>
+            }
+            .into_view(cx),
         ]
-        .into_iter()
-        .map(|item| item.into_view(cx))
-        .collect()
         // ω <fn CollectionGrid::get_fields for Holding>
     }
 

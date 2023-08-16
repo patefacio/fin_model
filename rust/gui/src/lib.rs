@@ -4,10 +4,13 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+pub use component::account_component::AccountComponent;
 pub use component::bond_spec_component::BondSpecComponent;
 pub use component::collapsible_component::CollapsibleComponent;
 pub use component::collection_grid_component::CollectionGrid;
 pub use component::collection_grid_component::CollectionGridComponent;
+pub use component::collection_grid_component::CollectionGridState;
+pub use component::collection_grid_impls::accounts_impl::AccountSharedContext;
 pub use component::collection_grid_impls::holdings_impl::HoldingSharedContext;
 pub use component::component_display_component::ComponentDisplayComponent;
 pub use component::currency_select::currency_from_symbol;

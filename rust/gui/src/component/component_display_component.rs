@@ -22,7 +22,7 @@ pub fn ComponentDisplayComponent(
     cx: Scope,
 ) -> impl IntoView {
     // α <fn component_display_component>
-    use crate::CollapsibleComponent;
+    use crate::AccountSharedContext;
     use crate::CollectionGridComponent;
     use crate::CurrencySelect;
     use crate::DisposeTest;
@@ -48,6 +48,8 @@ pub fn ComponentDisplayComponent(
     use std::collections::HashMap;
     use std::collections::HashSet;
 
+    use plus_modeled::Account;
+    use plus_modeled::AccountType;
     use plus_modeled::Currency;
     use plus_modeled::Holding;
     use plus_modeled::NormalSpec;
@@ -117,6 +119,22 @@ pub fn ComponentDisplayComponent(
         .flatten()
         .collect::<Vec<_>>();
 
+    let accounts = [
+        ("Interactive Brokers".to_string(), AccountType::Taxable),
+        ("VG Retirement".to_string(), AccountType::TraditionalIra),
+        ("VG 401k".to_string(), AccountType::TraditionalIrs401K),
+        ("VG Roth".to_string(), AccountType::RothIrs401K),
+    ]
+    .map(|(name, account_type)| Account {
+        name: name.to_string(),
+        account_type: account_type as i32,
+        holdings: holdings.clone(),
+        value: 0.0,
+        owner_index: 0,
+        default_item_growth: None,
+    })
+    .to_vec();
+
     view! { cx,
         <div style="
         position: -webkit-sticky; 
@@ -129,21 +147,12 @@ pub fn ComponentDisplayComponent(
         border-color: green;
         border-width: 6px;
         z-index: 2;
+        max-height: 250px;
+        overflow-y: scroll;
         ">
             <h4>"Last Update"</h4>
             <p>{last_update}</p>
         </div>
-
-        <CollapsibleComponent header="Explore Selected Normal".to_string()>
-            <NormalSpecComponent updatable=Updatable::new(
-                Some(NormalSpec {
-                    mean: 0.1,
-                    std_dev: 0.2,
-                }),
-                move |ns| show_update(format!("New ns -> {ns:?}")),
-            )/>
-
-        </CollapsibleComponent>
 
         <h3>"Numbers"</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
@@ -160,6 +169,7 @@ pub fn ComponentDisplayComponent(
                 <li>'m' -> Convert to millions</li>
                 <li>'b' -> Convert to billions</li>
                 </ul>
+                <li>Up/Down Arrow Increment/Decrement digit to left</li>
                 <li>Support for <em>Prefix</em> and/or <em>Suffix</em> (See <em>Percent</em> 
                 for suffix example and <em>NormalSpec</em> for prefix and suffix)
                 </li>
@@ -545,25 +555,19 @@ pub fn ComponentDisplayComponent(
             },
         )/>
         <hr/>
-        <h4>"Collection Grid Component<Holding>"</h4>
+        <h4>"Collection Grid Component<Account>"</h4>
         <CollectionGridComponent
             updatable=UpdatablePair::new(
-                holdings,
-                HoldingSharedContext {
-                    symbol_growth_map: HashMap::from([
-                        ("IBM".into(), ItemGrowth::default()),
-                        ("MSFT".into(), ItemGrowth::default()),
-                    ]),
-                    symbol_names: HashSet::from(["IBM".into(), "MSFT".into()]),
-                },
-                move |holding_list| {
-                    show_update(format!("Holding list updated -> {holding_list:?}"));
+                accounts,
+                AccountSharedContext::default(),
+                move |accounts| {
+                    show_update(format!("Accounts list updated -> {accounts:?}"));
                 },
             )
 
             read_only=false
         />
-        <hr/>
+
         <div style="margin: 2rem;">"Dispose Test"</div>
         <Show when=move || (read_count.get() % 2) == 0 fallback=|_| "Nothing">
             <DisposeTest/>
