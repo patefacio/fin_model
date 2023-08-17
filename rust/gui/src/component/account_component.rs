@@ -4,10 +4,8 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AccountSharedContext;
-use crate::CollectionGridState;
 use crate::Updatable;
 use crate::UpdatablePair;
-use crate::UpdatePairType;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::{component, view, IntoView, Scope};
@@ -131,6 +129,11 @@ where
                 <div>
                     <div class="info-label">"Account Holdings"</div>
                     <CollectionGridComponent
+                        header=vec![
+                            "Symbol".to_string(), "Market Value".to_string(), "Cost Basis"
+                            .to_string(), "Unrealized (G/L)".to_string(),
+                        ]
+
                         updatable=holdings_updatable
                         on_state_change=Some(set_state_change)
                     />

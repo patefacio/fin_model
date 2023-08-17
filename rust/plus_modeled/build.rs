@@ -16,7 +16,6 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("Account", "#[derive(Serialize, Deserialize)]")
         .type_attribute("RequiredMinimumDistribution", "#[derive(Serialize, Deserialize)]")
         .type_attribute("AccountTreatment", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("AgeAssumptions", "#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]")
         .type_attribute("BalanceSheet", "#[derive(Serialize, Deserialize)]")
         .type_attribute("Date", "#[derive(Serialize, Deserialize)]")
         .type_attribute("YearValue", "#[derive(Serialize, Deserialize, Copy, PartialOrd)]")
@@ -42,11 +41,6 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("OutlookMarketAssumptions", "#[derive(Serialize, Deserialize)]")
         .type_attribute("DistributionSpec", "#[derive(Serialize, Deserialize)]")
         .type_attribute("Worth", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("ValueFlowSpec", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("GrowingFlowSpec", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("HoldingLinks", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("FlowSpec", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("Person", "#[derive(Serialize, Deserialize)]")
         .type_attribute("RetirementContribution", "#[derive(Serialize, Deserialize)]")
         .type_attribute("EmployerMatchProgram", "#[derive(Serialize, Deserialize)]")
         .type_attribute("RetirementContributionLimit", "#[derive(Serialize, Deserialize)]")
@@ -74,20 +68,15 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("distribution_policy", "#[derive(Serialize, Deserialize)]")
         .type_attribute("withdrawal_treatment", "#[derive(Serialize, Deserialize)]")
         .type_attribute("item_index", "#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]")
-        .type_attribute("system_id", "#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]")
-        .type_attribute("one_of_flow_spec", "#[derive(Serialize, Deserialize)]")
-        .type_attribute("one_of_holding_links", "#[derive(Serialize, Deserialize)]") 
+        .type_attribute("system_id", "#[derive(Serialize, Deserialize, Copy, Hash, Ord, PartialOrd, Eq)]") 
         .compile(&[ 
           "account.proto",
-          "age_assumptions.proto",
           "balance_sheet.proto",
           "core.proto",
           "growth.proto",
           "distributions.proto",
           "core_enums.proto",
           "worth.proto",
-          "flow_specs.proto",
-          "person.proto",
           "retirement.proto",
           "system_defaults.proto"
         ], &["../../protobuf"])?;

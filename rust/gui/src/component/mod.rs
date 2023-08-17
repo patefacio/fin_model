@@ -4,10 +4,10 @@
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod account_component;
+pub mod accounts_grid;
 pub mod bond_spec_component;
 pub mod collapsible_component;
 pub mod collection_grid_component;
-pub mod collection_grid_impls;
 pub mod component_display_component;
 pub mod currency_select;
 pub mod currency_value_input;
@@ -25,6 +25,7 @@ pub mod expandable_rate_component;
 pub mod growth_assumption_component;
 pub mod historic_risk_return_component;
 pub mod holding_component;
+pub mod holdings_grid;
 pub mod integer_input;
 pub mod item_growth_component;
 pub mod item_growth_select;
@@ -36,7 +37,6 @@ pub mod ok_cancel_component;
 pub mod percent_input;
 pub mod rate_curve_component;
 pub mod symbol_input;
-pub mod value_flow_spec_component;
 pub mod year_currency_value_input;
 pub mod year_input;
 pub mod year_range_input;

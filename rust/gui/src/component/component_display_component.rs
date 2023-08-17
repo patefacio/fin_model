@@ -45,8 +45,6 @@ pub fn ComponentDisplayComponent(
     use crate::YearValueInput;
     use leptos::*;
     use leptos_dom::console_log;
-    use std::collections::HashMap;
-    use std::collections::HashSet;
 
     use plus_modeled::Account;
     use plus_modeled::AccountType;
@@ -565,7 +563,7 @@ pub fn ComponentDisplayComponent(
                 },
             )
 
-            read_only=false
+            header=vec!["Account".to_string(), "Type".to_string(), "Market Value".to_string(),]
         />
 
         <div style="margin: 2rem;">"Dispose Test"</div>

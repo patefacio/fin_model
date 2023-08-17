@@ -12,12 +12,9 @@ use crate::HtmlTag;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::{component, view, IntoView, Scope};
-use leptos::{create_node_ref, create_rw_signal, store_value};
-use leptos::{IntoAttribute, IntoClass, SignalGet, SignalSet};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::ev::{focusin, mousedown};
-use leptos_dom::helpers::window_event_listener_untyped;
 use leptos_dom::html::{Button, Div};
 use std::rc::Rc;
 use wasm_bindgen::JsCast;

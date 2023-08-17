@@ -1,20 +1,22 @@
-//! TODO: Document Module(holdings_impl)
+//! Module for holdings_grid leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::CollectionGrid;
+use crate::CollectionGridState;
 use crate::SymbolGrowthMap;
 use crate::Updatable;
 use crate::UpdatablePair;
-use leptos::view;
-use leptos::IntoView;
-use leptos::Scope;
+#[allow(unused_imports)]
+use leptos::log;
+use leptos::WriteSignal;
+use leptos::{component, view, IntoView, Scope};
+#[allow(unused_imports)]
+use leptos_dom::console_log;
 use leptos_dom::View;
 use plus_modeled::Holding;
-use std::cell::RefCell;
 use std::collections::HashSet;
-use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
@@ -42,35 +44,52 @@ pub struct HoldingSharedContext {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
+// --- functions ---
+////////////////////////////////////////////////////////////////////////////////////
+/// Display and edit support for list of holdings in an account
+///
+///   * **cx** - Context
+///   * **updatable_pair** - The account to edit with shared context
+///   * **on_state_change** - Enables parent to track state changes.
+/// For example, parent may want different behavior when editing an entry
+/// versus just displaying the rows.
+///   * _return_ - View for holdings_grid
+#[component]
+pub fn HoldingsGrid(
+    /// Context
+    cx: Scope,
+    /// The account to edit with shared context
+    updatable_pair: UpdatablePair<Vec<Holding>, HoldingSharedContext>,
+    /// Enables parent to track state changes.
+    /// For example, parent may want different behavior when editing an entry
+    /// versus just displaying the rows.
+    #[prop(default=None)]
+    on_state_change: Option<WriteSignal<CollectionGridState>>,
+) -> impl IntoView {
+    // α <fn holdings_grid>
+
+    use crate::CollectionGridComponent;
+
+    view! { cx,
+        <CollectionGridComponent
+            header=vec![
+                "Symbol".to_string(), "Market Value".to_string(), "Cost Basis".to_string(),
+                "Unrealized (G/L)".to_string(),
+            ]
+
+            updatable=updatable_pair
+            on_state_change=on_state_change
+        />
+    }
+
+    // ω <fn holdings_grid>
+}
+
+////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
 impl CollectionGrid for Holding {
     type SharedContext = HoldingSharedContext;
-    /// Get the number of columns.
-    ///
-    ///   * _return_ - Number of columns
-    fn get_column_count() -> usize {
-        // α <fn CollectionGrid::get_column_count for Holding>
-        4
-        // ω <fn CollectionGrid::get_column_count for Holding>
-    }
-
-    /// The header for the collection.
-    ///
-    ///   * _return_ - The header as a list of elements
-    fn get_header() -> Vec<String> {
-        // α <fn CollectionGrid::get_header for Holding>
-        [
-            "Symbol".to_string(),
-            "Market Value".to_string(),
-            "Cost Basis".to_string(),
-            "Unrealized (G/L)".to_string(),
-        ]
-        .into_iter()
-        .collect()
-        // ω <fn CollectionGrid::get_header for Holding>
-    }
-
     /// Get the display fields for the element.
     ///
     ///   * **cx** - The context for the fields
@@ -143,6 +162,7 @@ impl CollectionGrid for Holding {
             }
             .into_view(cx),
         ]
+
         // ω <fn CollectionGrid::get_fields for Holding>
     }
 
@@ -201,5 +221,5 @@ impl CollectionGrid for Holding {
     }
 }
 
-// α <mod-def holdings_impl>
-// ω <mod-def holdings_impl>
+// α <mod-def holdings_grid>
+// ω <mod-def holdings_grid>

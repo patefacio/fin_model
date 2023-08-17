@@ -36,7 +36,7 @@ impl DistributionPdf for NormalSpec {
     fn get_pdf_chart(&self, num_points: usize) -> String {
         // α <fn DistributionPdf::get_pdf_chart for NormalSpec>
         use crate::scale_by;
-        use crate::utils::constants::plot_text_style;
+        use crate::utils::constants::PLOT_TEXT_STYLE;
         use plotters::prelude::*;
 
         // Cap the number of points to range (32, 1024)
@@ -73,7 +73,7 @@ impl DistributionPdf for NormalSpec {
         {
             let root = SVGBackend::with_string(&mut plot_buff, (300, 275))
                 .into_drawing_area()
-                .titled(&format!("PDF {}", self), plot_text_style.clone())
+                .titled(&format!("PDF {}", self), PLOT_TEXT_STYLE.clone())
                 .expect("");
 
             let mut chart = ChartBuilder::on(&root)

@@ -4,6 +4,7 @@
         "./rust/gui/Cargo.toml"
     ],
     "cSpell.words": [
+        "commified",
         "impls"
     ],
     "rust-analyzer.showUnlinkedFileNotification": false

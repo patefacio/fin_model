@@ -43,16 +43,6 @@ pub trait CollectionGrid: Sized {
     /// Data shared among all edited items.
     type SharedContext: Debug;
 
-    /// Get the number of columns.
-    ///
-    ///   * _return_ - Number of columns
-    fn get_column_count() -> usize;
-
-    /// The header for the collection.
-    ///
-    ///   * _return_ - The header as a list of elements
-    fn get_header() -> Vec<String>;
-
     /// Get the display fields for the element.
     ///
     ///   * **cx** - The context for the fields
@@ -97,7 +87,7 @@ pub trait CollectionGrid: Sized {
 ///
 ///   * **cx** - Context
 ///   * **updatable** - Items to show
-///   * **read_only** - If true just display (default false)
+///   * **header** - Header for the grid
 ///   * **on_state_change** - Enables parent to track state changes.
 /// For example, parent may want different behavior when editing an entry
 /// versus just displaying the rows.
@@ -108,9 +98,8 @@ pub fn CollectionGridComponent<T, S>(
     cx: Scope,
     /// Items to show
     updatable: UpdatablePair<Vec<T>, S>,
-    /// If true just display (default false)
-    #[prop(default = false)]
-    read_only: bool,
+    /// Header for the grid
+    header: Vec<String>,
     /// Enables parent to track state changes.
     /// For example, parent may want different behavior when editing an entry
     /// versus just displaying the rows.
@@ -195,14 +184,16 @@ where
         cgc_data_signal.with(|cgc_data| cgc_data.component_state == CollectionGridState::EditNew)
     };
 
+    // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
+    let grid_column_end = 3 + header.len();
+    let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", header.len());
+
     // A header for the component, including empty fields for our `Edit` and `Delete` buttons,
     // so the shape matches that of the displayed rows
     let header = {
-        let mut fields = <T as CollectionGrid>::get_header();
-        if !read_only {
-            fields.insert(0, String::default());
-            fields.insert(0, String::default());
-        }
+        let mut fields = header;
+        fields.insert(0, String::default());
+        fields.insert(0, String::default());
         fields
             .into_iter()
             .map(|column_header| {
@@ -211,8 +202,6 @@ where
             .collect::<Vec<HtmlElement<Div>>>()
     };
 
-    // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
-    let grid_column_end = 3 + T::get_column_count();
     let editable_style =
         move || format!("grid-column-start: 1; grid-column-end: {grid_column_end}");
 
@@ -406,8 +395,6 @@ where
         }
     };
 
-    let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", T::get_column_count());
-
     view! { cx,
         <div
             class="collection-grid"
@@ -445,10 +432,8 @@ where
                                                                 );
                                                         }
                                                     }
-                                                    if !read_only {
-                                                        user_fields.insert(0, make_delete_button(&key));
-                                                        user_fields.insert(0, make_edit_button(&key));
-                                                    }
+                                                    user_fields.insert(0, make_delete_button(&key));
+                                                    user_fields.insert(0, make_edit_button(&key));
 
                                                     view! { cx,
                                                         {user_fields.into_view(cx)}

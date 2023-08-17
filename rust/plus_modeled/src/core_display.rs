@@ -30,7 +30,7 @@ impl Display for Date {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for Date>
-        todo!("Implement `fmt`")
+        write!(f, "{:0>2}/{:0>2}/{}", self.month, self.day, self.year)
         // ω <fn Display::fmt for Date>
     }
 }
@@ -167,7 +167,19 @@ impl Display for YearValueSeries {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for YearValueSeries>
-        todo!("Implement `fmt`")
+        write!(
+            f,
+            "YVS({} entries on ({},{}))",
+            self.curve.len(),
+            self.curve
+                .first()
+                .map(|yv| yv.to_string())
+                .unwrap_or_else(|| String::default()),
+            self.curve
+                .last()
+                .map(|yv| yv.to_string())
+                .unwrap_or_else(|| String::default()),
+        )
         // ω <fn Display::fmt for YearValueSeries>
     }
 }
@@ -179,7 +191,7 @@ impl Display for DbId {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for DbId>
-        todo!("Implement `fmt`")
+        write!(f, "DbId({})", self.id)
         // ω <fn Display::fmt for DbId>
     }
 }
@@ -191,7 +203,15 @@ impl Display for DossierHoldingIndex {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for DossierHoldingIndex>
-        todo!("Implement `fmt`")
+        use crate::SystemUnicodes;
+        write!(
+            f,
+            "{}({}){}({})",
+            SystemUnicodes::Account.as_unicode(),
+            self.account_index,
+            SystemUnicodes::Holding.as_unicode(),
+            self.holding_index.map_or("_".into(), |h| format!("{}", h))
+        )
         // ω <fn Display::fmt for DossierHoldingIndex>
     }
 }
@@ -203,7 +223,24 @@ impl Display for DossierItemIndex {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for DossierItemIndex>
-        todo!("Implement `fmt`")
+        use crate::core::dossier_item_index::ItemIndex;
+        use crate::SystemUnicodes;
+
+        write!(
+            f,
+            "{}",
+            match self.item_index {
+                Some(ItemIndex::WorthIndex(f)) => {
+                    format!("{}({})", SystemUnicodes::House.as_unicode(), f)
+                }
+                Some(ItemIndex::HoldingIndex(f)) => f.to_string(),
+                Some(ItemIndex::FlowIndex(f)) => {
+                    format!("{}({})", SystemUnicodes::Faucet.as_unicode(), f)
+                }
+                None => String::default(),
+            }
+        )
+
         // ω <fn Display::fmt for DossierItemIndex>
     }
 }
@@ -215,7 +252,17 @@ impl Display for DossierCorrelationEntry {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for DossierCorrelationEntry>
-        todo!("Implement `fmt`")
+        write!(
+            f,
+            "DCE(({},{})->{})",
+            self.row_index
+                .map(|ri| ri.to_string())
+                .unwrap_or_else(|| String::default()),
+            self.column_index
+                .map(|ci| ci.to_string())
+                .unwrap_or_else(|| String::default()),
+            self.correlation
+        )
         // ω <fn Display::fmt for DossierCorrelationEntry>
     }
 }
@@ -227,7 +274,7 @@ impl Display for DossierCorrelationMatrix {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for DossierCorrelationMatrix>
-        todo!("Implement `fmt`")
+        write!(f, "DCM({} mappings)", self.mappings.len())
         // ω <fn Display::fmt for DossierCorrelationMatrix>
     }
 }
@@ -239,7 +286,13 @@ impl Display for PeriodBalance {
     ///   * _return_ - Formatted instance
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         // α <fn Display::fmt for PeriodBalance>
-        todo!("Implement `fmt`")
+        use plus_utils::commify_float;
+        write!(
+            f,
+            "({}->{})",
+            commify_float(self.start_balance),
+            commify_float(self.end_balance)
+        )
         // ω <fn Display::fmt for PeriodBalance>
     }
 }

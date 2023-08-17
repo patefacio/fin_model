@@ -4,7 +4,6 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::HoldingSharedContext;
-use crate::SymbolGrowthMap;
 use crate::Updatable;
 use crate::UpdatablePair;
 #[allow(unused_imports)]
@@ -19,7 +18,6 @@ use plus_modeled::ItemGrowth;
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// A single holding in an account.
-///
 ///
 ///   * **cx** - Context
 ///   * **updatable** - The holding being edited by this component with shared context

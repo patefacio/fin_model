@@ -365,20 +365,20 @@ impl CharState {
     ///   * _return_ - The formatted number and caret position in it.
     pub fn finalize_number(self) -> LenientFormatted {
         // α <fn CharState::finalize_number>
-        use crate::utils::commify_number;
+        use crate::commify_int;
 
         let (parsed_value, text) = if let Ok(parsed_number) = self.current_text.parse::<f64>() {
             if let Some(decimal_position) = self.decimal_position {
                 let integer_part = parsed_number as i64;
                 if integer_part <= -1000 || integer_part >= 1000 {
-                    let mut final_number = commify_number(integer_part);
+                    let mut final_number = commify_int(integer_part);
                     final_number.push_str(&self.current_text[decimal_position..]);
                     (parsed_number, final_number)
                 } else {
                     (parsed_number, self.current_text)
                 }
             } else {
-                (parsed_number, commify_number(parsed_number as i64))
+                (parsed_number, commify_int(parsed_number as i64))
             }
         } else {
             return LenientFormatted::Incomplete(self.current_text, self.numeric_to_caret);
