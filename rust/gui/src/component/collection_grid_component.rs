@@ -151,9 +151,7 @@ where
             .collect::<HashMap<String, RwSignal<usize>>>(),
     );
 
-    let add_item_label = move || {
-        add_item_label.clone()
-    };
+    let add_item_label = move || add_item_label.clone();
 
     // Component data containing the vector we manage and the current state
     let cgc_data_signal = create_rw_signal(
@@ -462,11 +460,16 @@ where
                 }
             />
 
-            <button 
-                class="cgc-add-row" 
-                on:click=move |_| { set_new_item_edit() } disabled=move || is_disabled()>
-                <strong>"+"</strong>
-            </button>
+            <Show when=move || !is_new_item_edit() fallback=|_| ()>
+                <button
+                    class="cgc-add-row"
+                    style=format!("grid-column-start: 0; grid-column-end: {grid_column_end};")
+                    on:click=move |_| { set_new_item_edit() }
+                    disabled=move || is_disabled()
+                >
+                    <strong>{add_item_label()}</strong>
+                </button>
+            </Show>
             {show_new_row_editor}
         </div>
     }

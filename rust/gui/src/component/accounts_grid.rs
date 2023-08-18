@@ -81,9 +81,8 @@ impl CollectionGrid for Account {
             AccountType::Taxable => "Taxable",
             AccountType::TraditionalIra => "IRA",
             AccountType::TraditionalIrs401K => "401K",
-            AccountType::OtherAccountType => "Other"
+            AccountType::OtherAccountType => "Other",
         };
-
 
         vec![
             view! { cx, <div class="account-header-cell" style:text-align="right">{self.name.clone()}</div> }.into_view(cx),
