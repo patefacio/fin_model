@@ -135,6 +135,7 @@ where
                         ]
 
                         updatable=holdings_updatable
+                        add_item_label="Add New Holding".to_string()
                         on_state_change=Some(set_state_change)
                     />
                 </div>

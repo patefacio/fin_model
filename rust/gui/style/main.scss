@@ -40,6 +40,10 @@ button {
 	font-size: var(--plus-sm-fnt);
 }
 
+button:hover {
+	background-color: hsl(120, 50%, 80%);
+}
+
 .form {
 	background: #fff;
 }
@@ -287,6 +291,12 @@ input.invalid:focus {
 	text-align: right;
 }
 
+.cgc-add-row {
+	background-color: hsl(120, 50%, 88%);
+	grid-column-start: 1;
+	grid-column-end: 6;
+}
+
 .tooltip {
 	position: relative;
 	border-bottom: 1px dashed #000;
@@ -378,4 +388,23 @@ input.invalid:focus {
 	border-radius: 3px;
 	margin-inline-start: 2px;
 	margin-inline-end: 2px;
+}
+
+.dossier-toolbar {
+	display: inline-flex;
+	//background-color: hsl(120, 50%, 90%);
+}
+
+.label-button {
+	display: inline-block;
+	margin: 0.2rem;
+	padding: 0.5rem;
+	label {
+		margin-top: 0.4rem;
+	}
+}
+
+.dossier-show {
+	min-height: 140px;
+	background-color: hsl(120, 50%, 90%);
 }

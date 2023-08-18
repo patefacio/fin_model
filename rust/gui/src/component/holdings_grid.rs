@@ -78,6 +78,7 @@ pub fn HoldingsGrid(
             ]
 
             updatable=updatable_pair
+            add_item_label="Add New Holding".to_string()
             on_state_change=on_state_change
         />
     }

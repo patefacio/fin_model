@@ -91,6 +91,7 @@ pub trait CollectionGrid: Sized {
 ///   * **on_state_change** - Enables parent to track state changes.
 /// For example, parent may want different behavior when editing an entry
 /// versus just displaying the rows.
+///   * **add_item_label** - Label to show on add button
 ///   * _return_ - View for collection_grid_component
 #[component]
 pub fn CollectionGridComponent<T, S>(
@@ -105,6 +106,9 @@ pub fn CollectionGridComponent<T, S>(
     /// versus just displaying the rows.
     #[prop(default=None)]
     on_state_change: Option<WriteSignal<CollectionGridState>>,
+    /// Label to show on add button
+    #[prop(default="Add New Item".to_string())]
+    add_item_label: String,
 ) -> impl IntoView
 where
     T: 'static + Clone + Debug + CollectionGrid<SharedContext = S>,
@@ -146,6 +150,10 @@ where
             .map(|(i, row)| (row.get_key(), create_rw_signal(cx, i)))
             .collect::<HashMap<String, RwSignal<usize>>>(),
     );
+
+    let add_item_label = move || {
+        add_item_label.clone()
+    };
 
     // Component data containing the vector we manage and the current state
     let cgc_data_signal = create_rw_signal(
@@ -454,7 +462,9 @@ where
                 }
             />
 
-            <button on:click=move |_| { set_new_item_edit() } disabled=move || is_disabled()>
+            <button 
+                class="cgc-add-row" 
+                on:click=move |_| { set_new_item_edit() } disabled=move || is_disabled()>
                 <strong>"+"</strong>
             </button>
             {show_new_row_editor}

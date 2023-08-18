@@ -46,9 +46,13 @@ pub fn AccountsGrid(
     use crate::CollectionGridComponent;
 
     view! { cx,
+        <h3>"Accounts"</h3>
+
+        <p>"Enter all financial accounts in this section."</p>
         <CollectionGridComponent
             updatable=updatable_pair
             header=vec!["Account".to_string(), "Type".to_string(), "Market Value".to_string(),]
+            add_item_label="Add New Account".to_string()
         />
     }
 
@@ -69,9 +73,21 @@ impl CollectionGrid for Account {
         use leptos::IntoStyle;
         use plus_modeled::AccountType;
 
+        let account_type = match AccountType::from_i32(self.account_type).unwrap() {
+            AccountType::CollegeIrs529 => "College 529",
+            AccountType::Demand => "Demand",
+            AccountType::HealthSavingsAccount => "HSA",
+            AccountType::RothIrs401K => "Roth",
+            AccountType::Taxable => "Taxable",
+            AccountType::TraditionalIra => "IRA",
+            AccountType::TraditionalIrs401K => "401K",
+            AccountType::OtherAccountType => "Other"
+        };
+
+
         vec![
             view! { cx, <div class="account-header-cell" style:text-align="right">{self.name.clone()}</div> }.into_view(cx),
-            view! { cx, <div class="account-header-cell" style:text-align="right">{AccountType::from_i32(self.account_type).unwrap().as_str_name().to_string()}</div> }.into_view(cx),
+            view! { cx, <div class="account-header-cell" style:text-align="right">{account_type}</div> }.into_view(cx),
             view! { cx, <div class="account-header-cell" style:text-align="right">{"MV".to_string()}</div> }.into_view(cx),
         ]
         // ω <fn CollectionGrid::get_fields for Account>
