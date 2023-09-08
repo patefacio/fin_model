@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use plus_modeled::RateCurve;
+use plus_modeled::YearValue;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- traits ---
@@ -9,7 +9,7 @@ use plus_modeled::RateCurve;
 /// Create a plot for a dataset
 pub trait PlotData {
     /// Create a plot (svg) for the data set.
-    /// For example, implementation of this trait for a [RateCurve](plus_modeled::RateCurve)
+    /// For example, implementation of this trait for a [RateCurveData](crate::RateCurveData)
     /// would return an SVG of the return step function.
     ///
     ///   * _return_ - An svg image of the plot
@@ -17,17 +17,25 @@ pub trait PlotData {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
+// --- structs ---
+////////////////////////////////////////////////////////////////////////////////////
+/// Implements plotting on `Vec<YearValue>` as rate curve
+pub struct RateCurveData<'a> {
+    /// Data to plot as rates
+    pub curve: &'a Vec<YearValue>,
+}
+
+////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
-impl PlotData for RateCurve {
+impl<'a> PlotData for RateCurveData<'a> {
     /// Create a plot (svg) for the data set.
-    /// For example, implementation of this trait for a [RateCurve](plus_modeled::RateCurve)
+    /// For example, implementation of this trait for a [RateCurveData](crate::RateCurveData)
     /// would return an SVG of the return step function.
     ///
     ///   * _return_ - An svg image of the plot
     fn plot(&self) -> String {
-        // α <fn PlotData::plot for RateCurve>
-
+        // α <fn PlotData::plot for RateCurveData<'a>>
         use plotters::prelude::*;
 
         // Check to see if the curve is empty -> no values can be plotted if the user
@@ -113,7 +121,7 @@ impl PlotData for RateCurve {
 
         plot_buff
 
-        // ω <fn PlotData::plot for RateCurve>
+        // ω <fn PlotData::plot for RateCurveData<'a>>
     }
 }
 

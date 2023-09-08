@@ -7,12 +7,15 @@ use crate::SelectDirection;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::ReadSignal;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use plus_modeled::FlowDirection;
 use plus_modeled::NormalSpec;
 use std::collections::BTreeMap;
 use std::fmt::Debug;
+use std::hash::Hash;
 use strum::{IntoEnumIterator, VariantNames};
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +34,8 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * **growth_mapping** - Mapping of enum to its growth.
 ///   * **column_count** - Number of columns to display in the grid of options.
 ///   * **direction** - Specifies whether items flows from top to bottom or left to right.
+///   * **flow_filter** - Filter on enum variants
+///   * **label** - Convert enum type to label
 ///   * _return_ - View for item_growth_select
 #[component]
 pub fn ItemGrowthSelect<E>(
@@ -47,62 +52,117 @@ pub fn ItemGrowthSelect<E>(
     /// Specifies whether items flows from top to bottom or left to right.
     #[prop(default=SelectDirection::LeftToRight)]
     direction: SelectDirection,
+    /// Filter on enum variants
+    #[prop(default=None)]
+    flow_filter: Option<(ReadSignal<FlowDirection>, Box<dyn Fn(&E) -> bool>)>,
+    /// Convert enum type to label
+    label: Box<dyn Fn(&E) -> String>,
 ) -> impl IntoView
 where
-    E: Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
+    E: Clone + Debug + VariantNames + IntoEnumIterator + PartialEq + Eq + Hash + 'static,
 {
     // α <fn item_growth_select>
 
     use crate::{InitialValue, MultiColumnSelect, SelectOption};
+    use leptos::store_value;
+    use leptos::SignalWith;
+    use leptos::StoredValue;
+    use std::collections::HashMap;
 
-    // Iterate over enum variants to find the index of the initial value
-    let (initial_index, _) = E::iter()
-        .enumerate()
-        .find(|(_, variant)| *variant == updatable.value)
-        .unwrap();
-
-    let stored_updatable = leptos::store_value(cx, updatable);
-
-    let options: Vec<_> = E::VARIANTS
-        .iter()
-        .map(|variant| SelectOption::KeyLabel {
-            key: variant.to_string(),
+    fn to_key_label(key: &str) -> SelectOption {
+        SelectOption::KeyLabel {
+            key: key.to_string(),
             label: NormalSpec {
                 mean: 0.1,
                 std_dev: 0.2,
             }
             .to_string(),
-        })
-        .collect();
+        }
+    }
 
-    let menu_select = move |value: String| {
-        stored_updatable.update_value(|updatable| {
-            updatable.update_and_then_signal(|selection| {
-                for (i, e) in E::iter().enumerate() {
-                    if E::VARIANTS[i] == value {
-                        *selection = e;
-                        break;
-                    }
-                }
-            })
-        });
+    struct IGSData<E> {
+        updatable: Updatable<E>,
+        label_to_value: HashMap<String, E>,
+        value_to_label: HashMap<E, String>,
+    }
+
+    let filter_signal = flow_filter.as_ref().map(|flow_filter| flow_filter.0);
+    let (label_to_value, value_to_label): (Vec<_>, Vec<_>) = E::iter()
+        .enumerate()
+        .map(|(i, e)| {
+            let label = label(&e);
+            ((label.clone(), e.clone()), (e.clone(), label))
+        })
+        .unzip();
+
+    let igs_data_stored_value = store_value(
+        cx,
+        IGSData {
+            updatable,
+            label_to_value: label_to_value.into_iter().collect(),
+            value_to_label: value_to_label.into_iter().collect(),
+        },
+    );
+
+    let mcs_select = move || {
+        if let Some(filter_change) = filter_signal {
+            filter_change.track();
+        }
+
+        let mut initial_value = None;
+
+        let options = {
+            let options = igs_data_stored_value.with_value(|igs_data| {
+                let mut current_index = 0;
+                E::iter()
+                    .enumerate()
+                    .filter_map(|(i, e)| {
+                        let included = flow_filter
+                            .as_ref()
+                            .map(|(_flow_direction, filter)| filter(&e))
+                            .unwrap_or(true);
+
+                        if included {
+                            if e == igs_data.updatable.value {
+                                initial_value = Some(InitialValue::SelectionIndex(current_index));
+                            }
+                            current_index += 1;
+                            Some(to_key_label(&igs_data.value_to_label.get(&e).unwrap()))
+                        } else {
+                            None
+                        }
+                    })
+                    .collect::<Vec<_>>()
+            });
+
+            options
+        };
+
+        let menu_select = move |label: String| {
+            igs_data_stored_value.update_value(|igs_data| {
+                igs_data.updatable.update_and_then_signal(|selection| {
+                    *selection = igs_data.label_to_value.get(&label).cloned().unwrap();
+                })
+            });
+        };
+
+        view! { cx,
+            <MultiColumnSelect
+                options=options
+                column_count=column_count
+                initial_value=initial_value
+                on_select=menu_select
+                direction=direction
+            />
+        }
     };
 
     view! { cx,
         <div class="ig">
-            <MultiColumnSelect
-                options=options
-                column_count=column_count
-                initial_value=Some(InitialValue::SelectionIndex(initial_index))
-                on_select=menu_select
-                direction=direction
-            />
-            <div>
+            {move || mcs_select()} <div>
                 <div class="ig-growth-label">
                     <div class="info-label">
-                        {move || {
-                            format!("Growth: {}", NormalSpec { mean : 0.1, std_dev : 0.2 })
-                        }}
+                        {move || { format!("{}", NormalSpec { mean : 0.1, std_dev : 0.2 }) }}
 
                     </div>
                 </div>

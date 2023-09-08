@@ -36,14 +36,14 @@ pub fn ExpandableRateComponent(
     /// Context
     cx: Scope,
     /// The [RateCurve] being edited
-    updatable: Updatable<RateCurve>,
+    updatable: Updatable<Vec<YearValue>>,
     /// Range of valid years.
     #[prop(default=YearRange{ start: 1900, end: 2400 })]
     year_range: YearRange,
 ) -> impl IntoView {
     // α <fn expandable_rate_component>
     use crate::PercentInput;
-    use crate::RateCurveComponent;
+    use crate::YearValueSeriesComponent;
     use leptos::create_rw_signal;
     use leptos::store_value;
     use leptos::Show;
@@ -56,11 +56,7 @@ pub fn ExpandableRateComponent(
 
     let stored_single_value = store_value(
         cx,
-        updatable
-            .value
-            .curve
-            .first()
-            .map(|year_value| year_value.value),
+        updatable.value.first().map(|year_value| year_value.value),
     );
 
     let stored_updatable = store_value(cx, updatable);
@@ -71,15 +67,14 @@ pub fn ExpandableRateComponent(
                 year: MIN_DATE,
                 value: value.unwrap(),
             };
-            stored_updatable
-                .update_value(|updatable| updatable.value.curve = vec![new_first_year_value]);
+            stored_updatable.update_value(|updatable| updatable.value = vec![new_first_year_value]);
         })
     };
 
     let show_single_rate = move || {
         is_expanded.track();
-        let new_single_rate = stored_updatable
-            .with_value(|updatable| updatable.value.curve.last().map(|yv| yv.value));
+        let new_single_rate =
+            stored_updatable.with_value(|updatable| updatable.value.last().map(|yv| yv.value));
         stored_single_value.update_value(|value| *value = new_single_rate);
         view! { cx,
             <PercentInput placeholder=Some("value".to_string()) updatable=single_value_updatable()/>
@@ -90,9 +85,9 @@ pub fn ExpandableRateComponent(
     let show_rate_curve = move || {
         is_expanded.track();
         view! { cx,
-            <RateCurveComponent updatable=Updatable::new(
+            <YearValueSeriesComponent updatable=Updatable::new(
                 stored_updatable.with_value(|updatable| updatable.value.clone()),
-                move |new_rc| {
+                move |new_rc: &Vec<YearValue>| {
                     stored_updatable
                         .update_value(move |updatable| {
                             updatable

@@ -35,14 +35,13 @@ pub fn ComponentDisplayComponent(
     use crate::NumericInput;
     use crate::OkCancelComponent;
     use crate::PercentInput;
-    use crate::RateCurveComponent;
     use crate::SelectDirection;
     use crate::Updatable;
-    use crate::UpdatablePair;
     use crate::YearCurrencyValueInput;
     use crate::YearInput;
     use crate::YearRangeInput;
     use crate::YearValueInput;
+    use crate::YearValueSeriesComponent;
     use leptos::*;
     use leptos_dom::console_log;
 
@@ -134,6 +133,7 @@ pub fn ComponentDisplayComponent(
     .to_vec();
 
     view! { cx,
+        <div class="cdc">
         <div style="
         position: -webkit-sticky; 
         position: sticky; 
@@ -426,6 +426,7 @@ pub fn ComponentDisplayComponent(
                 <li>Accept the selection <strong>and signals</strong> on Enter, Space</li>
                 <li>No-Op on Escape</li>
                 <li>Display Selections Left-To-Right or Top-To-Bottom</li>
+                <li>EnumSelect supports filtering (e.g. this has filtered out <strong>Il</strong> and <strong>Ca</strong>)</li>
                 </ul>
                 "></p>
                 <EnumSelect
@@ -436,7 +437,13 @@ pub fn ComponentDisplayComponent(
 
                     direction=SelectDirection::TopToBottom
                     column_count=5
+                    filter=Some(
+                        std::boxed::Box::new(|&e| {
+                            e != StateOfResidence::Il && e != StateOfResidence::Ca
+                        }),
+                    )
                 />
+
             </div>
             <div style="padding: 1em;">
                 <h4>"Mutli-Column Select (Left To Right)"</h4>
@@ -525,29 +532,27 @@ pub fn ComponentDisplayComponent(
         </div>
         <hr/>
         <h4>"Rate Curve"</h4>
-        <RateCurveComponent updatable=Updatable::new(
-            RateCurve::default(),
+        <YearValueSeriesComponent updatable=Updatable::new(
+            Vec::new(),
             move |rc| {
                 show_update(format!("RateCurve updated -> {rc:?}"));
             },
         )/>
         <hr/>
         <h4>"Rate Curve with Sample Data"</h4>
-        <RateCurveComponent updatable=Updatable::new(
-            RateCurve {
-                curve: vec![
-                    YearValue { year : 2002, value : 0.045 }, YearValue { year : 2000, value : 0.06
-                    }, YearValue { year : 1980, value : 0.025, }, YearValue { year : 2000, value : -
-                    0.0334 }
-                ],
-            },
+        <YearValueSeriesComponent updatable=Updatable::new(
+            vec![
+                YearValue { year : 2002, value : 0.045 }, YearValue { year : 2000, value : 0.06 },
+                YearValue { year : 1980, value : 0.025, }, YearValue { year : 2000, value : - 0.0334
+                }
+            ],
             move |rc| {
                 show_update(format!("Rate Curve -> {rc:?}"));
             },
         )/>
         <h4>"Rate Curve with Expandable View"</h4>
         <ExpandableRateComponent updatable=Updatable::new(
-            RateCurve::default(),
+            Vec::new(),
             move |rc| {
                 show_update(format!("RateCurve updated -> {rc:?}"));
             },
@@ -555,11 +560,17 @@ pub fn ComponentDisplayComponent(
         <hr/>
         <h4>"Collection Grid Component<Account>"</h4>
         <CollectionGridComponent
-            updatable=UpdatablePair::new(
+            rows_updatable=Updatable::new(
                 accounts,
-                AccountSharedContext::default(),
                 move |accounts| {
                     show_update(format!("Accounts list updated -> {accounts:?}"));
+                },
+            )
+
+            shared_context_updatable=Updatable::new(
+                AccountSharedContext::default(),
+                move |sc| {
+                    show_update(format!("Account shared context updated -> {sc:?}"));
                 },
             )
 
@@ -577,6 +588,7 @@ pub fn ComponentDisplayComponent(
         <button on:click=move |_| {
             write_count.update(|c| *c = *c + 1);
         }>{move || format!("Inc({})", read_count.get())}</button>
+        </div>
     }
 
     // ω <fn component_display_component>

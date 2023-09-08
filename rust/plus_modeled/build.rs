@@ -45,6 +45,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
         .type_attribute("EmployerMatchProgram", "#[derive(Serialize, Deserialize)]")
         .type_attribute("RetirementContributionLimit", "#[derive(Serialize, Deserialize)]")
         .type_attribute("SystemDefaults", "#[derive(Serialize, Deserialize)]")
+        .type_attribute("LangSelector", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("Currency", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("AccountType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")
         .type_attribute("BasicAllocationType", "#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]")

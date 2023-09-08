@@ -137,7 +137,7 @@ pub fn NormalSpecComponent(
         })
     };
 
-    const input_size: u32 = 7;
+    const INPUT_SIZE: u32 = 7;
 
     view! { cx,
         <div class="ns">
@@ -154,8 +154,8 @@ pub fn NormalSpecComponent(
 
                             non_negative=non_negative_mean
                             updatable=mean_updatable
-                            size=input_size
-                            max_len=input_size
+                            size=INPUT_SIZE
+                            max_len=INPUT_SIZE
                         />
                         <span>", "</span>
                         <NumericInput
@@ -167,8 +167,8 @@ pub fn NormalSpecComponent(
 
                             non_negative=true
                             updatable=std_dev_updatable
-                            size=input_size
-                            max_len=input_size
+                            size=INPUT_SIZE
+                            max_len=INPUT_SIZE
                         />
                         <span>")"</span>
                         <div class="explore-normal">

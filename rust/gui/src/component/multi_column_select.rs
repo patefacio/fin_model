@@ -26,6 +26,7 @@ use web_sys::{Element, Event, FocusEvent, KeyboardEvent, MouseEvent};
 /// The initial value, which can be either a selection from the options or
 /// if a default value is not appropriate a _placeholder_ to show in the label
 /// until the value is selected.
+#[derive(Clone, Debug)]
 pub enum InitialValue {
     /// Displayed on the main select button until a selection is made.
     Placeholder(String),
@@ -129,7 +130,6 @@ where
     use leptos::NodeRef;
     use leptos::*;
     use leptos_use::use_event_listener;
-    let mut on_select = on_select;
 
     fn get_selection(element: Element) -> Option<(usize, String)> {
         find_element_up(element, HtmlTag::Button).and_then(|element| {
@@ -173,10 +173,6 @@ where
         Some(InitialValue::Placeholder(placeholder)) => (0, placeholder),
         None => (0, options[0].main_button_label().clone()),
     };
-
-    // Signal the resolved initial value
-    // TODO: Determine if this is necessary/helpful
-    //on_select(initial_value.clone());
 
     let mcs_data = create_rw_signal(
         cx,
@@ -223,7 +219,6 @@ where
     };
 
     let set_selection = move |element: Element| {
-        let _timing = BlockTime::new(&format!("setting_selection -> {element:?}"));
         if let Some((flat_index, selected)) = get_selection(element) {
             mcs_data.update(|mcs_data| {
                 mcs_data.main_button_label = selected.clone();
@@ -234,7 +229,6 @@ where
     };
 
     let handle_key_down = move |ev: KeyboardEvent| {
-        let _timing = BlockTime::new("key_down");
         let key_code = ev.key_code();
 
         match key_code {
@@ -264,14 +258,12 @@ where
     };
 
     let handle_click = Rc::new(move |ev: MouseEvent| {
-        let _timing = BlockTime::new("click");
         set_selection(element_from_event(&ev));
         hide_menu();
         set_focus_main_button();
     });
 
     let handle_main_button_action = move || {
-        let _timing = BlockTime::new("main button action");
         if menu_is_hidden.get_untracked() {
             show_menu();
         }
@@ -285,7 +277,6 @@ where
     };
 
     let handle_main_button_key_activate = move |ev: KeyboardEvent| {
-        let _timing = BlockTime::new("key_down");
         let key_code = ev.key_code();
 
         match key_code {
@@ -298,7 +289,6 @@ where
     };
 
     let handle_mouseover = move |ev: MouseEvent| {
-        log!("Got mouseover!");
         if let Some((index, _)) = get_selection(element_from_event(&ev)) {
             set_target_focus(index);
         }
@@ -328,7 +318,7 @@ where
                                     class="icon-label"
                                 >
                                     <div class="icon">{key}</div>
-                                    <div class="label">{label}</div>
+                                    <div class="mcs-select-label">{label}</div>
                                 </div>
                             }
                             .into_view(cx),

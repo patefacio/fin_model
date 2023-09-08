@@ -6,10 +6,12 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::ReadSignal;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DossierItemType;
+use plus_modeled::FlowDirection;
 use plus_modeled::FlowType;
 use plus_modeled::GrowthItemMappings;
 use plus_modeled::HoldingType;
@@ -44,6 +46,7 @@ use plus_modeled::WorthType;
 /// This map provides the component the ability to display for
 /// reference the current associated growth, _assuming `standard`
 /// outlook.
+///   * **flow_direction** - Specialize the types of flows by direction for the case of DossierItemType::Flow.
 ///   * _return_ - View for item_growth_component
 #[component]
 pub fn ItemGrowthComponent<'a>(
@@ -58,82 +61,146 @@ pub fn ItemGrowthComponent<'a>(
     /// reference the current associated growth, _assuming `standard`
     /// outlook.
     growth_item_mappings: &'a GrowthItemMappings,
+    /// Specialize the types of flows by direction for the case of DossierItemType::Flow.
+    #[prop(default=None)]
+    flow_direction: Option<ReadSignal<FlowDirection>>,
 ) -> impl IntoView {
     // α <fn item_growth_component>
 
+    use crate::AppContext;
     use crate::CollapsibleComponent;
     use crate::GrowthAssumptionComponent;
     use crate::ItemGrowthSelect;
     use leptos::store_value;
+    use leptos::use_context;
+    use leptos::SignalGet;
+    use plus_lookup::I18nEnums;
+    use plus_modeled::get_flow_direction;
+    use plus_modeled::ItemGrowth;
+    use plus_modeled::LangSelector;
+    use plus_modeled::SystemGrowthId;
+    use plus_modeled::SystemId;
     use std::collections::BTreeMap;
 
+    let initial_system_id = updatable
+        .value
+        .system_growth_id
+        .as_ref()
+        .and_then(|system_growth_id| {
+            system_growth_id.system_id.map(|system_id| match system_id {
+                SystemId::HoldingItemId(i) => i,
+                SystemId::InstrumentId(i) => i,
+                SystemId::WorthItemId(i) => i,
+                SystemId::FlowItemId(i) => i,
+            })
+        })
+        .unwrap_or_default() as i32;
+
+    let updatable_store_value = store_value(cx, updatable);
+
+    let set_system_id = move |id: u32| {
+        let new_id = match dossier_item_type {
+            DossierItemType::Holding => SystemId::HoldingItemId(id),
+            DossierItemType::Flow => SystemId::FlowItemId(id),
+            DossierItemType::Worth => SystemId::WorthItemId(id),
+            DossierItemType::Instrument => SystemId::InstrumentId(id),
+        };
+
+        updatable_store_value.update_value(|updatable| {
+            updatable.update_and_then_signal(|item_growth| {
+                if let Some(system_growth_id) = item_growth.system_growth_id.as_mut() {
+                    system_growth_id.system_id = Some(new_id);
+                } else {
+                    *item_growth = ItemGrowth {
+                        system_growth_id: Some(SystemGrowthId {
+                            system_id: Some(new_id),
+                        }),
+                        ..Default::default()
+                    }
+                }
+            })
+        })
+    };
+
+    let flow_type_filter = flow_direction.map(|flow_direction| {
+        let flow_type_filter: Box<dyn Fn(&FlowType) -> bool> =
+            Box::new(move |flow_type: &FlowType| {
+                let desired_direction = flow_direction.get();
+                let flow_direction = get_flow_direction(flow_type);
+                flow_direction == desired_direction
+            });
+
+        (flow_direction, flow_type_filter)
+    });
+
     let column_count = 2;
+    let lang_selector = use_context::<AppContext>(cx).unwrap().lang_selector;
 
     let category_select = match dossier_item_type {
         DossierItemType::Holding => view! { cx,
             <ItemGrowthSelect
                 updatable=Updatable::new(
-                    HoldingType::UsEquityMarket,
-                    |e| {
-                        log!("Holding selection updated -> {e:?}");
-                        tracing::debug!("Holding selection updated -> {e:?}");
+                    HoldingType::from_i32(initial_system_id).unwrap_or_default(),
+                    move |e| {
+                        log!("Updated holding system id to {e:?}");
+                        set_system_id(*e as u32)
                     },
                 )
 
                 growth_mapping=BTreeMap::new()
                 column_count=column_count
+                label=Box::new(move |e| I18nEnums::HoldingType(lang_selector.get(), e).to_string())
             />
         }
         .into_view(cx),
         DossierItemType::Flow => view! { cx,
             <ItemGrowthSelect
                 updatable=Updatable::new(
-                    FlowType::CollegeExpense,
-                    |e| {
-                        log!("Flow selection updated -> {e:?}");
-                    },
+                    FlowType::from_i32(initial_system_id).unwrap_or_default(),
+                    move |e| { set_system_id(*e as u32) },
                 )
 
                 growth_mapping=BTreeMap::new()
                 column_count=column_count
+                flow_filter=flow_type_filter
+                label=Box::new(move |e| I18nEnums::FlowType(lang_selector.get(), e).to_string())
             />
         }
         .into_view(cx),
         DossierItemType::Worth => view! { cx,
             <ItemGrowthSelect
                 updatable=Updatable::new(
-                    WorthType::FamilyFarm,
-                    |e| {
-                        log!("Worth selection updated -> {e:?}");
+                    WorthType::from_i32(initial_system_id).unwrap_or_default(),
+                    move |e| {
+                        log!("Updated worth system id to {e:?}");
+                        set_system_id(*e as u32)
                     },
                 )
 
                 growth_mapping=BTreeMap::new()
                 column_count=column_count
+                label=Box::new(move |e| I18nEnums::WorthType(lang_selector.get(), e).to_string())
             />
         }
         .into_view(cx),
         DossierItemType::Instrument => view! { cx,
             <ItemGrowthSelect
                 updatable=Updatable::new(
-                    FlowType::CollegeExpense,
-                    |e| {
-                        log!("Flow selection updated -> {e:?}");
-                    },
+                    FlowType::from_i32(initial_system_id).unwrap_or_default(),
+                    move |e| { set_system_id(*e as u32) },
                 )
 
                 growth_mapping=BTreeMap::new()
                 column_count=column_count
+                label=Box::new(move |e| I18nEnums::FlowType(lang_selector.get(), e).to_string())
             />
         }
         .into_view(cx),
     };
 
-    let updatable_value = store_value(cx, updatable);
-
     let growth_assumption_updatable = move || {
         Updatable::new(
-            updatable_value.with_value(|updatable| {
+            updatable_store_value.with_value(|updatable| {
                 updatable
                     .value
                     .growth_assumption

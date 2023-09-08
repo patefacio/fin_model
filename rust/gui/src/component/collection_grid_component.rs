@@ -3,11 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::UpdatablePair;
+use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::RwSignal;
-use leptos::SignalUpdate;
+use leptos::StoredValue;
 use leptos::View;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView, Scope};
@@ -31,6 +31,15 @@ pub enum CollectionGridState {
         /// Key of item being edited
         selection_key: String,
     },
+}
+
+/// Specifies if new row edit or existing row edit
+#[derive(Eq, PartialEq, Debug, Clone)]
+pub enum CollectionGridEditType {
+    /// Edit of row in grid
+    RowEdit,
+    /// Edit of row to be added to grid
+    NewRowEdit,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -59,21 +68,29 @@ pub trait CollectionGrid: Sized {
     ///   * _return_ - New element
     fn new() -> Self;
 
-    /// Create a view to edit the element
+    /// Create a view to edit the row
     ///
     ///   * **cx** - Context
-    ///   * **updatable** - Updatable containing the element to edit.
-    /// This component will update the vector whenever the element is signaled
-    /// by finding the proper element in the vector and replacing it with the update.
-    ///   * **on_cancel** - Called if edit is canceled.
+    ///   * **edit_type** - Type of edit
+    ///   * **row_stored_value** - Row to edit.
+    ///   * **shared_context_stored_value** - Updatable containing the shared context.
     ///   * _return_ - The edit view
-    fn edit_element<F>(
+    fn edit_row(
         cx: Scope,
-        updatable: UpdatablePair<Self, Self::SharedContext>,
-        on_cancel: F,
-    ) -> View
-    where
-        F: 'static + FnMut(&str);
+        edit_type: CollectionGridEditType,
+        row_stored_value: StoredValue<Self>,
+        shared_context_stored_value: StoredValue<Self::SharedContext>,
+    ) -> View;
+
+    /// Return true if row edit satisfies any shared context constraints
+    ///
+    ///   * **edited_row** - The edited row
+    ///   * **shared_context** - The current shared context
+    ///   * _return_ - An error message if not acceptable change, None otherwise
+    fn accept_row_edit(
+        edited_row: &Self,
+        shared_context: &mut Self::SharedContext,
+    ) -> Option<String>;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +103,8 @@ pub trait CollectionGrid: Sized {
 /// It is called grid component because it is styled with a grid.
 ///
 ///   * **cx** - Context
-///   * **updatable** - Items to show
+///   * **rows_updatable** - Items to show
+///   * **shared_context_updatable** - Shared context
 ///   * **header** - Header for the grid
 ///   * **on_state_change** - Enables parent to track state changes.
 /// For example, parent may want different behavior when editing an entry
@@ -98,7 +116,9 @@ pub fn CollectionGridComponent<T, S>(
     /// Context
     cx: Scope,
     /// Items to show
-    updatable: UpdatablePair<Vec<T>, S>,
+    rows_updatable: Updatable<Vec<T>>,
+    /// Shared context
+    shared_context_updatable: Updatable<S>,
     /// Header for the grid
     header: Vec<String>,
     /// Enables parent to track state changes.
@@ -116,15 +136,20 @@ where
 {
     // α <fn collection_grid_component>
 
-    use crate::UpdatePairType;
+    use crate::AppContext;
+    use crate::OkCancel;
+    use crate::OkCancelComponent;
     use leptos::create_rw_signal;
+    use leptos::on_cleanup;
     use leptos::store_value;
+    use leptos::use_context;
     use leptos::For;
     use leptos::IntoAttribute;
     use leptos::IntoView;
     use leptos::Show;
     use leptos::SignalGet;
     use leptos::SignalGetUntracked;
+    use leptos::SignalSet;
     use leptos::SignalUpdate;
     use leptos::SignalUpdateUntracked;
     use leptos::SignalWith;
@@ -134,8 +159,58 @@ where
     use std::collections::HashMap;
     use std::rc::Rc;
 
+    fn print_type_of<T>(_: &T) {
+        println!("{}", std::any::type_name::<T>())
+    }
+
+    log!(
+        "Creating collection_grid_component! {cx:?} -> {}",
+        std::any::type_name::<T>()
+    );
+    leptos::on_cleanup(cx, move || {
+        log!(
+            "CLEANING UP HOLDING {cx:?} -> {}",
+            std::any::type_name::<T>()
+        )
+    });
+
+    /// This is used to ensure only one collection has an ok/cancel enabled at a time.
+    let grid_edit_active_count = use_context::<AppContext>(cx)
+        .unwrap()
+        .grid_edit_active_count;
+
+    let add_to_active_count = move || {
+        grid_edit_active_count.update(|count| {
+            *count += 1;
+            log!("Grid Edit Active incremented to {count}");
+        })
+    };
+
+    let remove_from_active_count = move || {
+        grid_edit_active_count.update(|count| {
+            *count -= 1;
+            log!("Grid Edit Active decremented to {count}");
+        })
+    };
+
+    // Add a default new element
+    let row_stored_value = store_value(cx, <T as CollectionGrid>::new());
+    let shared_context_stored_value = store_value(cx, shared_context_updatable.value.clone());
+    let active_key_stored_value: StoredValue<Option<String>> = store_value(cx, None);
+    let initial_grid_edit_active_count = grid_edit_active_count.get_untracked() + 1;
+    let ok_cancel_enabled = move || {
+        log!(
+            "Checking {} against initial {} for {cx:?}",
+            grid_edit_active_count.get(),
+            initial_grid_edit_active_count
+        );
+        grid_edit_active_count.get() == initial_grid_edit_active_count
+    };
+    let row_count_signal = create_rw_signal(cx, rows_updatable.value.len());
+
     struct CGCData<T, S> {
-        updatable: UpdatablePair<Vec<T>, S>,
+        rows_updatable: Updatable<Vec<T>>,
+        shared_context_updatable: Updatable<S>,
         component_state: CollectionGridState,
     }
 
@@ -143,8 +218,8 @@ where
     // which enables update of view for specific row.
     let signals = store_value(
         cx,
-        updatable
-            .first_value
+        rows_updatable
+            .value
             .iter()
             .enumerate()
             .map(|(i, row)| (row.get_key(), create_rw_signal(cx, i)))
@@ -157,7 +232,8 @@ where
     let cgc_data_signal = create_rw_signal(
         cx,
         CGCData {
-            updatable,
+            rows_updatable,
+            shared_context_updatable,
             component_state: CollectionGridState::Display,
         },
     );
@@ -169,19 +245,23 @@ where
     };
 
     let signal_state_change = move |new_state: CollectionGridState| {
+        match new_state {
+            CollectionGridState::Display => remove_from_active_count(),
+            _ => add_to_active_count(),
+        }
         if let Some(on_state_change) = on_state_change {
             on_state_change.update(|state| *state = new_state)
         }
     };
 
     let set_enabled = move || {
-        log!("Setting state back to display");
         cgc_data_signal.update(|cgc_data| cgc_data.component_state = CollectionGridState::Display);
         signal_state_change(CollectionGridState::Display);
     };
 
     let set_new_item_edit = move || {
-        log!("Setting state back to display");
+        row_stored_value.update_value(|row| *row = <T as CollectionGrid>::new());
+        active_key_stored_value.update_value(|active_key| *active_key = None);
         cgc_data_signal.update(|cgc_data| cgc_data.component_state = CollectionGridState::EditNew);
         signal_state_change(CollectionGridState::EditNew);
     };
@@ -212,17 +292,21 @@ where
         move || format!("grid-column-start: 1; grid-column-end: {grid_column_end}");
 
     // Reactive count of elements
-    let num_elements =
-        move || cgc_data_signal.with(|cgc_data| cgc_data.updatable.first_value.len());
+    let num_elements_tracked = move || {
+        let num_elements = row_count_signal.get();
+        num_elements
+    };
+
+    let num_elements_untracked = move || row_count_signal.get_untracked();
 
     // Get the key associated with the row index into the vec
     let nth_key = move |n: usize| {
         cgc_data_signal.with_untracked(|cgc_data| {
             cgc_data
-                .updatable
-                .first_value
+                .rows_updatable
+                .value
                 .get(n)
-                .map(|row| row.get_key().clone())
+                .map(|row| row.get_key())
         })
     };
 
@@ -231,6 +315,7 @@ where
 
     // Delete the entry corresponding to the key.
     let delete_by_key = move |key: &str| {
+        let rows_len = num_elements_untracked();
         // Reach into the map of signals to get the index of the corresponding entry
         if let Some(position) =
             signals.with_value(|signals| signals.get(key).cloned().map(|signal| signal.get()))
@@ -239,7 +324,7 @@ where
             // <For... component that is tracking `cgc_data`
             cgc_data_signal.update(|cgc_data| {
                 signals.update_value(|signals| {
-                    let rows = &mut cgc_data.updatable.first_value;
+                    let rows = &mut cgc_data.rows_updatable.value;
                     rows.remove(position);
                     let end = rows.len();
                     // After removing the row we need to iterate over all subsequent
@@ -251,8 +336,11 @@ where
                             row_signal.update_untracked(|index| *index = position + i);
                         }
                     }
+                    signals.remove(key);
                 });
+                cgc_data.rows_updatable.signal();
             });
+            row_count_signal.set(rows_len - 1);
         }
     };
 
@@ -292,7 +380,6 @@ where
         view! { cx,
             <button
                 on:click=move |_| {
-                    log!("Trashcan clicked!");
                     delete_by_key(&key);
                 }
 
@@ -311,95 +398,128 @@ where
         })
     };
 
-    let this_row_updated =
-        move |(row, shared_context, update_type): (&T, &S, crate::UpdatePairType)| {
-            if let Some(key_signal) = key_signal(&row.get_key()) {
-                let index = key_signal.get_untracked();
-                cgc_data_signal.update_untracked(|cgc_data| {
-                    cgc_data.updatable.update_and_then_signal(|(rows, shared)| {
-                        if let Some(row_) = rows.get_mut(index) {
-                            log!(
-                                "Collection grid updating row {index} -> `{}` with\n{row:?}",
-                                row.get_key()
-                            );
-                            *row_ = row.clone();
-                            update_type
-                        } else {
-                            UpdatePairType::UpdateNone
-                        }
-                    });
-                });
-                set_enabled();
-                key_signal.update(|i| log!("Signalling {i} for {row:?}"));
-            } else {
-                panic!("No signal for row `{}`", row.get_key());
-            }
-        };
-
-    let this_row_canceled = move |key: &str| {
-        set_enabled();
-        if let Some(signal) = key_signal(key) {
-            signal.update(|_| {});
-        }
-    };
-
     let row_cloned = move |key: &str| {
         cgc_data_signal.with_untracked(move |cgc_data| {
             cgc_data
-                .updatable
-                .first_value
+                .rows_updatable
+                .value
                 .get(index_by_key(&*key))
                 .cloned()
                 .unwrap()
         })
     };
 
-    let shared_context_cloned =
-        move || cgc_data_signal.with_untracked(|cgc_data| cgc_data.updatable.second_value.clone());
+    let on_ok_cancel = move |ok_cancel: OkCancel| {
+        if let Some(key) = active_key_stored_value.get_value() {
+            let key_signal = key_signal(&key).unwrap();
+
+            match ok_cancel {
+                OkCancel::Ok => {
+                    let index = key_signal.get_untracked();
+                    cgc_data_signal.update_untracked(|cgc_data| {
+                        cgc_data.rows_updatable.update_and_then_signal(|rows| {
+                            let updated_row = row_stored_value.get_value();
+                            if let Some(row_) = rows.get_mut(index) {
+                                log!("Updating row {index} from {row_:?}\nto\n{updated_row:?}",);
+                                *row_ = updated_row;
+                            } else {
+                                log!("UpdateNone!!");
+                            }
+                        });
+                    });
+                    set_enabled();
+                }
+                OkCancel::Cancel => {
+                    set_enabled();
+                }
+            }
+            key_signal.update(|i| log!("Signalling {i}"));
+        } else {
+            // Adding new entry
+            match ok_cancel {
+                OkCancel::Ok => {
+                    let row_count = row_count_signal.get();
+                    cgc_data_signal.update(|cgc_data| {
+                        cgc_data.rows_updatable.update_and_then_signal(|rows| {
+                            let new_row = row_stored_value.get_value();
+                            let key = new_row.get_key();
+                            rows.push(new_row);
+                            signals.update_value(|signals| {
+                                signals.insert(key, create_rw_signal(cx, rows.len() - 1));
+                            });
+                        });
+                    });
+                    row_count_signal.set(row_count + 1);
+                    set_enabled();
+                }
+                OkCancel::Cancel => {
+                    set_enabled();
+                }
+            }
+        }
+    };
+
+    let edit_row_view = move || {
+        view! { cx,
+            <div class="cgc-editable" style=editable_style>
+                {<T as CollectionGrid>::edit_row(
+                    cx,
+                    CollectionGridEditType::RowEdit,
+                    row_stored_value,
+                    shared_context_stored_value,
+                )}
+
+                <Show when=move || ok_cancel_enabled() fallback=|_| ()>
+                    <div class="ok-cancel-bar">
+                        <OkCancelComponent on_ok_cancel=on_ok_cancel/>
+                    </div>
+                </Show>
+            </div>
+        }
+        .into_view(cx)
+    };
 
     let show_row_editor = move |key: &str| {
         let key = key.to_string();
-        let edit_key = key.clone();
-        view! { cx,
-            <Show when=move || { is_this_row_edit(&key) } fallback=|_| ()>
-                <div class="cgc-editable" style=editable_style>
-                    {<T as CollectionGrid>::edit_element(
-                        cx,
-                        UpdatablePair::new(
-                            row_cloned(&edit_key),
-                            shared_context_cloned(),
-                            this_row_updated,
-                        ),
-                        this_row_canceled,
-                    )}
+        let this_row_edit = is_this_row_edit(&key);
+        if this_row_edit {
+            active_key_stored_value.update_value(|active_key| *active_key = Some(key.clone()));
+            let edit_key = key.clone();
+            // First get the row data and store
+            row_stored_value.update_value(|row| *row = row_cloned(&edit_key));
+        }
 
-                </div>
+        view! { cx,
+            <Show when=move || this_row_edit fallback=|_| ()>
+                {edit_row_view}
             </Show>
         }
     };
 
     let show_new_row_editor = move || {
         view! { cx,
-            <div
-                class="cgc-insert"
-                style=format!("grid-column-start: 2; grid-column-end: {};", grid_column_end)
-            ></div>
             <Show when=move || is_new_item_edit() fallback=|_| ()>
-                <div class="cgc-editable" style=editable_style>
-                    {<T as CollectionGrid>::edit_element(
-                        cx,
-                        UpdatablePair::new(
-                            <T as CollectionGrid>::new(),
-                            shared_context_cloned(),
-                            this_row_updated,
-                        ),
-                        this_row_canceled,
-                    )}
-
-                </div>
+                {edit_row_view}
             </Show>
         }
     };
+
+    // TRY TO REFACTOR TO FUNCTION
+    // fn get_row_fields<T>(row: &T) -> Vec<View> {
+    //     let mut user_fields = row.get_fields(cx);
+    //     for user_field in user_fields.iter() {
+    //         let inactive_edit_key = Rc::clone(&key);
+    //         if let Some(element) = user_field.as_element().cloned() {
+    //             let html_element = element.into_html_element(cx);
+    //             html_element.class("inactive-edit", move || {
+    //                 is_disabled() && !is_this_row_edit(&inactive_edit_key)
+    //             });
+    //         }
+    //     }
+    //     user_fields.insert(0, make_delete_button(&key));
+    //     user_fields.insert(0, make_edit_button(&key));
+    //     user_fields
+    // }
 
     view! { cx,
         <div
@@ -408,8 +528,9 @@ where
         >
             {header}
             <For
-                each=move || { 0..num_elements() }
+                each=move || { 0..num_elements_tracked() }
                 key=move |&i| { nth_key(i) }
+
                 view=move |cx, i| {
                     let key = Rc::new(nth_key(i).unwrap());
                     if let Some(key_signal) = key_signal(&key) {
@@ -422,33 +543,29 @@ where
                                         cgc_data_signal
                                             .with_untracked(move |cgc_data| {
                                                 let key = Rc::clone(&key);
-                                                if let Some(row) = cgc_data.updatable.first_value.get(index)
-                                                {
-                                                    let mut user_fields = row.get_fields(cx);
-                                                    for user_field in user_fields.iter() {
-                                                        let inactive_edit_key = Rc::clone(&key);
-                                                        if let Some(element) = user_field.as_element().cloned() {
-                                                            let html_element = element.into_html_element(cx);
-                                                            html_element
-                                                                .class(
-                                                                    "inactive-edit",
-                                                                    move || {
-                                                                        is_disabled() && !is_this_row_edit(&inactive_edit_key)
-                                                                    },
-                                                                );
-                                                        }
+                                                let row = cgc_data.rows_updatable.value.get(index).unwrap();
+                                                let mut user_fields = row.get_fields(cx);
+                                                for user_field in user_fields.iter() {
+                                                    let inactive_edit_key = Rc::clone(&key);
+                                                    if let Some(element) = user_field.as_element().cloned() {
+                                                        let html_element = element.into_html_element(cx);
+                                                        html_element
+                                                            .class(
+                                                                "inactive-edit",
+                                                                move || {
+                                                                    is_disabled() && !is_this_row_edit(&inactive_edit_key)
+                                                                },
+                                                            );
                                                     }
-                                                    user_fields.insert(0, make_delete_button(&key));
-                                                    user_fields.insert(0, make_edit_button(&key));
-
-                                                    view! { cx,
-                                                        {user_fields.into_view(cx)}
-                                                        {show_row_editor(&key)}
-                                                    }
-                                                        .into_view(cx)
-                                                } else {
-                                                    ().into_view(cx)
                                                 }
+                                                user_fields.insert(0, make_delete_button(&key));
+                                                user_fields.insert(0, make_edit_button(&key));
+
+                                                view! { cx,
+                                                    {user_fields.into_view(cx)}
+                                                    {show_row_editor(&key)}
+                                                }
+                                                    .into_view(cx)
                                             })
                                     })
                             }}
@@ -460,12 +577,11 @@ where
                 }
             />
 
-            <Show when=move || !is_new_item_edit() fallback=|_| ()>
+            <Show when=move || !is_disabled() fallback=|_| ()>
                 <button
                     class="cgc-add-row"
                     style=format!("grid-column-start: 0; grid-column-end: {grid_column_end};")
                     on:click=move |_| { set_new_item_edit() }
-                    disabled=move || is_disabled()
                 >
                     <strong>{add_item_label()}</strong>
                 </button>

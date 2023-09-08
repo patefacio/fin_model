@@ -41,15 +41,12 @@ pub fn GrowthAssumptionComponent(
     // α <fn growth_assumption_component>
 
     use crate::NormalSpecComponent;
-    use crate::RateCurveComponent;
-    use leptos::create_rw_signal;
+    use crate::OneOfComponent;
+    use crate::YearValueSeriesComponent;
     use leptos::store_value;
-    use leptos::IntoAttribute;
-    use leptos::Show;
-    use leptos::SignalGet;
-    use leptos::SignalUpdate;
+    use plus_modeled::RateCurve;
 
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[derive(Debug, Clone, Copy, PartialEq, EnumVariantNames, EnumIter)]
     enum GrowthType {
         UseNormal,
         UsePinned,
@@ -63,8 +60,6 @@ pub fn GrowthAssumptionComponent(
         // Prefer normal if neither set yet
         GrowthType::UseNormal
     };
-
-    let growth_type = create_rw_signal(cx, initial_growth_type);
 
     let updatable = store_value(cx, updatable);
 
@@ -82,80 +77,44 @@ pub fn GrowthAssumptionComponent(
                     .value
                     .pinned_growth
                     .as_ref()
-                    .cloned()
+                    .map(|rc| rc.curve.clone())
                     .unwrap_or_default()
             }),
             move |pinned| {
-                updatable
-                    .update_value(|updatable| updatable.value.pinned_growth = Some(pinned.clone()))
+                updatable.update_value(|updatable| {
+                    updatable.value.pinned_growth = Some(RateCurve {
+                        curve: pinned.clone(),
+                    })
+                })
             },
         )
     };
 
     let show_normal_spec = move || {
-        view! { cx,
-            <Show when=move || { growth_type.get() == GrowthType::UseNormal } fallback=|_| ()>
-                <NormalSpecComponent updatable=normal_spec_updatable()/>
-            </Show>
-        }
+        view! { cx, <NormalSpecComponent updatable=normal_spec_updatable()/> }.into_view(cx)
     };
 
     let show_pinned_curve = move || {
-        view! { cx,
-            <Show when=move || { growth_type.get() == GrowthType::UsePinned } fallback=|_| ()>
-                <RateCurveComponent updatable=rate_curve_updatable()/>
-            </Show>
-        }
+        view! { cx, <YearValueSeriesComponent updatable=rate_curve_updatable()/> }.into_view(cx)
+    };
+
+    let views = move |growth_type: &GrowthType| match growth_type {
+        GrowthType::UseNormal => show_normal_spec(),
+        GrowthType::UsePinned => show_pinned_curve(),
+    };
+
+    let label_maker = move |growth_type: &GrowthType| match growth_type {
+        GrowthType::UseNormal => String::from("Normal Spec"),
+        GrowthType::UsePinned => String::from("Fixed Rate Curve"),
     };
 
     view! { cx,
-        <fieldset style="margin: 0.5rem;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; margin: 3px">
-                <div style="margin-bottom: 0.3em;">
-                    // *NOTE* Putting <input> in <label> for better alignment
-                    // https:
-                    <label>
-                        <input
-                            style="vertical-align: baseline;"
-                            id="normal"
-                            on:click=move |_| {
-                                growth_type
-                                    .update(|growth_type| *growth_type = GrowthType::UseNormal)
-                            }
-
-                            name="override-select"
-                            type="radio"
-                            value="normal"
-                            checked=move || { growth_type.get() == GrowthType::UseNormal }
-                        />
-                        "Normal Spec"
-                    </label>
-                </div>
-                <div style="margin-bottom: 0.3em;">
-                    <label style="white-space: no-wrap">
-                        <input
-                            id="pinned"
-                            on:click=move |_| {
-                                growth_type
-                                    .update(|growth_type| *growth_type = GrowthType::UsePinned)
-                            }
-
-                            name="override-select"
-                            type="radio"
-                            value="pinned"
-                            checked=move || { growth_type.get() == GrowthType::UsePinned }
-                        />
-                        "Pinned Curve"
-                    </label>
-                </div>
-                <div style="grid-column-start: 1; grid-column-end: 3">
-                    {move || show_normal_spec()}
-                </div>
-                <div style="grid-column-start: 2; grid-column-end: 3">
-                    {move || show_pinned_curve()}
-                </div>
-            </div>
-        </fieldset>
+        <OneOfComponent
+            selection=initial_growth_type
+            name="system-growth".to_string()
+            views=views
+            labels=Some(label_maker)
+        />
     }
 
     // ω <fn growth_assumption_component>

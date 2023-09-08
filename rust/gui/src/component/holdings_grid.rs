@@ -4,12 +4,13 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::CollectionGrid;
+use crate::CollectionGridEditType;
 use crate::CollectionGridState;
 use crate::SymbolGrowthMap;
 use crate::Updatable;
-use crate::UpdatablePair;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::StoredValue;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
@@ -49,22 +50,17 @@ pub struct HoldingSharedContext {
 /// Display and edit support for list of holdings in an account
 ///
 ///   * **cx** - Context
-///   * **updatable_pair** - The account to edit with shared context
-///   * **on_state_change** - Enables parent to track state changes.
-/// For example, parent may want different behavior when editing an entry
-/// versus just displaying the rows.
+///   * **holdings_updatable** - Holdings to edit
+///   * **shared_context_updatable** - The shared context
 ///   * _return_ - View for holdings_grid
 #[component]
 pub fn HoldingsGrid(
     /// Context
     cx: Scope,
-    /// The account to edit with shared context
-    updatable_pair: UpdatablePair<Vec<Holding>, HoldingSharedContext>,
-    /// Enables parent to track state changes.
-    /// For example, parent may want different behavior when editing an entry
-    /// versus just displaying the rows.
-    #[prop(default=None)]
-    on_state_change: Option<WriteSignal<CollectionGridState>>,
+    /// Holdings to edit
+    holdings_updatable: Updatable<Vec<Holding>>,
+    /// The shared context
+    shared_context_updatable: Updatable<HoldingSharedContext>,
 ) -> impl IntoView {
     // α <fn holdings_grid>
 
@@ -77,9 +73,9 @@ pub fn HoldingsGrid(
                 "Unrealized (G/L)".to_string(),
             ]
 
-            updatable=updatable_pair
+            rows_updatable=holdings_updatable
+            shared_context_updatable=shared_context_updatable
             add_item_label="Add New Holding".to_string()
-            on_state_change=on_state_change
         />
     }
 
@@ -142,23 +138,23 @@ impl CollectionGrid for Holding {
         vec![
             view! { cx,
 
-                <div class="holding-header-cell"
+                <div class="cgc-header-cell"
                 style:text-align="right">{self.instrument_name.clone()}</div>
             }
             .into_view(cx),
             view! { cx,
-                <div class="holding-header-cell"
+                <div class="cgc-header-cell"
                 style:text-align="right">{market_value}</div>
             }
             .into_view(cx),
             view! { cx,
-                <div class="holding-header-cell"
+                <div class="cgc-header-cell"
                 style:text-align="right">{cost_basis}</div>
             }
             .into_view(cx),
             view! { cx,
                 <div
-                class="holding-header-cell"
+                class="cgc-header-cell"
                 style:text-align="right">{gain_loss}</div>
             }
             .into_view(cx),
@@ -185,40 +181,45 @@ impl CollectionGrid for Holding {
         // ω <fn CollectionGrid::new for Holding>
     }
 
-    /// Create a view to edit the element
+    /// Create a view to edit the row
     ///
     ///   * **cx** - Context
-    ///   * **updatable** - Updatable containing the element to edit.
-    /// This component will update the vector whenever the element is signaled
-    /// by finding the proper element in the vector and replacing it with the update.
-    ///   * **on_cancel** - Called if edit is canceled.
+    ///   * **edit_type** - Type of edit
+    ///   * **row_stored_value** - Row to edit.
+    ///   * **shared_context_stored_value** - Updatable containing the shared context.
     ///   * _return_ - The edit view
-    fn edit_element<F>(
+    fn edit_row(
         cx: Scope,
-        updatable: UpdatablePair<Self, Self::SharedContext>,
-        on_cancel: F,
-    ) -> View
-    where
-        F: 'static + FnMut(&str),
-    {
-        // α <fn CollectionGrid::edit_element for Holding>
+        edit_type: CollectionGridEditType,
+        row_stored_value: StoredValue<Self>,
+        shared_context_stored_value: StoredValue<Self::SharedContext>,
+    ) -> View {
+        // α <fn CollectionGrid::edit_row for Holding>
 
         use crate::HoldingComponent;
-        let key = updatable.first_value.get_key();
-        let mut on_cancel = on_cancel;
-        let on_cancel = move || {
-            on_cancel(&key);
-        };
 
-        leptos::log!(
-            "EDITING element -> `{:?}` with shared: -> {:?}",
-            updatable.first_value,
-            updatable.second_value
-        );
+        view! { cx,
+            <HoldingComponent
+                holding_stored_value=row_stored_value
+                shared_context_stored_value=shared_context_stored_value
+            />
+        }
 
-        view! { cx, <HoldingComponent updatable=updatable on_cancel=on_cancel/> }.into_view(cx)
+        // ω <fn CollectionGrid::edit_row for Holding>
+    }
 
-        // ω <fn CollectionGrid::edit_element for Holding>
+    /// Return true if row edit satisfies any shared context constraints
+    ///
+    ///   * **edited_row** - The edited row
+    ///   * **shared_context** - The current shared context
+    ///   * _return_ - An error message if not acceptable change, None otherwise
+    fn accept_row_edit(
+        edited_row: &Self,
+        shared_context: &mut Self::SharedContext,
+    ) -> Option<String> {
+        // α <fn CollectionGrid::accept_row_edit for Holding>
+        todo!("Implement `accept_row_edit`")
+        // ω <fn CollectionGrid::accept_row_edit for Holding>
     }
 }
 

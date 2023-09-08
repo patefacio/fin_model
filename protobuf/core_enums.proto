@@ -9,6 +9,26 @@ package core_enums;
 option java_package="plus_modeled";
 
 /*
+  Language selector for the i18n supported languages
+*/
+enum LangSelector {
+  /*
+    US English
+  */
+  US_ENGLISH = 0;
+  
+  /*
+    French
+  */
+  FRENCH = 1;
+  
+  /*
+    German
+  */
+  GERMAN = 2;
+}
+
+/*
   Enumerate the currencies supported.
 */
 enum Currency {
@@ -88,44 +108,44 @@ enum Currency {
 */
 enum AccountType {
   /*
-    An account not covered by other types.
-  */
-  OTHER_ACCOUNT_TYPE = 0;
-  
-  /*
     A tax sheltered account with funds whose taxes have been paid.
   */
-  ROTH_IRS_401_K = 1;
+  ROTH_IRS_401_K = 0;
   
   /*
     A tax sheltered account for funds taxed in retirement.
   */
-  TRADITIONAL_IRS_401_K = 2;
+  TRADITIONAL_IRS_401_K = 1;
   
   /*
     A tax sheltered account for qualified education expenses.
   */
-  COLLEGE_IRS_529 = 3;
+  COLLEGE_IRS_529 = 2;
   
   /*
     A tax sheltered account with funds taxed in retirement
   */
-  TRADITIONAL_IRA = 4;
+  TRADITIONAL_IRA = 3;
   
   /*
     An account whose investment returns are taxable.
   */
-  TAXABLE = 5;
+  TAXABLE = 4;
   
   /*
     An account that allow a relatively quick access to funds, including checking, savings.
   */
-  DEMAND = 6;
+  DEMAND = 5;
   
   /*
     A tax sheltered account for qualified medical expenses.
   */
-  HEALTH_SAVINGS_ACCOUNT = 7;
+  HEALTH_SAVINGS_ACCOUNT = 6;
+  
+  /*
+    An account not covered by other types.
+  */
+  OTHER_ACCOUNT_TYPE = 7;
 }
 
 /*
@@ -736,44 +756,54 @@ enum NamedRateCurve {
 */
 enum WorthType {
   /*
-    An _atypical_ worth not, represented by other categories.
-  */
-  OTHER_WORTH = 0;
-  
-  /*
     Any form of residential real estate.
   */
-  RESIDENTIAL_REAL_ESTATE = 1;
+  RESIDENTIAL_REAL_ESTATE = 0;
   
   /*
     Any form of commercial real estate.
   */
-  COMMERCIAL_REAL_ESTATE = 2;
+  COMMERCIAL_REAL_ESTATE = 1;
   
   /*
     Family Farm
   */
-  FAMILY_FARM = 3;
+  FAMILY_FARM = 2;
   
   /*
     A car, truck, etc
   */
-  AUTOMOBILE = 4;
+  AUTOMOBILE = 3;
   
   /*
     A car that is 20 years or older.
   */
-  CLASSIC_CAR = 5;
+  CLASSIC_CAR = 4;
   
   /*
     A car that is 45 years or older.
   */
-  ANTIQUE_CAR = 6;
+  ANTIQUE_CAR = 5;
   
   /*
     A car built between 1919 and 1930.
   */
-  VINTAGE_CAR = 7;
+  VINTAGE_CAR = 6;
+  
+  /*
+    A boat
+  */
+  BOAT = 7;
+  
+  /*
+    Toys
+  */
+  TOYS = 8;
+  
+  /*
+    An _atypical_ worth not, represented by other categories.
+  */
+  OTHER_WORTH = 9;
 }
 
 /*
@@ -781,74 +811,69 @@ enum WorthType {
 */
 enum HoldingType {
   /*
-    An instrument not represented by other categories.
-  */
-  OTHER_INSTRUMENT = 0;
-  
-  /*
     A sample instrument from the US equity market.
   */
-  US_EQUITY_SAMPLE = 1;
+  US_EQUITY_SAMPLE = 0;
   
   /*
     Well diversified instrument representing US equities, including large, small, mid caps.
   */
-  US_EQUITY_MARKET = 2;
+  US_EQUITY_MARKET = 1;
   
   /*
     US Large cap equity market
   */
-  US_LARGE_EQUITY_MARKET = 3;
+  US_LARGE_EQUITY_MARKET = 2;
   
   /*
     Individual equity from us large cap equity market.
   */
-  US_LARGE_EQUITY_SAMPLE = 4;
+  US_LARGE_EQUITY_SAMPLE = 3;
   
   /*
     Sample small cap US equity
   */
-  US_SMALL_EQUITY_MARKET = 5;
+  US_SMALL_EQUITY_MARKET = 4;
   
   /*
     Sample from US small cap equities.
   */
-  US_SMALL_EQUITY_SAMPLE = 6;
+  US_SMALL_EQUITY_SAMPLE = 5;
   
   /*
     ETF or similar diversified instrument representing US mid-caps (e.g. `Vanguard Mid-Cap - VO`).
   */
-  US_MID_EQUITY_MARKET = 7;
+  US_MID_EQUITY_MARKET = 6;
   
   /*
     Sample from US midcaps.
   */
-  US_MID_EQUITY_SAMPLE = 8;
+  US_MID_EQUITY_SAMPLE = 7;
   
   /*
     ETF or similar diversified instrument representing emerging markets (e.g. iShares MSCI Emerging Markets - `EEM`)
   */
-  EMERGING_EQUITY_MARKET = 9;
+  EMERGING_EQUITY_MARKET = 8;
   
   /*
     A single instrument from the emerging markets category of stocks.
   */
-  EMERGING_EQUITY_MARKET_SAMPLE = 10;
+  EMERGING_EQUITY_MARKET_SAMPLE = 9;
   
   /*
     Gold as an investment, physical or ETF
   */
-  GOLD = 11;
+  GOLD = 10;
   
   /*
     Treasury Inflation Protected Securities
   */
-  TIPS = 12;
+  TIPS = 11;
   
   /*
     Investments in real estate.
   */
-  REAL_ESTATE = 13;
+  REAL_ESTATE = 12;
   
   /*
     Developed Markets - proxied by `VTMGX`
@@ -862,62 +887,67 @@ enum HoldingType {
     characteristics. Vanguard’s refined indexing process, combined with low management fees and efficient 
     trading, has provided tight tracking net of expenses.
   */
-  DEVELOPED_MARKETS = 14;
+  DEVELOPED_MARKETS = 13;
   
   /*
     An instrument in the _developed markets_ domain.
   */
-  DEVELOPED_MARKETS_SAMPLE = 15;
+  DEVELOPED_MARKETS_SAMPLE = 14;
   
   /*
     US High Yield Bonds
   */
-  US_HIGH_YIELD_BONDS = 16;
+  US_HIGH_YIELD_BONDS = 15;
   
   /*
     Commodities
   */
-  COMMODITIES = 17;
+  COMMODITIES = 16;
   
   /*
     Long term treasury average maturity of 15–30 years - proxied by `VUSUX`.
   */
-  US_LONG_TERM_TREASURY = 18;
+  US_LONG_TERM_TREASURY = 17;
   
   /*
     Intermediate term treasury average maturity of 1-10 years - proxied by `VSIGX`.
   */
-  US_INTERMEDIATE_TERM_TREASURY = 19;
+  US_INTERMEDIATE_TERM_TREASURY = 18;
   
   /*
     Short term treasury average maturity of 1-4 years - proxied by `VFIRX`.
   */
-  US_SHORT_TERM_TREASURY = 20;
+  US_SHORT_TERM_TREASURY = 19;
   
   /*
     Short duration corporate bonds - proxied by `VCSH` 
   */
-  US_SHORT_TERM_CORPORATE_BOND = 21;
+  US_SHORT_TERM_CORPORATE_BOND = 20;
   
   /*
     Long term corporate bonds - proxied by `VCLT`
   */
-  US_LONG_TERM_CORPORATE_BOND = 22;
+  US_LONG_TERM_CORPORATE_BOND = 21;
   
   /*
     Money market fund - proxied by `VMFXX`
   */
-  US_MONEY_MARKET = 23;
+  US_MONEY_MARKET = 22;
   
   /*
     International bonds - proxied by `VTABX`.
   */
-  INTERNATIONAL_BONDS = 24;
+  INTERNATIONAL_BONDS = 23;
   
   /*
     Basic CD - typical cash instrument
   */
-  CERTIFICATE_OF_DEPOSIT = 25;
+  CERTIFICATE_OF_DEPOSIT = 24;
+  
+  /*
+    An instrument not represented by other categories.
+  */
+  OTHER_INSTRUMENT = 25;
 }
 
 /*
@@ -925,69 +955,59 @@ enum HoldingType {
 */
 enum FlowType {
   /*
-    An _atypical_ in flow not represented by other categories
-  */
-  OTHER_IN_FLOW = 0;
-  
-  /*
-    An _atypical_ out flow not represented by other categories
-  */
-  OTHER_OUT_FLOW = 1;
-  
-  /*
     Money earned from a job - wages, salaries, tips etc
   */
-  EARNED_INCOME = 2;
+  EARNED_INCOME = 0;
   
   /*
     Money from pension
   */
-  PENSION_INCOME = 3;
+  PENSION_INCOME = 1;
   
   /*
     Money from social security
   */
-  SOCIAL_SECURITY_INCOME = 4;
+  SOCIAL_SECURITY_INCOME = 2;
   
   /*
     Money from rental properties - passive income
   */
-  RENTAL_INCOME = 5;
+  RENTAL_INCOME = 3;
   
   /*
     Money from royalties such as music, books, manuscripts, computer software, or a patent
   */
-  ROYALTY_INCOME = 6;
+  ROYALTY_INCOME = 4;
   
   /*
     Money from internet advertising - passive income
   */
-  INTERNET_ADVERTISING_INCOME = 7;
+  INTERNET_ADVERTISING_INCOME = 5;
   
   /*
     Money from business you are not actively involved in - passive income
   */
-  PASSIVE_BUSINESS_INCOME = 8;
+  PASSIVE_BUSINESS_INCOME = 6;
   
   /*
     Money classified as ordinary income for tax purposes
   */
-  ORDINARY_INCOME = 9;
+  ORDINARY_INCOME = 7;
   
   /*
     General cost of living
   */
-  LIVING_EXPENSE = 10;
+  LIVING_EXPENSE = 8;
   
   /*
     Costs associated with health care
   */
-  HEALTH_CARE_EXPENSE = 11;
+  HEALTH_CARE_EXPENSE = 9;
   
   /*
     Cost of college which historically has grown faster than inflation
   */
-  COLLEGE_EXPENSE = 12;
+  COLLEGE_EXPENSE = 10;
   
   /*
     Property taxes, which may be deductible.
@@ -998,7 +1018,7 @@ enum FlowType {
     
     The limit is scheduled to last through the 2025 tax year, unless Congress extends it.
   */
-  PROPERTY_TAXES = 13;
+  PROPERTY_TAXES = 11;
   
   /*
     Mortgage interest, which may be deductible.
@@ -1007,14 +1027,14 @@ enum FlowType {
     on up to $750,000 ($375,000 for married-filing-separately taxpayers) of mortgage debt incurred 
     after Dec. 15, 2017.
   */
-  MORTGAGE_INTEREST = 14;
+  MORTGAGE_INTEREST = 12;
   
   /*
     State taxes paid, which may be deductible.
     you can deduct state income taxes that are paid, but the write-off is limited to up to $10,000, 
     which includes all deductible state and local taxes.
   */
-  STATE_TAXES_PAID = 15;
+  STATE_TAXES_PAID = 13;
   
   /*
     Charitable donations, which may be deductible.
@@ -1022,7 +1042,7 @@ enum FlowType {
     Generally, you can deduct charitable contributions of cash totaling up to 60% of your adjusted gross income,
     or AGI. Donations of items or property also are considered deductible charitable contributions.
   */
-  CHARITABLE_DONATIONS = 16;
+  CHARITABLE_DONATIONS = 14;
   
   /*
     Medical expenses, which may be deductible.
@@ -1037,7 +1057,7 @@ enum FlowType {
     18 cents a mile for travel you made for medical purposes through June 2022. The amount has increased to 22 
     cents a mile from July 1, 2022, through the end of the year.
   */
-  MEDICAL_EXPENSES = 17;
+  MEDICAL_EXPENSES = 15;
   
   /*
     Retirement credits, which may be deductible.
@@ -1050,7 +1070,7 @@ enum FlowType {
     jointly), making the maximum possible credit $1,000 ($2,000 if married filing jointly). The IRS has 
     a chart to help calculate your credit.
   */
-  RETIREMENT_CREDITS = 18;
+  RETIREMENT_CREDITS = 16;
   
   /*
     IRA contributions, which may be deductible.
@@ -1058,5 +1078,15 @@ enum FlowType {
     The maximum contribution for 2022 in a traditional or Roth IRA is $6,000, plus another $1,000 for 
     people who are 50 years old or more. Your contributions to a traditional IRA are tax-deductible.
   */
-  IRA_CONTRIBUTIONS = 19;
+  IRA_CONTRIBUTIONS = 17;
+  
+  /*
+    An _atypical_ in flow not represented by other categories
+  */
+  OTHER_IN_FLOW = 18;
+  
+  /*
+    An _atypical_ out flow not represented by other categories
+  */
+  OTHER_OUT_FLOW = 19;
 }

@@ -1,0 +1,13 @@
+person_type = Person Type
+    .primary_owner = Propriétaire Principal
+    .secondary_owner = Propriétaire Secondaire
+    .dependent = Dépendant
+account_type = Account Type
+    .roth_irs_401_k = Roth 401 K
+    .traditional_irs_401_k = Traditional 401 K
+    .college_irs_529 = Collège 529
+    .traditional_ira = Traditional Ira
+    .taxable = Imposable
+    .demand = Compte à vue
+    .health_savings_account = Compte D'épargne Santé
+    .other_account_type = Other Account Type    

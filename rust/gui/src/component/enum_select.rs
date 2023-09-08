@@ -10,6 +10,7 @@ use leptos::log;
 use leptos::{component, view, IntoView, Scope};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use std::boxed::Box;
 use std::cmp::PartialEq;
 use std::fmt::Debug;
 use strum::{IntoEnumIterator, VariantNames};
@@ -33,6 +34,8 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * **updatable** - Value of enum that will be changed on selection.
 ///   * **column_count** - Number of columns to display in the grid of options.
 ///   * **direction** - Specifies whether items flows from top to bottom or left to right.
+///   * **filter** - Filter on enum variants
+///   * **label** - Convert enum type to label - for when VariantNames does not cut it
 ///   * _return_ - View for enum_select
 #[component]
 pub fn EnumSelect<E>(
@@ -46,33 +49,69 @@ pub fn EnumSelect<E>(
     /// Specifies whether items flows from top to bottom or left to right.
     #[prop(default=SelectDirection::LeftToRight)]
     direction: SelectDirection,
+    /// Filter on enum variants
+    #[prop(default=None)]
+    filter: Option<Box<dyn Fn(&E) -> bool>>,
+    /// Convert enum type to label - for when VariantNames does not cut it
+    #[prop(default=None)]
+    label: Option<Box<dyn Fn(&E) -> String>>,
 ) -> impl IntoView
 where
-    E: Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
+    E: Clone + Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
 {
     // α <fn enum_select>
 
     use crate::{InitialValue, MultiColumnSelect, SelectOption};
 
-    // Iterate over enum variants to find the index of the initial value
-    let (initial_index, _) = E::iter()
+    let filter_set: Vec<_> = E::iter()
         .enumerate()
-        .find(|(_, variant)| *variant == updatable.value)
-        .unwrap();
-
-    let stored_updatable = leptos::store_value(cx, updatable);
-
-    let options: Vec<_> = E::VARIANTS
-        .iter()
-        .map(|variant| SelectOption::Label(variant.to_string()))
+        .filter_map(|(i, e)| {
+            let included = filter.as_ref().map(|filter| filter(&e)).unwrap_or(true);
+            if included {
+                Some((
+                    e.clone(),
+                    if let Some(label) = label.as_ref() {
+                        label(&e)
+                    } else {
+                        E::VARIANTS[i].to_string()
+                    },
+                ))
+            } else {
+                None
+            }
+        })
         .collect();
 
+    // Iterate over enum variants to find the index of the initial value
+    let initial_index = filter_set
+        .iter()
+        .position(|(e, _label)| *e == updatable.value)
+        .unwrap_or_default();
+
+    let options: Vec<_> = filter_set
+        .iter()
+        .map(|(_e, label)| SelectOption::Label(label.to_string()))
+        .collect();
+
+    struct ESData<E> {
+        updatable: Updatable<E>,
+        filter_set: Vec<(E, String)>,
+    }
+
+    let es_data_stored_value = leptos::store_value(
+        cx,
+        ESData {
+            updatable,
+            filter_set,
+        },
+    );
+
     let menu_select = move |value: String| {
-        stored_updatable.update_value(|updatable| {
-            updatable.update_and_then_signal(|selection| {
-                for (i, e) in E::iter().enumerate() {
-                    if E::VARIANTS[i] == value {
-                        *selection = e;
+        es_data_stored_value.update_value(|es_data| {
+            es_data.updatable.update_and_then_signal(|selection| {
+                for (e, label) in es_data.filter_set.iter() {
+                    if *label == value {
+                        *selection = e.clone();
                         break;
                     }
                 }

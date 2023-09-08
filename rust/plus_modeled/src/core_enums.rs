@@ -1,4 +1,42 @@
 ///
+/// Language selector for the i18n supported languages
+#[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum LangSelector {
+    ///
+    /// US English
+    UsEnglish = 0,
+    ///
+    /// French
+    French = 1,
+    ///
+    /// German
+    German = 2,
+}
+impl LangSelector {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            LangSelector::UsEnglish => "US_ENGLISH",
+            LangSelector::French => "FRENCH",
+            LangSelector::German => "GERMAN",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "US_ENGLISH" => Some(Self::UsEnglish),
+            "FRENCH" => Some(Self::French),
+            "GERMAN" => Some(Self::German),
+            _ => None,
+        }
+    }
+}
+///
 /// Enumerate the currencies supported.
 #[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -98,29 +136,29 @@ impl Currency {
 #[repr(i32)]
 pub enum AccountType {
     ///
-    /// An account not covered by other types.
-    OtherAccountType = 0,
-    ///
     /// A tax sheltered account with funds whose taxes have been paid.
-    RothIrs401K = 1,
+    RothIrs401K = 0,
     ///
     /// A tax sheltered account for funds taxed in retirement.
-    TraditionalIrs401K = 2,
+    TraditionalIrs401K = 1,
     ///
     /// A tax sheltered account for qualified education expenses.
-    CollegeIrs529 = 3,
+    CollegeIrs529 = 2,
     ///
     /// A tax sheltered account with funds taxed in retirement
-    TraditionalIra = 4,
+    TraditionalIra = 3,
     ///
     /// An account whose investment returns are taxable.
-    Taxable = 5,
+    Taxable = 4,
     ///
     /// An account that allow a relatively quick access to funds, including checking, savings.
-    Demand = 6,
+    Demand = 5,
     ///
     /// A tax sheltered account for qualified medical expenses.
-    HealthSavingsAccount = 7,
+    HealthSavingsAccount = 6,
+    ///
+    /// An account not covered by other types.
+    OtherAccountType = 7,
 }
 impl AccountType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -129,7 +167,6 @@ impl AccountType {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            AccountType::OtherAccountType => "OTHER_ACCOUNT_TYPE",
             AccountType::RothIrs401K => "ROTH_IRS_401_K",
             AccountType::TraditionalIrs401K => "TRADITIONAL_IRS_401_K",
             AccountType::CollegeIrs529 => "COLLEGE_IRS_529",
@@ -137,12 +174,12 @@ impl AccountType {
             AccountType::Taxable => "TAXABLE",
             AccountType::Demand => "DEMAND",
             AccountType::HealthSavingsAccount => "HEALTH_SAVINGS_ACCOUNT",
+            AccountType::OtherAccountType => "OTHER_ACCOUNT_TYPE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "OTHER_ACCOUNT_TYPE" => Some(Self::OtherAccountType),
             "ROTH_IRS_401_K" => Some(Self::RothIrs401K),
             "TRADITIONAL_IRS_401_K" => Some(Self::TraditionalIrs401K),
             "COLLEGE_IRS_529" => Some(Self::CollegeIrs529),
@@ -150,6 +187,7 @@ impl AccountType {
             "TAXABLE" => Some(Self::Taxable),
             "DEMAND" => Some(Self::Demand),
             "HEALTH_SAVINGS_ACCOUNT" => Some(Self::HealthSavingsAccount),
+            "OTHER_ACCOUNT_TYPE" => Some(Self::OtherAccountType),
             _ => None,
         }
     }
@@ -1036,29 +1074,35 @@ impl NamedRateCurve {
 #[repr(i32)]
 pub enum WorthType {
     ///
-    /// An _atypical_ worth not, represented by other categories.
-    OtherWorth = 0,
-    ///
     /// Any form of residential real estate.
-    ResidentialRealEstate = 1,
+    ResidentialRealEstate = 0,
     ///
     /// Any form of commercial real estate.
-    CommercialRealEstate = 2,
+    CommercialRealEstate = 1,
     ///
     /// Family Farm
-    FamilyFarm = 3,
+    FamilyFarm = 2,
     ///
     /// A car, truck, etc
-    Automobile = 4,
+    Automobile = 3,
     ///
     /// A car that is 20 years or older.
-    ClassicCar = 5,
+    ClassicCar = 4,
     ///
     /// A car that is 45 years or older.
-    AntiqueCar = 6,
+    AntiqueCar = 5,
     ///
     /// A car built between 1919 and 1930.
-    VintageCar = 7,
+    VintageCar = 6,
+    ///
+    /// A boat
+    Boat = 7,
+    ///
+    /// Toys
+    Toys = 8,
+    ///
+    /// An _atypical_ worth not, represented by other categories.
+    OtherWorth = 9,
 }
 impl WorthType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1067,7 +1111,6 @@ impl WorthType {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            WorthType::OtherWorth => "OTHER_WORTH",
             WorthType::ResidentialRealEstate => "RESIDENTIAL_REAL_ESTATE",
             WorthType::CommercialRealEstate => "COMMERCIAL_REAL_ESTATE",
             WorthType::FamilyFarm => "FAMILY_FARM",
@@ -1075,12 +1118,14 @@ impl WorthType {
             WorthType::ClassicCar => "CLASSIC_CAR",
             WorthType::AntiqueCar => "ANTIQUE_CAR",
             WorthType::VintageCar => "VINTAGE_CAR",
+            WorthType::Boat => "BOAT",
+            WorthType::Toys => "TOYS",
+            WorthType::OtherWorth => "OTHER_WORTH",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "OTHER_WORTH" => Some(Self::OtherWorth),
             "RESIDENTIAL_REAL_ESTATE" => Some(Self::ResidentialRealEstate),
             "COMMERCIAL_REAL_ESTATE" => Some(Self::CommercialRealEstate),
             "FAMILY_FARM" => Some(Self::FamilyFarm),
@@ -1088,6 +1133,9 @@ impl WorthType {
             "CLASSIC_CAR" => Some(Self::ClassicCar),
             "ANTIQUE_CAR" => Some(Self::AntiqueCar),
             "VINTAGE_CAR" => Some(Self::VintageCar),
+            "BOAT" => Some(Self::Boat),
+            "TOYS" => Some(Self::Toys),
+            "OTHER_WORTH" => Some(Self::OtherWorth),
             _ => None,
         }
     }
@@ -1099,47 +1147,44 @@ impl WorthType {
 #[repr(i32)]
 pub enum HoldingType {
     ///
-    /// An instrument not represented by other categories.
-    OtherInstrument = 0,
-    ///
     /// A sample instrument from the US equity market.
-    UsEquitySample = 1,
+    UsEquitySample = 0,
     ///
     /// Well diversified instrument representing US equities, including large, small, mid caps.
-    UsEquityMarket = 2,
+    UsEquityMarket = 1,
     ///
     /// US Large cap equity market
-    UsLargeEquityMarket = 3,
+    UsLargeEquityMarket = 2,
     ///
     /// Individual equity from us large cap equity market.
-    UsLargeEquitySample = 4,
+    UsLargeEquitySample = 3,
     ///
     /// Sample small cap US equity
-    UsSmallEquityMarket = 5,
+    UsSmallEquityMarket = 4,
     ///
     /// Sample from US small cap equities.
-    UsSmallEquitySample = 6,
+    UsSmallEquitySample = 5,
     ///
     /// ETF or similar diversified instrument representing US mid-caps (e.g. `Vanguard Mid-Cap - VO`).
-    UsMidEquityMarket = 7,
+    UsMidEquityMarket = 6,
     ///
     /// Sample from US midcaps.
-    UsMidEquitySample = 8,
+    UsMidEquitySample = 7,
     ///
     /// ETF or similar diversified instrument representing emerging markets (e.g. iShares MSCI Emerging Markets - `EEM`)
-    EmergingEquityMarket = 9,
+    EmergingEquityMarket = 8,
     ///
     /// A single instrument from the emerging markets category of stocks.
-    EmergingEquityMarketSample = 10,
+    EmergingEquityMarketSample = 9,
     ///
     /// Gold as an investment, physical or ETF
-    Gold = 11,
+    Gold = 10,
     ///
     /// Treasury Inflation Protected Securities
-    Tips = 12,
+    Tips = 11,
     ///
     /// Investments in real estate.
-    RealEstate = 13,
+    RealEstate = 12,
     ///
     /// Developed Markets - proxied by `VTMGX`
     /// Vanguard Developed Markets Index Fund seeks to track the performance of the FTSE Developed All Cap ex
@@ -1151,40 +1196,43 @@ pub enum HoldingType {
     /// implement trading decisions that accommodate cash flows and maintain close correlation with index
     /// characteristics. Vanguard’s refined indexing process, combined with low management fees and efficient
     /// trading, has provided tight tracking net of expenses.
-    DevelopedMarkets = 14,
+    DevelopedMarkets = 13,
     ///
     /// An instrument in the _developed markets_ domain.
-    DevelopedMarketsSample = 15,
+    DevelopedMarketsSample = 14,
     ///
     /// US High Yield Bonds
-    UsHighYieldBonds = 16,
+    UsHighYieldBonds = 15,
     ///
     /// Commodities
-    Commodities = 17,
+    Commodities = 16,
     ///
     /// Long term treasury average maturity of 15–30 years - proxied by `VUSUX`.
-    UsLongTermTreasury = 18,
+    UsLongTermTreasury = 17,
     ///
     /// Intermediate term treasury average maturity of 1-10 years - proxied by `VSIGX`.
-    UsIntermediateTermTreasury = 19,
+    UsIntermediateTermTreasury = 18,
     ///
     /// Short term treasury average maturity of 1-4 years - proxied by `VFIRX`.
-    UsShortTermTreasury = 20,
+    UsShortTermTreasury = 19,
     ///
     /// Short duration corporate bonds - proxied by `VCSH`
-    UsShortTermCorporateBond = 21,
+    UsShortTermCorporateBond = 20,
     ///
     /// Long term corporate bonds - proxied by `VCLT`
-    UsLongTermCorporateBond = 22,
+    UsLongTermCorporateBond = 21,
     ///
     /// Money market fund - proxied by `VMFXX`
-    UsMoneyMarket = 23,
+    UsMoneyMarket = 22,
     ///
     /// International bonds - proxied by `VTABX`.
-    InternationalBonds = 24,
+    InternationalBonds = 23,
     ///
     /// Basic CD - typical cash instrument
-    CertificateOfDeposit = 25,
+    CertificateOfDeposit = 24,
+    ///
+    /// An instrument not represented by other categories.
+    OtherInstrument = 25,
 }
 impl HoldingType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1193,7 +1241,6 @@ impl HoldingType {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            HoldingType::OtherInstrument => "OTHER_INSTRUMENT",
             HoldingType::UsEquitySample => "US_EQUITY_SAMPLE",
             HoldingType::UsEquityMarket => "US_EQUITY_MARKET",
             HoldingType::UsLargeEquityMarket => "US_LARGE_EQUITY_MARKET",
@@ -1219,12 +1266,12 @@ impl HoldingType {
             HoldingType::UsMoneyMarket => "US_MONEY_MARKET",
             HoldingType::InternationalBonds => "INTERNATIONAL_BONDS",
             HoldingType::CertificateOfDeposit => "CERTIFICATE_OF_DEPOSIT",
+            HoldingType::OtherInstrument => "OTHER_INSTRUMENT",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "OTHER_INSTRUMENT" => Some(Self::OtherInstrument),
             "US_EQUITY_SAMPLE" => Some(Self::UsEquitySample),
             "US_EQUITY_MARKET" => Some(Self::UsEquityMarket),
             "US_LARGE_EQUITY_MARKET" => Some(Self::UsLargeEquityMarket),
@@ -1250,6 +1297,7 @@ impl HoldingType {
             "US_MONEY_MARKET" => Some(Self::UsMoneyMarket),
             "INTERNATIONAL_BONDS" => Some(Self::InternationalBonds),
             "CERTIFICATE_OF_DEPOSIT" => Some(Self::CertificateOfDeposit),
+            "OTHER_INSTRUMENT" => Some(Self::OtherInstrument),
             _ => None,
         }
     }
@@ -1261,44 +1309,38 @@ impl HoldingType {
 #[repr(i32)]
 pub enum FlowType {
     ///
-    /// An _atypical_ in flow not represented by other categories
-    OtherInFlow = 0,
-    ///
-    /// An _atypical_ out flow not represented by other categories
-    OtherOutFlow = 1,
-    ///
     /// Money earned from a job - wages, salaries, tips etc
-    EarnedIncome = 2,
+    EarnedIncome = 0,
     ///
     /// Money from pension
-    PensionIncome = 3,
+    PensionIncome = 1,
     ///
     /// Money from social security
-    SocialSecurityIncome = 4,
+    SocialSecurityIncome = 2,
     ///
     /// Money from rental properties - passive income
-    RentalIncome = 5,
+    RentalIncome = 3,
     ///
     /// Money from royalties such as music, books, manuscripts, computer software, or a patent
-    RoyaltyIncome = 6,
+    RoyaltyIncome = 4,
     ///
     /// Money from internet advertising - passive income
-    InternetAdvertisingIncome = 7,
+    InternetAdvertisingIncome = 5,
     ///
     /// Money from business you are not actively involved in - passive income
-    PassiveBusinessIncome = 8,
+    PassiveBusinessIncome = 6,
     ///
     /// Money classified as ordinary income for tax purposes
-    OrdinaryIncome = 9,
+    OrdinaryIncome = 7,
     ///
     /// General cost of living
-    LivingExpense = 10,
+    LivingExpense = 8,
     ///
     /// Costs associated with health care
-    HealthCareExpense = 11,
+    HealthCareExpense = 9,
     ///
     /// Cost of college which historically has grown faster than inflation
-    CollegeExpense = 12,
+    CollegeExpense = 10,
     ///
     /// Property taxes, which may be deductible.
     /// Property taxes may be deductible if you itemize, but a limit comes into play.
@@ -1307,25 +1349,25 @@ pub enum FlowType {
     /// (SALT), including property taxes, are capped at $10,000.
     ///
     /// The limit is scheduled to last through the 2025 tax year, unless Congress extends it.
-    PropertyTaxes = 13,
+    PropertyTaxes = 11,
     ///
     /// Mortgage interest, which may be deductible.
     /// From [_Forbe's_ article](<https://www.forbes.com/advisor/taxes/tax-write-offs-you-can-claim-on-your-taxes/>)
     /// The interest you pay for your mortgage can be deducted from your taxes. The write-off is limited to interest
     /// on up to $750,000 ($375,000 for married-filing-separately taxpayers) of mortgage debt incurred
     /// after Dec. 15, 2017.
-    MortgageInterest = 14,
+    MortgageInterest = 12,
     ///
     /// State taxes paid, which may be deductible.
     /// you can deduct state income taxes that are paid, but the write-off is limited to up to $10,000,
     /// which includes all deductible state and local taxes.
-    StateTaxesPaid = 15,
+    StateTaxesPaid = 13,
     ///
     /// Charitable donations, which may be deductible.
     /// From [_Forbe's_ article](<https://www.forbes.com/advisor/taxes/tax-write-offs-you-can-claim-on-your-taxes/>)
     /// Generally, you can deduct charitable contributions of cash totaling up to 60% of your adjusted gross income,
     /// or AGI. Donations of items or property also are considered deductible charitable contributions.
-    CharitableDonations = 16,
+    CharitableDonations = 14,
     ///
     /// Medical expenses, which may be deductible.
     /// From [_Forbe's_ article](<https://www.forbes.com/advisor/taxes/tax-write-offs-you-can-claim-on-your-taxes/>)
@@ -1338,7 +1380,7 @@ pub enum FlowType {
     /// Trips to your doctor’s office or hospital appointments qualify for medical mileage. For 2022, you can deduct
     /// 18 cents a mile for travel you made for medical purposes through June 2022. The amount has increased to 22
     /// cents a mile from July 1, 2022, through the end of the year.
-    MedicalExpenses = 17,
+    MedicalExpenses = 15,
     ///
     /// Retirement credits, which may be deductible.
     /// From [_Forbe's_ article](<https://www.forbes.com/advisor/taxes/tax-write-offs-you-can-claim-on-your-taxes/>)
@@ -1349,13 +1391,19 @@ pub enum FlowType {
     /// The maximum contribution amount that qualifies for the credit is $2,000 ($4,000 if married filing
     /// jointly), making the maximum possible credit $1,000 ($2,000 if married filing jointly). The IRS has
     /// a chart to help calculate your credit.
-    RetirementCredits = 18,
+    RetirementCredits = 16,
     ///
     /// IRA contributions, which may be deductible.
     /// From [_Forbe's_ article](<https://www.forbes.com/advisor/taxes/tax-write-offs-you-can-claim-on-your-taxes/>)
     /// The maximum contribution for 2022 in a traditional or Roth IRA is $6,000, plus another $1,000 for
     /// people who are 50 years old or more. Your contributions to a traditional IRA are tax-deductible.
-    IraContributions = 19,
+    IraContributions = 17,
+    ///
+    /// An _atypical_ in flow not represented by other categories
+    OtherInFlow = 18,
+    ///
+    /// An _atypical_ out flow not represented by other categories
+    OtherOutFlow = 19,
 }
 impl FlowType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1364,8 +1412,6 @@ impl FlowType {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            FlowType::OtherInFlow => "OTHER_IN_FLOW",
-            FlowType::OtherOutFlow => "OTHER_OUT_FLOW",
             FlowType::EarnedIncome => "EARNED_INCOME",
             FlowType::PensionIncome => "PENSION_INCOME",
             FlowType::SocialSecurityIncome => "SOCIAL_SECURITY_INCOME",
@@ -1384,13 +1430,13 @@ impl FlowType {
             FlowType::MedicalExpenses => "MEDICAL_EXPENSES",
             FlowType::RetirementCredits => "RETIREMENT_CREDITS",
             FlowType::IraContributions => "IRA_CONTRIBUTIONS",
+            FlowType::OtherInFlow => "OTHER_IN_FLOW",
+            FlowType::OtherOutFlow => "OTHER_OUT_FLOW",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "OTHER_IN_FLOW" => Some(Self::OtherInFlow),
-            "OTHER_OUT_FLOW" => Some(Self::OtherOutFlow),
             "EARNED_INCOME" => Some(Self::EarnedIncome),
             "PENSION_INCOME" => Some(Self::PensionIncome),
             "SOCIAL_SECURITY_INCOME" => Some(Self::SocialSecurityIncome),
@@ -1409,6 +1455,8 @@ impl FlowType {
             "MEDICAL_EXPENSES" => Some(Self::MedicalExpenses),
             "RETIREMENT_CREDITS" => Some(Self::RetirementCredits),
             "IRA_CONTRIBUTIONS" => Some(Self::IraContributions),
+            "OTHER_IN_FLOW" => Some(Self::OtherInFlow),
+            "OTHER_OUT_FLOW" => Some(Self::OtherOutFlow),
             _ => None,
         }
     }

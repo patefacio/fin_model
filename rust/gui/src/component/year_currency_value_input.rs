@@ -51,8 +51,13 @@ pub fn YearCurrencyValueInput(
     use leptos::MaybeSignal;
     use leptos::SignalUpdate;
     use plus_modeled::Currency;
+    use plus_utils::this_year;
 
-    let initial_year = updatable.value.as_ref().map(|ycv| ycv.year);
+    let initial_year = updatable
+        .value
+        .as_ref()
+        .map(|ycv| ycv.year)
+        .or_else(|| Some(this_year()));
 
     let initial_value = updatable.value.as_ref().map(|ycv| ycv.value);
 
