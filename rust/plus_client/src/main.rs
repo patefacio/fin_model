@@ -3,7 +3,7 @@
 async fn main() -> std::io::Result<()> {
     use actix_files::Files;
     use actix_web::*;
-    use fin_model_gui::AppComponent;
+    use plus_client::AppComponent;
     use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
 

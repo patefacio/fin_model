@@ -2,7 +2,7 @@
 edition = "2021"
 name = "plus_lookup"
 version = "0.0.1"
-description = """TODO: Describe cargo project(plus_lookup)"""
+description = """Layer sitting on top of `plus_modeled` to support `i18n` and various name lookups."""
 license = "MIT"
 keywords = []
 

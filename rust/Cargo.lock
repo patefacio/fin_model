@@ -1214,42 +1214,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fin_model_gui"
-version = "0.0.1"
-dependencies = [
- "actix-files",
- "actix-web",
- "cfg-if",
- "chrono",
- "console_error_panic_hook",
- "console_log",
- "criterion",
- "env_logger",
- "leptos",
- "leptos-use",
- "leptos_actix",
- "leptos_dom",
- "leptos_meta",
- "leptos_router",
- "log",
- "num-format",
- "once_cell",
- "plotters",
- "plotters-svg",
- "plus_lookup",
- "plus_modeled",
- "plus_utils",
- "strum",
- "strum_macros",
- "test-log",
- "tracing",
- "tracing-subscriber",
- "tracing-subscriber-wasm",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
 name = "fixedbitset"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2899,6 +2863,42 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38f6d39893cca0701371e3c27294f09797214b86f1fb951b89ade8ec04e2abab"
 dependencies = [
  "plotters-backend",
+]
+
+[[package]]
+name = "plus_client"
+version = "0.0.1"
+dependencies = [
+ "actix-files",
+ "actix-web",
+ "cfg-if",
+ "chrono",
+ "console_error_panic_hook",
+ "console_log",
+ "criterion",
+ "env_logger",
+ "leptos",
+ "leptos-use",
+ "leptos_actix",
+ "leptos_dom",
+ "leptos_meta",
+ "leptos_router",
+ "log",
+ "num-format",
+ "once_cell",
+ "plotters",
+ "plotters-svg",
+ "plus_lookup",
+ "plus_modeled",
+ "plus_utils",
+ "strum",
+ "strum_macros",
+ "test-log",
+ "tracing",
+ "tracing-subscriber",
+ "tracing-subscriber-wasm",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

@@ -26,7 +26,6 @@ pub fn AppSideBar(
     view! {
         cx,
         <div class="app-side-bar">
-        "SIDE"
         </div>
     }
 

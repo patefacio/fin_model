@@ -2,7 +2,7 @@
 edition = "2021"
 name = "plus_utils"
 version = "0.0.1"
-description = """TODO: Describe cargo project(plus_utils)"""
+description = """General utility code that can be used on server and webassembly"""
 license = "MIT"
 keywords = []
 

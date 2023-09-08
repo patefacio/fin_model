@@ -6,7 +6,7 @@
 	--mcs-btn-color: cyan;
 	--mcs-tbl-color: white;
 	--plus-btn-color: hsl(120, 50%, 90%);
-	--plus-btn-padding: 0.20rem;
+	--plus-btn-padding: 0.1rem 0.30rem;
 	--plus-btn-margin: 0.15rem;
 	--plus-background: white;
 	--plus-label-bg: white;
@@ -501,7 +501,7 @@ input.invalid:focus {
 .app-component {
 	height: 100vh;
 	display: grid;
-	grid-template-columns: 100px 1fr;
+	grid-template-columns: 10px 1fr;
 	grid-template-rows: 40px 1fr;
 }
 
@@ -516,7 +516,11 @@ input.invalid:focus {
 .app-lang-select {
 	margin-left: auto;
 	position: relative;
-	right: 30px;
+	//right: 2rem;
+}
+
+.app-lang-select-inner {
+	width: 7rem;
 }
 
 .app-side-bar {

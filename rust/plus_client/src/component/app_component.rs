@@ -52,7 +52,7 @@ pub fn AppComponent(
     view! {
         cx,
 
-        <Stylesheet id="leptos" href="/pkg/fin_model_gui.css"/>
+        <Stylesheet id="leptos" href="/pkg/plus_client.css"/>
         <Title text="Auric Components"/>
         <Router>
             <main>

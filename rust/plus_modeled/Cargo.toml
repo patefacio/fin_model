@@ -2,7 +2,7 @@
 edition = "2021"
 name = "plus_modeled"
 version = "0.0.1"
-description = """TODO: Describe cargo project(plus_modeled)"""
+description = """Modeled data."""
 license = "MIT"
 keywords = []
 

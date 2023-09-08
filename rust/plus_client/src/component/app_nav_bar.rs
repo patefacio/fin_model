@@ -42,6 +42,7 @@ pub fn AppNavBar(
         cx,
         <div class="app-nav-bar">
         <div class="app-lang-select">
+        <div class="app-lang-select-inner">
         <EnumSelect
             updatable=lang_selector_updatable
             column_count=1
@@ -51,6 +52,7 @@ pub fn AppNavBar(
                 }),
             )
         />
+        </div>
         </div>
         </div>
     }

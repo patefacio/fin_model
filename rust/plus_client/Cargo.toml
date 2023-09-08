@@ -1,8 +1,8 @@
 [package]
 edition = "2021"
-name = "fin_model_gui"
+name = "plus_client"
 version = "0.0.1"
-description = """TODO: Describe cargo project(fin_model_gui)"""
+description = """Small subset of client to try things out and ask questions"""
 license = "MIT"
 keywords = []
 
@@ -70,7 +70,7 @@ ssr = [
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name   
-output-name = "fin_model_gui"
+output-name = "plus_client"
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"
 # The site-root relative folder where all compiled output (JS, WASM and CSS) is written
@@ -118,7 +118,7 @@ lib-features = ["hydrate"]
 # Optional. Defaults to false.
 lib-default-features = false
 
-bin-target = "fin_model_gui"
+bin-target = "plus_client"
 
 
 [dev-dependencies]

@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use fin_model_gui::utils::live_parsed_date::{clean_date, LiveParsedDate};
+use plus_client::utils::live_parsed_date::{clean_date, LiveParsedDate};
 use std::hint::black_box;
 
 pub fn clean_date_benchmark(c: &mut Criterion) {

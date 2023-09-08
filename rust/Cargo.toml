@@ -1,7 +1,7 @@
 [workspace]
 resolver = "1"
 members = [
-    "gui",
+    "plus_client",
     "plus_modeled",
     "plus_utils"
 ]
