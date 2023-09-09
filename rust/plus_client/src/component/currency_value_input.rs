@@ -7,7 +7,7 @@ use crate::Updatable;
 use leptos::create_node_ref;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::html::Input;
@@ -18,13 +18,10 @@ use plus_modeled::core::CurrencyValue;
 ////////////////////////////////////////////////////////////////////////////////////
 /// A component for specifying a currency and value
 ///
-///   * **cx** - Context
 ///   * **updatable** - TODO Document Param(updatable)
 ///   * _return_ - View for currency_value_input
 #[component]
 pub fn CurrencyValueInput(
-    /// Context
-    cx: Scope,
     /// TODO Document Param(updatable)
     updatable: Updatable<CurrencyValue>,
 ) -> impl IntoView {

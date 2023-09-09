@@ -6,7 +6,7 @@
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::NormalSpec;
@@ -16,14 +16,11 @@ use plus_modeled::NormalSpec;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Component showing potential loss for a normal distribution.
 ///
-///   * **cx** - Context
 ///   * **normal_spec** - The normal to plot
 ///   * **loss_vec** - Vector of returns to report probability of loss
 ///   * _return_ - View for normal_loss_component
 #[component]
 pub fn NormalLossComponent(
-    /// Context
-    cx: Scope,
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
     /// Vector of returns to report probability of loss
@@ -46,14 +43,13 @@ pub fn NormalLossComponent(
     use leptos::SignalWithUntracked;
 
     let (sample_loss, set_sample_loss) = create_signal(
-        cx,
         normal_spec.with_untracked(|normal_spec| normal_spec.cdf_sigmoid_approx(0.0)),
     );
     let sample_loss_updatable = Updatable::new(Some(0.0), move |loss| {
         set_sample_loss.update(|sample_loss| *sample_loss = *loss);
     });
 
-    view! { cx,
+    view! {
         <div style="display: grid; grid-template-columns: 1fr 1fr">
             <div style="grid-column-start: 1; grid-column-end: 3; text-align: center">
                 <h4>
@@ -73,8 +69,8 @@ pub fn NormalLossComponent(
             <For
                 each=move || loss_vec.get()
                 key=|item| { format!("{item:?}") }
-                view=move |cx, cdf_input| {
-                    view! { cx,
+                view=move |cdf_input| {
+                    view! {
                         <div style="text-align: right;">
                             {move || { format!("{:.2}%", scale_by(cdf_input, 2)) }}
                         </div>

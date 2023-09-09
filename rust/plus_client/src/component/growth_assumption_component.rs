@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::GrowthAssumption;
@@ -28,13 +28,10 @@ use plus_modeled::GrowthAssumption;
 /// or [RateCurve](plus_modeled::RateCurve) and for a given forecast the appropriate
 /// growth will be selected.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [GrowthAssumption] being edited
 ///   * _return_ - View for growth_assumption_component
 #[component]
 pub fn GrowthAssumptionComponent(
-    /// Context
-    cx: Scope,
     /// The [GrowthAssumption] being edited
     updatable: Updatable<GrowthAssumption>,
 ) -> impl IntoView {
@@ -61,7 +58,7 @@ pub fn GrowthAssumptionComponent(
         GrowthType::UseNormal
     };
 
-    let updatable = store_value(cx, updatable);
+    let updatable = store_value(updatable);
 
     let normal_spec_updatable = move || {
         Updatable::new(
@@ -90,13 +87,11 @@ pub fn GrowthAssumptionComponent(
         )
     };
 
-    let show_normal_spec = move || {
-        view! { cx, <NormalSpecComponent updatable=normal_spec_updatable()/> }.into_view(cx)
-    };
+    let show_normal_spec =
+        move || view! { <NormalSpecComponent updatable=normal_spec_updatable()/> }.into_view();
 
-    let show_pinned_curve = move || {
-        view! { cx, <YearValueSeriesComponent updatable=rate_curve_updatable()/> }.into_view(cx)
-    };
+    let show_pinned_curve =
+        move || view! { <YearValueSeriesComponent updatable=rate_curve_updatable()/> }.into_view();
 
     let views = move |growth_type: &GrowthType| match growth_type {
         GrowthType::UseNormal => show_normal_spec(),
@@ -108,7 +103,7 @@ pub fn GrowthAssumptionComponent(
         GrowthType::UsePinned => String::from("Fixed Rate Curve"),
     };
 
-    view! { cx,
+    view! {
         <OneOfComponent
             selection=initial_growth_type
             name="system-growth".to_string()

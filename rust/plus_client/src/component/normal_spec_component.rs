@@ -9,7 +9,7 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::Show;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::core::NormalSpec;
@@ -19,14 +19,11 @@ use plus_modeled::core::NormalSpec;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a normal specification -> N(mu, sigma).
 ///
-///   * **cx** - Context
 ///   * **updatable** - The normal spec being edited
 ///   * **non_negative_mean** - If set, negative values are disallowed for the mean.
 ///   * _return_ - View for normal_spec_component
 #[component]
 pub fn NormalSpecComponent(
-    /// Context
-    cx: Scope,
     /// The normal spec being edited
     updatable: Updatable<Option<NormalSpec>>,
     /// If set, negative values are disallowed for the mean.
@@ -69,19 +66,14 @@ pub fn NormalSpecComponent(
         .as_ref()
         .map(|normal_spec| scale_by(normal_spec.std_dev, 2));
 
-    let (spec_signal, set_spec_signal) = create_signal(
-        cx,
-        updatable.value.as_ref().map(|ns| *ns).unwrap_or_default(),
-    );
+    let (spec_signal, set_spec_signal) =
+        create_signal(updatable.value.as_ref().map(|ns| *ns).unwrap_or_default());
 
-    let normal_bits_store_value = store_value(
-        cx,
-        NormalBits {
-            mean: initial_mean,
-            std_dev: initial_std_dev,
-            updatable,
-        },
-    );
+    let normal_bits_store_value = store_value(NormalBits {
+        mean: initial_mean,
+        std_dev: initial_std_dev,
+        updatable,
+    });
 
     let signal_update = move || {
         normal_bits_store_value.update_value(|normal_bits| {
@@ -116,7 +108,7 @@ pub fn NormalSpecComponent(
         signal_update();
     });
 
-    let (enable_graphs, set_disable_graphs) = create_signal(cx, GraphDisplay::Historic);
+    let (enable_graphs, set_disable_graphs) = create_signal(GraphDisplay::Historic);
 
     let show_pdf = move |_| {
         set_disable_graphs.update(|v| {
@@ -139,7 +131,7 @@ pub fn NormalSpecComponent(
 
     const INPUT_SIZE: u32 = 7;
 
-    view! { cx,
+    view! {
         <div class="ns">
             <fieldset class="nsg">
                 <div style="display: flex;">
@@ -226,7 +218,7 @@ pub fn NormalSpecComponent(
                                             enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
                                         }
 
-                                        fallback=|_| ()
+                                        fallback=|| ()
                                     >
                                         <HistoricRiskReturnComponent normal_spec=MaybeSignal::Dynamic(
                                             spec_signal.into(),
@@ -237,7 +229,7 @@ pub fn NormalSpecComponent(
                                             enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
                                         }
 
-                                        fallback=|_| ()
+                                        fallback=|| ()
                                     >
                                         <DistributionPdfComponent normal_spec=MaybeSignal::Dynamic(
                                             spec_signal.into(),
@@ -248,7 +240,7 @@ pub fn NormalSpecComponent(
                                             enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
                                         }
 
-                                        fallback=|_| ()
+                                        fallback=|| ()
                                     >
                                         <DistributionCdfComponent normal_spec=MaybeSignal::Dynamic(
                                             spec_signal.into(),

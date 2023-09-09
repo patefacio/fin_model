@@ -10,7 +10,7 @@ use leptos::RwSignal;
 use leptos::StoredValue;
 use leptos::View;
 use leptos::WriteSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::boxed::Box;
@@ -54,9 +54,8 @@ pub trait CollectionGrid: Sized {
 
     /// Get the display fields for the element.
     ///
-    ///   * **cx** - The context for the fields
     ///   * _return_ - The fields as elements
-    fn get_fields(&self, cx: Scope) -> Vec<View>;
+    fn get_fields(&self) -> Vec<View>;
 
     /// Get key that uniquely identifies the element.
     ///
@@ -70,13 +69,11 @@ pub trait CollectionGrid: Sized {
 
     /// Create a view to edit the row
     ///
-    ///   * **cx** - Context
     ///   * **edit_type** - Type of edit
     ///   * **row_stored_value** - Row to edit.
     ///   * **shared_context_stored_value** - Updatable containing the shared context.
     ///   * _return_ - The edit view
     fn edit_row(
-        cx: Scope,
         edit_type: CollectionGridEditType,
         row_stored_value: StoredValue<Self>,
         shared_context_stored_value: StoredValue<Self::SharedContext>,
@@ -102,7 +99,6 @@ pub trait CollectionGrid: Sized {
 ///
 /// It is called grid component because it is styled with a grid.
 ///
-///   * **cx** - Context
 ///   * **rows_updatable** - Items to show
 ///   * **shared_context_updatable** - Shared context
 ///   * **header** - Header for the grid
@@ -113,8 +109,6 @@ pub trait CollectionGrid: Sized {
 ///   * _return_ - View for collection_grid_component
 #[component]
 pub fn CollectionGridComponent<T, S>(
-    /// Context
-    cx: Scope,
     /// Items to show
     rows_updatable: Updatable<Vec<T>>,
     /// Shared context
@@ -164,20 +158,13 @@ where
     }
 
     log!(
-        "Creating collection_grid_component! {cx:?} -> {}",
+        "Creating collection_grid_component!  -> {}",
         std::any::type_name::<T>()
     );
-    leptos::on_cleanup(cx, move || {
-        log!(
-            "CLEANING UP HOLDING {cx:?} -> {}",
-            std::any::type_name::<T>()
-        )
-    });
+    leptos::on_cleanup(move || log!("CLEANING UP HOLDING-> {}", std::any::type_name::<T>()));
 
     /// This is used to ensure only one collection has an ok/cancel enabled at a time.
-    let grid_edit_active_count = use_context::<AppContext>(cx)
-        .unwrap()
-        .grid_edit_active_count;
+    let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
 
     let add_to_active_count = move || {
         grid_edit_active_count.update(|count| {
@@ -194,19 +181,19 @@ where
     };
 
     // Add a default new element
-    let row_stored_value = store_value(cx, <T as CollectionGrid>::new());
-    let shared_context_stored_value = store_value(cx, shared_context_updatable.value.clone());
-    let active_key_stored_value: StoredValue<Option<String>> = store_value(cx, None);
+    let row_stored_value = store_value(<T as CollectionGrid>::new());
+    let shared_context_stored_value = store_value(shared_context_updatable.value.clone());
+    let active_key_stored_value: StoredValue<Option<String>> = store_value(None);
     let initial_grid_edit_active_count = grid_edit_active_count.get_untracked() + 1;
     let ok_cancel_enabled = move || {
         log!(
-            "Checking {} against initial {} for {cx:?}",
+            "Checking {} against initial {}",
             grid_edit_active_count.get(),
             initial_grid_edit_active_count
         );
         grid_edit_active_count.get() == initial_grid_edit_active_count
     };
-    let row_count_signal = create_rw_signal(cx, rows_updatable.value.len());
+    let row_count_signal = create_rw_signal(rows_updatable.value.len());
 
     struct CGCData<T, S> {
         rows_updatable: Updatable<Vec<T>>,
@@ -217,26 +204,22 @@ where
     // Entry_signals is the map of keys to the signal associated with the index of the row,
     // which enables update of view for specific row.
     let signals = store_value(
-        cx,
         rows_updatable
             .value
             .iter()
             .enumerate()
-            .map(|(i, row)| (row.get_key(), create_rw_signal(cx, i)))
+            .map(|(i, row)| (row.get_key(), create_rw_signal(i)))
             .collect::<HashMap<String, RwSignal<usize>>>(),
     );
 
     let add_item_label = move || add_item_label.clone();
 
     // Component data containing the vector we manage and the current state
-    let cgc_data_signal = create_rw_signal(
-        cx,
-        CGCData {
-            rows_updatable,
-            shared_context_updatable,
-            component_state: CollectionGridState::Display,
-        },
-    );
+    let cgc_data_signal = create_rw_signal(CGCData {
+        rows_updatable,
+        shared_context_updatable,
+        component_state: CollectionGridState::Display,
+    });
 
     // If we are not in the _display_ state we are either editing a new entry or are editing
     // a specific row. In either case we want the other rows to be disables
@@ -283,7 +266,7 @@ where
         fields
             .into_iter()
             .map(|column_header| {
-                view! { cx, <div class="header">{column_header}</div> }
+                view! { <div class="header">{column_header}</div> }
             })
             .collect::<Vec<HtmlElement<Div>>>()
     };
@@ -351,7 +334,7 @@ where
     let make_edit_button = move |key: &str| {
         let key = key.to_string();
 
-        view! { cx,
+        view! {
             <button
                 on:click=move |_| {
                     cgc_data_signal
@@ -372,12 +355,12 @@ where
                 "✍"
             </button>
         }
-        .into_view(cx)
+        .into_view()
     };
 
     let make_delete_button = move |key: &str| {
         let key = key.to_string();
-        view! { cx,
+        view! {
             <button
                 on:click=move |_| {
                     delete_by_key(&key);
@@ -388,7 +371,7 @@ where
                 "🗑"
             </button>
         }
-        .into_view(cx)
+        .into_view()
     };
 
     let is_this_row_edit = move |key: &str| {
@@ -445,7 +428,7 @@ where
                             let key = new_row.get_key();
                             rows.push(new_row);
                             signals.update_value(|signals| {
-                                signals.insert(key, create_rw_signal(cx, rows.len() - 1));
+                                signals.insert(key, create_rw_signal(rows.len() - 1));
                             });
                         });
                     });
@@ -460,23 +443,22 @@ where
     };
 
     let edit_row_view = move || {
-        view! { cx,
+        view! {
             <div class="cgc-editable" style=editable_style>
                 {<T as CollectionGrid>::edit_row(
-                    cx,
                     CollectionGridEditType::RowEdit,
                     row_stored_value,
                     shared_context_stored_value,
                 )}
 
-                <Show when=move || ok_cancel_enabled() fallback=|_| ()>
+                <Show when=move || ok_cancel_enabled() fallback=|| ()>
                     <div class="ok-cancel-bar">
                         <OkCancelComponent on_ok_cancel=on_ok_cancel/>
                     </div>
                 </Show>
             </div>
         }
-        .into_view(cx)
+        .into_view()
     };
 
     let show_row_editor = move |key: &str| {
@@ -489,16 +471,16 @@ where
             row_stored_value.update_value(|row| *row = row_cloned(&edit_key));
         }
 
-        view! { cx,
-            <Show when=move || this_row_edit fallback=|_| ()>
+        view! {
+            <Show when=move || this_row_edit fallback=|| ()>
                 {edit_row_view}
             </Show>
         }
     };
 
     let show_new_row_editor = move || {
-        view! { cx,
-            <Show when=move || is_new_item_edit() fallback=|_| ()>
+        view! {
+            <Show when=move || is_new_item_edit() fallback=|| ()>
                 {edit_row_view}
             </Show>
         }
@@ -506,11 +488,11 @@ where
 
     // TRY TO REFACTOR TO FUNCTION
     // fn get_row_fields<T>(row: &T) -> Vec<View> {
-    //     let mut user_fields = row.get_fields(cx);
+    //     let mut user_fields = row.get_fields();
     //     for user_field in user_fields.iter() {
     //         let inactive_edit_key = Rc::clone(&key);
     //         if let Some(element) = user_field.as_element().cloned() {
-    //             let html_element = element.into_html_element(cx);
+    //             let html_element = element.into_html_element();
     //             html_element.class("inactive-edit", move || {
     //                 is_disabled() && !is_this_row_edit(&inactive_edit_key)
     //             });
@@ -521,7 +503,7 @@ where
     //     user_fields
     // }
 
-    view! { cx,
+    view! {
         <div
             class="collection-grid"
             style=format!("display: grid; grid-template-columns: {grid_template_columns}")
@@ -531,10 +513,10 @@ where
                 each=move || { 0..num_elements_tracked() }
                 key=move |&i| { nth_key(i) }
 
-                view=move |cx, i| {
+                view=move |i| {
                     let key = Rc::new(nth_key(i).unwrap());
                     if let Some(key_signal) = key_signal(&key) {
-                        view! { cx,
+                        view! {
                             {move || {
                                 let key = Rc::clone(&key);
                                 key_signal
@@ -544,11 +526,11 @@ where
                                             .with_untracked(move |cgc_data| {
                                                 let key = Rc::clone(&key);
                                                 let row = cgc_data.rows_updatable.value.get(index).unwrap();
-                                                let mut user_fields = row.get_fields(cx);
+                                                let mut user_fields = row.get_fields();
                                                 for user_field in user_fields.iter() {
                                                     let inactive_edit_key = Rc::clone(&key);
                                                     if let Some(element) = user_field.as_element().cloned() {
-                                                        let html_element = element.into_html_element(cx);
+                                                        let html_element = element.into_html_element();
                                                         html_element
                                                             .class(
                                                                 "inactive-edit",
@@ -560,24 +542,23 @@ where
                                                 }
                                                 user_fields.insert(0, make_delete_button(&key));
                                                 user_fields.insert(0, make_edit_button(&key));
-
-                                                view! { cx,
-                                                    {user_fields.into_view(cx)}
+                                                view! {
+                                                    {user_fields.into_view()}
                                                     {show_row_editor(&key)}
                                                 }
-                                                    .into_view(cx)
+                                                    .into_view()
                                             })
                                     })
                             }}
                         }
-                            .into_view(cx)
+                            .into_view()
                     } else {
-                        ().into_view(cx)
+                        ().into_view()
                     }
                 }
             />
 
-            <Show when=move || !is_disabled() fallback=|_| ()>
+            <Show when=move || !is_disabled() fallback=|| ()>
                 <button
                     class="cgc-add-row"
                     style=format!("grid-column-start: 0; grid-column-end: {grid_column_end};")

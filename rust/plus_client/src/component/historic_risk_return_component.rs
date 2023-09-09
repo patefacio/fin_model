@@ -6,7 +6,7 @@
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::NormalSpec;
@@ -17,13 +17,10 @@ use plus_modeled::NormalSpec;
 /// Given a [NormalSpec] provides an SVG plot showing the `(risk/return)` along side
 /// various historic `(risk/return)` values for equities, bonds, ...
 ///
-///   * **cx** - Context
 ///   * **normal_spec** - The normal to plot
 ///   * _return_ - View for historic_risk_return_component
 #[component]
 pub fn HistoricRiskReturnComponent(
-    /// Context
-    cx: Scope,
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
 ) -> impl IntoView {
@@ -37,7 +34,7 @@ pub fn HistoricRiskReturnComponent(
 
     let plot =
         move || normal_spec.with(|ns| ns.get_historic_plot(&*HISTORIC_RISK_RETURN_SAMPLES, false));
-    view! { cx,
+    view! {
         <div
             class="historic-legend"
             style="display:grid; grid-template-rows: 1fr 3fr 1fr; grid-template-columns: 1fr; max-width: 600px"
@@ -50,8 +47,8 @@ pub fn HistoricRiskReturnComponent(
                     <For
                         each=move || HISTORIC_RISK_RETURN_SAMPLES.clone()
                         key=|hrr| hrr.label.clone()
-                        view=move |cx, hrr| {
-                            view! { cx,
+                        view=move |hrr| {
+                            view! {
                                 <div style="display:flex; text-align: right;">
                                     <div style=format!(
                                         "height: 15px;

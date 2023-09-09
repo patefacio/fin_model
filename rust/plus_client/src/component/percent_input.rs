@@ -10,7 +10,7 @@ use leptos::create_signal;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::ops::RangeInclusive;
@@ -20,7 +20,6 @@ use std::ops::RangeInclusive;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Provides a [NumericInput] with a percent suffix modification.
 ///
-///   * **cx** - Context
 ///   * **updatable** - Called when input is updated.
 ///   * **placeholder** - Placeholder for the year field
 ///   * **size** - The size attribute, which one hopes would make the size of the
@@ -36,8 +35,6 @@ use std::ops::RangeInclusive;
 ///   * _return_ - View for percent_input
 #[component]
 pub fn PercentInput(
-    /// Context
-    cx: Scope,
     /// Called when input is updated.
     updatable: Updatable<Option<f64>>,
     /// Placeholder for the year field
@@ -79,7 +76,7 @@ pub fn PercentInput(
         });
     });
 
-    view! { cx,
+    view! {
         <NumericInput
             updatable=numeric_updatable
             on_enter=on_enter

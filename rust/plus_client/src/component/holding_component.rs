@@ -7,7 +7,7 @@ use crate::HoldingSharedContext;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::StoredValue;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::Holding;
@@ -18,14 +18,11 @@ use plus_modeled::ItemGrowth;
 ////////////////////////////////////////////////////////////////////////////////////
 /// A single holding in an account.
 ///
-///   * **cx** - Context
 ///   * **holding_stored_value** - The holding being edited by this component with shared context
 ///   * **shared_context_stored_value** - Shared context
 ///   * _return_ - View for holding_component
 #[component]
 pub fn HoldingComponent(
-    /// Context
-    cx: Scope,
     /// The holding being edited by this component with shared context
     holding_stored_value: StoredValue<Holding>,
     /// Shared context
@@ -83,7 +80,7 @@ pub fn HoldingComponent(
 
         let (market_value_signal, unrealized_gl_signal) = {
             let (mv, gl) = market_value_with_unrealized(&holding);
-            (create_rw_signal(cx, mv), create_rw_signal(cx, gl))
+            (create_rw_signal(mv), create_rw_signal(gl))
         };
 
         let update_market_value_and_unrealized = move || {
@@ -112,7 +109,6 @@ pub fn HoldingComponent(
         });
 
         let currency_rw_signal = create_rw_signal(
-            cx,
             to_currency_symbol(
                 unit_valuation
                     .map(|ycv| Currency::from_i32(ycv.currency).unwrap())
@@ -186,9 +182,9 @@ pub fn HoldingComponent(
             }
         };
 
-        leptos::on_cleanup(cx, move || log!("CLEANING UP HOLDING {cx:?}"));
+        leptos::on_cleanup(move || log!("CLEANING UP HOLDING"));
 
-        view! { cx,
+        view! {
             <fieldset class="holding" style="margin: 0.5rem;">
                 <legend>"Holding"</legend>
                 <div class="form">

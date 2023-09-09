@@ -7,7 +7,9 @@ use crate::SelectDirection;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::ReadSignal;
+use leptos::Signal;
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::boxed::Box;
@@ -30,17 +32,15 @@ use strum::{IntoEnumIterator, VariantNames};
 /// With this setup, any modeled enums can be provided as a list with this component.
 ///
 ///
-///   * **cx** - Context
 ///   * **updatable** - Value of enum that will be changed on selection.
 ///   * **column_count** - Number of columns to display in the grid of options.
 ///   * **direction** - Specifies whether items flows from top to bottom or left to right.
 ///   * **filter** - Filter on enum variants
 ///   * **label** - Convert enum type to label - for when VariantNames does not cut it
+///   * **disabled** - Signal allowing the disabling of the input.
 ///   * _return_ - View for enum_select
 #[component]
 pub fn EnumSelect<E>(
-    /// Context
-    cx: Scope,
     /// Value of enum that will be changed on selection.
     updatable: Updatable<E>,
     /// Number of columns to display in the grid of options.
@@ -55,6 +55,9 @@ pub fn EnumSelect<E>(
     /// Convert enum type to label - for when VariantNames does not cut it
     #[prop(default=None)]
     label: Option<Box<dyn Fn(&E) -> String>>,
+    /// Signal allowing the disabling of the input.
+    #[prop(default=Signal::derive(|| false), into)]
+    disabled: Signal<bool>,
 ) -> impl IntoView
 where
     E: Clone + Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
@@ -98,13 +101,10 @@ where
         filter_set: Vec<(E, String)>,
     }
 
-    let es_data_stored_value = leptos::store_value(
-        cx,
-        ESData {
-            updatable,
-            filter_set,
-        },
-    );
+    let es_data_stored_value = leptos::store_value(ESData {
+        updatable,
+        filter_set,
+    });
 
     let menu_select = move |value: String| {
         es_data_stored_value.update_value(|es_data| {
@@ -119,13 +119,14 @@ where
         });
     };
 
-    view! { cx,
+    view! {
         <MultiColumnSelect
             options=options
             column_count=column_count
             initial_value=Some(InitialValue::SelectionIndex(initial_index))
             on_select=menu_select
             direction=direction
+            disabled=disabled
         />
     }
 

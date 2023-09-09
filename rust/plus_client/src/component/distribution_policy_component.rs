@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DistributionPolicy;
@@ -16,13 +16,10 @@ use plus_modeled::DistributionPolicy;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Component for the distributions of a security
 ///
-///   * **cx** - Context
 ///   * **updatable** - The distribution policy being edited
 ///   * _return_ - View for distribution_policy_component
 #[component]
 pub fn DistributionPolicyComponent(
-    /// Context
-    cx: Scope,
     /// The distribution policy being edited
     updatable: Updatable<Option<DistributionPolicy>>,
 ) -> impl IntoView {
@@ -55,7 +52,7 @@ pub fn DistributionPolicyComponent(
         Policy::Bond => "Bond Spec".to_string(),
     };
 
-    let updatable_store_value = store_value(cx, updatable);
+    let updatable_store_value = store_value(updatable);
 
     let distribution_spec_view = move || {
         let current_distribution_spec =
@@ -75,8 +72,7 @@ pub fn DistributionPolicyComponent(
                 })
             },
         );
-        view! { cx, <DistributionSpecComponent updatable=distribution_spec_updatable/> }
-            .into_view(cx)
+        view! { <DistributionSpecComponent updatable=distribution_spec_updatable/> }.into_view()
     };
 
     let bond_spec_view = move || {
@@ -97,16 +93,16 @@ pub fn DistributionPolicyComponent(
             })
         });
 
-        view! { cx, <BondSpecComponent updatable=bond_spec_updatable/> }.into_view(cx)
+        view! { <BondSpecComponent updatable=bond_spec_updatable/> }.into_view()
     };
 
     let views = move |policy: &Policy| match policy {
         Policy::Distributions => distribution_spec_view(),
         Policy::Bond => bond_spec_view(),
-        Policy::None => ().into_view(cx),
+        Policy::None => ().into_view(),
     };
 
-    view! { cx,
+    view! {
         <OneOfComponent
             selection=selection
             name="distribution-policy".to_string()

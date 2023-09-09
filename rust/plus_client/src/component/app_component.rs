@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -14,44 +14,38 @@ use leptos_dom::console_log;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Top level component
 ///
-///   * **cx** - Context
 ///   * _return_ - View for app_component
 #[component]
-pub fn AppComponent(
-    /// Context
-    cx: Scope,
-) -> impl IntoView {
+pub fn AppComponent() -> impl IntoView {
     // α <fn app_component>
 
+    use crate::AppCenterComponent;
     use crate::AppContext;
-    use plus_modeled::LangSelector;
     use crate::AppNavBar;
     use crate::AppSideBar;
-    use crate::AppCenterComponent;
     use leptos::create_rw_signal;
     use leptos::provide_context;
-    use leptos_meta::Stylesheet;
     use leptos_meta::provide_meta_context;
+    use leptos_meta::Stylesheet;
+    use leptos_meta::Title;
     use leptos_router::Route;
     use leptos_router::Router;
     use leptos_router::Routes;
-    use leptos_meta::Title;
+    use plus_modeled::LangSelector;
 
     // Provides context that manages stylesheets, titles, meta tags, etc.
-    provide_meta_context(cx);
+    provide_meta_context();
 
-    let grid_edit_active_count = create_rw_signal(cx, 0);
-    let lang_selector = create_rw_signal(cx, LangSelector::French);
+    let grid_edit_active_count = create_rw_signal(0);
+    let lang_selector = create_rw_signal(LangSelector::French);
     let app_context = AppContext {
         lang_selector,
         grid_edit_active_count,
     };
 
-    provide_context(cx, app_context);
+    provide_context(app_context);
 
     view! {
-        cx,
-
         <Stylesheet id="leptos" href="/pkg/plus_client.css"/>
         <Title text="Auric Components"/>
         <Router>
@@ -59,14 +53,14 @@ pub fn AppComponent(
                 <Routes>
                     <Route
                         path=""
-                        view=|cx| {
-                            view! { cx,
+                        view=|| {
+                            view! {
                                 <div class="app-component">
-                                <AppNavBar/>
-                                <AppSideBar/>
-                                <AppCenterComponent/>
+                                    <AppNavBar/>
+                                    <AppSideBar/>
+                                    <AppCenterComponent/>
                                 </div>
-                             }
+                            }
                         }
                     />
 

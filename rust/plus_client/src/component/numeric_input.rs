@@ -11,7 +11,7 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 use leptos::{create_effect, create_node_ref, create_signal, store_value, ReadSignal, SignalWith};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -48,7 +48,6 @@ pub enum Modification {
 /// A component for accepting numeric input.
 /// Only valid numeric characters (ascii) are allowed. Numbers are automatically formatted.
 ///
-///   * **cx** - Context
 ///   * **updatable** - Signal updated as numeric input is updated.
 ///   * **input_class** - Class to decorate input element for styling
 ///   * **modification** - Optional modification (e.g. suffix/prefix)
@@ -69,8 +68,6 @@ pub enum Modification {
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
-    /// Context
-    cx: Scope,
     /// Signal updated as numeric input is updated.
     updatable: Updatable<Option<f64>>,
     /// Class to decorate input element for styling
@@ -166,7 +163,7 @@ pub fn NumericInput(
         })
         .unwrap_or_default();
 
-    let (is_valid, set_is_valid) = create_signal(cx, is_valid);
+    let (is_valid, set_is_valid) = create_signal(is_valid);
 
     #[derive(Debug, Copy, Clone)]
     enum TrackedKey {
@@ -193,12 +190,12 @@ pub fn NumericInput(
         tracked_key: None,
     };
 
-    let numeric_input_data = store_value(cx, numeric_input_data);
+    let numeric_input_data = store_value(numeric_input_data);
 
     let _log_me = move |s: &str| {
         numeric_input_data.with_value(|nid| {
             log!(
-                "`{s}` ({cx:?}) ->\n\tN:<{:?}>\n\tMod:<{:?}>\n\tRange:<{:?}>",
+                "`{s}->\n\tN:<{:?}>\n\tMod:<{:?}>\n\tRange:<{:?}>",
                 nid.updatable.value,
                 nid.modification,
                 nid.range
@@ -206,9 +203,9 @@ pub fn NumericInput(
         })
     };
 
-    let node_ref = create_node_ref::<Input>(cx);
+    let node_ref = create_node_ref::<Input>();
 
-    create_effect(cx, move |_| {
+    create_effect(move |_| {
         if let Some(clear_input) = clear_input {
             clear_input.track();
             if let Some(input_ref) = node_ref.get() {
@@ -302,7 +299,7 @@ pub fn NumericInput(
         }
     };
 
-    let update_value = leptos::store_value(cx, update_value);
+    let update_value = leptos::store_value(update_value);
 
     let key_movement = move |ev: KeyboardEvent| {
         let key_code = ev.key_code();
@@ -431,15 +428,15 @@ pub fn NumericInput(
     };
 
     if let Some(signal) = dynamic_prefix_signal {
-        create_effect(cx, move |_| {
+        create_effect(move |_| {
             signal.track();
             if let Some(input_ref) = node_ref.get_untracked() {
                 update_value.with_value(|update_value| update_value(input_ref.value()));
             }
-        })
+        });
     };
 
-    view! { cx,
+    view! {
         <input
             class=input_class
             class:invalid=move || { !is_valid.get() }

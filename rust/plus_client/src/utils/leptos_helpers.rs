@@ -109,8 +109,8 @@ pub mod unit_tests {
             fn user_callback(s: &mut S) {
                 let runtime = create_runtime();
                 println!("Callback exclusively using {s:?}");
-                run_scope(runtime, |cx| {
-                    let s = store_value(cx, true);
+                run_scope(runtime, || {
+                    let s = store_value(true);
                 })
             }
 
@@ -127,8 +127,8 @@ pub mod unit_tests {
             fn should_panic() {
                 let updatable = make_updatable("should panic");
                 let runtime = create_runtime();
-                run_scope(runtime, |cx| {
-                    let value = store_value(cx, make_shared_data(updatable));
+                run_scope(runtime, || {
+                    let value = store_value(make_shared_data(updatable));
                     value.update_value(|value| {
                         // do updates on S
                         user_callback(&mut value.as_ref().borrow_mut().value);
@@ -139,8 +139,8 @@ pub mod unit_tests {
             fn should_not_panic() {
                 let updatable = make_updatable("should not panic");
                 let runtime = create_runtime();
-                run_scope(runtime, |cx| {
-                    let ref_counted = store_value(cx, make_shared_data(updatable));
+                run_scope(runtime, || {
+                    let ref_counted = store_value(make_shared_data(updatable));
                     ref_counted.update_value(|_| {
                         // do updates on S
                     });

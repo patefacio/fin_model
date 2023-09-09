@@ -8,7 +8,7 @@ use crate::Year;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::Currency;
@@ -39,15 +39,12 @@ pub enum YearValueSeriesType {
 /// The component ensures the ordering (i.e. the years in the
 /// vector of [YearValue](plus_modeled::YearValue) are strictly increasing).
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [RateCurve] being edited
 ///   * **year_range** - Range of valid years.
 ///   * **series_type** - Type of data displayed.
 ///   * _return_ - View for year_value_series_component
 #[component]
 pub fn YearValueSeriesComponent(
-    /// Context
-    cx: Scope,
     /// The [RateCurve] being edited
     updatable: Updatable<Vec<YearValue>>,
     /// Range of valid years.
@@ -89,15 +86,14 @@ pub fn YearValueSeriesComponent(
     clean_curve(&mut updatable.value);
 
     let is_rate_curve_data = matches!(series_type, YearValueSeriesType::RateCurve);
-    let (updatable, set_updatable) = create_signal(cx, updatable);
-    let (curve, set_curve) = create_signal(cx, {
-        updatable.with_untracked(|updatable| updatable.value.clone())
-    });
+    let (updatable, set_updatable) = create_signal(updatable);
+    let (curve, set_curve) =
+        create_signal({ updatable.with_untracked(|updatable| updatable.value.clone()) });
 
-    let (entry_complete, set_entry_complete) = create_signal(cx, (None, None));
-    let (add_enabled, set_add_enabled) = create_signal(cx, false);
-    let (clear_fields, set_clear_fields) = create_signal(cx, ());
-    let (year_input_focus, set_year_input_focus) = create_signal(cx, ());
+    let (entry_complete, set_entry_complete) = create_signal((None, None));
+    let (add_enabled, set_add_enabled) = create_signal(false);
+    let (clear_fields, set_clear_fields) = create_signal(());
+    let (year_input_focus, set_year_input_focus) = create_signal(());
 
     let signal_parent_update = move || {
         curve.with_untracked(|curve| {
@@ -110,12 +106,11 @@ pub fn YearValueSeriesComponent(
     };
 
     let signals = store_value(
-        cx,
         curve
             .get_untracked()
             .iter()
             .enumerate()
-            .map(|(i, year_value)| (year_value.year.to_owned(), create_rw_signal(cx, i)))
+            .map(|(i, year_value)| (year_value.year.to_owned(), create_rw_signal(i)))
             .collect::<HashMap<u32, RwSignal<usize>>>(),
     );
 
@@ -141,7 +136,7 @@ pub fn YearValueSeriesComponent(
                 if let Some(current_signal) = signals_map.get(&new_year) {
                     current_signal.update(|index| *index = position);
                 } else {
-                    signals_map.insert(new_year, create_rw_signal(cx, position));
+                    signals_map.insert(new_year, create_rw_signal(position));
                 }
             });
             set_curve.update(|_curve| {});
@@ -190,9 +185,9 @@ pub fn YearValueSeriesComponent(
         }
     };
 
-    let (disabled, _set_disabled) = create_signal(cx, true);
+    let (disabled, _set_disabled) = create_signal(true);
     let year_input = move |year_value: YearValue| {
-        view! { cx,
+        view! {
             <YearInput
                 input_class=Some("rcc-yi".to_string())
                 disabled=Some(disabled)
@@ -216,7 +211,7 @@ pub fn YearValueSeriesComponent(
     };
 
     let percent_display = move |year_value: YearValue| {
-        view! { cx,
+        view! {
             <PercentInput
                 disabled=Some(disabled)
                 updatable=Updatable::new(
@@ -244,7 +239,7 @@ pub fn YearValueSeriesComponent(
     };
 
     let value_display = move |year_value: YearValue| {
-        view! { cx,
+        view! {
             <NumericInput
                 disabled=Some(disabled)
                 updatable=Updatable::new(
@@ -284,7 +279,7 @@ pub fn YearValueSeriesComponent(
     };
 
     let percent_input = move || {
-        view! { cx,
+        view! {
             <PercentInput
                 updatable=Updatable::new(
                     None,
@@ -309,11 +304,11 @@ pub fn YearValueSeriesComponent(
                 )
             />
         }
-        .into_view(cx)
+        .into_view()
     };
 
     let value_input = move || {
-        view! { cx,
+        view! {
             <NumericInput
                 updatable=Updatable::new(
                     None,
@@ -349,7 +344,7 @@ pub fn YearValueSeriesComponent(
                 )
             />
         }
-        .into_view(cx)
+        .into_view()
     };
 
     let value_header = if is_rate_curve_data {
@@ -358,7 +353,7 @@ pub fn YearValueSeriesComponent(
         "Value"
     };
 
-    view! { cx,
+    view! {
         <div class="rate-curve-data">
             <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
                 <div class="header"></div>
@@ -367,7 +362,7 @@ pub fn YearValueSeriesComponent(
                 <For
                     each=move || 0..num_elements()
                     key=move |&i| nth_key(i)
-                    view=move |cx, i| {
+                    view=move |i| {
                         let key = nth_key(i).unwrap();
                         let key_signal = key_signal(&key);
                         let year_value = move || {
@@ -385,8 +380,7 @@ pub fn YearValueSeriesComponent(
                             delete_by_key(&key);
                             signal_parent_update();
                         };
-
-                        view! { cx,
+                        view! {
                             <button on:click=delete_row>"🗑"</button>
                             {move || year_input(year_value())}
                             {move || {
@@ -433,7 +427,7 @@ pub fn YearValueSeriesComponent(
 
             </div>
         </div>
-        <Show when=move || curve.with(|curve| curve.len() > 1) fallback=|_| ()>
+        <Show when=move || curve.with(|curve| curve.len() > 1) fallback=|| ()>
             <CollapsibleComponent
                 collapsed_header="Show Rate Curve".to_string()
                 expanded_header=Some("Hide Curve".to_string())

@@ -6,7 +6,7 @@
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ChildrenFn;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -15,7 +15,6 @@ use leptos_dom::console_log;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Provides a bar with a label to expand/collapse contained content.
 ///
-///   * **cx** - Context
 ///   * **collapsed_header** - Content of the header bar when collapsed
 ///   * **expanded_header** - Content of the header bar when expanded.
 /// If `None` will be same as `collapsed_header`
@@ -24,8 +23,6 @@ use leptos_dom::console_log;
 ///   * _return_ - View for collapsible_component
 #[component]
 pub fn CollapsibleComponent(
-    /// Context
-    cx: Scope,
     /// Content of the header bar when collapsed
     collapsed_header: String,
     /// Content of the header bar when expanded.
@@ -45,7 +42,7 @@ pub fn CollapsibleComponent(
     use leptos::SignalGet;
     use leptos::SignalUpdate;
     use plus_utils::SystemUnicodes;
-    let is_expanded = create_rw_signal(cx, is_expanded);
+    let is_expanded = create_rw_signal(is_expanded);
     let expanded_header = expanded_header.unwrap_or_else(|| collapsed_header.clone());
 
     let header = move || {
@@ -56,7 +53,7 @@ pub fn CollapsibleComponent(
         }
     };
 
-    view! { cx,
+    view! {
         <div class="collapsible-header" style="display: flex; justify-content: space-between;">
             <div>{move || header()}</div>
             <button on:click=move |_| {
@@ -72,8 +69,8 @@ pub fn CollapsibleComponent(
 
             </button>
         </div>
-        <Show when=move || is_expanded.get() fallback=|_| ()>
-            {children(cx)}
+        <Show when=move || is_expanded.get() fallback=|| ()>
+            {children()}
         </Show>
     }
 

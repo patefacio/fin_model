@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DossierCorrelationEntry;
@@ -16,13 +16,10 @@ use plus_modeled::DossierCorrelationEntry;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a correlation value between _dossier items_.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [DossierCorrelationEntry] being edited
 ///   * _return_ - View for dossier_correlation_entry_component
 #[component]
 pub fn DossierCorrelationEntryComponent(
-    /// Context
-    cx: Scope,
     /// The [DossierCorrelationEntry] being edited
     updatable: Updatable<Option<DossierCorrelationEntry>>,
 ) -> impl IntoView {
@@ -69,7 +66,7 @@ pub fn DossierCorrelationEntryComponent(
         console_log(&format!("New value -> {new_input:?}"));
     });
 
-    view! { cx, <h3>"TODO DossierCorrelationEntryComponent"</h3> }
+    view! { <h3>"TODO DossierCorrelationEntryComponent"</h3> }
 
     // ω <fn dossier_correlation_entry_component>
 }

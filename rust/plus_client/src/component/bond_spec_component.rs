@@ -8,7 +8,7 @@ use crate::NumericInput;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::BondSpec;
@@ -18,13 +18,10 @@ use plus_modeled::BondSpec;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models bond specification
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [BondSpec] being edited.
 ///   * _return_ - View for bond_spec_component
 #[component]
 pub fn BondSpecComponent(
-    /// Context
-    cx: Scope,
     /// The [BondSpec] being edited.
     updatable: Updatable<Option<BondSpec>>,
 ) -> impl IntoView {
@@ -36,11 +33,11 @@ pub fn BondSpecComponent(
     use plus_modeled::YearValue;
 
     let bond_spec = updatable.value.as_ref().cloned().unwrap_or_default();
-    let updatable_store_value = store_value(cx, updatable);
+    let updatable_store_value = store_value(updatable);
 
     log!("Creating bond spec component for {bond_spec}");
 
-    view! { cx,
+    view! {
         <div class="form">
             <div class="form-row">
                 <label>

@@ -12,7 +12,7 @@ use crate::Updatable;
 use leptos::log;
 use leptos::StoredValue;
 use leptos::WriteSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::View;
@@ -49,14 +49,11 @@ pub struct HoldingSharedContext {
 ////////////////////////////////////////////////////////////////////////////////////
 /// Display and edit support for list of holdings in an account
 ///
-///   * **cx** - Context
 ///   * **holdings_updatable** - Holdings to edit
 ///   * **shared_context_updatable** - The shared context
 ///   * _return_ - View for holdings_grid
 #[component]
 pub fn HoldingsGrid(
-    /// Context
-    cx: Scope,
     /// Holdings to edit
     holdings_updatable: Updatable<Vec<Holding>>,
     /// The shared context
@@ -66,7 +63,7 @@ pub fn HoldingsGrid(
 
     use crate::CollectionGridComponent;
 
-    view! { cx,
+    view! {
         <CollectionGridComponent
             header=vec![
                 "Symbol".to_string(), "Market Value".to_string(), "Cost Basis".to_string(),
@@ -89,9 +86,8 @@ impl CollectionGrid for Holding {
     type SharedContext = HoldingSharedContext;
     /// Get the display fields for the element.
     ///
-    ///   * **cx** - The context for the fields
     ///   * _return_ - The fields as elements
-    fn get_fields(&self, cx: Scope) -> Vec<View> {
+    fn get_fields(&self) -> Vec<View> {
         // α <fn CollectionGrid::get_fields for Holding>
 
         use leptos::IntoStyle;
@@ -136,28 +132,27 @@ impl CollectionGrid for Holding {
             };
 
         vec![
-            view! { cx,
-
+            view! {
                 <div class="cgc-header-cell"
                 style:text-align="right">{self.instrument_name.clone()}</div>
             }
-            .into_view(cx),
-            view! { cx,
+            .into_view(),
+            view! {
                 <div class="cgc-header-cell"
                 style:text-align="right">{market_value}</div>
             }
-            .into_view(cx),
-            view! { cx,
+            .into_view(),
+            view! {
                 <div class="cgc-header-cell"
                 style:text-align="right">{cost_basis}</div>
             }
-            .into_view(cx),
-            view! { cx,
+            .into_view(),
+            view! {
                 <div
                 class="cgc-header-cell"
                 style:text-align="right">{gain_loss}</div>
             }
-            .into_view(cx),
+            .into_view(),
         ]
 
         // ω <fn CollectionGrid::get_fields for Holding>
@@ -183,13 +178,11 @@ impl CollectionGrid for Holding {
 
     /// Create a view to edit the row
     ///
-    ///   * **cx** - Context
     ///   * **edit_type** - Type of edit
     ///   * **row_stored_value** - Row to edit.
     ///   * **shared_context_stored_value** - Updatable containing the shared context.
     ///   * _return_ - The edit view
     fn edit_row(
-        cx: Scope,
         edit_type: CollectionGridEditType,
         row_stored_value: StoredValue<Self>,
         shared_context_stored_value: StoredValue<Self::SharedContext>,
@@ -198,7 +191,7 @@ impl CollectionGrid for Holding {
 
         use crate::HoldingComponent;
 
-        view! { cx,
+        view! {
             <HoldingComponent
                 holding_stored_value=row_stored_value
                 shared_context_stored_value=shared_context_stored_value

@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DossierHoldingIndex;
@@ -17,15 +17,12 @@ use plus_modeled::DossierHoldingIndex;
 /// Models a composite index referring to the account (0-indexed) and
 /// _optionally_ the holding within the account (0-indexed).
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [DossierHoldingIndex] being edited
 ///   * **account_placeholder** - Placeholder for account input
 ///   * **holding_placeholder** - Placeholder for holding input
 ///   * _return_ - View for dossier_holding_index_input
 #[component]
 pub fn DossierHoldingIndexInput(
-    /// Context
-    cx: Scope,
     /// The [DossierHoldingIndex] being edited
     updatable: Updatable<Option<DossierHoldingIndex>>,
     /// Placeholder for account input

@@ -6,7 +6,7 @@
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::NormalSpec;
@@ -16,14 +16,11 @@ use plus_modeled::NormalSpec;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Given a [NormalSpec] provides an SVG plot of its _pdf_.
 ///
-///   * **cx** - Context
 ///   * **normal_spec** - The normal to plot
 ///   * **disabled** - Signal allowing the disabling of the input.
 ///   * _return_ - View for distribution_pdf_component
 #[component]
 pub fn DistributionPdfComponent(
-    /// Context
-    cx: Scope,
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
     /// Signal allowing the disabling of the input.

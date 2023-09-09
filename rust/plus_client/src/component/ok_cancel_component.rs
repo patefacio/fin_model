@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -26,13 +26,10 @@ pub enum OkCancel {
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models an ok/cancel button pair.
 ///
-///   * **cx** - Context
 ///   * **on_ok_cancel** - Function to call when edit complete
 ///   * _return_ - View for ok_cancel_component
 #[component]
 pub fn OkCancelComponent<F>(
-    /// Context
-    cx: Scope,
     /// Function to call when edit complete
     on_ok_cancel: F,
 ) -> impl IntoView
@@ -43,9 +40,9 @@ where
 
     use leptos::store_value;
 
-    let on_ok_cancel = store_value(cx, on_ok_cancel);
+    let on_ok_cancel = store_value(on_ok_cancel);
 
-    view! { cx,
+    view! {
         <button
             class="ok-button"
             on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }

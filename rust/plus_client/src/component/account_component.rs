@@ -8,7 +8,7 @@ use crate::AccountSharedContext;
 use leptos::log;
 use leptos::StoredValue;
 use leptos::WriteSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::Account;
@@ -18,14 +18,11 @@ use plus_modeled::Account;
 ////////////////////////////////////////////////////////////////////////////////////
 /// A single account
 ///
-///   * **cx** - Context
 ///   * **account_stored_value** - The account to edit with shared context
 ///   * **shared_context_stored_value** - The shared context for accounts
 ///   * _return_ - View for account_component
 #[component]
 pub fn AccountComponent(
-    /// Context
-    cx: Scope,
     /// The account to edit with shared context
     account_stored_value: StoredValue<Account>,
     /// The shared context for accounts
@@ -34,13 +31,13 @@ pub fn AccountComponent(
     // α <fn account_component>
 
     log!(
-        "Creating new account component {} -> {cx:?}",
+        "Creating new account component {}",
         account_stored_value.with_value(|a| a.name.clone())
     );
 
-    leptos::on_cleanup(cx, move || {
+    leptos::on_cleanup(move || {
         log!(
-            "CLEANING UP Account {cx:?} -> {}",
+            "CLEANING UP Account -> {}",
             account_stored_value.with_value(|a| a.name.clone())
         )
     });
@@ -61,10 +58,10 @@ pub fn AccountComponent(
     use plus_lookup::I18nEnums;
     use plus_modeled::AccountType;
 
-    let lang_selector = use_context::<AppContext>(cx).unwrap().lang_selector;
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
 
     account_stored_value.with_value(|account| {
-        let name_node_ref = create_node_ref::<Input>(cx);
+        let name_node_ref = create_node_ref::<Input>();
         let account_name = account.name.clone();
         let initial_holdings = account.holdings.clone();
         let account_type = AccountType::from_i32(account.account_type).unwrap();
@@ -96,7 +93,7 @@ pub fn AccountComponent(
             }
         };
 
-        view! { cx,
+        view! {
             <fieldset>
                 <legend>"Account"</legend>
                 <div class="form">
@@ -130,7 +127,7 @@ pub fn AccountComponent(
                         <CollectionGridComponent
 
                             {
-                                on_cleanup(cx, log!("CLEANING UP HOLDING GRID! {cx:?}"));
+                                on_cleanup(log!("CLEANING UP HOLDING GRID!"));
                             }
 
                             header=vec![

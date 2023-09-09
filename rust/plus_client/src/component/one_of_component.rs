@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::cmp::PartialEq;
@@ -18,7 +18,6 @@ use strum::{IntoEnumIterator, VariantNames};
 ////////////////////////////////////////////////////////////////////////////////////
 /// Provides a component to toggle between values in an enumeration.
 ///
-///   * **cx** - Context
 ///   * **selection** - The selections to choose from
 ///   * **name** - Used for the name of radio buttons
 ///   * **labels** - Labels to show
@@ -26,8 +25,6 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * _return_ - View for one_of_component
 #[component]
 pub fn OneOfComponent<E, L, F, IV>(
-    /// Context
-    cx: Scope,
     /// The selections to choose from
     selection: E,
     /// Used for the name of radio buttons
@@ -55,9 +52,9 @@ where
     use std::iter::zip;
 
     let one_of_name = name;
-    let views_store_value = store_value(cx, views);
-    let labels_store_value = store_value(cx, labels);
-    let value = create_rw_signal(cx, selection.clone());
+    let views_store_value = store_value(views);
+    let labels_store_value = store_value(labels);
+    let value = create_rw_signal(selection.clone());
     let column_count = E::VARIANTS.len();
     let container_style = format!(
         "display: grid; grid-template-columns: {}; margin: 3px;",
@@ -77,7 +74,7 @@ where
             }
         });
 
-        view! { cx,
+        view! {
             <div style="margin-bottom: 0.3em;">
                 <label>
                     <input
@@ -93,21 +90,21 @@ where
                 </label>
             </div>
         }
-        .into_view(cx)
+        .into_view()
     };
 
     let radio_buttons = zip(E::iter(), E::VARIANTS)
         .map(|(e, &label)| make_radio_button(e, label.to_string()))
         .collect::<Vec<_>>();
 
-    view! { cx,
+    view! {
         <div style=container_style>{radio_buttons}</div>
         <hr/>
         {move || {
             let mut result = None;
             views_store_value
                 .update_value(|views| {
-                    result = Some(views(&value.get()).into_view(cx));
+                    result = Some(views(&value.get()).into_view());
                 });
             result
         }}

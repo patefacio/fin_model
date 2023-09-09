@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DossierHoldingIndex;
@@ -23,14 +23,11 @@ use plus_modeled::DossierItemIndex;
 /// - An index referencing a specific holding - via
 ///   [DossierHoldingIndex](plus_modeled::DossierHoldingIndex)
 ///
-///   * **cx** - Context
 ///   * **updatable** - TODO Document Param(updatable)
 ///   * **item_placeholder** - Placeholder for holding item
 ///   * _return_ - View for dossier_item_index_component
 #[component]
 pub fn DossierItemIndexComponent(
-    /// Context
-    cx: Scope,
     /// TODO Document Param(updatable)
     updatable: Updatable<Option<DossierItemIndex>>,
     /// Placeholder for holding item
@@ -79,7 +76,7 @@ pub fn DossierItemIndexComponent(
         _ => console_log(&format!("Not Worth Index")),
     }
 
-    view! { cx,
+    view! {
         <h3>"TODO DossierItemIndex"</h3>
         <label>
             <input type="text"/>

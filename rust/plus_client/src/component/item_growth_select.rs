@@ -8,7 +8,7 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::FlowDirection;
@@ -28,7 +28,6 @@ use strum::{IntoEnumIterator, VariantNames};
 /// larger but provides a way for the user to see the growth impact
 /// of the selection
 ///
-///   * **cx** - Context
 ///   * **updatable** - The enum being selected (eg [HoldingType](plus_modeled::HoldingType),
 /// [WorthType](plus_modeled::WorthType), etc).
 ///   * **growth_mapping** - Mapping of enum to its growth.
@@ -39,8 +38,6 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * _return_ - View for item_growth_select
 #[component]
 pub fn ItemGrowthSelect<E>(
-    /// Context
-    cx: Scope,
     /// The enum being selected (eg [HoldingType](plus_modeled::HoldingType),
     /// [WorthType](plus_modeled::WorthType), etc).
     updatable: Updatable<E>,
@@ -95,14 +92,11 @@ where
         })
         .unzip();
 
-    let igs_data_stored_value = store_value(
-        cx,
-        IGSData {
-            updatable,
-            label_to_value: label_to_value.into_iter().collect(),
-            value_to_label: value_to_label.into_iter().collect(),
-        },
-    );
+    let igs_data_stored_value = store_value(IGSData {
+        updatable,
+        label_to_value: label_to_value.into_iter().collect(),
+        value_to_label: value_to_label.into_iter().collect(),
+    });
 
     let mcs_select = move || {
         if let Some(filter_change) = filter_signal {
@@ -146,7 +140,7 @@ where
             });
         };
 
-        view! { cx,
+        view! {
             <MultiColumnSelect
                 options=options
                 column_count=column_count
@@ -157,7 +151,7 @@ where
         }
     };
 
-    view! { cx,
+    view! {
         <div class="ig">
             {move || mcs_select()} <div>
                 <div class="ig-growth-label">

@@ -11,7 +11,9 @@ use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::HtmlTag;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::ReadSignal;
+use leptos::Signal;
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::ev::{focusin, mousedown};
@@ -95,17 +97,15 @@ pub struct Indexer {
 ///
 /// This uses a grid for styling.
 ///
-///   * **cx** - Context
 ///   * **options** - The options to display
 ///   * **on_select** - Called when selection changes
 ///   * **initial_value** - Initial selection - if None assumes first option
 ///   * **direction** - Specifies whether items flows from top to bottom or left to right.
 ///   * **column_count** - Number of columns to display in the grid of options.
+///   * **disabled** - Signal allowing the disabling of the input.
 ///   * _return_ - View for multi_column_select
 #[component]
 pub fn MultiColumnSelect<F>(
-    /// Context
-    cx: Scope,
     /// The options to display
     options: Vec<SelectOption>,
     /// Called when selection changes
@@ -119,16 +119,29 @@ pub fn MultiColumnSelect<F>(
     /// Number of columns to display in the grid of options.
     #[prop(default = 3)]
     column_count: usize,
+    /// Signal allowing the disabling of the input.
+    #[prop(default=Signal::derive(|| false), into)]
+    disabled: Signal<bool>,
 ) -> impl IntoView
 where
     F: FnMut(String) + 'static,
 {
     // α <fn multi_column_select>
 
+    use leptos::create_node_ref;
     use leptos::create_rw_signal;
+    use leptos::ev::{focusin, mousedown};
     use leptos::html::Button;
+    use leptos::IntoAttribute;
+    use leptos::IntoClass;
     use leptos::NodeRef;
-    use leptos::*;
+    use leptos::SignalGet;
+    use leptos::SignalGetUntracked;
+    use leptos::SignalSet;
+    use leptos::SignalUpdate;
+    use leptos::SignalWith;
+    use leptos::SignalWithUntracked;
+    use leptos_dom::document;
     use leptos_use::use_event_listener;
 
     fn get_selection(element: Element) -> Option<(usize, String)> {
@@ -174,22 +187,19 @@ where
         None => (0, options[0].main_button_label().clone()),
     };
 
-    let mcs_data = create_rw_signal(
-        cx,
-        MCSData::<F> {
-            options,
-            on_select,
-            selection_vec: (0..indexer.item_count)
-                .map(move |_| create_node_ref::<Button>(cx))
-                .collect::<Vec<_>>(),
-            current_index,
-            main_button_label: initial_value.clone(),
-        },
-    );
-    let menu_is_hidden = create_rw_signal(cx, true);
-    let using_mouse = create_rw_signal(cx, false);
-    let mcs_grid_ref = create_node_ref::<Div>(cx);
-    let main_button_ref = create_node_ref::<Button>(cx);
+    let mcs_data = create_rw_signal(MCSData::<F> {
+        options,
+        on_select,
+        selection_vec: (0..indexer.item_count)
+            .map(move |_| create_node_ref::<Button>())
+            .collect::<Vec<_>>(),
+        current_index,
+        main_button_label: initial_value.clone(),
+    });
+    let menu_is_hidden = create_rw_signal(true);
+    let using_mouse = create_rw_signal(false);
+    let mcs_grid_ref = create_node_ref::<Div>();
+    let main_button_ref = create_node_ref::<Button>();
 
     let set_focus_main_button = move || {
         if let Some(main_button_ref) = main_button_ref.get_untracked() {
@@ -308,11 +318,11 @@ where
                     let (value, button_content) = match select_option {
                         SelectOption::Label(label) => (
                             label,
-                            view! { cx, <div class="mcs-label">{label}</div> }.into_view(cx),
+                            view! { <div class="mcs-label">{label}</div> }.into_view(),
                         ),
                         SelectOption::KeyLabel { key, label } => (
                             key,
-                            view! { cx,
+                            view! {
                                 <div
                                     style="display: grid; grid-template-columns: 1fr 1fr;"
                                     class="icon-label"
@@ -321,7 +331,7 @@ where
                                     <div class="mcs-select-label">{label}</div>
                                 </div>
                             }
-                            .into_view(cx),
+                            .into_view(),
                         ),
                     };
 
@@ -330,7 +340,7 @@ where
                     let wrapped_handle_keydown = handle_key_down.clone();
                     let wrapped_handle_keydown = move |ev| wrapped_handle_keydown(ev);
 
-                    view! { cx,
+                    view! {
                         <button
                             class="select-button"
                             on:click=wrapped_handle_click
@@ -345,9 +355,9 @@ where
                             {button_content}
                         </button>
                     }
-                    .into_view(cx)
+                    .into_view()
                 } else {
-                    view! { cx, <div></div> }.into_view(cx)
+                    view! { <div></div> }.into_view()
                 };
                 cells.push(cell);
             }
@@ -355,7 +365,7 @@ where
     });
 
     #[cfg(not(feature = "ssr"))]
-    let _ = use_event_listener(cx, document(), mousedown, move |ev: MouseEvent| {
+    let _ = use_event_listener(document(), mousedown, move |ev| {
         if let Some(container_div) = mcs_grid_ref.get_untracked() {
             if !menu_is_hidden.get_untracked() {
                 let target_element = element_from_event(&ev);
@@ -369,7 +379,7 @@ where
     });
 
     #[cfg(not(feature = "ssr"))]
-    let _ = use_event_listener(cx, document(), focusin, move |ev: FocusEvent| {
+    let _ = use_event_listener(document(), focusin, move |ev| {
         if let Some(container_div) = mcs_grid_ref.get_untracked() {
             if !menu_is_hidden.get_untracked() {
                 let target_element = element_from_event(&ev);
@@ -384,13 +394,14 @@ where
         }
     });
 
-    view! { cx,
+    view! {
         <div class="mcs-grid" disabled=move || { !menu_is_hidden.get() } node_ref=mcs_grid_ref>
             <button
                 on:mousedown=handle_main_button_mousedown
                 on:keydown=handle_main_button_key_activate
                 class="main-button"
                 node_ref=main_button_ref
+                disabled=disabled
             >
                 {move || { mcs_data.with(|mcs_data| mcs_data.main_button_label.clone()) }}
             </button>
@@ -399,7 +410,7 @@ where
                 class:hidden=move || menu_is_hidden.get()
                 style=format!("grid-template-columns: {}", "1fr ".repeat(column_count))
             >
-                {cells.into_view(cx)}
+                {cells.into_view()}
             </div>
         </div>
     }

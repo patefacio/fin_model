@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::Currency;
@@ -16,13 +16,10 @@ use plus_modeled::Currency;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a currency select of a set of currencies
 ///
-///   * **cx** - Context
 ///   * **updatable** - Currency update callback
 ///   * _return_ - View for currency_select
 #[component]
 pub fn CurrencySelect(
-    /// Context
-    cx: Scope,
     /// Currency update callback
     updatable: Updatable<Currency>,
 ) -> impl IntoView {

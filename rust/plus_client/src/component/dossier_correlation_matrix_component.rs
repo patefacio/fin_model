@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DossierCorrelationMatrix;
@@ -16,13 +16,10 @@ use plus_modeled::DossierCorrelationMatrix;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a correlation matrix where all pair-wise indices are represented as keys.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [DossierCorrelationMatrix] being edited
 ///   * _return_ - View for dossier_correlation_matrix_component
 #[component]
 pub fn DossierCorrelationMatrixComponent(
-    /// Context
-    cx: Scope,
     /// The [DossierCorrelationMatrix] being edited
     updatable: Updatable<DossierCorrelationMatrix>,
 ) -> impl IntoView {
@@ -36,14 +33,14 @@ pub fn DossierCorrelationMatrixComponent(
 
     //let index_pairs = updatable.value.mappings.iter();
 
-    let (indices, _set_indices) = create_signal(cx, updatable.value.mappings);
+    let (indices, _set_indices) = create_signal(updatable.value.mappings);
     console_log(&format!("MATRIX WORKING"));
 
-    view! { cx,
+    view! {
         <For
             each=move || indices.get()
             key=|entry| { format!("{entry:?}") }
-            view=|cx, element| {
+            view=|element| {
                 let row_index = element
                     .row_index
                     .as_ref()
@@ -65,8 +62,7 @@ pub fn DossierCorrelationMatrixComponent(
                     })
                     .unwrap();
                 let correlation = element.correlation;
-
-                view! { cx,
+                view! {
                     <div style="display: inline-flex">
                         <div inner_html=format!("row: {row_index} [ ")></div>
                         <div inner_html=format!(" ] column: {column_index}, ")></div>
@@ -192,10 +188,7 @@ pub fn get_matrix_correlation(matrix: &DossierCorrelationMatrix, index: (u32, u3
 }
 
 #[component]
-pub fn DisplayEntireMatrix(
-    cx: Scope,
-    updatable: Updatable<DossierCorrelationMatrix>,
-) -> impl IntoView {
+pub fn DisplayEntireMatrix(updatable: Updatable<DossierCorrelationMatrix>) -> impl IntoView {
     use leptos::store_value;
     use plus_modeled::core::dossier_item_index::ItemIndex;
     //use plus_modeled::core::DossierHoldingIndex;
@@ -210,7 +203,7 @@ pub fn DisplayEntireMatrix(
     let mut rows = vec![];
     let mut cols = vec![];
 
-    let updatable = store_value(cx, updatable);
+    let updatable = store_value(updatable);
     updatable.with_value(|updatable| {
         for i in updatable.value.mappings.iter() {
             let row_index = i
@@ -244,29 +237,29 @@ pub fn DisplayEntireMatrix(
     cols.sort();
     cols.dedup();
 
-    let (row_indices, _set_indices) = create_signal(cx, rows.clone());
+    let (row_indices, _set_indices) = create_signal(rows.clone());
 
     console_log(&format!("DISPLAY WORKING"));
 
-    view! { cx,
+    view! {
         <div inner_html=format!("_ {cols:?}")></div>
         <For
             each=move || row_indices.get()
             key=|entry| { format!("{entry:?}") }
-            view=move |cx, r_element| {
+            view=move |r_element| {
                 let row_index = rows.get(r_element as usize).unwrap();
-                let (col_indices, _set_indices) = create_signal(cx, cols.clone());
-                view! { cx,
+                let (col_indices, _set_indices) = create_signal(cols.clone());
+                view! {
                     <div inner_html=format!("R({row_index:?})")></div>
                     <For
                         each=move || col_indices.get()
                         key=|entry| { format!("{entry:?}") }
-                        view=move |cx, c_element| {
+                        view=move |c_element| {
                             let column_index = updatable
                                 .with_value(|updatable| {
                                     get_matrix_correlation(&updatable.value, (r_element, c_element))
                                 });
-                            view! { cx,
+                            view! {
                                 <div style="display: inline-flex">
                                     <div inner_html=format!("C({column_index})")></div>
                                 </div>

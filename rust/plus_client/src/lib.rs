@@ -133,8 +133,8 @@ if #[cfg(feature = "hydrate")] {
 
       tracing::debug!("What is going on?");
 
-      leptos::mount_to_body(move |cx| {
-          view! { cx, <AppComponent/> }
+      leptos::mount_to_body(move || {
+          view! { <AppComponent/> }
       });
     }
 }

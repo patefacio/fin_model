@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -15,7 +15,6 @@ use leptos_dom::console_log;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models an input field that accepts a valid symbol (aka Instrument Name)
 ///
-///   * **cx** - Context
 ///   * **symbol_updatable** - The symbol name.
 ///   * **size** - The size attribute, which one hopes would make the size of the
 /// input field roughly that number of characters. But YMMV.
@@ -25,8 +24,6 @@ use leptos_dom::console_log;
 ///   * _return_ - View for symbol_input
 #[component]
 pub fn SymbolInput(
-    /// Context
-    cx: Scope,
     /// The symbol name.
     symbol_updatable: Updatable<String>,
     /// The size attribute, which one hopes would make the size of the
@@ -47,7 +44,7 @@ pub fn SymbolInput(
     use leptos::create_node_ref;
     use leptos_dom::{console_log, html::Input};
 
-    let input_ref = create_node_ref::<Input>(cx);
+    let input_ref = create_node_ref::<Input>();
 
     let on_input = move |_| {
         console_log("Got keydown for symbol!");
@@ -60,7 +57,7 @@ pub fn SymbolInput(
         console_log("Got keydown");
     };
 
-    view! { cx,
+    view! {
         <input
             node_ref=input_ref
             on:keydown=on_keydown

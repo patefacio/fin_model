@@ -8,7 +8,7 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use std::ops::RangeInclusive;
@@ -18,7 +18,6 @@ use std::ops::RangeInclusive;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a single integer
 ///
-///   * **cx** - Context
 ///   * **updatable** - Called when input is updated.
 ///   * **input_class** - Class to decorate input element for styling
 ///   * **placeholder** - Placeholder shown if entry is empty.
@@ -35,8 +34,6 @@ use std::ops::RangeInclusive;
 ///   * _return_ - View for integer_input
 #[component]
 pub fn IntegerInput(
-    /// Context
-    cx: Scope,
     /// Called when input is updated.
     updatable: Updatable<Option<u32>>,
     /// Class to decorate input element for styling

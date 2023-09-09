@@ -10,7 +10,7 @@ use crate::Updatable;
 use leptos::log;
 use leptos::StoredValue;
 use leptos::WriteSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::View;
@@ -33,14 +33,11 @@ pub struct AccountSharedContext {}
 ////////////////////////////////////////////////////////////////////////////////////
 /// Display and edit support for list of accounts.
 ///
-///   * **cx** - Context
 ///   * **accounts_updatable** - The accounts to edit
 ///   * **shared_context_updatable** - The shared context
 ///   * _return_ - View for accounts_grid
 #[component]
 pub fn AccountsGrid(
-    /// Context
-    cx: Scope,
     /// The accounts to edit
     accounts_updatable: Updatable<Vec<Account>>,
     /// The shared context
@@ -52,9 +49,9 @@ pub fn AccountsGrid(
     use crate::CollectionGridComponent;
     use leptos::use_context;
 
-    let lang_selector = use_context::<AppContext>(cx).unwrap().lang_selector;
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
 
-    view! { cx,
+    view! {
         <h3>"Accounts"</h3>
 
         <p>"Enter all financial accounts in this section."</p>
@@ -77,12 +74,11 @@ impl CollectionGrid for Account {
     type SharedContext = AccountSharedContext;
     /// Get the display fields for the element.
     ///
-    ///   * **cx** - The context for the fields
     ///   * _return_ - The fields as elements
-    fn get_fields(&self, cx: Scope) -> Vec<View> {
+    fn get_fields(&self) -> Vec<View> {
         // α <fn CollectionGrid::get_fields for Account>
 
-        log!("GETTING FIELDS OF {cx:?} -> {}", self.name);
+        log!("GETTING FIELDS OF  -> {}", self.name);
 
         use crate::AppContext;
         use leptos::use_context;
@@ -92,7 +88,7 @@ impl CollectionGrid for Account {
         use plus_modeled::AccountType;
         use plus_modeled::LangSelector;
 
-        let lang_selector = use_context::<AppContext>(cx)
+        let lang_selector = use_context::<AppContext>()
             .map(|dossier_context| dossier_context.lang_selector)
             .unwrap();
 
@@ -103,9 +99,9 @@ impl CollectionGrid for Account {
         .to_string();
 
         vec![
-            view! { cx, <div class="cgc-header-cell" style:text-align="right">{self.name.clone()}</div> }.into_view(cx),
-            view! { cx, <div class="cgc-header-cell" style:text-align="right">{account_type}</div> }.into_view(cx),
-            view! { cx, <div class="cgc-header-cell" style:text-align="right">{"MV-TODO".to_string()}</div> }.into_view(cx),
+            view! { <div class="cgc-header-cell" style:text-align="right">{self.name.clone()}</div> }.into_view(),
+            view! { <div class="cgc-header-cell" style:text-align="right">{account_type}</div> }.into_view(),
+            view! { <div class="cgc-header-cell" style:text-align="right">{"MV-TODO".to_string()}</div> }.into_view(),
         ]
         // ω <fn CollectionGrid::get_fields for Account>
     }
@@ -130,13 +126,11 @@ impl CollectionGrid for Account {
 
     /// Create a view to edit the row
     ///
-    ///   * **cx** - Context
     ///   * **edit_type** - Type of edit
     ///   * **row_stored_value** - Row to edit.
     ///   * **shared_context_stored_value** - Updatable containing the shared context.
     ///   * _return_ - The edit view
     fn edit_row(
-        cx: Scope,
         edit_type: CollectionGridEditType,
         row_stored_value: StoredValue<Self>,
         shared_context_stored_value: StoredValue<Self::SharedContext>,
@@ -150,13 +144,13 @@ impl CollectionGrid for Account {
             row_stored_value.with_value(|a| a.name.clone())
         );
 
-        view! { cx,
+        view! {
             <AccountComponent
                 account_stored_value=row_stored_value
                 shared_context_stored_value=shared_context_stored_value
             />
         }
-        .into_view(cx)
+        .into_view()
         // ω <fn CollectionGrid::edit_row for Account>
     }
 

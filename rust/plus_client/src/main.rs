@@ -3,14 +3,14 @@
 async fn main() -> std::io::Result<()> {
     use actix_files::Files;
     use actix_web::*;
-    use plus_client::AppComponent;
     use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
+    use plus_client::AppComponent;
 
     let conf = get_configuration(None).await.unwrap();
     let addr = conf.leptos_options.site_addr;
     // Generate the list of routes in your Leptos App
-    let routes = generate_route_list(|cx| view! { cx, <AppComponent/> });
+    let routes = generate_route_list(|| view! { <AppComponent/> });
 
     HttpServer::new(move || {
         let leptos_options = &conf.leptos_options;
@@ -21,7 +21,7 @@ async fn main() -> std::io::Result<()> {
             .leptos_routes(
                 leptos_options.to_owned(),
                 routes.to_owned(),
-                |cx| view! { cx, <AppComponent/> },
+                || view! { <AppComponent/> },
             )
             .service(Files::new("/", site_root))
         //.wrap(middleware::Compress::default())

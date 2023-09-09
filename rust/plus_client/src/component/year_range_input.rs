@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::YearRange;
@@ -17,15 +17,12 @@ use std::ops::RangeInclusive;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a _start_ and _end_ year.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [YearRange] being edited
 ///   * **range** - Range of valid values for input.
 ///   * **align_left** - If set, numeric text aligned to left.
 ///   * _return_ - View for year_range_input
 #[component]
 pub fn YearRangeInput(
-    /// Context
-    cx: Scope,
     /// The [YearRange] being edited
     updatable: Updatable<Option<YearRange>>,
     /// Range of valid values for input.
@@ -57,14 +54,11 @@ pub fn YearRangeInput(
         updatable: Updatable<Option<YearRange>>,
     }
 
-    let stored_updatable = store_value(
-        cx,
-        YearRangeData {
-            start,
-            end,
-            updatable,
-        },
-    );
+    let stored_updatable = store_value(YearRangeData {
+        start,
+        end,
+        updatable,
+    });
 
     fn signal_pair(year_range_data: &mut YearRangeData) {
         if year_range_data.start.is_some() && year_range_data.end.is_some() {
@@ -103,7 +97,7 @@ pub fn YearRangeInput(
             end: 2400,
         });
 
-    view! { cx,
+    view! {
         <div style="display: inline-flex;">
             <YearInput
                 input_class=Some("yri-start".to_string())

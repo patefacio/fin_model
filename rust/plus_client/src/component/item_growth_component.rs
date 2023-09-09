@@ -7,7 +7,7 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DossierItemType;
@@ -39,7 +39,6 @@ use plus_modeled::WorthType;
 /// This component provides the selection of the system categorization and uses
 /// the [GrowthAssumptionComponent](crate::GrowthAssumptionComponent) to collect the overrides.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The current value of the system id
 ///   * **dossier_item_type** - Indicates the categories to display for selection (e.g. Worth, Holding, ...)
 ///   * **growth_item_mappings** - Provides mapping of assumptions that the categories default to.
@@ -50,8 +49,6 @@ use plus_modeled::WorthType;
 ///   * _return_ - View for item_growth_component
 #[component]
 pub fn ItemGrowthComponent<'a>(
-    /// Context
-    cx: Scope,
     /// The current value of the system id
     updatable: Updatable<ItemGrowth>,
     /// Indicates the categories to display for selection (e.g. Worth, Holding, ...)
@@ -96,7 +93,7 @@ pub fn ItemGrowthComponent<'a>(
         })
         .unwrap_or_default() as i32;
 
-    let updatable_store_value = store_value(cx, updatable);
+    let updatable_store_value = store_value(updatable);
 
     let set_system_id = move |id: u32| {
         let new_id = match dossier_item_type {
@@ -134,10 +131,10 @@ pub fn ItemGrowthComponent<'a>(
     });
 
     let column_count = 2;
-    let lang_selector = use_context::<AppContext>(cx).unwrap().lang_selector;
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
 
     let category_select = match dossier_item_type {
-        DossierItemType::Holding => view! { cx,
+        DossierItemType::Holding => view! {
             <ItemGrowthSelect
                 updatable=Updatable::new(
                     HoldingType::from_i32(initial_system_id).unwrap_or_default(),
@@ -152,8 +149,8 @@ pub fn ItemGrowthComponent<'a>(
                 label=Box::new(move |e| I18nEnums::HoldingType(lang_selector.get(), e).to_string())
             />
         }
-        .into_view(cx),
-        DossierItemType::Flow => view! { cx,
+        .into_view(),
+        DossierItemType::Flow => view! {
             <ItemGrowthSelect
                 updatable=Updatable::new(
                     FlowType::from_i32(initial_system_id).unwrap_or_default(),
@@ -166,8 +163,8 @@ pub fn ItemGrowthComponent<'a>(
                 label=Box::new(move |e| I18nEnums::FlowType(lang_selector.get(), e).to_string())
             />
         }
-        .into_view(cx),
-        DossierItemType::Worth => view! { cx,
+        .into_view(),
+        DossierItemType::Worth => view! {
             <ItemGrowthSelect
                 updatable=Updatable::new(
                     WorthType::from_i32(initial_system_id).unwrap_or_default(),
@@ -182,8 +179,8 @@ pub fn ItemGrowthComponent<'a>(
                 label=Box::new(move |e| I18nEnums::WorthType(lang_selector.get(), e).to_string())
             />
         }
-        .into_view(cx),
-        DossierItemType::Instrument => view! { cx,
+        .into_view(),
+        DossierItemType::Instrument => view! {
             <ItemGrowthSelect
                 updatable=Updatable::new(
                     FlowType::from_i32(initial_system_id).unwrap_or_default(),
@@ -195,7 +192,7 @@ pub fn ItemGrowthComponent<'a>(
                 label=Box::new(move |e| I18nEnums::FlowType(lang_selector.get(), e).to_string())
             />
         }
-        .into_view(cx),
+        .into_view(),
     };
 
     let growth_assumption_updatable = move || {
@@ -214,7 +211,7 @@ pub fn ItemGrowthComponent<'a>(
         )
     };
 
-    view! { cx,
+    view! {
         <div>
             <div class="icg-select">{category_select}</div>
             <CollapsibleComponent

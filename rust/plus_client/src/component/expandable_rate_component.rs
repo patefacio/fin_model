@@ -7,7 +7,7 @@ use crate::Updatable;
 use crate::Year;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::RateCurve;
@@ -27,14 +27,11 @@ use plus_modeled::YearValue;
 /// more than one entry the component throws up a popup dialog warning that
 /// all entries except the first will be discarded.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [RateCurve] being edited
 ///   * **year_range** - Range of valid years.
 ///   * _return_ - View for expandable_rate_component
 #[component]
 pub fn ExpandableRateComponent(
-    /// Context
-    cx: Scope,
     /// The [RateCurve] being edited
     updatable: Updatable<Vec<YearValue>>,
     /// Range of valid years.
@@ -52,14 +49,12 @@ pub fn ExpandableRateComponent(
     use leptos::SignalWith;
     use plus_utils::plus_constants::MIN_DATE;
 
-    let is_expanded = create_rw_signal(cx, false);
+    let is_expanded = create_rw_signal(false);
 
-    let stored_single_value = store_value(
-        cx,
-        updatable.value.first().map(|year_value| year_value.value),
-    );
+    let stored_single_value =
+        store_value(updatable.value.first().map(|year_value| year_value.value));
 
-    let stored_updatable = store_value(cx, updatable);
+    let stored_updatable = store_value(updatable);
 
     let single_value_updatable = move || {
         Updatable::new(stored_single_value.get_value(), move |value| {
@@ -76,15 +71,13 @@ pub fn ExpandableRateComponent(
         let new_single_rate =
             stored_updatable.with_value(|updatable| updatable.value.last().map(|yv| yv.value));
         stored_single_value.update_value(|value| *value = new_single_rate);
-        view! { cx,
-            <PercentInput placeholder=Some("value".to_string()) updatable=single_value_updatable()/>
-        }
-        .into_view(cx)
+        view! { <PercentInput placeholder=Some("value".to_string()) updatable=single_value_updatable()/> }
+        .into_view()
     };
 
     let show_rate_curve = move || {
         is_expanded.track();
-        view! { cx,
+        view! {
             <YearValueSeriesComponent updatable=Updatable::new(
                 stored_updatable.with_value(|updatable| updatable.value.clone()),
                 move |new_rc: &Vec<YearValue>| {
@@ -99,10 +92,10 @@ pub fn ExpandableRateComponent(
                 },
             )/>
         }
-        .into_view(cx)
+        .into_view()
     };
 
-    view! { cx,
+    view! {
         <div>
             <span
                 data-text="Collapsing removes entered data. Are you sure you want to close?"
@@ -121,14 +114,14 @@ pub fn ExpandableRateComponent(
                     {move || { if is_expanded.get() { "...-" } else { "...+" } }}
                 </button>
             </span>
-            <Show when=move || { !is_expanded.get() } fallback=|_| ()>
+            <Show when=move || { !is_expanded.get() } fallback=|| ()>
 
                 {move || show_single_rate()}
 
             </Show>
 
         </div>
-        <Show when=move || { is_expanded.get() } fallback=|_| ()>
+        <Show when=move || { is_expanded.get() } fallback=|| ()>
 
             {move || { show_rate_curve() }}
 

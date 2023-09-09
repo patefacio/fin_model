@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::DistributionSpec;
@@ -16,13 +16,10 @@ use plus_modeled::DistributionSpec;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models the distributions streams associated with a symbol or holding set
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [AgeAssumptions] being edited.
 ///   * _return_ - View for distribution_spec_component
 #[component]
 pub fn DistributionSpecComponent(
-    /// Context
-    cx: Scope,
     /// The [AgeAssumptions] being edited.
     updatable: Updatable<Option<DistributionSpec>>,
 ) -> impl IntoView {
@@ -51,9 +48,9 @@ pub fn DistributionSpecComponent(
         })
     }
 
-    let updatable_store_value = store_value(cx, updatable);
+    let updatable_store_value = store_value(updatable);
 
-    view! { cx,
+    view! {
         <div class="form">
             <div class="form-row">
                 <label>

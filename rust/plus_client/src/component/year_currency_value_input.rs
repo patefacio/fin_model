@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
@@ -16,7 +16,6 @@ use plus_modeled::core::{YearCurrencyValue, YearRange};
 ////////////////////////////////////////////////////////////////////////////////////
 /// Input for combined (year, currency, value).
 ///
-///   * **cx** - Context
 ///   * **updatable** - Initial value and callback
 ///   * **year_range** - Range of valid years.
 ///   * **value_placeholder** - Placeholder for the value field
@@ -24,8 +23,6 @@ use plus_modeled::core::{YearCurrencyValue, YearRange};
 ///   * _return_ - View for year_currency_value_input
 #[component]
 pub fn YearCurrencyValueInput(
-    /// Context
-    cx: Scope,
     /// Initial value and callback
     updatable: Updatable<Option<YearCurrencyValue>>,
     /// Range of valid years.
@@ -67,10 +64,10 @@ pub fn YearCurrencyValueInput(
         .and_then(|ycv| Currency::from_i32(ycv.currency))
         .unwrap_or_default();
 
-    let updatable = store_value(cx, updatable);
+    let updatable = store_value(updatable);
 
     let (currency_prefix, set_currency_prefix) =
-        create_signal(cx, to_currency_symbol(initial_currency).to_string());
+        create_signal(to_currency_symbol(initial_currency).to_string());
 
     let currency_select_updatable = Updatable::new(initial_currency, move |new_currency| {
         set_currency_prefix.update(|currency_prefix| {
@@ -131,7 +128,7 @@ pub fn YearCurrencyValueInput(
         currency_prefix.into(),
     )));
 
-    view! { cx,
+    view! {
         <div class="ycv" style="display: flex">
             <div class="ycv-currency">
                 <CurrencySelect updatable=currency_select_updatable/>

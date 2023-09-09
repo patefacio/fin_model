@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -14,46 +14,48 @@ use leptos_dom::console_log;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Top navigation bar
 ///
-///   * **cx** - Context
 ///   * _return_ - View for app_nav_bar
 #[component]
-pub fn AppNavBar(
-    /// Context
-    cx: Scope,
-) -> impl IntoView {
+pub fn AppNavBar() -> impl IntoView {
     // α <fn app_nav_bar>
 
-    use plus_lookup::I18nEnums;
-    use plus_modeled::LangSelector;
+    use crate::AppContext;
+    use crate::EnumSelect;
+    use crate::Updatable;
     use leptos::use_context;
+    use leptos::Signal;
+    use leptos::SignalGet;
     use leptos::SignalGetUntracked;
     use leptos::SignalSet;
-    use crate::AppContext;
-    use crate::Updatable;
-    use crate::EnumSelect;
-    let lang_selector = use_context::<AppContext>(cx).unwrap().lang_selector;
+    use plus_lookup::I18nEnums;
+    use plus_modeled::LangSelector;
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
+    let lang_select_disabled = move || grid_edit_active_count.get() > 0;
 
     let lang_selector_updatable =
-    Updatable::new(lang_selector.get_untracked(), move |new_lang_selector| {
-        lang_selector.set(new_lang_selector.clone())
-    });
+        Updatable::new(lang_selector.get_untracked(), move |new_lang_selector| {
+            lang_selector.set(new_lang_selector.clone())
+        });
 
     view! {
-        cx,
         <div class="app-nav-bar">
-        <div class="app-lang-select">
-        <div class="app-lang-select-inner">
-        <EnumSelect
-            updatable=lang_selector_updatable
-            column_count=1
-            label=Some(
-                Box::new(move |e| {
-                    I18nEnums::LangSelector(lang_selector.get_untracked(), e).to_string()
-                }),
-            )
-        />
-        </div>
-        </div>
+            <div class="app-lang-select">
+                <div class="app-lang-select-inner">
+                    <EnumSelect
+                        updatable=lang_selector_updatable
+                        column_count=1
+                        label=Some(
+                            Box::new(move |e| {
+                                I18nEnums::LangSelector(lang_selector.get_untracked(), e)
+                                    .to_string()
+                            }),
+                        )
+
+                        disabled=Signal::derive(lang_select_disabled)
+                    />
+                </div>
+            </div>
         </div>
     }
 

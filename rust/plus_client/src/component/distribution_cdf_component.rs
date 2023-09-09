@@ -6,7 +6,7 @@
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::NormalSpec;
@@ -16,13 +16,10 @@ use plus_modeled::NormalSpec;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Given a [NormalSpec] provides an SVG plot of its _cdf_.
 ///
-///   * **cx** - Context
 ///   * **normal_spec** - The normal to plot
 ///   * _return_ - View for distribution_cdf_component
 #[component]
 pub fn DistributionCdfComponent(
-    /// Context
-    cx: Scope,
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
 ) -> impl IntoView {
@@ -37,7 +34,7 @@ pub fn DistributionCdfComponent(
         normal_spec.get_cdf_chart(200)
     };
 
-    view! { cx, <div style="display: flex; justify-content: center;" inner_html=plot></div> }
+    view! { <div style="display: flex; justify-content: center;" inner_html=plot></div> }
 
     // ω <fn distribution_cdf_component>
 }

@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -14,20 +14,12 @@ use leptos_dom::console_log;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Top level side bar
 ///
-///   * **cx** - Context
 ///   * _return_ - View for app_side_bar
 #[component]
-pub fn AppSideBar(
-    /// Context
-    cx: Scope,
-) -> impl IntoView {
+pub fn AppSideBar() -> impl IntoView {
     // α <fn app_side_bar>
 
-    view! {
-        cx,
-        <div class="app-side-bar">
-        </div>
-    }
+    view! { <div class="app-side-bar"></div> }
 
     // ω <fn app_side_bar>
 }

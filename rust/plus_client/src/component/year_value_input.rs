@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::YearValue;
@@ -16,14 +16,11 @@ use plus_modeled::YearValue;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a _year_ combined with a _value_.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [YearValue] being edited
 ///   * **align_left** - If set, numeric text aligned to left.
 ///   * _return_ - View for year_value_input
 #[component]
 pub fn YearValueInput(
-    /// Context
-    cx: Scope,
     /// The [YearValue] being edited
     updatable: Updatable<Option<YearValue>>,
     /// If set, numeric text aligned to left.
@@ -47,14 +44,11 @@ pub fn YearValueInput(
         updatable: Updatable<Option<YearValue>>,
     }
 
-    let stored_updatable = store_value(
-        cx,
-        YearValueData {
-            year,
-            value,
-            updatable,
-        },
-    );
+    let stored_updatable = store_value(YearValueData {
+        year,
+        value,
+        updatable,
+    });
 
     fn signal_pair(year_value_data: &mut YearValueData) {
         if year_value_data.year.is_some() && year_value_data.value.is_some() {
@@ -83,7 +77,7 @@ pub fn YearValueInput(
         })
     });
 
-    view! { cx,
+    view! {
         <div style="display: inline-flex">
             <YearInput
                 input_class=Some("yvi-year".to_string())

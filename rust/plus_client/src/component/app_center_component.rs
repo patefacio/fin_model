@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -14,13 +14,9 @@ use leptos_dom::console_log;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Main content
 ///
-///   * **cx** - Context
 ///   * _return_ - View for app_center_component
 #[component]
-pub fn AppCenterComponent(
-    /// Context
-    cx: Scope,
-) -> impl IntoView {
+pub fn AppCenterComponent() -> impl IntoView {
     // α <fn app_center_component>
 
     use crate::AccountSharedContext;
@@ -102,12 +98,12 @@ pub fn AppCenterComponent(
     });
 
     view! {
-        cx,
         <div class="app-center">
-        <AccountsGrid
-        accounts_updatable=accounts_updatable
-        shared_context_updatable=shared_context_updatable
-        />
+            <AccountsGrid
+                accounts_updatable=accounts_updatable
+                shared_context_updatable=shared_context_updatable
+            />
+            <Parent/>
         </div>
     }
 
@@ -115,4 +111,53 @@ pub fn AppCenterComponent(
 }
 
 // α <mod-def app_center_component>
+
+#[component]
+pub fn Parent() -> impl IntoView {
+    use crate::EnumSelect;
+    use crate::NumericInput;
+    use crate::Updatable;
+    use leptos::create_rw_signal;
+    use leptos::Signal;
+    use leptos::SignalGet;
+    use leptos::SignalUpdate;
+    use plus_modeled::AccountType;
+
+    let child_id_rw_signal = create_rw_signal(1);
+
+    let create_new_child = move || {
+        let id = child_id_rw_signal.get();
+        view! { <Child id=id/> }
+    };
+
+    view! {
+        <h4>"Parent"</h4>
+        <button on:click=move |_| {
+            child_id_rw_signal.update(|id| *id += 1);
+        }>"Make Child"</button>
+        {move || create_new_child()}
+        <EnumSelect
+            updatable=Updatable::new(
+                AccountType::Taxable,
+                |account_type| log!("Account type updated -> {account_type:?}"),
+            )
+
+            disabled=Signal::derive(move || child_id_rw_signal.get() % 2 == 0)
+        />
+        <NumericInput updatable=Updatable::new(Some(1.0), |n| log!("Number now {n:?}"))/>
+    }
+}
+
+#[component]
+pub fn Child(id: u32) -> impl IntoView {
+    use leptos::on_cleanup;
+    view! {
+        {
+            on_cleanup(move || log!("Cleaning up child {id}"));
+        }
+
+        <h5>{format!("Child {id}")}</h5>
+    }
+}
+
 // ω <mod-def app_center_component>

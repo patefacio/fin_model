@@ -7,7 +7,7 @@ use crate::IntegerClamp;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 use leptos::{create_node_ref, ReadSignal};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -19,7 +19,6 @@ use plus_modeled::core::YearRange;
 ////////////////////////////////////////////////////////////////////////////////////
 /// A component for specifying a year, constrained by a year range.
 ///
-///   * **cx** - Context
 ///   * **input_class** - Class to decorate input element for styling
 ///   * **year_range** - Range of valid years.
 ///   * **updatable** - Value and callback
@@ -35,8 +34,6 @@ use plus_modeled::core::YearRange;
 ///   * _return_ - View for year_input
 #[component]
 pub fn YearInput(
-    /// Context
-    cx: Scope,
     /// Class to decorate input element for styling
     #[prop(default=None)]
     input_class: Option<String>,
@@ -81,7 +78,6 @@ pub fn YearInput(
 
     // Track whether year is valid to give hint to user - reactive to update class
     let (is_in_range, set_is_in_range) = create_signal(
-        cx,
         updatable
             .value
             .map(|year| year_is_valid(year))
@@ -96,7 +92,7 @@ pub fn YearInput(
         String::default()
     };
 
-    let node_ref = create_node_ref::<Input>(cx);
+    let node_ref = create_node_ref::<Input>();
     let mut updatable = updatable;
     let year_clamp = if live_clamp {
         Some(IntegerClamp::new(year_range.start..=year_range.end))
@@ -104,7 +100,7 @@ pub fn YearInput(
         None
     };
 
-    create_effect(cx, move |_| {
+    create_effect(move |_| {
         if let Some(clear_input) = clear_input.as_ref() {
             let _ = clear_input.get();
             if let Some(input_ref) = node_ref.get() {
@@ -113,7 +109,7 @@ pub fn YearInput(
         }
     });
 
-    create_effect(cx, move |_| {
+    create_effect(move |_| {
         if let Some(set_focus) = set_focus.as_ref() {
             let _ = set_focus.get();
             if let Some(input_ref) = node_ref.get() {
@@ -155,7 +151,7 @@ pub fn YearInput(
         }
     };
 
-    view! { cx,
+    view! {
         <input
             node_ref=node_ref
             class="year-input"

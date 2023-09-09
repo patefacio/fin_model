@@ -6,7 +6,7 @@
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_modeled::Date;
@@ -17,7 +17,6 @@ use plus_modeled::YearRange;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Models a date of format _MM/DD/YYYY_.
 ///
-///   * **cx** - Context
 ///   * **updatable** - The [Date] being edited
 ///   * **year_range** - Range of valid years for date input.
 ///   * **placeholder** - Placeholder shown if entry is empty.
@@ -25,8 +24,6 @@ use plus_modeled::YearRange;
 ///   * _return_ - View for date_input
 #[component]
 pub fn DateInput(
-    /// Context
-    cx: Scope,
     /// The [Date] being edited
     updatable: Updatable<Option<Date>>,
     /// Range of valid years for date input.
@@ -74,7 +71,7 @@ pub fn DateInput(
         .unwrap_or_else(|| LiveParsedDate::new(year_range));
 
     // Track whether year is valid to give hint to user - reactive to update class
-    let (is_in_range, set_is_in_range) = create_signal(cx, is_in_range);
+    let (is_in_range, set_is_in_range) = create_signal(is_in_range);
 
     let initial_value = if updatable.value.is_some() {
         live_parsed_date.formatted.clone()
@@ -82,15 +79,12 @@ pub fn DateInput(
         String::default()
     };
 
-    let date_data = store_value(
-        cx,
-        DateData {
-            updatable,
-            live_parsed_date,
-        },
-    );
+    let date_data = store_value(DateData {
+        updatable,
+        live_parsed_date,
+    });
 
-    let node_ref = create_node_ref::<Input>(cx);
+    let node_ref = create_node_ref::<Input>();
     let update_value = move || {
         let input_ref = node_ref.get().expect("Date input node");
         let value = input_ref.value();
@@ -175,7 +169,7 @@ pub fn DateInput(
         }
     };
 
-    view! { cx,
+    view! {
         <input
             node_ref=node_ref
             class="date-input"

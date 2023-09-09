@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::{component, view, IntoView, Scope};
+use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 
@@ -14,33 +14,26 @@ use leptos_dom::console_log;
 ////////////////////////////////////////////////////////////////////////////////////
 /// See what gets cleaned up.
 ///
-///   * **cx** - Context
 ///   * _return_ - View for dispose_test
 #[component]
-pub fn DisposeTest(
-    /// Context
-    cx: Scope,
-) -> impl IntoView {
+pub fn DisposeTest() -> impl IntoView {
     // α <fn dispose_test>
 
     use leptos::*;
     use std::rc::Rc;
 
-    let sz = std::mem::size_of_val(&cx);
-
-    let some_data = Rc::new(SomeData::new(&format!("DisposeTest Badabing:{cx:?}")));
+    let some_data = Rc::new(SomeData::new(&format!("DisposeTest Badabing")));
 
     /*
         let (some_data, some_data_write) = leptos::create_signal(
-            cx,
-           SomeData::new(&format!("DisposeTest Badabing:{cx:?}"))
+           SomeData::new(&format!("DisposeTest Badabing"))
         );
     */
     let do_stuff = move || {
         leptos_dom::console_log(&format!("Doing stuff"));
     };
 
-    let do_stuff = leptos::store_value(cx, do_stuff);
+    let do_stuff = leptos::store_value(do_stuff);
 
     // leptos_dom::console_log(&format!(
     //     "Size of read signal is {}, size of write signal is {}",
@@ -48,10 +41,10 @@ pub fn DisposeTest(
     //     std::mem::size_of_val(&some_data_write),
     // ));
 
-    leptos_dom::console_log(&format!("DisposeTest cx({cx:?}"));
+    leptos_dom::console_log(&format!("DisposeTest"));
     let log_dispose_item = crate::utils::log_dispose::LogDispose::new("dIsPoSe".into());
 
-    let on_click = leptos::store_value(cx, move |_| {
+    let on_click = leptos::store_value(move |_| {
         println!("{log_dispose_item:?}");
         console_log("Clicked Bam Button");
         // leptos_dom::console_log(&format!(
@@ -66,9 +59,8 @@ pub fn DisposeTest(
         // ));
     });
 
-    view! { cx,
+    view! {
         <button on:click=move |e| { on_click.with_value(|on_click| on_click(e)) }>"Bam"</button>
-        <p>{&format!("Scope {cx:?}")}</p>
         <p>{&format!("Some data string -> {}", some_data.data.clone())}</p>
     }
 
