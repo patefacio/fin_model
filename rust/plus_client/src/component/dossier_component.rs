@@ -228,6 +228,17 @@ fn spoof_accounts() -> (Vec<Account>, AccountSharedContext) {
             ..Default::default()
         },
         Holding {
+            instrument_name: "QQQ".to_string(),
+            quantity: 100.0,
+            unit_valuation: Some(YearCurrencyValue {
+                year: 2020,
+                currency: 0,
+                value: 376.97,
+            }),
+            cost_basis: 40_000.0,
+            ..Default::default()
+        },
+        Holding {
             instrument_name: "IWM".to_string(),
             quantity: 1000.0,
             unit_valuation: Some(YearCurrencyValue {
@@ -249,17 +260,18 @@ fn spoof_accounts() -> (Vec<Account>, AccountSharedContext) {
             cost_basis: 140_000.0,
             ..Default::default()
         },
+        Holding {
+            instrument_name: "XBI".to_string(),
+            quantity: 300.0,
+            unit_valuation: Some(YearCurrencyValue {
+                year: 2020,
+                currency: 0,
+                value: 78.83,
+            }),
+            cost_basis: 36_323.0,
+            ..Default::default()
+        },
     ];
-
-    let holdings = (0..3)
-        .map(|i| {
-            holdings.iter().map(move |h| Holding {
-                instrument_name: format!("{} -> {i}", h.instrument_name),
-                ..h.clone()
-            })
-        })
-        .flatten()
-        .collect::<Vec<_>>();
 
     let accounts = [
         ("Interactive Brokers".to_string(), AccountType::Taxable),

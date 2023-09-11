@@ -398,7 +398,7 @@ where
                     set_enabled();
                 }
             }
-            key_signal.update(|i| log!("Signalling {i}"));
+            key_signal.update(|i| {});
         } else {
             // Adding new entry
             match ok_cancel {
