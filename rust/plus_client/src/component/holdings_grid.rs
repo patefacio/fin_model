@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::CollectionGrid;
 use crate::CollectionGridEditType;
 use crate::CollectionGridState;
@@ -10,12 +11,16 @@ use crate::SymbolGrowthMap;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::use_context;
+use leptos::IntoAttribute;
+use leptos::SignalGet;
 use leptos::StoredValue;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::View;
+use plus_lookup::I18nHoldingsGrid;
 use plus_modeled::Holding;
 use std::collections::HashSet;
 
@@ -59,24 +64,36 @@ pub fn HoldingsGrid(
     /// The shared context
     shared_context_updatable: Updatable<HoldingSharedContext>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-hg";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_symbol = move || I18nHoldingsGrid::Symbol(lang_selector.get()).to_string();
+    let i18n_mv = move || I18nHoldingsGrid::Mv(lang_selector.get()).to_string();
+    let i18n_cb = move || I18nHoldingsGrid::Cb(lang_selector.get()).to_string();
+    let i18n_ugl = move || I18nHoldingsGrid::Ugl(lang_selector.get()).to_string();
+    let i18n_holdings = move || I18nHoldingsGrid::Holdings(lang_selector.get()).to_string();
+    let i18n_new_holding = move || I18nHoldingsGrid::NewHolding(lang_selector.get()).to_string();
     // α <fn holdings_grid>
 
     use crate::CollectionGridComponent;
-
-    view! {
-        <CollectionGridComponent
-            header=vec![
-                "Symbol".to_string(), "Market Value".to_string(), "Cost Basis".to_string(),
-                "Unrealized (G/L)".to_string(),
-            ]
-
-            rows_updatable=holdings_updatable
-            shared_context_updatable=shared_context_updatable
-            add_item_label="Add New Holding".to_string()
-        />
-    }
+    let header = move || {
+        let header = vec![i18n_symbol(), i18n_mv(), i18n_cb(), i18n_ugl()];
+        header
+    };
 
     // ω <fn holdings_grid>
+    view! {
+        <div class=SELF_CLASS>
+            // α <plus-hg-view>
+            <div class="grid-label">{i18n_holdings}</div>
+            <CollectionGridComponent
+                header=(move || header())()
+                rows_updatable=holdings_updatable
+                shared_context_updatable=shared_context_updatable
+                add_item_label=(move || i18n_new_holding())()
+            />
+            // ω <plus-hg-view>
+        </div>
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

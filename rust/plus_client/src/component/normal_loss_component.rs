@@ -100,7 +100,7 @@ pub fn NormalLossComponent(
             </div>
             <div style="text-align: right">
                 <NumericInput
-                    placeholder=Some("CDF Sample".to_string())
+                    placeholder="CDF Sample"
                     modification=Some(Modification::PrefixAndSuffix {
                         prefix: "gain < ".into(),
                         suffix: "%".into(),

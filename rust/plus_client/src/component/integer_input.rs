@@ -7,6 +7,7 @@ use crate::NumericInput;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::MaybeSignal;
 use leptos::ReadSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
@@ -40,8 +41,8 @@ pub fn IntegerInput(
     #[prop(default=None)]
     input_class: Option<String>,
     /// Placeholder shown if entry is empty.
-    #[prop(default=None)]
-    placeholder: Option<String>,
+    #[prop(default=String::from("value"), into)]
+    placeholder: String,
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
     #[prop(default = 8)]
@@ -65,8 +66,8 @@ pub fn IntegerInput(
     #[prop(default = false)]
     align_left: bool,
     /// Signal allowing the disabling of the input.
-    #[prop(default=None)]
-    disabled: Option<ReadSignal<bool>>,
+    #[prop(into, optional)]
+    disabled: MaybeSignal<bool>,
     /// Called on update to check if value is valid.
     #[prop(default=None)]
     validator: Option<Box<dyn FnMut(i32) -> bool>>,
@@ -89,7 +90,7 @@ pub fn IntegerInput(
         Box::new(new_validator) as Box<dyn FnMut(f64) -> bool>
     });
 
-    view! { cx,
+    view! {
         <NumericInput
             input_class=input_class
             updatable=numeric_updatable

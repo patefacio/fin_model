@@ -7,8 +7,7 @@ use crate::SelectDirection;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::ReadSignal;
-use leptos::Signal;
+use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -37,7 +36,7 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * **direction** - Specifies whether items flows from top to bottom or left to right.
 ///   * **filter** - Filter on enum variants
 ///   * **label** - Convert enum type to label - for when VariantNames does not cut it
-///   * **disabled** - Signal allowing the disabling of the input.
+///   * **disabled** - Signal allowing the disabling of the select button.
 ///   * _return_ - View for enum_select
 #[component]
 pub fn EnumSelect<E>(
@@ -55,9 +54,9 @@ pub fn EnumSelect<E>(
     /// Convert enum type to label - for when VariantNames does not cut it
     #[prop(default=None)]
     label: Option<Box<dyn Fn(&E) -> String>>,
-    /// Signal allowing the disabling of the input.
-    #[prop(default=Signal::derive(|| false), into)]
-    disabled: Signal<bool>,
+    /// Signal allowing the disabling of the select button.
+    #[prop(into, optional)]
+    disabled: MaybeSignal<bool>,
 ) -> impl IntoView
 where
     E: Clone + Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,

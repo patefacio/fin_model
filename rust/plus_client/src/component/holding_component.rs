@@ -3,13 +3,17 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::HoldingSharedContext;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::use_context;
+use leptos::SignalGet;
 use leptos::StoredValue;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use plus_lookup::I18nHoldingComponent;
 use plus_modeled::Holding;
 use plus_modeled::ItemGrowth;
 
@@ -28,6 +32,17 @@ pub fn HoldingComponent(
     /// Shared context
     shared_context_stored_value: StoredValue<HoldingSharedContext>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-hc";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_mv = move || I18nHoldingComponent::Mv(lang_selector.get()).to_string();
+    let i18n_holding = move || I18nHoldingComponent::Holding(lang_selector.get()).to_string();
+    let i18n_ugl = move || I18nHoldingComponent::Ugl(lang_selector.get()).to_string();
+    let i18n_symbol = move || I18nHoldingComponent::Symbol(lang_selector.get()).to_string();
+    let i18n_current_price =
+        move || I18nHoldingComponent::CurrentPrice(lang_selector.get()).to_string();
+    let i18n_growth = move || I18nHoldingComponent::Growth(lang_selector.get()).to_string();
+    let i18n_cost = move || I18nHoldingComponent::Cost(lang_selector.get()).to_string();
+    let i18n_quantity = move || I18nHoldingComponent::Quantity(lang_selector.get()).to_string();
     // α <fn holding_component>
 
     use crate::to_currency_symbol;
@@ -40,12 +55,11 @@ pub fn HoldingComponent(
     use crate::YearCurrencyValueInput;
     use leptos::create_rw_signal;
     use leptos::MaybeSignal;
-    use leptos::SignalGet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
+    use leptos::IntoAttribute;
     use plus_modeled::Currency;
     use plus_modeled::CurrencyValue;
-    use plus_modeled::DistributionPolicy;
     use plus_modeled::DossierItemType;
     use plus_modeled::GrowthAssumption;
     use plus_modeled::GrowthItemMappings;
@@ -162,13 +176,12 @@ pub fn HoldingComponent(
             Updatable::new(distribution_policy, move |distribution_policy| {
                 holding_stored_value.update_value(|holding| {
                     holding.distribution_policy = distribution_policy.as_ref().cloned();
-                    log!("DistributionPolicy updated {distribution_policy:?}");
                 })
             });
 
         let market_value = move || {
             if let Some(mv) = market_value_signal.get() {
-                format!("Market Value: {mv}")
+                format!("{}: {mv}", i18n_mv())
             } else {
                 String::default()
             }
@@ -176,66 +189,70 @@ pub fn HoldingComponent(
 
         let unrealized_gain_loss = move || {
             if let Some(gl) = unrealized_gl_signal.get() {
-                format!("Unrealized G/L: {}", gl)
+                format!("{}: {}", i18n_ugl(), gl)
             } else {
                 String::default()
             }
         };
 
-        leptos::on_cleanup(move || log!("CLEANING UP HOLDING"));
-
         view! {
-            <fieldset class="holding" style="margin: 0.5rem;">
-                <legend>"Holding"</legend>
-                <div class="form">
-                    <div class="form-row">
-                        <label>"Symbol" <SymbolInput symbol_updatable=symbol_updatable/></label>
-                        <label>
-                            "Current Price"
-                            <div style="display: inline-block; margin-left: 0.45em;">
-                                <YearCurrencyValueInput
-                                    updatable=unit_valuation_updatable
-                                    value_placeholder="price".to_string()
+            <div class=SELF_CLASS>
+                <fieldset class="holding" style="margin: 0.5rem;">
+                    <legend>{i18n_holding}</legend>
+                    <div class="form">
+                        <div class="form-row">
+                            <label>
+                                {i18n_symbol} <SymbolInput symbol_updatable=symbol_updatable/>
+                            </label>
+                            <label>
+                                {i18n_current_price}
+                                <div style="display: inline-block; margin-left: 0.45em;">
+                                    <YearCurrencyValueInput
+                                        updatable=unit_valuation_updatable
+                                        value_placeholder="price".to_string()
+                                    />
+                                </div>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label>
+                                {i18n_quantity} <NumericInput updatable=quantity_updatable/>
+                            </label>
+                            <label>
+                                {i18n_cost}
+                                <NumericInput
+                                    updatable=cost_basis_updatable
+                                    modification=Some(
+                                        Modification::Prefix(
+                                            MaybeSignal::Dynamic(currency_rw_signal.into()),
+                                        ),
+                                    )
                                 />
-                            </div>
-                        </label>
-                    </div>
-                    <div class="form-row">
-                        <label>"Quantity" <NumericInput updatable=quantity_updatable/></label>
-                        <label>
-                            "Cost"
-                            <NumericInput
-                                updatable=cost_basis_updatable
-                                modification=Some(
-                                    Modification::Prefix(
-                                        MaybeSignal::Dynamic(currency_rw_signal.into()),
-                                    ),
-                                )
-                            />
 
-                        </label>
-                    </div>
-                    <div class="form-row">
-                        <div class="info-label">{move || market_value()}</div>
-                        <div class="info-label">{move || unrealized_gain_loss()}</div>
-                    </div>
-                    <div style="grid-column-start: 1; grid-column-end: 2;">
-                        <fieldset>
-                            <legend>"Growth"</legend>
-                            <ItemGrowthComponent
-                                updatable=item_growth_updatable
-                                dossier_item_type=DossierItemType::Holding
-                                growth_item_mappings=&GrowthItemMappings::default()
-                            />
-                        </fieldset>
-                        <fieldset>
-                            <legend>"Distributions"</legend>
-                            <DistributionPolicyComponent updatable=distribution_policy_updatable/>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <div class="info-label">{move || market_value()}</div>
+                            <div class="info-label">{move || unrealized_gain_loss()}</div>
+                        </div>
+                        <div style="grid-column-start: 1; grid-column-end: 2;">
+                            <fieldset>
+                                <legend>{i18n_growth}</legend>
+                                <ItemGrowthComponent
+                                    updatable=item_growth_updatable
+                                    dossier_item_type=DossierItemType::Holding
+                                    growth_item_mappings=&GrowthItemMappings::default()
+                                />
+                            </fieldset>
+                            <fieldset>
+                                <legend>"Distributions"</legend>
+                                <DistributionPolicyComponent updatable=distribution_policy_updatable/>
 
-                        </fieldset>
+                            </fieldset>
+                        </div>
                     </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </div>
         }
     })
 

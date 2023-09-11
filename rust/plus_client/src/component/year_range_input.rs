@@ -101,7 +101,7 @@ pub fn YearRangeInput(
         <div style="display: inline-flex;">
             <YearInput
                 input_class=Some("yri-start".to_string())
-                placeholder=Some("start".to_string())
+                placeholder="start"
                 updatable=start_year_updatable
                 year_range=year_range
                 live_clamp=true
@@ -109,7 +109,7 @@ pub fn YearRangeInput(
             />
             <YearInput
                 input_class=Some("yri-end".to_string())
-                placeholder=Some("end".to_string())
+                placeholder="end"
                 updatable=end_year_updatable
                 year_range=year_range
                 live_clamp=true

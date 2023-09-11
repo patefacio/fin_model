@@ -8,7 +8,7 @@ use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::{component, view, IntoView};
-use leptos::{create_node_ref, ReadSignal};
+use leptos::{create_node_ref, MaybeSignal, ReadSignal};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::html::Input;
@@ -43,11 +43,11 @@ pub fn YearInput(
     /// Value and callback
     updatable: Updatable<Option<u32>>,
     /// Placeholder shown if entry is empty.
-    #[prop(default=None)]
-    placeholder: Option<String>,
+    #[prop(default=String::from("Year"), into)]
+    placeholder: String,
     /// Signal allowing the disabling of the input.
-    #[prop(default=None)]
-    disabled: Option<ReadSignal<bool>>,
+    #[prop(into, optional)]
+    disabled: MaybeSignal<bool>,
     /// Signal requesting to clear the input.
     #[prop(default=None)]
     clear_input: Option<ReadSignal<()>>,
@@ -162,9 +162,9 @@ pub fn YearInput(
             size=5
             maxlength=4
             style:text-align=move || { if align_left { "left" } else { "right" } }
-            placeholder=placeholder
+            placeholder=placeholder.to_string()
             type="text"
-            disabled=move || disabled.map(|disabled| disabled.get()).unwrap_or_default()
+            disabled=disabled
         />
     }
 

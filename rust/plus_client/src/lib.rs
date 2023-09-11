@@ -34,6 +34,7 @@ pub use component::distribution_cdf_component::DistributionCdfComponent;
 pub use component::distribution_pdf_component::DistributionPdfComponent;
 pub use component::distribution_policy_component::DistributionPolicyComponent;
 pub use component::distribution_spec_component::DistributionSpecComponent;
+pub use component::dossier_component::DossierComponent;
 pub use component::dossier_correlation_entry_component::DossierCorrelationEntryComponent;
 pub use component::dossier_correlation_matrix_component::DossierCorrelationMatrixComponent;
 pub use component::dossier_holding_index_input::DossierHoldingIndexInput;

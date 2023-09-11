@@ -59,23 +59,20 @@ pub fn DistributionSpecComponent(
                             updatable=Updatable::new(
                                 first_rate(&distribution_spec.qualified_dividend),
                                 move |rate| {
-                                    log!("DistSpec got new qualified rate -> {rate:?}");
                                     updatable_store_value
                                         .update_value(|updatable| {
                                             updatable
                                                 .update_and_then_signal(|ds| {
                                                     let new_curve = make_single_entry_curve(rate);
-                                                    log!("Updating qualified in {ds:?} with {new_curve:?}");
                                                     ds
                                                         .get_or_insert_with(|| DistributionSpec::default())
                                                         .qualified_dividend = new_curve;
-                                                    log!("After update -> {ds:?}");
                                                 })
                                         });
                                 },
                             )
 
-                            placeholder=Some("annual pct".to_string())
+                            placeholder="annual pct"
                         />
                     </div>
                 </label>
@@ -97,7 +94,7 @@ pub fn DistributionSpecComponent(
                                 },
                             )
 
-                            placeholder=Some("annual pct".to_string())
+                            placeholder="annual pct"
                         />
                     </div>
                 </label>
@@ -121,7 +118,7 @@ pub fn DistributionSpecComponent(
                                 },
                             )
 
-                            placeholder=Some("annual pct".to_string())
+                            placeholder="annual pct"
                         />
                     </div>
                 </label>
@@ -143,7 +140,7 @@ pub fn DistributionSpecComponent(
                                 },
                             )
 
-                            placeholder=Some("annual pct".to_string())
+                            placeholder="annual pct"
                         />
                     </div>
                 </label>

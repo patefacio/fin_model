@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::lang_selector_to_language_id;
 use crate::{FRENCH, GERMAN, LOCALES, US_ENGLISH};
 use core::fmt::Display;
 use core::fmt::Formatter;
@@ -79,24 +80,6 @@ pub enum I18nEnums<'a> {
     HoldingType(LangSelector, &'a HoldingType),
     /// Enumerates supported enums and implements display to dispatch on language and value
     FlowType(LangSelector, &'a FlowType),
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-// --- functions ---
-////////////////////////////////////////////////////////////////////////////////////
-/// Get the language identifier from selector.
-///
-///   * **lang_selector** - The language selector
-///   * _return_ - Reference to the language identifier
-#[inline]
-pub fn lang_selector_to_language_id<'a>(lang_selector: &LangSelector) -> &'a LanguageIdentifier {
-    // α <fn lang_selector_to_language_id>
-    match lang_selector {
-        LangSelector::UsEnglish => &US_ENGLISH,
-        LangSelector::French => &FRENCH,
-        LangSelector::German => &GERMAN,
-    }
-    // ω <fn lang_selector_to_language_id>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

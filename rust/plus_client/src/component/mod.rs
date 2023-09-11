@@ -21,6 +21,7 @@ pub mod distribution_cdf_component;
 pub mod distribution_pdf_component;
 pub mod distribution_policy_component;
 pub mod distribution_spec_component;
+pub mod dossier_component;
 pub mod dossier_correlation_entry_component;
 pub mod dossier_correlation_matrix_component;
 pub mod dossier_holding_index_input;

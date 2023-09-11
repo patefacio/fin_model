@@ -42,7 +42,7 @@ pub fn DistributionPdfComponent(
         }
     };
 
-    view! { cx, <div style="display: flex; justify-content: center;" inner_html=plot></div> }
+    view! { <div style="display: flex; justify-content: center;" inner_html=plot></div> }
 
     // ω <fn distribution_pdf_component>
 }

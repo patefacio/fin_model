@@ -176,6 +176,7 @@ fieldset {
 
 legend {
 	font-weight: bold;
+	font-size: 1.1rem;
 }
 
 fieldset.disabled {
@@ -398,13 +399,14 @@ input.invalid:focus {
 }
 
 .dossier-toolbar {
-	display: flex;
-	justify-content: center;
-	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(6, 1fr) auto;
+	max-width: 600px;
+	// Center the toolbar
+	margin: 0 auto;
 }
 
 .label-button {
-	display: inline-block;
 	margin: 0.2rem;
 	padding: 0.5rem;
 	button {
@@ -413,6 +415,7 @@ input.invalid:focus {
 	}
 	label {
 		margin-top: 0.4rem;
+		white-space: normal;
 	}
 }
 
@@ -529,3 +532,20 @@ input.invalid:focus {
 	grid-column: 1;
 }
 
+.plus-hc {
+	background-color: beige;
+}
+
+.plus-hg {
+	background-color: beige;
+}
+
+.plus-aac {
+	background-color: pink;
+	color: pink;
+}
+
+.grid-label {
+	font-weight: bold;
+	font-size: 1.1rem;
+}

@@ -113,19 +113,16 @@ pub fn NormalSpecComponent(
     let show_pdf = move |_| {
         set_disable_graphs.update(|v| {
             *v = GraphDisplay::Pdf;
-            log!("PDF Shown");
         })
     };
     let show_cdf = move |_| {
         set_disable_graphs.update(|v| {
             *v = GraphDisplay::Cdf;
-            log!("CDF Shown");
         })
     };
     let show_hist = move |_| {
         set_disable_graphs.update(|v| {
             *v = GraphDisplay::Historic;
-            log!("Historic Shown");
         })
     };
 
@@ -138,7 +135,7 @@ pub fn NormalSpecComponent(
                     <div style="display: inline;">
                         <span>"N("</span>
                         <NumericInput
-                            placeholder=Some("mean".to_string())
+                            placeholder="mean"
                             modification=Some(Modification::PrefixAndSuffix {
                                 prefix: "μ=".into(),
                                 suffix: "%".into(),
@@ -151,7 +148,7 @@ pub fn NormalSpecComponent(
                         />
                         <span>", "</span>
                         <NumericInput
-                            placeholder=Some("std. dev".to_string())
+                            placeholder="std. dev"
                             modification=Some(Modification::PrefixAndSuffix {
                                 prefix: "σ=".into(),
                                 suffix: "%".into(),

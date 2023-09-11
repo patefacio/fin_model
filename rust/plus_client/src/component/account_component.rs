@@ -4,13 +4,17 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AccountSharedContext;
+use crate::AppContext;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::use_context;
+use leptos::SignalGet;
 use leptos::StoredValue;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use plus_lookup::I18nAccountComponent;
 use plus_modeled::Account;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -28,23 +32,15 @@ pub fn AccountComponent(
     /// The shared context for accounts
     shared_context_stored_value: StoredValue<AccountSharedContext>,
 ) -> impl IntoView {
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_account = move || I18nAccountComponent::Account(lang_selector.get()).to_string();
+    let i18n_account_type =
+        move || I18nAccountComponent::AccountType(lang_selector.get()).to_string();
+    let i18n_holdings = move || I18nAccountComponent::Holdings(lang_selector.get()).to_string();
     // α <fn account_component>
 
-    log!(
-        "Creating new account component {}",
-        account_stored_value.with_value(|a| a.name.clone())
-    );
-
-    leptos::on_cleanup(move || {
-        log!(
-            "CLEANING UP Account -> {}",
-            account_stored_value.with_value(|a| a.name.clone())
-        )
-    });
-
     use crate::AppContext;
-    use crate::CollectionGridComponent;
-    use crate::CollectionGridState;
+    use crate::HoldingsGrid;
     use crate::EnumSelect;
     use crate::HoldingSharedContext;
     use crate::Updatable;
@@ -56,6 +52,7 @@ pub fn AccountComponent(
     use leptos::SignalGet;
     use leptos_dom::html::Input;
     use plus_lookup::I18nEnums;
+    use plus_lookup::I18nAccountComponent;
     use plus_modeled::AccountType;
 
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
@@ -75,10 +72,6 @@ pub fn AccountComponent(
         let holdings_updatable = Updatable::new(initial_holdings, move |new_holdings| {
             account_stored_value.update_value(|account| {
                 account.holdings = new_holdings.clone();
-                log!(
-                    "Updating Acct:{} holdings -> {new_holdings:?}",
-                    account.name
-                );
             });
         });
 
@@ -95,7 +88,7 @@ pub fn AccountComponent(
 
         view! {
             <fieldset>
-                <legend>"Account"</legend>
+                <legend>{i18n_account}</legend>
                 <div class="form">
                     <div class="form-row">
                         <label>
@@ -107,7 +100,7 @@ pub fn AccountComponent(
                             />
                         </label>
                         <label>
-                            "Account Type" <div style="display: inline-block;">
+                            {i18n_account_type} <div style="display: inline-block;">
                                 <EnumSelect
                                     updatable=holding_type_updatable
                                     label=Some(
@@ -123,21 +116,9 @@ pub fn AccountComponent(
                 </div>
                 <div class="account-holdings">
                     <div>
-                        <div class="info-label">"Account Holdings"</div>
-                        <CollectionGridComponent
-
-                            {
-                                on_cleanup(log!("CLEANING UP HOLDING GRID!"));
-                            }
-
-                            header=vec![
-                                "Symbol".to_string(), "Market Value".to_string(), "Cost Basis"
-                                .to_string(), "Unrealized (G/L)".to_string(),
-                            ]
-
-                            rows_updatable=holdings_updatable
+                        <HoldingsGrid
+                            holdings_updatable=holdings_updatable
                             shared_context_updatable=shared_context_updatable
-                            add_item_label="Add New Holding".to_string()
                         />
                     </div>
                 </div>

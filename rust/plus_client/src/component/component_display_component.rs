@@ -178,7 +178,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                         )
 
                         range=Some(-5.0..=5.0)
-                        placeholder=Some("temp".to_string())
+                        placeholder="temp"
                         size=13
                     />
                 </div>
@@ -198,7 +198,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 Modification::Prefix(MaybeSignal::Static("$ ".to_string())),
                             )
 
-                            placeholder=Some("dollars".to_string())
+                            placeholder="dollars"
                             size=12
                         />
                     </div>
@@ -217,7 +217,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 Modification::Prefix(MaybeSignal::Static("€ ".to_string())),
                             )
 
-                            placeholder=Some("euros".to_string())
+                            placeholder="euros"
                             size=12
                         />
                     </div>
@@ -237,7 +237,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 suffix: "/yr".into(),
                             })
 
-                            placeholder=Some("expense/yr".to_string())
+                            placeholder="expense/yr"
                             range=Some(0.0..=5_000.0)
                             max_len=14
                             size=12
@@ -275,7 +275,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 move |n| { show_update(format!("Input updated -> {n:?}")) },
                             )
 
-                            placeholder=Some("Integer".to_string())
+                            placeholder="Integer"
                             range=Some(0..=5000)
                         />
                     </div>
@@ -288,7 +288,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 move |n| { show_update(format!("Input updated -> {n:?}")) },
                             )
 
-                            placeholder=Some("Integer".to_string())
+                            placeholder="Integer"
                             validator=Some(Box::new(|v| v % 2 == 0))
                         />
                     </div>
@@ -303,7 +303,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 move |n| { show_update(format!("Percent updated -> {n:?}")) },
                             )
 
-                            placeholder=Some("pct complete".to_string())
+                            placeholder="pct complete"
                             max_len=8
                             range=Some(0.0..=0.4)
                         />
@@ -329,7 +329,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 move |y| { show_update(format!("Year updated -> {y:?}")) },
                             )
 
-                            placeholder=Some("year".to_string())
+                            placeholder="year"
                             live_clamp=true
                             year_range=YearRange {
                                 start: 1900,
@@ -346,7 +346,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 move |y| { show_update(format!("Year updated -> {y:?}")) },
                             )
 
-                            placeholder=Some("year".to_string())
+                            placeholder="year"
                             year_range=YearRange {
                                 start: 1900,
                                 end: 2300,
@@ -364,7 +364,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                                 move |y| { show_update(format!("Year updated -> {y:?}")) },
                             )
 
-                            placeholder=Some("year".to_string())
+                            placeholder="year"
                             year_range=YearRange {
                                 start: 2020,
                                 end: 2030,
@@ -395,7 +395,6 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                             },
                         )
 
-                        placeholder=Some("MM/DD/YYYY".to_string())
                         year_range=Some(YearRange {
                             start: 1990,
                             end: 2070,

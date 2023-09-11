@@ -3,17 +3,22 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::CollectionGrid;
 use crate::CollectionGridEditType;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::use_context;
+use leptos::IntoAttribute;
+use leptos::SignalGet;
 use leptos::StoredValue;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use leptos_dom::View;
+use plus_lookup::I18nAccountsGrid;
 use plus_modeled::Account;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -43,28 +48,37 @@ pub fn AccountsGrid(
     /// The shared context
     shared_context_updatable: Updatable<AccountSharedContext>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-ag";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_name = move || I18nAccountsGrid::Name(lang_selector.get()).to_string();
+    let i18n_accounts = move || I18nAccountsGrid::Accounts(lang_selector.get()).to_string();
+    let i18n_mv = move || I18nAccountsGrid::Mv(lang_selector.get()).to_string();
+    let i18n_type = move || I18nAccountsGrid::Type(lang_selector.get()).to_string();
+    let i18n_new_account = move || I18nAccountsGrid::NewAccount(lang_selector.get()).to_string();
+    let i18n_grid_help = move || I18nAccountsGrid::GridHelp(lang_selector.get()).to_string();
     // α <fn accounts_grid>
 
-    use crate::AppContext;
     use crate::CollectionGridComponent;
-    use leptos::use_context;
-
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-
-    view! {
-        <h3>"Accounts"</h3>
-
-        <p>"Enter all financial accounts in this section."</p>
-        <CollectionGridComponent
-            rows_updatable=accounts_updatable
-            shared_context_updatable=shared_context_updatable
-            // TODO: i18n
-            header=vec!["Account".to_string(), "Type".to_string(), "Market Value".to_string(),]
-            add_item_label="Add New Account".to_string()
-        />
-    }
+    let header = move || {
+        let header = vec![i18n_name(), i18n_type(), i18n_mv()];
+        header
+    };
 
     // ω <fn accounts_grid>
+    view! {
+        <div class=SELF_CLASS>
+            // α <plus-ag-view>
+            <div class="grid-label">{i18n_accounts}</div>
+            <p inner_html=i18n_grid_help></p>
+            <CollectionGridComponent
+                rows_updatable=accounts_updatable
+                shared_context_updatable=shared_context_updatable
+                header=(move || header())()
+                add_item_label=i18n_new_account()
+            />
+            // ω <plus-ag-view>
+        </div>
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -78,15 +92,9 @@ impl CollectionGrid for Account {
     fn get_fields(&self) -> Vec<View> {
         // α <fn CollectionGrid::get_fields for Account>
 
-        log!("GETTING FIELDS OF  -> {}", self.name);
-
-        use crate::AppContext;
-        use leptos::use_context;
         use leptos::IntoStyle;
-        use leptos::SignalGet;
         use plus_lookup::I18nEnums;
         use plus_modeled::AccountType;
-        use plus_modeled::LangSelector;
 
         let lang_selector = use_context::<AppContext>()
             .map(|dossier_context| dossier_context.lang_selector)
@@ -138,11 +146,6 @@ impl CollectionGrid for Account {
         // α <fn CollectionGrid::edit_row for Account>
 
         use crate::AccountComponent;
-
-        log!(
-            "RERUNNING EDIT ACCOUNT ROW {}",
-            row_stored_value.with_value(|a| a.name.clone())
-        );
 
         view! {
             <AccountComponent

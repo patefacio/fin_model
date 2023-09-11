@@ -63,7 +63,7 @@ pub enum Modification {
 ///   * **on_enter** - Called if user hits enter, passes current input value.
 ///   * **clear_input** - Signal requesting to clear the input.
 ///   * **no_decimal** - Indicates decimals disallowed.
-///   * **disabled** - Signal allowing the disabling of the input.
+///   * **disabled** - Signal allowing the disabling of the select button.
 ///   * **validator** - Called on update to check if value is valid.
 ///   * _return_ - View for numeric_input
 #[component]
@@ -83,8 +83,8 @@ pub fn NumericInput(
     #[prop(default = false)]
     align_left: bool,
     /// Placeholder shown if entry is empty.
-    #[prop(default=None)]
-    placeholder: Option<String>,
+    #[prop(default=String::from("value"), into)]
+    placeholder: String,
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
     #[prop(default = 9)]
@@ -104,9 +104,9 @@ pub fn NumericInput(
     /// Indicates decimals disallowed.
     #[prop(default = false)]
     no_decimal: bool,
-    /// Signal allowing the disabling of the input.
-    #[prop(default=None)]
-    disabled: Option<ReadSignal<bool>>,
+    /// Signal allowing the disabling of the select button.
+    #[prop(into, optional)]
+    disabled: MaybeSignal<bool>,
     /// Called on update to check if value is valid.
     #[prop(default=None)]
     validator: Option<Box<dyn FnMut(f64) -> bool>>,
@@ -191,18 +191,6 @@ pub fn NumericInput(
     };
 
     let numeric_input_data = store_value(numeric_input_data);
-
-    let _log_me = move |s: &str| {
-        numeric_input_data.with_value(|nid| {
-            log!(
-                "`{s}->\n\tN:<{:?}>\n\tMod:<{:?}>\n\tRange:<{:?}>",
-                nid.updatable.value,
-                nid.modification,
-                nid.range
-            )
-        })
-    };
-
     let node_ref = create_node_ref::<Input>();
 
     create_effect(move |_| {
@@ -245,7 +233,6 @@ pub fn NumericInput(
                 let lenient_formatted = format_number_lenient(&value, selection_start);
 
                 if let LenientFormatted::Incomplete(_text, _position) = &lenient_formatted {
-                    log!("Incomplete number -> {lenient_formatted:?}");
                     return;
                 }
 
@@ -465,12 +452,12 @@ pub fn NumericInput(
                 }
             }
 
-            placeholder=placeholder.unwrap_or_default()
+            placeholder=placeholder.to_string()
             value=initial_value
             maxlength=max_len
             size=size
             type="text"
-            disabled=move || disabled.map(|disabled| disabled.get()).unwrap_or_default()
+            disabled=disabled
         />
     }
     // ω <fn numeric_input>

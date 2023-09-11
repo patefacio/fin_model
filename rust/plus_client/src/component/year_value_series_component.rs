@@ -190,7 +190,7 @@ pub fn YearValueSeriesComponent(
         view! {
             <YearInput
                 input_class=Some("rcc-yi".to_string())
-                disabled=Some(disabled)
+                disabled=disabled
                 updatable=Updatable::new(
                     Some(year_value.year),
                     move |year| {
@@ -205,7 +205,7 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder=Some("year".to_string())
+                placeholder="year"
             />
         }
     };
@@ -213,7 +213,7 @@ pub fn YearValueSeriesComponent(
     let percent_display = move |year_value: YearValue| {
         view! {
             <PercentInput
-                disabled=Some(disabled)
+                disabled=disabled
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |percent| {
@@ -228,7 +228,7 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder=Some("rate".to_string())
+                placeholder="rate"
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();
@@ -241,7 +241,7 @@ pub fn YearValueSeriesComponent(
     let value_display = move |year_value: YearValue| {
         view! {
             <NumericInput
-                disabled=Some(disabled)
+                disabled=disabled
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |value| {
@@ -268,7 +268,7 @@ pub fn YearValueSeriesComponent(
                 )
 
                 // modification=Some(Modification::Prefix(MaybeSignal::Static("$".into())))
-                placeholder=Some("value".to_string())
+                placeholder="value"
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();
@@ -295,7 +295,7 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder=Some("rate".to_string())
+                placeholder="rate"
                 clear_input=Some(clear_fields)
                 on_enter=Some(
                     Box::new(move |_| {
@@ -335,7 +335,7 @@ pub fn YearValueSeriesComponent(
                     ),
                 )
 
-                placeholder=Some("value".to_string())
+                placeholder="value"
                 clear_input=Some(clear_fields)
                 on_enter=Some(
                     Box::new(move |_| {
@@ -412,7 +412,7 @@ pub fn YearValueSeriesComponent(
                         },
                     )
 
-                    placeholder=Some("year".to_string())
+                    placeholder="year"
                     clear_input=Some(clear_fields)
                     set_focus=Some(year_input_focus)
                     year_range=year_range
@@ -421,7 +421,6 @@ pub fn YearValueSeriesComponent(
                 {if is_rate_curve_data {
                     percent_input()
                 } else {
-                    log!("Creating value input -> {series_type:?}");
                     value_input()
                 }}
 

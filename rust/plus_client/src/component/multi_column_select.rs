@@ -11,8 +11,7 @@ use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::HtmlTag;
 #[allow(unused_imports)]
 use leptos::log;
-use leptos::ReadSignal;
-use leptos::Signal;
+use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
@@ -120,8 +119,8 @@ pub fn MultiColumnSelect<F>(
     #[prop(default = 3)]
     column_count: usize,
     /// Signal allowing the disabling of the input.
-    #[prop(default=Signal::derive(|| false), into)]
-    disabled: Signal<bool>,
+    #[prop(into, optional)]
+    disabled: MaybeSignal<bool>,
 ) -> impl IntoView
 where
     F: FnMut(String) + 'static,

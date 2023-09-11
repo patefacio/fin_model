@@ -6,9 +6,9 @@
 use crate::Modification;
 use crate::NumericInput;
 use crate::Updatable;
-use leptos::create_signal;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::MaybeSignal;
 use leptos::ReadSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
@@ -21,7 +21,7 @@ use std::ops::RangeInclusive;
 /// Provides a [NumericInput] with a percent suffix modification.
 ///
 ///   * **updatable** - Called when input is updated.
-///   * **placeholder** - Placeholder for the year field
+///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * **size** - The size attribute, which one hopes would make the size of the
 /// input field roughly that number of characters. But YMMV.
 ///
@@ -37,9 +37,9 @@ use std::ops::RangeInclusive;
 pub fn PercentInput(
     /// Called when input is updated.
     updatable: Updatable<Option<f64>>,
-    /// Placeholder for the year field
-    #[prop(default=None)]
-    placeholder: Option<String>,
+    /// Placeholder shown if entry is empty.
+    #[prop(into, optional)]
+    placeholder: String,
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
     #[prop(default = 9)]
@@ -60,8 +60,8 @@ pub fn PercentInput(
     #[prop(default=None)]
     clear_input: Option<ReadSignal<()>>,
     /// Signal allowing the disabling of the input.
-    #[prop(default=None)]
-    disabled: Option<ReadSignal<bool>>,
+    #[prop(into, optional)]
+    disabled: MaybeSignal<bool>,
 ) -> impl IntoView {
     // α <fn percent_input>
 

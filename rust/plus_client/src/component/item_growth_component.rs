@@ -139,7 +139,6 @@ pub fn ItemGrowthComponent<'a>(
                 updatable=Updatable::new(
                     HoldingType::from_i32(initial_system_id).unwrap_or_default(),
                     move |e| {
-                        log!("Updated holding system id to {e:?}");
                         set_system_id(*e as u32)
                     },
                 )
@@ -169,7 +168,6 @@ pub fn ItemGrowthComponent<'a>(
                 updatable=Updatable::new(
                     WorthType::from_i32(initial_system_id).unwrap_or_default(),
                     move |e| {
-                        log!("Updated worth system id to {e:?}");
                         set_system_id(*e as u32)
                     },
                 )

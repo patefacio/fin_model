@@ -3,7 +3,16 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+pub use i18n_component_display::I18nAccountComponent;
+pub use i18n_component_display::I18nAccountsGrid;
+pub use i18n_component_display::I18nDossierComponent;
+pub use i18n_component_display::I18nHoldingComponent;
+pub use i18n_component_display::I18nHoldingsGrid;
+pub use i18n_component_display::I18nPersonsGrid;
+pub use i18n_component_display::I18nWorthComponent;
+pub use i18n_component_display::I18nWorthsGrid;
 pub use i18n_enum_display::I18nEnums;
+pub use plus_modeled::LangSelector;
 pub use plus_utils::SystemUnicodes;
 pub use system_lookup::SystemLookup;
 
@@ -11,8 +20,29 @@ pub use system_lookup::SystemLookup;
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod generated_system_lookup;
+pub mod i18n_component_display;
 pub mod i18n_enum_display;
 pub mod system_lookup;
+
+////////////////////////////////////////////////////////////////////////////////////
+// --- functions ---
+////////////////////////////////////////////////////////////////////////////////////
+/// Get the language identifier from selector.
+///
+///   * **lang_selector** - The language selector
+///   * _return_ - Reference to the language identifier
+#[inline]
+pub(crate) fn lang_selector_to_language_id<'a>(
+    lang_selector: &LangSelector,
+) -> &'a LanguageIdentifier {
+    // α <fn lang_selector_to_language_id>
+    match lang_selector {
+        LangSelector::UsEnglish => &US_ENGLISH,
+        LangSelector::French => &FRENCH,
+        LangSelector::German => &GERMAN,
+    }
+    // ω <fn lang_selector_to_language_id>
+}
 
 // α <mod-def lib>
 use fluent_templates::static_loader;

@@ -20,7 +20,7 @@ use plus_modeled::YearRange;
 ///   * **updatable** - The [Date] being edited
 ///   * **year_range** - Range of valid years for date input.
 ///   * **placeholder** - Placeholder shown if entry is empty.
-///   * **input_class** - Class to decorate input element for styling
+///   * **class** - Class to decorate input element for styling
 ///   * _return_ - View for date_input
 #[component]
 pub fn DateInput(
@@ -30,11 +30,11 @@ pub fn DateInput(
     #[prop(default=Some(YearRange{ start: 1900, end: 2350 }))]
     year_range: Option<YearRange>,
     /// Placeholder shown if entry is empty.
-    #[prop(default=None)]
-    placeholder: Option<String>,
+    #[prop(default=String::from("MM/DD/YYYY"), into)]
+    placeholder: String,
     /// Class to decorate input element for styling
-    #[prop(default=None)]
-    input_class: Option<String>,
+    #[prop(default=String::from("date-input"), into)]
+    class: String,
 ) -> impl IntoView {
     // α <fn date_input>
 
@@ -173,13 +173,13 @@ pub fn DateInput(
         <input
             node_ref=node_ref
             class="date-input"
-            class=input_class
+            class=class.to_string()
             class:invalid=move || { !is_in_range.get() }
             on:input=move |_| update_value()
             on:keydown=key_down_handler
             value=initial_value
             size=12
-            placeholder=placeholder
+            placeholder=placeholder.to_string()
             type="text"
         />
     }

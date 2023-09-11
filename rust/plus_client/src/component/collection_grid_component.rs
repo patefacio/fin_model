@@ -153,30 +153,18 @@ where
     use std::collections::HashMap;
     use std::rc::Rc;
 
-    fn print_type_of<T>(_: &T) {
-        println!("{}", std::any::type_name::<T>())
-    }
-
-    log!(
-        "Creating collection_grid_component!  -> {}",
-        std::any::type_name::<T>()
-    );
-    leptos::on_cleanup(move || log!("CLEANING UP HOLDING-> {}", std::any::type_name::<T>()));
-
     /// This is used to ensure only one collection has an ok/cancel enabled at a time.
     let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
 
     let add_to_active_count = move || {
         grid_edit_active_count.update(|count| {
             *count += 1;
-            log!("Grid Edit Active incremented to {count}");
         })
     };
 
     let remove_from_active_count = move || {
         grid_edit_active_count.update(|count| {
             *count -= 1;
-            log!("Grid Edit Active decremented to {count}");
         })
     };
 
@@ -186,11 +174,6 @@ where
     let active_key_stored_value: StoredValue<Option<String>> = store_value(None);
     let initial_grid_edit_active_count = grid_edit_active_count.get_untracked() + 1;
     let ok_cancel_enabled = move || {
-        log!(
-            "Checking {} against initial {}",
-            grid_edit_active_count.get(),
-            initial_grid_edit_active_count
-        );
         grid_edit_active_count.get() == initial_grid_edit_active_count
     };
     let row_count_signal = create_rw_signal(rows_updatable.value.len());
@@ -403,7 +386,6 @@ where
                         cgc_data.rows_updatable.update_and_then_signal(|rows| {
                             let updated_row = row_stored_value.get_value();
                             if let Some(row_) = rows.get_mut(index) {
-                                log!("Updating row {index} from {row_:?}\nto\n{updated_row:?}",);
                                 *row_ = updated_row;
                             } else {
                                 log!("UpdateNone!!");

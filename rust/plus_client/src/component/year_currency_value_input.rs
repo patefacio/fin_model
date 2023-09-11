@@ -136,7 +136,7 @@ pub fn YearCurrencyValueInput(
             <div class="ycv-value">
                 <NumericInput
                     updatable=value_updatable
-                    placeholder=Some(value_placeholder)
+                    placeholder=value_placeholder
                     modification=modification
                 />
             </div>
@@ -145,7 +145,7 @@ pub fn YearCurrencyValueInput(
                 <YearInput
                     updatable=year_updatable
                     year_range=year_range
-                    placeholder=Some(year_placeholder)
+                    placeholder=year_placeholder
                 />
             </div>
         </div>

@@ -82,12 +82,12 @@ pub fn YearValueInput(
             <YearInput
                 input_class=Some("yvi-year".to_string())
                 updatable=year_updatable
-                placeholder=Some("year".to_string())
+                placeholder="year"
                 align_left=align_left
             />
             <NumericInput
                 input_class=Some("yvi-value".to_string())
-                placeholder=Some("value".to_string())
+                placeholder="value"
                 updatable=value_updatable
                 non_negative=true
                 modification=Some(Modification::Prefix(("$".into())))

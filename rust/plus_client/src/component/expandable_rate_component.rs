@@ -71,7 +71,7 @@ pub fn ExpandableRateComponent(
         let new_single_rate =
             stored_updatable.with_value(|updatable| updatable.value.last().map(|yv| yv.value));
         stored_single_value.update_value(|value| *value = new_single_rate);
-        view! { <PercentInput placeholder=Some("value".to_string()) updatable=single_value_updatable()/> }
+        view! { <PercentInput placeholder="value" updatable=single_value_updatable()/> }
         .into_view()
     };
 
