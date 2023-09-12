@@ -14,7 +14,6 @@ use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_lookup::I18nDossierComponent;
-use plus_modeled::Dossier;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -25,8 +24,6 @@ use plus_modeled::Dossier;
 ///   * _return_ - View for dossier_component
 #[component]
 pub fn DossierComponent(
-    /// The dossier to edit
-    updatable: Updatable<Dossier>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-dc";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
