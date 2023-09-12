@@ -204,6 +204,8 @@ pub fn DossierComponent(
                 </Show>
             </div>
 
+            <!-- "THIS CAUSES HYDRATION ISSUE" -->
+
             // ω <plus-dc-view>
         </div>
     }
