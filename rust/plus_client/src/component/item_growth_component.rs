@@ -138,9 +138,7 @@ pub fn ItemGrowthComponent<'a>(
             <ItemGrowthSelect
                 updatable=Updatable::new(
                     HoldingType::from_i32(initial_system_id).unwrap_or_default(),
-                    move |e| {
-                        set_system_id(*e as u32)
-                    },
+                    move |e| { set_system_id(*e as u32) },
                 )
 
                 growth_mapping=BTreeMap::new()
@@ -167,9 +165,7 @@ pub fn ItemGrowthComponent<'a>(
             <ItemGrowthSelect
                 updatable=Updatable::new(
                     WorthType::from_i32(initial_system_id).unwrap_or_default(),
-                    move |e| {
-                        set_system_id(*e as u32)
-                    },
+                    move |e| { set_system_id(*e as u32) },
                 )
 
                 growth_mapping=BTreeMap::new()

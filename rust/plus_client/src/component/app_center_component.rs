@@ -26,7 +26,7 @@ pub fn AppCenterComponent() -> impl IntoView {
         <div class="app-center">
             <DossierComponent/>
             <hr/>
-            <div style="height: 40px;"/>
+            <div style="height: 40px;"></div>
             <h3>"Following content is to show features of various components"</h3>
             <ComponentDisplayComponent/>
         </div>

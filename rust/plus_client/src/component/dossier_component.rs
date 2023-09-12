@@ -14,6 +14,7 @@ use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
 use plus_lookup::I18nDossierComponent;
+use plus_modeled::Dossier;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -24,6 +25,8 @@ use plus_lookup::I18nDossierComponent;
 ///   * _return_ - View for dossier_component
 #[component]
 pub fn DossierComponent(
+    /// The dossier to edit
+    updatable: Updatable<Dossier>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-dc";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
@@ -74,15 +77,11 @@ pub fn DossierComponent(
     let show_assumptions = move || set_show_content.update(|s| *s = ShowContent::ShowAssumptions);
 
     let persons_view = move || {
-        view! {
-            <h2>"TODO -> " {move || i18n_people()}</h2>
-        }
+        view! { <h2>"TODO -> " {move || i18n_people()}</h2> }
     };
 
     let worths_view = move || {
-        view! {
-            <h2>"TODO -> " {move || i18n_worths()}</h2>
-        }
+        view! { <h2>"TODO -> " {move || i18n_worths()}</h2> }
     };
 
     let accounts_view = move || {
@@ -105,21 +104,15 @@ pub fn DossierComponent(
     };
 
     let flow_specs_view = move || {
-        view! {
-            <h2>"TODO -> "  {move || i18n_cash_flows()}</h2>
-        }
+        view! { <h2>"TODO -> " {move || i18n_cash_flows()}</h2> }
     };
 
     let taxes_view = move || {
-        view! {
-            <h2>"TODO -> "  {move || i18n_taxes()}</h2>
-        }
+        view! { <h2>"TODO -> " {move || i18n_taxes()}</h2> }
     };
 
     let assumptions_view = move || {
-        view! {
-            <h2>"TODO -> "  {move || i18n_assumptions()}</h2>
-        }
+        view! { <h2>"TODO -> " {move || i18n_assumptions()}</h2> }
     };
 
     let buttons_disabled = move || grid_edit_active_count.get() > 0;
@@ -204,9 +197,7 @@ pub fn DossierComponent(
                 </Show>
             </div>
 
-            <!-- "THIS CAUSES HYDRATION ISSUE" -->
-
-            // ω <plus-dc-view>
+        // ω <plus-dc-view>
         </div>
     }
 }

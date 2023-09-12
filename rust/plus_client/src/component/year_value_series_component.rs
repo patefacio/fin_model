@@ -418,11 +418,7 @@ pub fn YearValueSeriesComponent(
                     year_range=year_range
                     live_clamp=true
                 />
-                {if is_rate_curve_data {
-                    percent_input()
-                } else {
-                    value_input()
-                }}
+                {if is_rate_curve_data { percent_input() } else { value_input() }}
 
             </div>
         </div>

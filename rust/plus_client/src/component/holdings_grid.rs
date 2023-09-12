@@ -91,7 +91,7 @@ pub fn HoldingsGrid(
                 shared_context_updatable=shared_context_updatable
                 add_item_label=(move || i18n_new_holding())()
             />
-            // ω <plus-hg-view>
+        // ω <plus-hg-view>
         </div>
     }
 }

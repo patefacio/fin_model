@@ -76,7 +76,7 @@ pub fn AccountsGrid(
                 header=(move || header())()
                 add_item_label=i18n_new_account()
             />
-            // ω <plus-ag-view>
+        // ω <plus-ag-view>
         </div>
     }
 }
