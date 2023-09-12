@@ -59,7 +59,10 @@ pub fn AccountsGrid(
     // α <fn accounts_grid>
 
     use crate::CollectionGridComponent;
+    use leptos::SignalWith;
+
     let header = move || {
+        lang_selector.track();
         let header = vec![i18n_name(), i18n_type(), i18n_mv()];
         header
     };

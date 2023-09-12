@@ -3,12 +3,17 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::Updatable;
 #[allow(unused_imports)]
 use leptos::log;
+use leptos::use_context;
+use leptos::IntoAttribute;
+use leptos::SignalGet;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::console_log;
+use plus_lookup::I18nDistributionPolicyComponent;
 use plus_modeled::DistributionPolicy;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +28,13 @@ pub fn DistributionPolicyComponent(
     /// The distribution policy being edited
     updatable: Updatable<Option<DistributionPolicy>>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-dpc";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_no_distributions =
+        move || I18nDistributionPolicyComponent::NoDistributions(lang_selector.get()).to_string();
+    let i18n_distributions =
+        move || I18nDistributionPolicyComponent::Distributions(lang_selector.get()).to_string();
+    let i18n_bond = move || I18nDistributionPolicyComponent::Bond(lang_selector.get()).to_string();
     // α <fn distribution_policy_component>
 
     use crate::BondSpecComponent;
@@ -46,10 +58,10 @@ pub fn DistributionPolicyComponent(
         None => Policy::None,
     };
 
-    let label_maker = |policy: &Policy| match policy {
-        Policy::None => "No Distributions".to_string(),
-        Policy::Distributions => "Distributions".to_string(),
-        Policy::Bond => "Bond Spec".to_string(),
+    let label_maker = move |policy: &Policy| match policy {
+        Policy::None => i18n_no_distributions(),
+        Policy::Distributions => i18n_distributions(),
+        Policy::Bond => i18n_bond(),
     };
 
     let updatable_store_value = store_value(updatable);
@@ -102,16 +114,19 @@ pub fn DistributionPolicyComponent(
         Policy::None => ().into_view(),
     };
 
-    view! {
-        <OneOfComponent
-            selection=selection
-            name="distribution-policy".to_string()
-            views=views
-            labels=Some(label_maker)
-        />
-    }
-
     // ω <fn distribution_policy_component>
+    view! {
+        <div class=SELF_CLASS>
+            // α <plus-dpc-view>
+            <OneOfComponent
+                selection=selection
+                name="distribution-policy".to_string()
+                views=views
+                labels=Some(label_maker)
+            />
+        // ω <plus-dpc-view>
+        </div>
+    }
 }
 
 // α <mod-def distribution_policy_component>

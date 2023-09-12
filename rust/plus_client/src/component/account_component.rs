@@ -8,6 +8,7 @@ use crate::AppContext;
 #[allow(unused_imports)]
 use leptos::log;
 use leptos::use_context;
+use leptos::IntoAttribute;
 use leptos::SignalGet;
 use leptos::StoredValue;
 use leptos::WriteSignal;
@@ -32,17 +33,19 @@ pub fn AccountComponent(
     /// The shared context for accounts
     shared_context_stored_value: StoredValue<AccountSharedContext>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-ac";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let i18n_account = move || I18nAccountComponent::Account(lang_selector.get()).to_string();
+    let i18n_name = move || I18nAccountComponent::Name(lang_selector.get()).to_string();
     let i18n_account_type =
         move || I18nAccountComponent::AccountType(lang_selector.get()).to_string();
     let i18n_holdings = move || I18nAccountComponent::Holdings(lang_selector.get()).to_string();
     // α <fn account_component>
 
     use crate::AppContext;
-    use crate::HoldingsGrid;
     use crate::EnumSelect;
     use crate::HoldingSharedContext;
+    use crate::HoldingsGrid;
     use crate::Updatable;
     use leptos::create_node_ref;
     use leptos::create_signal;
@@ -51,48 +54,51 @@ pub fn AccountComponent(
     use leptos::IntoAttribute;
     use leptos::SignalGet;
     use leptos_dom::html::Input;
-    use plus_lookup::I18nEnums;
     use plus_lookup::I18nAccountComponent;
+    use plus_lookup::I18nEnums;
     use plus_modeled::AccountType;
 
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let account = account_stored_value.with_value(|account| account.clone());
 
-    account_stored_value.with_value(|account| {
-        let name_node_ref = create_node_ref::<Input>();
-        let account_name = account.name.clone();
-        let initial_holdings = account.holdings.clone();
-        let account_type = AccountType::from_i32(account.account_type).unwrap();
+    let name_node_ref = create_node_ref::<Input>();
+    let account_name = account.name.clone();
+    let initial_holdings = account.holdings.clone();
+    let account_type = AccountType::from_i32(account.account_type).unwrap();
 
-        let holding_type_updatable = Updatable::new(account_type, move |&account_type| {
-            account_stored_value.update_value(|account| {
-                account.account_type = account_type as i32;
-            });
+    let holding_type_updatable = Updatable::new(account_type, move |&account_type| {
+        account_stored_value.update_value(|account| {
+            account.account_type = account_type as i32;
+        });
+    });
+
+    let holdings_updatable = Updatable::new(initial_holdings, move |new_holdings| {
+        account_stored_value.update_value(|account| {
+            account.holdings = new_holdings.clone();
+        });
+    });
+
+    let shared_context_updatable =
+        Updatable::new(HoldingSharedContext::default(), |shared_context| {
+            log!("Shared context updated -> {shared_context:?}");
         });
 
-        let holdings_updatable = Updatable::new(initial_holdings, move |new_holdings| {
-            account_stored_value.update_value(|account| {
-                account.holdings = new_holdings.clone();
-            });
-        });
+    let on_name_input = move |_| {
+        if let Some(input) = name_node_ref.get() {
+            account_stored_value.update_value(|account| account.name = input.value());
+        }
+    };
 
-        let shared_context_updatable =
-            Updatable::new(HoldingSharedContext::default(), |shared_context| {
-                log!("Shared context updated -> {shared_context:?}");
-            });
-
-        let on_name_input = move |_| {
-            if let Some(input) = name_node_ref.get() {
-                account_stored_value.update_value(|account| account.name = input.value());
-            }
-        };
-
-        view! {
+    // ω <fn account_component>
+    view! {
+        <div class=SELF_CLASS>
+            // α <plus-ac-view>
             <fieldset>
                 <legend>{i18n_account}</legend>
                 <div class="form">
                     <div class="form-row">
                         <label>
-                            "Name"
+                            {i18n_name}
                             <input
                                 value=account_name
                                 node_ref=name_node_ref
@@ -123,10 +129,9 @@ pub fn AccountComponent(
                     </div>
                 </div>
             </fieldset>
-        }
-    })
-
-    // ω <fn account_component>
+        // ω <plus-ac-view>
+        </div>
+    }
 }
 
 // α <mod-def account_component>

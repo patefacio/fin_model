@@ -19,8 +19,8 @@ use leptos_dom::console_log;
 pub fn AppCenterComponent() -> impl IntoView {
     // α <fn app_center_component>
 
-    use crate::DossierComponent;
     use crate::ComponentDisplayComponent;
+    use crate::DossierComponent;
 
     view! {
         <div class="app-center">

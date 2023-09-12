@@ -54,10 +54,10 @@ pub fn HoldingComponent(
     use crate::Updatable;
     use crate::YearCurrencyValueInput;
     use leptos::create_rw_signal;
+    use leptos::IntoAttribute;
     use leptos::MaybeSignal;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
-    use leptos::IntoAttribute;
     use plus_modeled::Currency;
     use plus_modeled::CurrencyValue;
     use plus_modeled::DossierItemType;

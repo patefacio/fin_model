@@ -201,8 +201,8 @@ pub fn DossierComponent(
 
 // α <mod-def dossier_component>
 
-use plus_modeled::{Holding, YearCurrencyValue, Account, AccountType};
 use crate::AccountSharedContext;
+use plus_modeled::{Account, AccountType, Holding, YearCurrencyValue};
 
 fn spoof_accounts() -> (Vec<Account>, AccountSharedContext) {
     let holdings = vec![

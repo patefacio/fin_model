@@ -154,6 +154,7 @@ where
     use std::rc::Rc;
 
     /// This is used to ensure only one collection has an ok/cancel enabled at a time.
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
 
     let add_to_active_count = move || {
@@ -173,9 +174,7 @@ where
     let shared_context_stored_value = store_value(shared_context_updatable.value.clone());
     let active_key_stored_value: StoredValue<Option<String>> = store_value(None);
     let initial_grid_edit_active_count = grid_edit_active_count.get_untracked() + 1;
-    let ok_cancel_enabled = move || {
-        grid_edit_active_count.get() == initial_grid_edit_active_count
-    };
+    let ok_cancel_enabled = move || grid_edit_active_count.get() == initial_grid_edit_active_count;
     let row_count_signal = create_rw_signal(rows_updatable.value.len());
 
     struct CGCData<T, S> {

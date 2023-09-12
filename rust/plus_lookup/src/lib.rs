@@ -5,9 +5,15 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub use i18n_component_display::I18nAccountComponent;
 pub use i18n_component_display::I18nAccountsGrid;
+pub use i18n_component_display::I18nAgeAssumptionsComponent;
+pub use i18n_component_display::I18nBondSpecComponent;
+pub use i18n_component_display::I18nDistributionPolicyComponent;
+pub use i18n_component_display::I18nDistributionSpecComponent;
 pub use i18n_component_display::I18nDossierComponent;
+pub use i18n_component_display::I18nFlowSpecComponent;
 pub use i18n_component_display::I18nHoldingComponent;
 pub use i18n_component_display::I18nHoldingsGrid;
+pub use i18n_component_display::I18nPersonComponent;
 pub use i18n_component_display::I18nPersonsGrid;
 pub use i18n_component_display::I18nWorthComponent;
 pub use i18n_component_display::I18nWorthsGrid;
@@ -52,7 +58,7 @@ use unic_langid::{langid, LanguageIdentifier};
 
 pub(crate) static US_ENGLISH: LanguageIdentifier = langid!("en-US");
 pub(crate) static FRENCH: LanguageIdentifier = langid!("fr-FR");
-pub(crate) static GERMAN: LanguageIdentifier = langid!("de");
+pub(crate) static GERMAN: LanguageIdentifier = langid!("de-DE");
 
 static_loader! {
     pub(crate) static LOCALES = {
