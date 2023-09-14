@@ -4,11 +4,9 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_modeled::DossierHoldingIndex;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -63,10 +61,10 @@ pub fn DossierHoldingIndexInput(
                 .borrow_mut()
                 .update_and_then_signal(|dhi| {
                     if let Some(dhi) = dhi {
-                        console_log(&format!("Setting account for DHI -> {new_input:?}"));
+                        log!("Setting account for DHI -> {new_input:?}");
                         dhi.account_index = new_input as u32;
                     } else {
-                        console_log(&format!("Setting empty DHI for first -> {new_input:?}"));
+                        log!("Setting empty DHI for first -> {new_input:?}");
                         *dhi = Some(DossierHoldingIndex {
                             account_index: new_input as u32,
                             holding_index: Some(0),
@@ -74,7 +72,7 @@ pub fn DossierHoldingIndexInput(
                     }
                 });
         }
-        console_log(&format!("New Account -> {new_input:?}"));
+        log!("New Account -> {new_input:?}");
     });
 
     let updatable_for_holding = Rc::clone(&updatable);
@@ -85,10 +83,10 @@ pub fn DossierHoldingIndexInput(
                 .borrow_mut()
                 .update_and_then_signal(|dhi| {
                     if let Some(dhi) = dhi {
-                        console_log(&format!("Setting holding for DHI -> {new_input:?}"));
+                        log!("Setting holding for DHI -> {new_input:?}");
                         dhi.holding_index = Some(new_input as u32);
                     } else {
-                        console_log(&format!("Setting empty DHI for first -> {new_input:?}"));
+                        log!("Setting empty DHI for first -> {new_input:?}");
                         *dhi = Some(DossierHoldingIndex {
                             account_index: 0,
                             holding_index: Some(new_input as u32),
@@ -96,7 +94,7 @@ pub fn DossierHoldingIndexInput(
                     }
                 });
         }
-        console_log(&format!("New Holding -> {new_input:?}"));
+        log!("New Holding -> {new_input:?}");
     });
 
     view! {

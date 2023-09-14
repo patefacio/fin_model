@@ -3,11 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use std::cmp::PartialEq;
 use std::collections::HashMap;
 use std::fmt::Debug;

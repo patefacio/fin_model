@@ -9,8 +9,6 @@ use crate::CollectionGridEditType;
 use crate::CollectionGridState;
 use crate::SymbolGrowthMap;
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::use_context;
 use leptos::IntoAttribute;
 use leptos::SignalGet;
@@ -18,7 +16,7 @@ use leptos::StoredValue;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use leptos_dom::View;
 use plus_lookup::I18nHoldingsGrid;
 use plus_modeled::Holding;

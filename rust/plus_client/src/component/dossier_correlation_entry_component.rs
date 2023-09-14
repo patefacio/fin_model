@@ -4,11 +4,9 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_modeled::DossierCorrelationEntry;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -48,12 +46,10 @@ pub fn DossierCorrelationEntryComponent(
                 .borrow_mut()
                 .update_and_then_signal(|DCE| {
                     if let Some(DCE) = DCE {
-                        console_log(&format!("Setting value on row -> {new_input:?}"));
+                        log!("Setting value on row -> {new_input:?}");
                         DCE.row_index = new_input
                     } else {
-                        console_log(&format!(
-                            "Setting empty row on first change of value -> {new_input:?}"
-                        ));
+                        log!("Setting empty row on first change of value -> {new_input:?}");
 
                         *DCE = Some(DossierCorrelationEntry {
                             row_index: new_input,
@@ -63,7 +59,7 @@ pub fn DossierCorrelationEntryComponent(
                     }
                 });
         }
-        console_log(&format!("New value -> {new_input:?}"));
+        log!("New value -> {new_input:?}");
     });
 
     view! { <h3>"TODO DossierCorrelationEntryComponent"</h3> }

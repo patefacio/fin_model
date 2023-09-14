@@ -4,11 +4,9 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_modeled::DossierCorrelationMatrix;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +32,7 @@ pub fn DossierCorrelationMatrixComponent(
     //let index_pairs = updatable.value.mappings.iter();
 
     let (indices, _set_indices) = create_signal(updatable.value.mappings);
-    console_log(&format!("MATRIX WORKING"));
+    log!("MATRIX WORKING");
 
     view! {
         <For
@@ -238,8 +236,6 @@ pub fn DisplayEntireMatrix(updatable: Updatable<DossierCorrelationMatrix>) -> im
     cols.dedup();
 
     let (row_indices, _set_indices) = create_signal(rows.clone());
-
-    console_log(&format!("DISPLAY WORKING"));
 
     view! {
         <div inner_html=format!("_ {cols:?}")></div>

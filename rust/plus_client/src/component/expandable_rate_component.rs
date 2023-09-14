@@ -5,11 +5,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
 use crate::Year;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_modeled::RateCurve;
 use plus_modeled::YearRange;
 use plus_modeled::YearValue;

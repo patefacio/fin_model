@@ -4,11 +4,9 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -42,19 +40,18 @@ pub fn SymbolInput(
     let initial_value = symbol_updatable.value.clone();
     let mut symbol_updatable = symbol_updatable;
     use leptos::create_node_ref;
-    use leptos_dom::{console_log, html::Input};
+    use leptos_dom::html::Input;
 
     let input_ref = create_node_ref::<Input>();
 
     let on_input = move |_| {
-        console_log("Got keydown for symbol!");
         let input_ref = input_ref.get().expect("Input node exists");
         symbol_updatable
             .update_and_then_signal(move |symbol_name| *symbol_name = input_ref.value());
     };
 
     let on_keydown = move |_| {
-        console_log("Got keydown");
+        log!("Got keydown");
     };
 
     view! {

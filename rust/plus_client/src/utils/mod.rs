@@ -11,7 +11,6 @@ pub mod element_sugar;
 pub mod historic_risk_return;
 pub mod html_tag;
 pub mod integer_clamp;
-pub mod leptos_helpers;
 pub mod live_parsed_date;
 pub mod log_dispose;
 pub mod modeled_impls;

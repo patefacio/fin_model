@@ -3,11 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -39,7 +37,6 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
     use crate::YearValueInput;
     use crate::YearValueSeriesComponent;
     use leptos::*;
-    use leptos_dom::console_log;
 
     use plus_modeled::Account;
     use plus_modeled::AccountType;
@@ -60,7 +57,7 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
 
     let show_update = move |s: String| {
         set_last_update.update(|original| {
-            console_log(&s);
+            log!("{}", &s);
             *original = s;
         });
     };

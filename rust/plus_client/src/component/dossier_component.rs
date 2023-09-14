@@ -5,14 +5,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::use_context;
 use leptos::IntoAttribute;
 use leptos::SignalGet;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_lookup::I18nDossierComponent;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -20,11 +18,9 @@ use plus_lookup::I18nDossierComponent;
 ////////////////////////////////////////////////////////////////////////////////////
 /// Component to edit a single [Dossier](plus_modeled::Dossier)
 ///
-///   * **updatable** - The dossier to edit
 ///   * _return_ - View for dossier_component
 #[component]
-pub fn DossierComponent(
-) -> impl IntoView {
+pub fn DossierComponent() -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-dc";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let i18n_people = move || I18nDossierComponent::People(lang_selector.get()).to_string();

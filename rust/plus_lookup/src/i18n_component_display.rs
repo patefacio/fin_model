@@ -76,23 +76,6 @@ pub enum I18nDistributionSpecComponent {
     Interest(LangSelector),
 }
 
-/// Strings for `dossier_component`
-#[derive(Debug, Copy, Clone)]
-pub enum I18nDossierComponent {
-    /// Strings for component People
-    People(LangSelector),
-    /// Strings for component Worths
-    Worths(LangSelector),
-    /// Strings for component Accounts
-    Accounts(LangSelector),
-    /// Strings for component CashFlows
-    CashFlows(LangSelector),
-    /// Strings for component Taxes
-    Taxes(LangSelector),
-    /// Strings for component Assumptions
-    Assumptions(LangSelector),
-}
-
 /// Strings for `holding_component`
 #[derive(Debug, Copy, Clone)]
 pub enum I18nHoldingComponent {
@@ -138,6 +121,23 @@ pub enum I18nAgeAssumptionsComponent {
     RetirementAge(LangSelector),
     /// Strings for component DeathAge
     DeathAge(LangSelector),
+}
+
+/// Strings for `dossier_component`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nDossierComponent {
+    /// Strings for component People
+    People(LangSelector),
+    /// Strings for component Worths
+    Worths(LangSelector),
+    /// Strings for component Accounts
+    Accounts(LangSelector),
+    /// Strings for component CashFlows
+    CashFlows(LangSelector),
+    /// Strings for component Taxes
+    Taxes(LangSelector),
+    /// Strings for component Assumptions
+    Assumptions(LangSelector),
 }
 
 /// Strings for `flow_spec_component`
@@ -403,57 +403,6 @@ impl Display for I18nDistributionSpecComponent {
     }
 }
 
-impl Display for I18nDossierComponent {
-    /// Format the instance.
-    ///
-    ///   * **f** - Formatter to push formatted item to.
-    ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                I18nDossierComponent::People(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.people"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Worths(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.worths"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Accounts(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.accounts"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::CashFlows(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.cash_flows"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Taxes(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.taxes"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Assumptions(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.assumptions"
-                    )
-                    .unwrap_or_default(),
-            }
-        )
-    }
-}
-
 impl Display for I18nHoldingComponent {
     /// Format the instance.
     ///
@@ -588,6 +537,57 @@ impl Display for I18nAgeAssumptionsComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "age_assumptions_component.death_age"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
+impl Display for I18nDossierComponent {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nDossierComponent::People(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.people"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Worths(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.worths"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Accounts(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.accounts"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::CashFlows(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.cash_flows"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Taxes(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.taxes"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Assumptions(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.assumptions"
                     )
                     .unwrap_or_default(),
             }

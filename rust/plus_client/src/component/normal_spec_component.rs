@@ -6,12 +6,10 @@
 use crate::Modification;
 use crate::NumericInput;
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::Show;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_modeled::core::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////

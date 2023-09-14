@@ -5,12 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
 use leptos::create_node_ref;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::console_log;
 use leptos_dom::html::Input;
+#[allow(unused_imports)]
+use leptos_dom::log;
 use plus_modeled::core::CurrencyValue;
 
 ////////////////////////////////////////////////////////////////////////////////////

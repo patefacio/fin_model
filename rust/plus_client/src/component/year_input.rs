@@ -5,13 +5,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::IntegerClamp;
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 use leptos::{create_node_ref, MaybeSignal, ReadSignal};
-#[allow(unused_imports)]
-use leptos_dom::console_log;
 use leptos_dom::html::Input;
+#[allow(unused_imports)]
+use leptos_dom::log;
 use plus_modeled::core::YearRange;
 
 ////////////////////////////////////////////////////////////////////////////////////

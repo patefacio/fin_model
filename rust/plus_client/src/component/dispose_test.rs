@@ -3,11 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -30,7 +28,7 @@ pub fn DisposeTest() -> impl IntoView {
         );
     */
     let do_stuff = move || {
-        leptos_dom::console_log(&format!("Doing stuff"));
+        log!("Doing stuff");
     };
 
     let do_stuff = leptos::store_value(do_stuff);
@@ -41,12 +39,12 @@ pub fn DisposeTest() -> impl IntoView {
     //     std::mem::size_of_val(&some_data_write),
     // ));
 
-    leptos_dom::console_log(&format!("DisposeTest"));
+    log!("DisposeTest");
     let log_dispose_item = crate::utils::log_dispose::LogDispose::new("dIsPoSe".into());
 
     let on_click = leptos::store_value(move |_| {
         println!("{log_dispose_item:?}");
-        console_log("Clicked Bam Button");
+        log!("Clicked Bam Button");
         // leptos_dom::console_log(&format!(
         //     "Clicked on {:?} -> {:?}({}) size({sz})",
         //     cloned,
@@ -77,7 +75,7 @@ struct SomeData {
 
 impl SomeData {
     fn new(message: &str) -> Self {
-        leptos_dom::console_log(&format!("Creating SomeData(`{message}`)"));
+        log!("Creating SomeData(`{message}`)");
         Self {
             data: message.to_string(),
             pad: [1; 1024 * 16],
@@ -87,7 +85,7 @@ impl SomeData {
 
 impl Drop for SomeData {
     fn drop(&mut self) {
-        leptos_dom::console_log(&format!("Dropping SomeData(`{}`)", self.data));
+        log!("Dropping SomeData(`{}`)", self.data);
     }
 }
 

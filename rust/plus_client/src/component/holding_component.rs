@@ -5,14 +5,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
 use crate::HoldingSharedContext;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::use_context;
 use leptos::SignalGet;
 use leptos::StoredValue;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_lookup::I18nHoldingComponent;
 use plus_modeled::Holding;
 use plus_modeled::ItemGrowth;

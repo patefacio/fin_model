@@ -5,8 +5,6 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AccountSharedContext;
 use crate::AppContext;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::use_context;
 use leptos::IntoAttribute;
 use leptos::SignalGet;
@@ -14,7 +12,7 @@ use leptos::StoredValue;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_lookup::I18nAccountComponent;
 use plus_modeled::Account;
 

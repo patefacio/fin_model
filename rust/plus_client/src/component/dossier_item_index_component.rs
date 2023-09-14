@@ -4,11 +4,9 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_modeled::DossierHoldingIndex;
 use plus_modeled::DossierItemIndex;
 
@@ -59,21 +57,21 @@ pub fn DossierItemIndexComponent(
                 .borrow_mut()
                 .update_and_then_signal(|ii| {
                     if let Some(ii) = ii {
-                        console_log(&format!("Setting account for DHI -> {new_input:?}"));
+                        log!("Setting account for DHI -> {new_input:?}");
                         ii.item_index = new_input;
                     } else {
-                        console_log(&format!("Setting empty DHI for first -> {new_input:?}"));
+                        log!("Setting empty DHI for first -> {new_input:?}");
                         *ii = Some(DossierItemIndex {
                             item_index: Some(ItemIndex::WorthIndex(32)),
                         })
                     }
                 });
         }
-        console_log(&format!("New Account -> {new_input:?}"));
+        log!("New Account -> {new_input:?}");
     });
     match item_index_updatable.value {
-        Some(Some(ItemIndex::WorthIndex(x))) => console_log(&format!("Worth Index")),
-        _ => console_log(&format!("Not Worth Index")),
+        Some(Some(ItemIndex::WorthIndex(x))) => log!("Worth Index"),
+        _ => log!("Not Worth Index"),
     }
 
     view! {

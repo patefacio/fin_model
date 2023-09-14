@@ -8,14 +8,12 @@ use crate::utils::constants::{
 };
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 use leptos::{create_effect, create_node_ref, create_signal, store_value, ReadSignal, SignalWith};
-#[allow(unused_imports)]
-use leptos_dom::console_log;
 use leptos_dom::html::Input;
+#[allow(unused_imports)]
+use leptos_dom::log;
 use std::ops::RangeInclusive;
 use web_sys::KeyboardEvent;
 

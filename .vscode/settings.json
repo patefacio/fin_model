@@ -1,7 +1,7 @@
 {
     "editor.inlayHints.enabled": "offUnlessPressed",
     "rust-analyzer.linkedProjects": [
-        "./rust/gui/Cargo.toml"
+        "./rust/plus_client/Cargo.toml"
     ],
     "cSpell.words": [
         "commified",

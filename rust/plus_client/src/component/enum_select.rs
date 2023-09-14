@@ -5,12 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::SelectDirection;
 use crate::Updatable;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use std::boxed::Box;
 use std::cmp::PartialEq;
 use std::fmt::Debug;

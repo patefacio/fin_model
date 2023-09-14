@@ -5,7 +5,7 @@ use cfg_if::cfg_if;
 
 // α <mod-def block_time>
 
-use leptos_dom::console_log;
+use leptos_dom::log;
 
 cfg_if! {
     // server-only stuff
@@ -46,7 +46,7 @@ impl BlockTime {
             }
         } else {
             pub fn new(label: &str) -> BlockTime {
-                leptos::log!("Open block `{}`", label);
+                log!("Open block `{}`", label);
                 BlockTime { label: label.into(), start: web_now() }
             }
         }
@@ -68,7 +68,7 @@ impl Drop for BlockTime {
             fn drop(&mut self) {
                 let duration = web_now() - self.start;
                 let message = format!("Close `{}`: Duration {:?} millis", self.label, duration);
-                console_log(&message);
+                log!("{}", message);
             }
 
         }

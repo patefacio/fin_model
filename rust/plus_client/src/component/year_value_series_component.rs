@@ -5,12 +5,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
 use crate::Year;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::ReadSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
-use leptos_dom::console_log;
+use leptos_dom::log;
 use plus_modeled::Currency;
 use plus_modeled::YearRange;
 use plus_modeled::YearValue;
@@ -65,7 +63,6 @@ pub fn YearValueSeriesComponent(
     use crate::YearInput;
     use leptos::create_rw_signal;
     use leptos::create_signal;
-    use leptos::log;
     use leptos::store_value;
     use leptos::For;
     use leptos::IntoAttribute;

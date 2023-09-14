@@ -9,14 +9,12 @@ use crate::utils::constants::{
 };
 use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::HtmlTag;
-#[allow(unused_imports)]
-use leptos::log;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::console_log;
 use leptos_dom::ev::{focusin, mousedown};
 use leptos_dom::html::{Button, Div};
+#[allow(unused_imports)]
+use leptos_dom::log;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, Event, FocusEvent, KeyboardEvent, MouseEvent};
