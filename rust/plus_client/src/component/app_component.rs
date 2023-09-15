@@ -35,7 +35,7 @@ pub fn AppComponent() -> impl IntoView {
     provide_meta_context();
 
     let grid_edit_active_count = create_rw_signal(0);
-    let lang_selector = create_rw_signal(LangSelector::French);
+    let lang_selector = create_rw_signal(LangSelector::UsEnglish);
     let app_context = AppContext {
         lang_selector,
         grid_edit_active_count,

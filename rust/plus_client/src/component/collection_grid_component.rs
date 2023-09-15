@@ -111,10 +111,6 @@ where
     pub shared_context_stored_value: StoredValue<S>,
     /// Maps key to row signal
     pub row_signals: HashMap<String, RwSignal<usize>>,
-    /// The keys for items in grid.
-    /// Provides means for adjusting data when the name (i.e. key) for an item changes
-    /// during an update.
-    pub keys: HashSet<String>,
     /// The component state
     pub component_state: CollectionGridState,
 }
@@ -408,11 +404,15 @@ where
                 each=move || { 0..row_count_reactive() }
                 key=move |&i| { nth_key(i) }
                 view=move |i| {
+                    let call_count = create_rw_signal(0);
                     let make_view = move || {
                         let key = nth_key(i);
                         let key_index_signal = key_index_signal(&key);
                         let index = key_index_signal.get();
-                        log!("Remaking view ({i},{index},`{key}`) -> {key_index_signal:?}");
+                        log!("count({}): Remaking view ({i},{index},`{key}`) -> {key_index_signal:?}", {
+                            call_count.update(|i| *i=*i+1);
+                            call_count.get_untracked()
+                        });
                         let mut user_fields = cgc_data_stored_value
                             .with_value(|cgc_data| {
                                 let row = cgc_data.rows_updatable.value.get(index).unwrap();
@@ -426,10 +426,10 @@ where
                                 {edit_row_view}
                             </Show>
                         }
-                    };
+                    }.into_view();
                     view! {
-                       // {}  // TAKE THIS OUT AND THINGS STOP WORKING 😔
-                        {move || make_view()}
+                        //{}  // TAKE THIS OUT AND THINGS STOP WORKING 😔
+                        {move || vec![make_view()]}
                     }
                 }
             />
@@ -496,7 +496,6 @@ where
             row_stored_value: store_value(<T as CollectionGrid>::new()),
             shared_context_stored_value,
             row_signals,
-            keys,
             component_state: CollectionGridState::Display,
         }
 
@@ -510,7 +509,7 @@ where
     #[inline]
     pub fn edit_item(&mut self, key: &str) -> CollectionGridState {
         // α <fn CgcData[T,S]::edit_item>
-        log!("EDITING ITEM `{key}`");
+
         use leptos::SignalGetUntracked;
         self.component_state = CollectionGridState::EditSelection {
             selection_key: key.into(),
@@ -554,14 +553,10 @@ where
     #[inline]
     pub fn is_active_key(&self, key: &str) -> bool {
         // α <fn CgcData[T,S]::is_active_key>
-
-        log!("CHECKING ACTIVE KEY `{key}` vs {:?}", self.component_state);
-
         match &self.component_state {
             CollectionGridState::EditSelection { selection_key } => key == selection_key,
             _ => false,
         }
-
         // ω <fn CgcData[T,S]::is_active_key>
     }
 
@@ -597,7 +592,6 @@ where
         use leptos::SignalGetUntracked;
         use leptos::SignalUpdateUntracked;
 
-        log!("Deleting item for key `{key}`");
         if let Some(position) = self
             .row_signals
             .get(key)
@@ -614,7 +608,6 @@ where
             for (i, row) in elements_after.iter().enumerate() {
                 let key = row.get_key();
                 if let Some(row_signal) = self.row_signals.get_mut(&key) {
-                    log!("Bumping index for {key} to {}", position + i);
                     row_signal.update_untracked(|index| *index = position + i);
                 }
             }
@@ -650,7 +643,6 @@ where
                         self.rows_updatable.update(|rows| {
                             if let Some(row_) = rows.get_mut(index) {
                                 *row_ = self.row_stored_value.get_value();
-                                log!("Processing edit accepted on {row_:?}");
                             } else {
                                 panic!("Unable to find row for {index}!");
                             }
@@ -659,7 +651,6 @@ where
                     // Ok for **new** edit
                     _ => {
                         let new_key = self.row_stored_value.with_value(|row| row.get_key());
-                        log!("Processing **new** edit accepted: {new_key}");
                         self.row_signals
                             .insert(new_key, create_rw_signal(self.rows_updatable.value.len()));
                         self.rows_updatable
@@ -724,7 +715,14 @@ pub mod unit_tests {
         #[test]
         fn new() {
             // α <fn test CgcData[T,S]::new>
-            todo!("Test new")
+
+            with_runtime(|| {
+                let cgc_data = make_cgc_data();
+                assert_eq!(Holding::default(), cgc_data.row_stored_value.get_value());
+                assert_eq!((), cgc_data.shared_context_stored_value.get_value());
+                assert_eq!(CollectionGridState::Display, cgc_data.component_state);
+            });
+
             // ω <fn test CgcData[T,S]::new>
         }
 
@@ -732,13 +730,17 @@ pub mod unit_tests {
         fn edit_item() {
             // α <fn test CgcData[T,S]::edit_item>
 
-            let cgc_data = make_cgc_data();
-
-            println!("BAMMMM!");
-            println!(
-                "cgc_data -> current_edit({:?}), active_key({:?})",
-                cgc_data.current_edit, cgc_data.active_key
-            );
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                let state = cgc_data.edit_item("SPY");
+                assert!(matches!(
+                    &state,
+                    CollectionGridState::EditSelection {
+                        selection_key
+                    } if selection_key == "SPY"
+                ));
+                assert_eq!(spy_holding(), cgc_data.row_stored_value.get_value());
+            });
 
             // ω <fn test CgcData[T,S]::edit_item>
         }
@@ -746,65 +748,197 @@ pub mod unit_tests {
         #[test]
         fn edit_new_item() {
             // α <fn test CgcData[T,S]::edit_new_item>
-            todo!("Test edit_new_item")
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                cgc_data.edit_new_item();
+                assert!(matches!(
+                    &cgc_data.component_state,
+                    CollectionGridState::EditNew
+                ));
+                assert_eq!(
+                    <Holding as CollectionGrid>::new(),
+                    cgc_data.row_stored_value.get_value()
+                );
+            });
             // ω <fn test CgcData[T,S]::edit_new_item>
         }
 
         #[test]
         fn is_active_key() {
             // α <fn test CgcData[T,S]::is_active_key>
-            todo!("Test is_active_key")
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                assert!(!cgc_data.is_active_key("SPY"));
+                let _state = cgc_data.edit_item("SPY");
+                assert!(cgc_data.is_active_key("SPY"));
+                cgc_data.edit_complete(OkCancel::Ok);
+                assert!(!cgc_data.is_active_key("SPY"));
+            });
             // ω <fn test CgcData[T,S]::is_active_key>
         }
 
         #[test]
         fn active_signal() {
             // α <fn test CgcData[T,S]::active_signal>
-            todo!("Test active_signal")
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                assert!(cgc_data.active_signal().is_none());
+                let _state = cgc_data.edit_item("SPY");
+                assert_eq!(
+                    0,
+                    cgc_data
+                        .active_signal()
+                        .expect("SPY@0 active")
+                        .get_untracked()
+                );
+                cgc_data.edit_complete(OkCancel::Cancel);
+                let _state = cgc_data.edit_item("QQQ");
+                assert_eq!(
+                    1,
+                    cgc_data
+                        .active_signal()
+                        .expect("QQQ@0 active")
+                        .get_untracked()
+                );
+                cgc_data.edit_complete(OkCancel::Cancel);
+                assert!(cgc_data.active_signal().is_none());
+            });
+
             // ω <fn test CgcData[T,S]::active_signal>
         }
 
         #[test]
         fn delete_item() {
             // α <fn test CgcData[T,S]::delete_item>
-            todo!("Test delete_item")
+
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                assert!(cgc_data.active_signal().is_none());
+                assert_eq!(3, cgc_data.rows_updatable.value.len());
+                assert_eq!(3, cgc_data.row_signals.len());
+                assert_eq!(2, cgc_data.key_index_signal("DIA").get_untracked());
+                cgc_data.delete_item("QQQ");
+                assert_eq!(2, cgc_data.rows_updatable.value.len());
+                assert_eq!(2, cgc_data.row_signals.len());
+                // Was SPY-0, QQQ-1, DIA-2. After delete of QQQ it is SPY-0, DIA-1
+                assert_eq!(1, cgc_data.key_index_signal("DIA").get_untracked());
+                assert_eq!(None, cgc_data.active_signal());
+            });
+
             // ω <fn test CgcData[T,S]::delete_item>
         }
 
         #[test]
         fn edit_complete() {
             // α <fn test CgcData[T,S]::edit_complete>
-            todo!("Test edit_complete")
+
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                cgc_data.edit_item("SPY");
+                cgc_data
+                    .row_stored_value
+                    .update_value(|holding| holding.quantity = 99.0);
+                // Not yet completed
+                assert_eq!(100.0, cgc_data.rows_updatable.value[0].quantity);
+                cgc_data.edit_complete(OkCancel::Ok);
+                assert_eq!(99.0, cgc_data.rows_updatable.value[0].quantity);
+                cgc_data.edit_item("QQQ");
+                cgc_data
+                    .row_stored_value
+                    .update_value(|holding| holding.quantity = 99.0);
+                assert_eq!(50.0, cgc_data.rows_updatable.value[1].quantity);
+                cgc_data.edit_complete(OkCancel::Cancel);
+                // Since edit was canceled - no change in quantity
+                assert_eq!(50.0, cgc_data.rows_updatable.value[1].quantity);
+            });
+
             // ω <fn test CgcData[T,S]::edit_complete>
         }
 
         #[test]
         fn nth_key() {
             // α <fn test CgcData[T,S]::nth_key>
-            todo!("Test nth_key")
+
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                assert_eq!("SPY", cgc_data.nth_key(0));
+                assert_eq!("QQQ", cgc_data.nth_key(1));
+                assert_eq!("DIA", cgc_data.nth_key(2));
+                cgc_data.delete_item("QQQ");
+                assert_eq!("SPY", cgc_data.nth_key(0));
+                assert_eq!("DIA", cgc_data.nth_key(1));
+            });
+
             // ω <fn test CgcData[T,S]::nth_key>
         }
 
         #[test]
         fn key_index_signal() {
             // α <fn test CgcData[T,S]::key_index_signal>
-            todo!("Test key_index_signal")
+
+            with_runtime(|| {
+                let mut cgc_data = make_cgc_data();
+                assert_eq!(0, cgc_data.key_index_signal("SPY").get_untracked());
+                assert_eq!(1, cgc_data.key_index_signal("QQQ").get_untracked());
+                assert_eq!(2, cgc_data.key_index_signal("DIA").get_untracked());
+                // let should_panic = || cgc_data.key_index_signal("NVDA");
+                // assert!(std::panic::catch_unwind(should_panic).is_err());
+                cgc_data.edit_new_item();
+                cgc_data
+                    .row_stored_value
+                    .update_value(|row| row.instrument_name = "NVDA".into());
+                cgc_data.edit_complete(OkCancel::Ok);
+                assert_eq!(3, cgc_data.key_index_signal("NVDA").get_untracked());
+            });
+
             // ω <fn test CgcData[T,S]::key_index_signal>
         }
 
         // α <mod-def test_cgc_data_ts>
         use super::*;
+        use leptos::SignalGet;
+        use leptos::SignalGetUntracked;
         use plus_modeled::Holding;
 
-        fn make_cgc_data() -> CgcData<Holding, ()> {
-            CgcData {
-                rows_updatable: Updatable::new(vec![Holding::default()], |_| {}),
-                shared_context_updatable: Updatable::new((), |_| {}),
-                active_key: None,
-                current_edit: 1,
-                keys: HashSet::new(),
-                component_state: CollectionGridState::Display,
+        fn spy_holding() -> Holding {
+            Holding {
+                instrument_name: "SPY".into(),
+                quantity: 100.0,
+                ..Default::default()
             }
+        }
+
+        fn qqq_holding() -> Holding {
+            Holding {
+                instrument_name: "QQQ".into(),
+                quantity: 50.0,
+                ..Default::default()
+            }
+        }
+
+        fn dia_holding() -> Holding {
+            Holding {
+                instrument_name: "DIA".into(),
+                quantity: 75.0,
+                ..Default::default()
+            }
+        }
+
+        fn test_holdings() -> Vec<Holding> {
+            vec![spy_holding(), qqq_holding(), dia_holding()]
+        }
+
+        fn make_cgc_data() -> CgcData<Holding, ()> {
+            CgcData::new(
+                Updatable::new(test_holdings(), |_| {}),
+                Updatable::new((), |_| {}),
+            )
+        }
+
+        fn with_runtime<F: FnOnce()>(f: F) {
+            let runtime = leptos::create_runtime();
+            f();
+            runtime.dispose();
         }
         // ω <mod-def test_cgc_data_ts>
     }
