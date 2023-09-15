@@ -49,9 +49,9 @@ where
     ///
     ///   * **updater** - Function responsible for making the update.
     #[inline]
-    pub fn update<U>(&mut self, updater: U)
+    pub fn update<U>(&mut self, mut updater: U)
     where
-        U: Fn(&mut T),
+        U: FnMut(&mut T),
     {
         // α <fn Updatable[T]::update>
         updater(&mut self.value);
@@ -63,9 +63,9 @@ where
     ///
     ///   * **updater** - Function responsible for making the update.
     #[inline]
-    pub fn update_and_then_signal<U>(&mut self, updater: U)
+    pub fn update_and_then_signal<U>(&mut self, mut updater: U)
     where
-        U: Fn(&mut T),
+        U: FnMut(&mut T),
     {
         // α <fn Updatable[T]::update_and_then_signal>
         updater(&mut self.value);

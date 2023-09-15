@@ -12,7 +12,6 @@ use leptos::WriteSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
-use std::boxed::Box;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -41,6 +40,19 @@ pub enum CollectionGridEditType {
     RowEdit,
     /// Edit of row to be added to grid
     NewRowEdit,
+}
+
+/// Result for an edit complete operation
+#[derive(Eq, PartialEq, Debug, Clone)]
+pub enum EditCompleteResult {
+    /// A selection edit has modified the key (i.e. name) such that it collides with another
+    /// previously defined row's key.
+    RejectNameCollision {
+        /// Some detail about name collision
+        message: String,
+    },
+    /// The edit_complete operation was accepted
+    Accepted,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -170,15 +182,14 @@ where
     use leptos::SignalGetUntracked;
     use leptos::SignalSet;
     use leptos::SignalUpdate;
-    use leptos::SignalUpdateUntracked;
-    use leptos::SignalWithUntracked;
     use leptos_dom::html::Div;
     use leptos_dom::HtmlElement;
-    use std::collections::HashMap;
-    use std::rc::Rc;
 
     /// This is used to ensure only one collection has an ok/cancel enabled at a time.
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    /// Because grids nest (e.g. AccountsGrid has AccountComponents each of which has
+    /// HoldingsGrid). When user opens an account and then a holding within it, without
+    /// this logic there would be to <Ok/Cancel> bars showing which could be quite confusing.
+    /// This ensures only the innermost <Ok/Cancel> bar is shown.
     let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
 
     let add_to_active_count = move || {
@@ -195,12 +206,11 @@ where
         })
     };
 
-    // Add a default new element
     let initial_grid_edit_active_count = grid_edit_active_count.get_untracked() + 1;
     let ok_cancel_enabled = move || grid_edit_active_count.get() == initial_grid_edit_active_count;
     let add_item_label = move || add_item_label.clone();
 
-    // Used to signal state change (e.g. going from Display to EditNew or EditSelection)
+    // Used to signal state change (e.g. going from Display to EditNew or EditSelection and back)
     let state_change_signal = create_rw_signal(());
 
     // Used to signal vector cardinality change
@@ -209,20 +219,21 @@ where
     // Component data containing the vector we manage and the current state
     let cgc_data_stored_value = store_value(CgcData::new(rows_updatable, shared_context_updatable));
 
-    // Called to revisit row count
+    // Current row count, subject to reactivity on row_count_signal
     let row_count_reactive = move || {
         use leptos::SignalWith;
         row_count_signal.track();
         cgc_data_stored_value.with_value(|cgc_data| cgc_data.rows_updatable.value.len())
     };
 
-    // Signals update of row count
+    // Signals update of row count - called when adding/deleting rows
     let row_count_updated = move || {
         let new_row_count =
             cgc_data_stored_value.with_value(|cgc_data| cgc_data.rows_updatable.value.len());
         row_count_signal.set(new_row_count);
     };
 
+    // Current state subject to reactivity on state_change_signal
     let state_change_reactive = move || {
         use leptos::SignalWith;
         state_change_signal.track();
@@ -232,15 +243,18 @@ where
         new_state
     };
 
-    // If we are not in the _display_ state we are either editing a new entry or are editing
-    // a specific row. In either case we want the other rows to be disables
-    let is_disabled = move || {
+    // The component goes into a _disabled_ state when editing a selected or new entry.
+    // In this state the edit and delete buttons of all the rows are disabled and the
+    // Ok/Cancel bar for the current edit is shown.
+    let is_disabled_reactive = move || {
         use leptos::SignalWith;
         state_change_signal.track();
         cgc_data_stored_value
             .with_value(|cgc_data| cgc_data.component_state != CollectionGridState::Display)
     };
 
+    // Called to get a new item and enter into CollectionGridState::NewEdit.
+    // Signals the state change
     let set_new_item_edit = move || {
         cgc_data_stored_value.update_value(|cgc_data| cgc_data.edit_new_item());
         state_change_signal.set(());
@@ -248,6 +262,7 @@ where
 
     // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
     let grid_column_end = 3 + header.len();
+    // The number of columns is 2 for edit and delete buttons and one for each cell in the header
     let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", header.len());
 
     // A header for the component, including empty fields for our `Edit` and `Delete` buttons,
@@ -267,7 +282,7 @@ where
     let editable_style =
         move || format!("grid-column-start: 1; grid-column-end: {grid_column_end}");
 
-    // Get the key associated with the row index into the vec
+    // Get the key associated with the row index into the vec - **Not Reactive**
     let nth_key = move |n: usize| cgc_data_stored_value.with_value(|cgc_data| cgc_data.nth_key(n));
 
     // Signal to update the view of element identified by key
@@ -302,7 +317,7 @@ where
                         .update(|_| ())
                 }
 
-                disabled=move || is_disabled()
+                disabled=move || is_disabled_reactive()
             >
                 "✍"
             </button>
@@ -319,7 +334,7 @@ where
                     row_count_updated()
                 }
 
-                disabled=move || is_disabled()
+                disabled=move || is_disabled_reactive()
             >
                 "🗑"
             </button>
@@ -327,30 +342,34 @@ where
         .into_view()
     };
 
-    let is_this_row_edit = move |key: &str| {
-        let is_active_key =
-            cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(key));
-        //log!("Checking if `{key}` is active edit! -> {is_active_key}");
-        is_active_key
-    };
+    let is_this_row_edit =
+        move |key: &str| cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(key));
 
     let on_ok_cancel = move |ok_cancel: OkCancel| {
         log!("Processing ok_cancel -> {ok_cancel:?}");
+
+        let mut edit_complete_result = EditCompleteResult::Accepted;
+        // Try to complete the edit. Save the edit completion result
         let mut active_signal = None;
         cgc_data_stored_value.update_value(|cgc_data| {
             active_signal = cgc_data.active_signal();
-            cgc_data.edit_complete(ok_cancel)
+            edit_complete_result = cgc_data.edit_complete(ok_cancel);
         });
-        remove_from_active_count();
-        // Signal state change
-        state_change_signal.set(());
 
-        if let Some(active_signal) = active_signal {
-            // There was an active edit, signal to hide its edit view
-            active_signal.update(|_| ());
+        if edit_complete_result == EditCompleteResult::Accepted {
+            remove_from_active_count();
+            // Signal state change
+            state_change_signal.set(());
+
+            if let Some(active_signal) = active_signal {
+                // There was an active edit, signal to hide its edit view
+                active_signal.update(|_| ());
+            } else {
+                // Was a new edit, signal cardinality change
+                row_count_updated();
+            }
         } else {
-            // Was a new edit, signal cardinality change
-            row_count_updated();
+            log!("Edit complete failed -> {edit_complete_result:?}");
         }
     };
 
@@ -409,10 +428,10 @@ where
                         let key = nth_key(i);
                         let key_index_signal = key_index_signal(&key);
                         let index = key_index_signal.get();
-                        log!("count({}): Remaking view ({i},{index},`{key}`) -> {key_index_signal:?}", {
-                            call_count.update(|i| *i=*i+1);
-                            call_count.get_untracked()
-                        });
+                        // log!("count({}): Remaking view ({i},{index},`{key}`) -> {key_index_signal:?}", {
+                        //     call_count.update(|i| *i=*i+1);
+                        //     call_count.get_untracked()
+                        // });
                         let mut user_fields = cgc_data_stored_value
                             .with_value(|cgc_data| {
                                 let row = cgc_data.rows_updatable.value.get(index).unwrap();
@@ -434,7 +453,7 @@ where
                 }
             />
 
-            <Show when=move || !is_disabled() fallback=|| ()>
+            <Show when=move || !is_disabled_reactive() fallback=|| ()>
                 <button
                     class="cgc-add-row"
                     style=format!("grid-column-start: 0; grid-column-end: {grid_column_end};")
@@ -620,11 +639,15 @@ where
     /// Processes the completed edit based on ok/cancel status
     ///
     ///   * **ok_cancel** - The exit status of the edit
-    pub fn edit_complete(&mut self, ok_cancel: OkCancel) {
+    ///   * _return_ - Result status of the operation
+    pub fn edit_complete(&mut self, ok_cancel: OkCancel) -> EditCompleteResult {
         // α <fn CgcData[T,S]::edit_complete>
 
         use leptos::create_rw_signal;
         use leptos::SignalGetUntracked;
+
+        log!("Processing edit complete {ok_cancel:?} with {:?}", self.component_state);
+        let mut result = EditCompleteResult::Accepted;
 
         match ok_cancel {
             OkCancel::Ok => {
@@ -640,13 +663,38 @@ where
 
                         // TODO: CHECK FOR NAME CHANGES HERE
 
-                        self.rows_updatable.update_and_then_signal(|rows| {
-                            log!("Updating row {index}");
+                        let rows_updatable = &mut self.rows_updatable;
+                        let row_signals = &mut self.row_signals;
+                        let row_stored_value = &mut self.row_stored_value;
+
+                        rows_updatable.update(|rows| {
+                            log!("Updating row {index} -> `{selection_key}`");
                             if let Some(row_) = rows.get_mut(index) {
-                                *row_ = self.row_stored_value.get_value();
-                                log!("Updating row {index} to -> {:?}", row_);
+                                let updated_row = row_stored_value.get_value();
+                                let updated_key = updated_row.get_key();
+                                let key_name_change = &updated_key != selection_key;
+                                let name_collision =
+                                    key_name_change && row_signals.contains_key(&updated_key);
+
+                                if name_collision {
+                                    log!("UPDATING NAME FROM `{selection_key}` to `{updated_key}`");
+                                    result = EditCompleteResult::RejectNameCollision {
+                                        message: format!(
+                                            "New name `{updated_key}` collides with existing item"
+                                        ),
+                                    };
+                                } else {
+                                    if key_name_change {
+                                        let row_signal = row_signals
+                                            .remove(selection_key)
+                                            .expect("Old key `{selection_key}` exists");
+                                        row_signals.insert(updated_key, row_signal);
+                                    }
+                                    *row_ = updated_row;
+                                    log!("Updating row {index} to -> {:?}", row_);
+                                }
                             } else {
-                                panic!("Unable to find row for {index}!");
+                                unreachable!("Unable to find row for {index}!");
                             }
                         });
                     }
@@ -655,16 +703,20 @@ where
                         let new_key = self.row_stored_value.with_value(|row| row.get_key());
                         self.row_signals
                             .insert(new_key, create_rw_signal(self.rows_updatable.value.len()));
-                        self.rows_updatable.update_and_then_signal(|rows| {
-                            rows.push(self.row_stored_value.get_value())
-                        });
+                        self.rows_updatable
+                            .update(|rows| rows.push(self.row_stored_value.get_value()));
                     }
                 };
             }
             OkCancel::Cancel => {}
+        };
+
+        if result == EditCompleteResult::Accepted {
+            self.rows_updatable.signal();
+            self.component_state = CollectionGridState::Display;
         }
 
-        self.component_state = CollectionGridState::Display
+        result
 
         // ω <fn CgcData[T,S]::edit_complete>
     }
@@ -883,6 +935,7 @@ pub mod unit_tests {
                 assert_eq!(0, cgc_data.key_index_signal("SPY").get_untracked());
                 assert_eq!(1, cgc_data.key_index_signal("QQQ").get_untracked());
                 assert_eq!(2, cgc_data.key_index_signal("DIA").get_untracked());
+                // TODO: Would be nice to show that this panics - but compile issues prevent it
                 // let should_panic = || cgc_data.key_index_signal("NVDA");
                 // assert!(std::panic::catch_unwind(should_panic).is_err());
                 cgc_data.edit_new_item();
