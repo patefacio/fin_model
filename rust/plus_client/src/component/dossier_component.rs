@@ -80,7 +80,7 @@ pub fn DossierComponent() -> impl IntoView {
     let accounts_view = move || {
         let (accounts, account_shared_context) = spoof_accounts();
 
-        let accounts_updatable = Updatable::new(accounts, move |accounts| {
+        let accounts_updatable = Updatable::new(accounts, move |updated_accounts| {
             log!("Accounts updated");
         });
 

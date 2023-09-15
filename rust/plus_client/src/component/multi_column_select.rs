@@ -139,7 +139,6 @@ where
     use leptos::SignalWith;
     use leptos::SignalWithUntracked;
     use leptos_dom::document;
-    use leptos_use::use_event_listener;
 
     fn get_selection(element: Element) -> Option<(usize, String)> {
         find_element_up(element, HtmlTag::Button).and_then(|element| {
@@ -361,8 +360,9 @@ where
         }
     });
 
+    /* TODO: ADD BACK when leptos_use updated 
     #[cfg(not(feature = "ssr"))]
-    let _ = use_event_listener(document(), mousedown, move |ev| {
+    let _ = leptos_use::use_event_listener(document(), mousedown, move |ev| {
         if let Some(container_div) = mcs_grid_ref.get_untracked() {
             if !menu_is_hidden.get_untracked() {
                 let target_element = element_from_event(&ev);
@@ -376,7 +376,7 @@ where
     });
 
     #[cfg(not(feature = "ssr"))]
-    let _ = use_event_listener(document(), focusin, move |ev| {
+    let _ = leptos_use::use_event_listener(document(), focusin, move |ev| {
         if let Some(container_div) = mcs_grid_ref.get_untracked() {
             if !menu_is_hidden.get_untracked() {
                 let target_element = element_from_event(&ev);
@@ -390,6 +390,7 @@ where
             }
         }
     });
+    */
 
     view! {
         <div class="mcs-grid" disabled=move || { !menu_is_hidden.get() } node_ref=mcs_grid_ref>

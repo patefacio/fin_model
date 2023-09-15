@@ -187,12 +187,14 @@ where
 
     let add_to_active_count = move || {
         grid_edit_active_count.update(|count| {
+            log!("Added active count to {}", *count + 1);
             *count += 1;
         })
     };
 
     let remove_from_active_count = move || {
         grid_edit_active_count.update(|count| {
+            log!("Removed active count to {}", *count - 1);
             *count -= 1;
         })
     };
@@ -228,27 +230,10 @@ where
     let state_change_reactive = move || {
         use leptos::SignalWith;
         state_change_signal.track();
-        cgc_data_stored_value.with_value(|cgc_data| cgc_data.component_state.clone())
-    };
-
-    // Updates state, notifies parent and signals
-    let state_change_updated = move |new_state: CollectionGridState| {
-        // Then grid_edit_active_account bookkeeping
-        match new_state {
-            CollectionGridState::Display => remove_from_active_count(),
-            _ => add_to_active_count(),
-        };
-
-        // First change in the store
-        cgc_data_stored_value.update_value(|cgc_data| cgc_data.component_state = new_state.clone());
-
-        // Notify parent if required
-        if let Some(on_state_change) = on_state_change {
-            on_state_change.update(|state| *state = new_state)
-        }
-
-        // Signal state change
-        state_change_signal.set(());
+        let new_state =
+            cgc_data_stored_value.with_value(|cgc_data| cgc_data.component_state.clone());
+        log!("STATE CHANGE REACTIVE: State has changed to {new_state:?}");
+        new_state
     };
 
     // If we are not in the _display_ state we are either editing a new entry or are editing
@@ -261,16 +246,9 @@ where
     };
 
     let set_new_item_edit = move || {
-        cgc_data_stored_value.update_value(|cgc_data| {
-            cgc_data
-                .row_stored_value
-                .update_value(|row| *row = <T as CollectionGrid>::new());
-        });
-
-        state_change_updated(CollectionGridState::EditNew);
+        cgc_data_stored_value.update_value(|cgc_data| cgc_data.edit_new_item());
+        state_change_signal.set(());
     };
-
-    let is_new_item_edit = move || state_change_reactive() == CollectionGridState::EditNew;
 
     // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
     let grid_column_end = 3 + header.len();
@@ -293,24 +271,18 @@ where
     let editable_style =
         move || format!("grid-column-start: 1; grid-column-end: {grid_column_end}");
 
-    // Reactive count of elements
-    let num_elements_tracked = move || {
-        let num_elements = row_count_signal.get();
-        num_elements
-    };
-
     // Get the key associated with the row index into the vec
     let nth_key = move |n: usize| cgc_data_stored_value.with_value(|cgc_data| cgc_data.nth_key(n));
 
     // Signal to update the view of element identified by key
-    let key_signal = move |key: &str| {
+    let key_index_signal = move |key: &str| {
         cgc_data_stored_value.with_value(|cgc_data| cgc_data.key_index_signal(key))
     };
 
     // Delete the entry corresponding to the key.
     let delete_by_key = move |key: &str| {
+        log!("Delete by key called for `{key}`");
         cgc_data_stored_value.update_value(|cgc_data| cgc_data.delete_item(key));
-        row_count_updated();
     };
 
     let make_edit_button = move |key: &str| {
@@ -322,14 +294,16 @@ where
                     let key = key.clone();
                     cgc_data_stored_value
                         .update_value(|cgc_data| {
+                            log!("EDITING `{key}` for button press!");
                             cgc_data.edit_item(&key);
-                            let key_index_signal = cgc_data.key_index_signal(&key);
-                            log!(
-                                "Signalling index({:?}) index({}) for update of {key}",
-                                key_index_signal, key_index_signal.get_untracked()
-                            );
-                            key_index_signal.update(|_| ())
                         });
+                    cgc_data_stored_value
+                        .with_value(|cgc_data| {
+                            let key_index_signal = cgc_data.key_index_signal(&key);
+                            log!("Signalling `{key}` to refresh -> {key_index_signal:?}");
+                            key_index_signal
+                        })
+                        .update(|_| ())
                 }
 
                 disabled=move || is_disabled()
@@ -360,17 +334,33 @@ where
     let is_this_row_edit = move |key: &str| {
         let is_active_key =
             cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(key));
-        log!("Checking if `{key}` is active edit! -> {is_active_key}");
+        //log!("Checking if `{key}` is active edit! -> {is_active_key}");
         is_active_key
     };
 
     let on_ok_cancel = move |ok_cancel: OkCancel| {
-        cgc_data_stored_value.update_value(|cgc_data| cgc_data.edit_complete(ok_cancel));
+        log!("Processing ok_cancel -> {ok_cancel:?}");
+        let mut active_signal = None;
+        cgc_data_stored_value.update_value(|cgc_data| {
+            active_signal = cgc_data.active_signal();
+            cgc_data.edit_complete(ok_cancel)
+        });
+        remove_from_active_count();
         // Signal state change
         state_change_signal.set(());
+
+        if let Some(active_signal) = active_signal {
+            // There was an active edit, signal to hide its edit view
+            active_signal.update(|_| ());
+        } else {
+            // Was a new edit, signal cardinality change
+            row_count_updated();
+        }
     };
 
     let edit_row_view = move || {
+        add_to_active_count();
+
         let (row_stored_value, shared_context_stored_value) =
             cgc_data_stored_value.with_value(|cgc_data| {
                 (
@@ -397,40 +387,16 @@ where
         .into_view()
     };
 
-    let show_row_editor = move |key: &str| {
-        let key = key.to_string();
-        view! {
-            <Show when=move || is_this_row_edit(&key) && false fallback=|| ()>
-                {edit_row_view}
-            </Show>
-        }
-    };
-
     let show_new_row_editor = move || {
-        cgc_data_stored_value.update_value(|cgc_data| cgc_data.edit_new_item());
         view! {
-            <Show when=move || is_new_item_edit() fallback=|| ()>
+            <Show
+                when=move || state_change_reactive() == CollectionGridState::EditNew
+                fallback=|| ()
+            >
                 {edit_row_view}
             </Show>
         }
     };
-
-    // TRY TO REFACTOR TO FUNCTION
-    // fn get_row_fields<T>(row: &T) -> Vec<View> {
-    //     let mut user_fields = row.get_fields();
-    //     for user_field in user_fields.iter() {
-    //         let inactive_edit_key = Rc::clone(&key);
-    //         if let Some(element) = user_field.as_element().cloned() {
-    //             let html_element = element.into_html_element();
-    //             html_element.class("inactive-edit", move || {
-    //                 is_disabled() && !is_this_row_edit(&inactive_edit_key)
-    //             });
-    //         }
-    //     }
-    //     user_fields.insert(0, make_delete_button(&key));
-    //     user_fields.insert(0, make_edit_button(&key));
-    //     user_fields
-    // }
 
     view! {
         <div
@@ -439,44 +405,32 @@ where
         >
             {header}
             <For
-                each=move || { 0..num_elements_tracked() }
+                each=move || { 0..row_count_reactive() }
                 key=move |&i| { nth_key(i) }
                 view=move |i| {
-                    let key = Rc::new(nth_key(i));
-                    let key_signal = key_signal(&key);
-                    let index = key_signal.get();
-                    log!(
-                        "(Re)creating view for `{key}` of original index {i} and current index {index} -> {:?}",
-                        key_signal
-                    );
-                    let mut user_fields = cgc_data_stored_value
-                        .with_value(|cgc_data| {
-                            let row = cgc_data.rows_updatable.value.get(index).unwrap();
-                            row.get_fields()
-                        });
-                    user_fields.insert(0, make_delete_button(&key));
-                    user_fields.insert(0, make_edit_button(&key));
+                    let make_view = move || {
+                        let key = nth_key(i);
+                        let key_index_signal = key_index_signal(&key);
+                        let index = key_index_signal.get();
+                        log!("Remaking view ({i},{index},`{key}`) -> {key_index_signal:?}");
+                        let mut user_fields = cgc_data_stored_value
+                            .with_value(|cgc_data| {
+                                let row = cgc_data.rows_updatable.value.get(index).unwrap();
+                                row.get_fields()
+                            });
+                        user_fields.insert(0, make_delete_button(&key));
+                        user_fields.insert(0, make_edit_button(&key));
+                        view! {
+                            {user_fields.into_view()}
+                            <Show when=move || is_this_row_edit(&key) fallback=|| ()>
+                                {edit_row_view}
+                            </Show>
+                        }
+                    };
                     view! {
-                        // for user_field in user_fields.iter() {
-                        // let inactive_edit_key = Rc::clone(&key);
-                        // if let Some(element) = user_field.as_element().cloned() {
-                        // let html_element = element.into_html_element();
-                        // html_element
-                        // .class(
-                        // "inactive-edit",
-                        // move || {
-                        // is_disabled() && !is_this_row_edit(&inactive_edit_key)
-                        // },
-                        // );
-                        // }
-                        // }
-                        {user_fields.into_view()}
-                        // {show_row_editor(&key)}
-                        <Show when=move || is_this_row_edit(&key) && false fallback=|| ()>
-                            {edit_row_view}
-                        </Show>
+                       // {}  // TAKE THIS OUT AND THINGS STOP WORKING 😔
+                        {move || make_view()}
                     }
-                        .into_view()
                 }
             />
 
@@ -586,20 +540,9 @@ where
         self.row_stored_value
             .update_value(|row| *row = <T as CollectionGrid>::new());
 
+        self.component_state = CollectionGridState::EditNew;
+
         // ω <fn CgcData[T,S]::edit_new_item>
-    }
-
-    /// Make a view to show the row identified by `index`.
-    /// The row displayed fits in the grid/table and has a hidden view to edit
-    /// the row when selected for edit.
-    ///
-    ///   * **index** - Index of row
-    ///   * _return_ - View for the row
-    pub fn make_row_view(&mut self, index: usize) -> View {
-        // α <fn CgcData[T,S]::make_row_view>
-
-        todo!("")
-        // ω <fn CgcData[T,S]::make_row_view>
     }
 
     /// Retrieves the key of edit row.
@@ -622,6 +565,29 @@ where
         // ω <fn CgcData[T,S]::is_active_key>
     }
 
+    /// Returns signal tied to the active edit row, if exists.
+    /// When editing a new row there is no active edit row.
+    /// When editing a selected row, that row is the active edit row
+    /// and the signal returned is connected to it.
+    ///
+    ///   * _return_ - If editing a row, the signal tied to that row.
+    #[inline]
+    pub fn active_signal(&mut self) -> Option<RwSignal<usize>> {
+        // α <fn CgcData[T,S]::active_signal>
+
+        match &self.component_state {
+            CollectionGridState::EditSelection { selection_key } => Some(
+                self.row_signals
+                    .get(selection_key)
+                    .expect("Row signal for active row `{selection_key}`")
+                    .clone(),
+            ),
+            _ => None,
+        }
+
+        // ω <fn CgcData[T,S]::active_signal>
+    }
+
     /// Delete the item identified by key
     ///
     ///   * **key** - Identifies row to delete
@@ -631,6 +597,7 @@ where
         use leptos::SignalGetUntracked;
         use leptos::SignalUpdateUntracked;
 
+        log!("Deleting item for key `{key}`");
         if let Some(position) = self
             .row_signals
             .get(key)
@@ -645,7 +612,9 @@ where
             // at the proper entry.
             let elements_after = &rows[position..end];
             for (i, row) in elements_after.iter().enumerate() {
-                if let Some(row_signal) = self.row_signals.get_mut(&row.get_key()) {
+                let key = row.get_key();
+                if let Some(row_signal) = self.row_signals.get_mut(&key) {
+                    log!("Bumping index for {key} to {}", position + i);
                     row_signal.update_untracked(|index| *index = position + i);
                 }
             }
@@ -669,17 +638,19 @@ where
                 match &self.component_state {
                     // Ok for selected edit
                     CollectionGridState::EditSelection { selection_key } => {
-                        let index = self
+                        let row_signal = self
                             .row_signals
                             .get(selection_key)
-                            .expect("Active key `{selection_key}` has a signal")
-                            .get_untracked();
+                            .expect("Active key `{selection_key}` has a signal");
+
+                        let index = row_signal.get_untracked();
 
                         // TODO: CHECK FOR NAME CHANGES HERE
 
                         self.rows_updatable.update(|rows| {
                             if let Some(row_) = rows.get_mut(index) {
                                 *row_ = self.row_stored_value.get_value();
+                                log!("Processing edit accepted on {row_:?}");
                             } else {
                                 panic!("Unable to find row for {index}!");
                             }
@@ -688,6 +659,7 @@ where
                     // Ok for **new** edit
                     _ => {
                         let new_key = self.row_stored_value.with_value(|row| row.get_key());
+                        log!("Processing **new** edit accepted: {new_key}");
                         self.row_signals
                             .insert(new_key, create_rw_signal(self.rows_updatable.value.len()));
                         self.rows_updatable
@@ -779,17 +751,17 @@ pub mod unit_tests {
         }
 
         #[test]
-        fn make_row_view() {
-            // α <fn test CgcData[T,S]::make_row_view>
-            todo!("Test make_row_view")
-            // ω <fn test CgcData[T,S]::make_row_view>
-        }
-
-        #[test]
         fn is_active_key() {
             // α <fn test CgcData[T,S]::is_active_key>
             todo!("Test is_active_key")
             // ω <fn test CgcData[T,S]::is_active_key>
+        }
+
+        #[test]
+        fn active_signal() {
+            // α <fn test CgcData[T,S]::active_signal>
+            todo!("Test active_signal")
+            // ω <fn test CgcData[T,S]::active_signal>
         }
 
         #[test]

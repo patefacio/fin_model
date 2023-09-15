@@ -177,7 +177,7 @@ fieldset {
 
 legend {
 	font-weight: bold;
-	font-size: 1.1rem;
+	font-size: 1.05rem;
 }
 
 fieldset.disabled {
@@ -283,6 +283,8 @@ input.invalid:focus {
 	background-color: hsl(120, 90%, 25%);
 	text-align: right;
 	font-weight: bold;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 .cgc-insert {
@@ -296,6 +298,7 @@ input.invalid:focus {
 }
 
 .cgc-header-cell {
+	padding-top: 3px;
 	padding-left: 1rem;
 	text-align: right;
 }
@@ -342,8 +345,7 @@ input.invalid:focus {
 
 .tooltip.left:before {
 	left: initial;
-	margin: inital;
-
+	margin: initial;
 }
 
 .tooltip:after {
@@ -548,5 +550,5 @@ input.invalid:focus {
 
 .grid-label {
 	font-weight: bold;
-	font-size: 1.2rem;
+	font-size: 1.05rem;
 }
