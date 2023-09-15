@@ -13,6 +13,7 @@ pub use i18n_component_display::I18nDossierComponent;
 pub use i18n_component_display::I18nFlowSpecComponent;
 pub use i18n_component_display::I18nHoldingComponent;
 pub use i18n_component_display::I18nHoldingsGrid;
+pub use i18n_component_display::I18nOkCancelComponent;
 pub use i18n_component_display::I18nPersonComponent;
 pub use i18n_component_display::I18nPersonsGrid;
 pub use i18n_component_display::I18nWorthComponent;

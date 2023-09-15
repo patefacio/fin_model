@@ -3,9 +3,14 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
+use leptos::use_context;
+use leptos::IntoAttribute;
+use leptos::SignalGet;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
+use plus_lookup::I18nOkCancelComponent;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -34,28 +39,34 @@ pub fn OkCancelComponent<F>(
 where
     F: FnMut(OkCancel) + 'static,
 {
+    pub const SELF_CLASS: &str = "plus-occ";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_ok = move || I18nOkCancelComponent::Ok(lang_selector.get()).to_string();
+    let i18n_cancel = move || I18nOkCancelComponent::Cancel(lang_selector.get()).to_string();
     // α <fn ok_cancel_component>
 
     use leptos::store_value;
-
     let on_ok_cancel = store_value(on_ok_cancel);
 
+    // ω <fn ok_cancel_component>
     view! {
-        <button
+        <div class=SELF_CLASS>
+            // α <plus-occ-view>
+            <button
             class="ok-button"
             on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }
         >
-            "Ok"
+            {i18n_ok}
         </button>
         <button
             class="cancel-button"
             on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }
         >
-            "Cancel"
+            {i18n_cancel}
         </button>
+            // ω <plus-occ-view>
+        </div>
     }
-
-    // ω <fn ok_cancel_component>
 }
 
 // α <mod-def ok_cancel_component>

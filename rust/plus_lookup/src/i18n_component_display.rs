@@ -114,6 +114,15 @@ pub enum I18nHoldingsGrid {
     NewHolding(LangSelector),
 }
 
+/// Strings for `ok_cancel_component`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nOkCancelComponent {
+    /// Strings for component Ok
+    Ok(LangSelector),
+    /// Strings for component Cancel
+    Cancel(LangSelector),
+}
+
 /// Strings for `age_assumptions_component`
 #[derive(Debug, Copy, Clone)]
 pub enum I18nAgeAssumptionsComponent {
@@ -510,6 +519,33 @@ impl Display for I18nHoldingsGrid {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "holdings_grid.new_holding"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
+impl Display for I18nOkCancelComponent {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nOkCancelComponent::Ok(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "ok_cancel_component.ok"
+                    )
+                    .unwrap_or_default(),
+                I18nOkCancelComponent::Cancel(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "ok_cancel_component.cancel"
                     )
                     .unwrap_or_default(),
             }
