@@ -6,9 +6,16 @@
       <sourceFolder url="file://$MODULE_DIR$/gui/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/benches" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/model/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plus_client/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/plus_client/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plus_lookup/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plus_modeled/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plus_utils/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/gui/target" />
       <excludeFolder url="file://$MODULE_DIR$/model/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/plus_client/target" />
+      <excludeFolder url="file://$MODULE_DIR$/plus_modeled/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

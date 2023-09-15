@@ -428,7 +428,7 @@ where
                         }
                     }.into_view();
                     view! {
-                        //{}  // TAKE THIS OUT AND THINGS STOP WORKING 😔
+                        {}  // TAKE THIS OUT AND THINGS STOP WORKING 😔
                         {move || vec![make_view()]}
                     }
                 }
@@ -640,9 +640,11 @@ where
 
                         // TODO: CHECK FOR NAME CHANGES HERE
 
-                        self.rows_updatable.update(|rows| {
+                        self.rows_updatable.update_and_then_signal(|rows| {
+                            log!("Updating row {index}");
                             if let Some(row_) = rows.get_mut(index) {
                                 *row_ = self.row_stored_value.get_value();
+                                log!("Updating row {index} to -> {:?}", row_);
                             } else {
                                 panic!("Unable to find row for {index}!");
                             }
@@ -653,9 +655,9 @@ where
                         let new_key = self.row_stored_value.with_value(|row| row.get_key());
                         self.row_signals
                             .insert(new_key, create_rw_signal(self.rows_updatable.value.len()));
-                        self.rows_updatable
-                            .value
-                            .push(self.row_stored_value.get_value());
+                        self.rows_updatable.update_and_then_signal(|rows| {
+                            rows.push(self.row_stored_value.get_value())
+                        });
                     }
                 };
             }
