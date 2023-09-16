@@ -24,6 +24,7 @@ use plus_modeled::Account;
 ///   * **account_stored_value** - The account to edit with shared context
 ///   * **shared_context_stored_value** - The shared context for accounts
 ///   * _return_ - View for account_component
+#[tracing::instrument(level = "warn")]
 #[component]
 pub fn AccountComponent(
     /// The account to edit with shared context
@@ -31,6 +32,7 @@ pub fn AccountComponent(
     /// The shared context for accounts
     shared_context_stored_value: StoredValue<AccountSharedContext>,
 ) -> impl IntoView {
+    tracing::debug!("Created account component for {:?}", account_stored_value.get_value());
     pub const SELF_CLASS: &str = "plus-ac";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let i18n_account = move || I18nAccountComponent::Account(lang_selector.get()).to_string();

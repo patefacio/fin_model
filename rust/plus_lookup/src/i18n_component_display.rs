@@ -43,6 +43,15 @@ pub enum I18nAccountsGrid {
     GridHelp(LangSelector),
 }
 
+/// Strings for `age_assumptions_component`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nAgeAssumptionsComponent {
+    /// Strings for component RetirementAge
+    RetirementAge(LangSelector),
+    /// Strings for component DeathAge
+    DeathAge(LangSelector),
+}
+
 /// Strings for `bond_spec_component`
 #[derive(Debug, Copy, Clone)]
 pub enum I18nBondSpecComponent {
@@ -74,6 +83,36 @@ pub enum I18nDistributionSpecComponent {
     CapitalGain(LangSelector),
     /// Strings for component Interest
     Interest(LangSelector),
+}
+
+/// Strings for `dossier_component`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nDossierComponent {
+    /// Strings for component People
+    People(LangSelector),
+    /// Strings for component Worths
+    Worths(LangSelector),
+    /// Strings for component Accounts
+    Accounts(LangSelector),
+    /// Strings for component CashFlows
+    CashFlows(LangSelector),
+    /// Strings for component Taxes
+    Taxes(LangSelector),
+    /// Strings for component Assumptions
+    Assumptions(LangSelector),
+}
+
+/// Strings for `flow_spec_component`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nFlowSpecComponent {
+    /// Strings for component Name
+    Name(LangSelector),
+    /// Strings for component InFlow
+    InFlow(LangSelector),
+    /// Strings for component OutFlow
+    OutFlow(LangSelector),
+    /// Strings for component CashFlow
+    CashFlow(LangSelector),
 }
 
 /// Strings for `holding_component`
@@ -121,45 +160,6 @@ pub enum I18nOkCancelComponent {
     Ok(LangSelector),
     /// Strings for component Cancel
     Cancel(LangSelector),
-}
-
-/// Strings for `age_assumptions_component`
-#[derive(Debug, Copy, Clone)]
-pub enum I18nAgeAssumptionsComponent {
-    /// Strings for component RetirementAge
-    RetirementAge(LangSelector),
-    /// Strings for component DeathAge
-    DeathAge(LangSelector),
-}
-
-/// Strings for `dossier_component`
-#[derive(Debug, Copy, Clone)]
-pub enum I18nDossierComponent {
-    /// Strings for component People
-    People(LangSelector),
-    /// Strings for component Worths
-    Worths(LangSelector),
-    /// Strings for component Accounts
-    Accounts(LangSelector),
-    /// Strings for component CashFlows
-    CashFlows(LangSelector),
-    /// Strings for component Taxes
-    Taxes(LangSelector),
-    /// Strings for component Assumptions
-    Assumptions(LangSelector),
-}
-
-/// Strings for `flow_spec_component`
-#[derive(Debug, Copy, Clone)]
-pub enum I18nFlowSpecComponent {
-    /// Strings for component Name
-    Name(LangSelector),
-    /// Strings for component InFlow
-    InFlow(LangSelector),
-    /// Strings for component OutFlow
-    OutFlow(LangSelector),
-    /// Strings for component CashFlow
-    CashFlow(LangSelector),
 }
 
 /// Strings for `person_component`
@@ -313,6 +313,33 @@ impl Display for I18nAccountsGrid {
     }
 }
 
+impl Display for I18nAgeAssumptionsComponent {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nAgeAssumptionsComponent::RetirementAge(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "age_assumptions_component.retirement_age"
+                    )
+                    .unwrap_or_default(),
+                I18nAgeAssumptionsComponent::DeathAge(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "age_assumptions_component.death_age"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
 impl Display for I18nBondSpecComponent {
     /// Format the instance.
     ///
@@ -405,6 +432,96 @@ impl Display for I18nDistributionSpecComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "distribution_spec_component.interest"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
+impl Display for I18nDossierComponent {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nDossierComponent::People(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.people"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Worths(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.worths"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Accounts(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.accounts"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::CashFlows(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.cash_flows"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Taxes(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.taxes"
+                    )
+                    .unwrap_or_default(),
+                I18nDossierComponent::Assumptions(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "dossier_component.assumptions"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
+impl Display for I18nFlowSpecComponent {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nFlowSpecComponent::Name(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_spec_component.name"
+                    )
+                    .unwrap_or_default(),
+                I18nFlowSpecComponent::InFlow(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_spec_component.in_flow"
+                    )
+                    .unwrap_or_default(),
+                I18nFlowSpecComponent::OutFlow(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_spec_component.out_flow"
+                    )
+                    .unwrap_or_default(),
+                I18nFlowSpecComponent::CashFlow(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_spec_component.cash_flow"
                     )
                     .unwrap_or_default(),
             }
@@ -546,123 +663,6 @@ impl Display for I18nOkCancelComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "ok_cancel_component.cancel"
-                    )
-                    .unwrap_or_default(),
-            }
-        )
-    }
-}
-
-impl Display for I18nAgeAssumptionsComponent {
-    /// Format the instance.
-    ///
-    ///   * **f** - Formatter to push formatted item to.
-    ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                I18nAgeAssumptionsComponent::RetirementAge(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "age_assumptions_component.retirement_age"
-                    )
-                    .unwrap_or_default(),
-                I18nAgeAssumptionsComponent::DeathAge(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "age_assumptions_component.death_age"
-                    )
-                    .unwrap_or_default(),
-            }
-        )
-    }
-}
-
-impl Display for I18nDossierComponent {
-    /// Format the instance.
-    ///
-    ///   * **f** - Formatter to push formatted item to.
-    ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                I18nDossierComponent::People(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.people"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Worths(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.worths"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Accounts(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.accounts"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::CashFlows(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.cash_flows"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Taxes(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.taxes"
-                    )
-                    .unwrap_or_default(),
-                I18nDossierComponent::Assumptions(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "dossier_component.assumptions"
-                    )
-                    .unwrap_or_default(),
-            }
-        )
-    }
-}
-
-impl Display for I18nFlowSpecComponent {
-    /// Format the instance.
-    ///
-    ///   * **f** - Formatter to push formatted item to.
-    ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                I18nFlowSpecComponent::Name(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "flow_spec_component.name"
-                    )
-                    .unwrap_or_default(),
-                I18nFlowSpecComponent::InFlow(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "flow_spec_component.in_flow"
-                    )
-                    .unwrap_or_default(),
-                I18nFlowSpecComponent::OutFlow(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "flow_spec_component.out_flow"
-                    )
-                    .unwrap_or_default(),
-                I18nFlowSpecComponent::CashFlow(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "flow_spec_component.cash_flow"
                     )
                     .unwrap_or_default(),
             }

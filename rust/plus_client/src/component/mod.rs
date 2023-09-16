@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod account_component;
 pub mod accounts_grid;
+pub mod age_assumptions_component;
 pub mod app_center_component;
 pub mod app_component;
 pub mod app_nav_bar;
@@ -38,6 +39,8 @@ pub mod numeric_input;
 pub mod ok_cancel_component;
 pub mod one_of_component;
 pub mod percent_input;
+pub mod person_component;
+pub mod persons_grid;
 pub mod symbol_input;
 pub mod year_currency_value_input;
 pub mod year_input;

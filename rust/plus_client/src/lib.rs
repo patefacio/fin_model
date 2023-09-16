@@ -13,6 +13,7 @@ extern crate strum_macros;
 pub use component::account_component::AccountComponent;
 pub use component::accounts_grid::AccountSharedContext;
 pub use component::accounts_grid::AccountsGrid;
+pub use component::age_assumptions_component::AgeAssumptionsComponent;
 pub use component::app_center_component::AppCenterComponent;
 pub use component::app_component::AppComponent;
 pub use component::app_nav_bar::AppNavBar;
@@ -57,6 +58,9 @@ pub use component::ok_cancel_component::OkCancel;
 pub use component::ok_cancel_component::OkCancelComponent;
 pub use component::one_of_component::OneOfComponent;
 pub use component::percent_input::PercentInput;
+pub use component::person_component::PersonComponent;
+pub use component::person_component::PersonSharedContext;
+pub use component::persons_grid::PersonsGrid;
 pub use component::symbol_input::SymbolInput;
 pub use component::year_currency_value_input::YearCurrencyValueInput;
 pub use component::year_input::YearInput;
@@ -113,20 +117,28 @@ if #[cfg(feature = "hydrate")] {
       leptos_dom::log!("HYDRATION HAPPENING");
       console_error_panic_hook::set_once();
 
-      tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::TRACE)
-        .without_time()
-        .with_file(true)
-        .with_line_number(true)
-        .with_target(false)
-        .with_writer(tracing_subscriber_wasm::MakeConsoleWriter::default())
-        .with_ansi(false)
-        .compact()
-        .pretty()
-        .finish()
-        .init();
+    //   let subscriber = tracing_subscriber::fmt()
+    //     .with_max_level(tracing::Level::TRACE)
+    //     .without_time()
+    //     .with_file(true)
+    //     .with_line_number(true)
+    //     .with_target(false)
+    //  //   .with_writer(tracing_subscriber_wasm::MakeConsoleWriter::default())
+    //     .with_ansi(false)
+    //     .compact()
+    //     .pretty()
+    //     .finish()
+    //    ;// .init();
+
+      use tracing_wasm::WASMLayerConfigBuilder;
+
+      tracing_wasm::set_as_global_default();
 
       tracing::debug!("Tracing debug message - test!");
+      tracing::trace!("Tracing tracing message - test!");
+      tracing::warn!("Tracing warning message - test!");
+
+
 
       leptos::mount_to_body(move || {
           view! { <AppComponent/> }
