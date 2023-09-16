@@ -108,12 +108,13 @@ impl CollectionGrid for Account {
     ///   * _return_ - The header
     fn get_header() -> Vec<String> {
         // α <fn CollectionGrid::get_header for Account>
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+        use leptos::SignalGetUntracked;
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
 
         vec![
-            I18nAccountsGrid::Name(lang_selector.get()).to_string(),
-            I18nAccountsGrid::Type(lang_selector.get()).to_string(),
-            I18nAccountsGrid::Mv(lang_selector.get()).to_string(),
+            I18nAccountsGrid::Name(lang_selector).to_string(),
+            I18nAccountsGrid::Type(lang_selector).to_string(),
+            I18nAccountsGrid::Mv(lang_selector).to_string(),
         ]
         // ω <fn CollectionGrid::get_header for Account>
     }
@@ -124,8 +125,9 @@ impl CollectionGrid for Account {
     fn get_add_item_label() -> String {
         // α <fn CollectionGrid::get_add_item_label for Account>
 
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-        I18nAccountsGrid::NewAccount(lang_selector.get()).to_string()
+        use leptos::SignalGetUntracked;
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
+        I18nAccountsGrid::NewAccount(lang_selector).to_string()
 
         // ω <fn CollectionGrid::get_add_item_label for Account>
     }

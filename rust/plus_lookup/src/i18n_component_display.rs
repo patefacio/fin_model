@@ -115,6 +115,19 @@ pub enum I18nFlowSpecComponent {
     CashFlow(LangSelector),
 }
 
+/// Strings for `flow_specs_grid`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nFlowSpecsGrid {
+    /// Strings for component Name
+    Name(LangSelector),
+    /// Strings for component InOut
+    InOut(LangSelector),
+    /// Strings for component YearRange
+    YearRange(LangSelector),
+    /// Strings for component NewCashFlow
+    NewCashFlow(LangSelector),
+}
+
 /// Strings for `holding_component`
 #[derive(Debug, Copy, Clone)]
 pub enum I18nHoldingComponent {
@@ -522,6 +535,45 @@ impl Display for I18nFlowSpecComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "flow_spec_component.cash_flow"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
+impl Display for I18nFlowSpecsGrid {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nFlowSpecsGrid::Name(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_specs_grid.name"
+                    )
+                    .unwrap_or_default(),
+                I18nFlowSpecsGrid::InOut(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_specs_grid.in_out"
+                    )
+                    .unwrap_or_default(),
+                I18nFlowSpecsGrid::YearRange(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_specs_grid.year_range"
+                    )
+                    .unwrap_or_default(),
+                I18nFlowSpecsGrid::NewCashFlow(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "flow_specs_grid.new_cash_flow"
                     )
                     .unwrap_or_default(),
             }

@@ -11,6 +11,7 @@ pub use i18n_component_display::I18nDistributionPolicyComponent;
 pub use i18n_component_display::I18nDistributionSpecComponent;
 pub use i18n_component_display::I18nDossierComponent;
 pub use i18n_component_display::I18nFlowSpecComponent;
+pub use i18n_component_display::I18nFlowSpecsGrid;
 pub use i18n_component_display::I18nHoldingComponent;
 pub use i18n_component_display::I18nHoldingsGrid;
 pub use i18n_component_display::I18nOkCancelComponent;

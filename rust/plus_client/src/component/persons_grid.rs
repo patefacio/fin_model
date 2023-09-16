@@ -94,12 +94,14 @@ impl CollectionGrid for Person {
     fn get_header() -> Vec<String> {
         // α <fn CollectionGrid::get_header for Person>
 
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+        use leptos::SignalGetUntracked;
+        
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
 
         vec![
-            I18nPersonsGrid::Name(lang_selector.get()).to_string(),
-            I18nPersonsGrid::Role(lang_selector.get()).to_string(),
-            I18nPersonsGrid::RetirementAge(lang_selector.get()).to_string(),
+            I18nPersonsGrid::Name(lang_selector).to_string(),
+            I18nPersonsGrid::Role(lang_selector).to_string(),
+            I18nPersonsGrid::RetirementAge(lang_selector).to_string(),
         ]
         // ω <fn CollectionGrid::get_header for Person>
     }
@@ -109,8 +111,11 @@ impl CollectionGrid for Person {
     ///   * _return_ - The add item label
     fn get_add_item_label() -> String {
         // α <fn CollectionGrid::get_add_item_label for Person>
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-        I18nPersonsGrid::NewPerson(lang_selector.get()).to_string()
+
+        use leptos::SignalGetUntracked;
+
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
+        I18nPersonsGrid::NewPerson(lang_selector).to_string()
         // ω <fn CollectionGrid::get_add_item_label for Person>
     }
 

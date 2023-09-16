@@ -167,13 +167,16 @@ impl CollectionGrid for Holding {
     ///   * _return_ - The header
     fn get_header() -> Vec<String> {
         // α <fn CollectionGrid::get_header for Holding>
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+
+        use leptos::SignalGetUntracked;
+
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
 
         vec![
-            I18nHoldingsGrid::Symbol(lang_selector.get()).to_string(),
-            I18nHoldingsGrid::Mv(lang_selector.get()).to_string(),
-            I18nHoldingsGrid::Cb(lang_selector.get()).to_string(),
-            I18nHoldingsGrid::Ugl(lang_selector.get()).to_string(),
+            I18nHoldingsGrid::Symbol(lang_selector).to_string(),
+            I18nHoldingsGrid::Mv(lang_selector).to_string(),
+            I18nHoldingsGrid::Cb(lang_selector).to_string(),
+            I18nHoldingsGrid::Ugl(lang_selector).to_string(),
         ]
         // ω <fn CollectionGrid::get_header for Holding>
     }
@@ -184,8 +187,10 @@ impl CollectionGrid for Holding {
     fn get_add_item_label() -> String {
         // α <fn CollectionGrid::get_add_item_label for Holding>
 
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-        I18nHoldingsGrid::NewHolding(lang_selector.get()).to_string()
+        use leptos::SignalGetUntracked;
+
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
+        I18nHoldingsGrid::NewHolding(lang_selector).to_string()
 
         // ω <fn CollectionGrid::get_add_item_label for Holding>
     }

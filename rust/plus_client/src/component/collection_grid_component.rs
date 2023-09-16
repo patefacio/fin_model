@@ -198,14 +198,14 @@ where
 
     let add_to_active_count = move || {
         grid_edit_active_count.update(|count| {
-            log!("Added active count to {}", *count + 1);
+            tracing::info!("Added active count to {}", *count + 1);
             *count += 1;
         })
     };
 
     let remove_from_active_count = move || {
         grid_edit_active_count.update(|count| {
-            log!("Removed active count to {}", *count - 1);
+            tracing::info!("Removed active count to {}", *count - 1);
             *count -= 1;
         })
     };
@@ -230,15 +230,19 @@ where
 
     // Current row count, subject to reactivity on row_count_signal
     let row_count_reactive = move || {
-        use leptos::SignalWith;
-        row_count_signal.track();
-        cgc_data_stored_value.with_value(|cgc_data| cgc_data.rows_updatable.value.len())
+        //use leptos::SignalWith;
+        //row_count_signal.track();
+        //let row_count = cgc_data_stored_value.with_value(|cgc_data| cgc_data.rows_updatable.value.len());
+        let row_count = row_count_signal.get();
+        tracing::info!("Reacting to new row count {row_count}");
+        row_count
     };
 
     // Signals update of row count - called when adding/deleting rows
     let row_count_updated = move || {
         let new_row_count =
             cgc_data_stored_value.with_value(|cgc_data| cgc_data.rows_updatable.value.len());
+        tracing::info!("Row count updated to {new_row_count}");
         row_count_signal.set(new_row_count);
     };
 
@@ -306,8 +310,12 @@ where
 
     // Delete the entry corresponding to the key.
     let delete_by_key = move |key: &str| {
-        log!("Delete by key called for `{key}`");
         cgc_data_stored_value.update_value(|cgc_data| cgc_data.delete_item(key));
+        row_count_updated();
+        tracing::info!(
+            "Deleted `{key}` BT -> {:?}",
+            std::backtrace::Backtrace::capture()
+        );
     };
 
     let make_edit_button = move |key: &str| {
@@ -318,17 +326,20 @@ where
                     let key = key.clone();
                     cgc_data_stored_value
                         .update_value(|cgc_data| {
-                            log!("EDITING `{key}` for button press!");
+                            tracing::info!("EDITING `{key}` for button press!");
                             cgc_data.edit_item(&key);
                         });
                     cgc_data_stored_value
                         .with_value(|cgc_data| {
                             let key_index_signal = cgc_data.key_index_signal(&key);
-                            log!("Signalling `{key}` to refresh -> {key_index_signal:?}");
+                            tracing::info!(
+                                "Signaling `{key}` {} to refresh -> {key_index_signal:?}",
+                                key_index_signal.get_untracked()
+                            );
                             key_index_signal
                         })
                         .update(|_| ());
-                    log!("SIGNALLING STATE CHANGE!");
+                    tracing::info!("SIGNALLING STATE CHANGE!");
                     state_change_signal.set(());
                 }
 
@@ -358,8 +369,6 @@ where
     };
 
     let on_ok_cancel = move |ok_cancel: OkCancel| {
-        log!("Processing ok_cancel -> {ok_cancel:?}");
-
         let mut edit_complete_result = EditCompleteResult::Accepted;
         // Try to complete the edit. Save the edit completion result
         let mut active_signal = None;
@@ -381,7 +390,7 @@ where
                 row_count_updated();
             }
         } else {
-            log!("Edit complete failed -> {edit_complete_result:?}");
+            tracing::info!("Edit complete failed -> {edit_complete_result:?}");
         }
     };
 
@@ -435,21 +444,19 @@ where
                 each=move || { 0..row_count_reactive() }
                 key=move |&i| { nth_key(i) }
                 view=move |i| {
-                    let key = nth_key(i);
-                    let key_index_signal = key_index_signal(&key);
-                    let is_this_row_edit = move |key: &str| {
-                        use leptos::SignalWith;
-                        key_index_signal.track();
-                        cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(key))
+                    let initial_key = nth_key(i);
+                    let key_index_signal = key_index_signal(&initial_key);
+                    let is_this_row_edit = move || {
+                        let index = key_index_signal.get();
+                        let key = nth_key(index);
+                        cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(&key))
                     };
                     let user_fields = move || {
+                        let index = key_index_signal.get();
+                        let key = nth_key(index);
                         let mut user_fields = cgc_data_stored_value
                             .with_value(|cgc_data| {
-                                let row = cgc_data
-                                    .rows_updatable
-                                    .value
-                                    .get(key_index_signal.get())
-                                    .unwrap();
+                                let row = cgc_data.rows_updatable.value.get(index).unwrap();
                                 row.get_fields()
                             });
                         user_fields.insert(0, make_delete_button(&key));
@@ -458,7 +465,7 @@ where
                     };
                     view! {
                         {move || user_fields()}
-                        <Show when=move || is_this_row_edit(&nth_key(i)) fallback=|| ()>
+                        <Show when=move || { is_this_row_edit() } fallback=|| ()>
                             {edit_row_view}
                         </Show>
                     }
@@ -469,10 +476,7 @@ where
                 <button
                     class="cgc-add-row"
                     style=format!("grid-column-start: 0; grid-column-end: {grid_column_end};")
-                    on:click=move |_| {
-                        log!("Button on click called for new row edit!");
-                        set_new_item_edit()
-                    }
+                    on:click=move |_| { set_new_item_edit() }
                 >
 
                     <strong>{add_item_label()}</strong>
@@ -623,6 +627,8 @@ where
         use leptos::SignalGetUntracked;
         use leptos::SignalUpdateUntracked;
 
+        self.log_state(&format!("pre-delete of `{key}`"));
+
         if let Some(position) = self
             .row_signals
             .get(key)
@@ -643,6 +649,9 @@ where
                 }
             }
             self.row_signals.remove(key);
+            self.log_state(&format!("post-delete of `{key}`"));
+        } else {
+            panic!("Could not find item `{key}` to delete!");
         }
 
         // ω <fn CgcData[T,S]::delete_item>
@@ -658,10 +667,6 @@ where
         use leptos::create_rw_signal;
         use leptos::SignalGetUntracked;
 
-        log!(
-            "Processing edit complete {ok_cancel:?} with {:?}",
-            self.component_state
-        );
         let mut result = EditCompleteResult::Accepted;
 
         match ok_cancel {
@@ -675,15 +680,11 @@ where
                             .expect("Active key `{selection_key}` has a signal");
 
                         let index = row_signal.get_untracked();
-
-                        // TODO: CHECK FOR NAME CHANGES HERE
-
                         let rows_updatable = &mut self.rows_updatable;
                         let row_signals = &mut self.row_signals;
                         let row_stored_value = &mut self.row_stored_value;
 
                         rows_updatable.update(|rows| {
-                            log!("Updating row {index} -> `{selection_key}`");
                             if let Some(row_) = rows.get_mut(index) {
                                 let updated_row = row_stored_value.get_value();
                                 let updated_key = updated_row.get_key();
@@ -692,7 +693,6 @@ where
                                     key_name_change && row_signals.contains_key(&updated_key);
 
                                 if name_collision {
-                                    log!("UPDATING NAME FROM `{selection_key}` to `{updated_key}`");
                                     result = EditCompleteResult::RejectNameCollision {
                                         message: format!(
                                             "New name `{updated_key}` collides with existing item"
@@ -706,7 +706,6 @@ where
                                         row_signals.insert(updated_key, row_signal);
                                     }
                                     *row_ = updated_row;
-                                    log!("Updating row {index} to -> {:?}", row_);
                                 }
                             } else {
                                 unreachable!("Unable to find row for {index}!");
@@ -748,7 +747,7 @@ where
             .value
             .get(n)
             .map(|row| row.get_key())
-            .expect("Signal present")
+            .expect(&format!("Signal present at {n}"))
 
         // ω <fn CgcData[T,S]::nth_key>
     }
@@ -761,9 +760,43 @@ where
     pub fn key_index_signal(&self, key: &str) -> RwSignal<usize> {
         // α <fn CgcData[T,S]::key_index_signal>
 
-        *self.row_signals.get(key).expect("Row index signal `{key}`")
+        *self.row_signals.get(key).expect(&format!("Row index signal `{key}`"))
 
         // ω <fn CgcData[T,S]::key_index_signal>
+    }
+
+    /// Dump current state
+    ///
+    ///   * **label** - Prefix label for log statement
+    pub fn log_state(&self, label: &str) {
+        // α <fn CgcData[T,S]::log_state>
+
+        use leptos::SignalGetUntracked;
+
+        let component_state = format!("{:?}", self.component_state);
+
+        let signals = self
+            .row_signals
+            .iter()
+            .map(|(key, signal)| format!("\t`{key}` -> {}", signal.get_untracked()))
+            .collect::<Vec<_>>()
+            .join("\n");
+
+        let rows = self
+            .rows_updatable
+            .value
+            .iter()
+            .enumerate()
+            .map(|(i, row)| format!("\t{i} -> {}", row.get_key()))
+            .collect::<Vec<_>>()
+            .join("\n");
+
+        tracing::info!(
+            "{label}: {}",
+            [component_state, signals, rows].to_vec().join("\n")
+        );
+
+        // ω <fn CgcData[T,S]::log_state>
     }
 }
 
@@ -962,6 +995,13 @@ pub mod unit_tests {
             });
 
             // ω <fn test CgcData[T,S]::key_index_signal>
+        }
+
+        #[test]
+        fn log_state() {
+            // α <fn test CgcData[T,S]::log_state>
+            todo!("Test log_state")
+            // ω <fn test CgcData[T,S]::log_state>
         }
 
         // α <mod-def test_cgc_data_ts>
