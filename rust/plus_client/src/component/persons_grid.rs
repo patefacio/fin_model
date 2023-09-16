@@ -37,19 +37,10 @@ pub fn PersonsGrid(
     pub const SELF_CLASS: &str = "plus-pg";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let i18n_people = move || I18nPersonsGrid::People(lang_selector.get()).to_string();
-    let i18n_name = move || I18nPersonsGrid::Name(lang_selector.get()).to_string();
-    let i18n_role = move || I18nPersonsGrid::Role(lang_selector.get()).to_string();
-    let i18n_retirement_age =
-        move || I18nPersonsGrid::RetirementAge(lang_selector.get()).to_string();
-    let i18n_new_person = move || I18nPersonsGrid::NewPerson(lang_selector.get()).to_string();
     let i18n_grid_help = move || I18nPersonsGrid::GridHelp(lang_selector.get()).to_string();
     // α <fn persons_grid>
 
     use crate::CollectionGridComponent;
-    let header = move || {
-        let header = vec![i18n_name(), i18n_role(), i18n_retirement_age()];
-        header
-    };
 
     // ω <fn persons_grid>
     view! {
@@ -60,8 +51,6 @@ pub fn PersonsGrid(
             <CollectionGridComponent
                 rows_updatable=persons_updatable
                 shared_context_updatable=shared_context_updatable
-                header=(move || header())()
-                add_item_label=(move || i18n_new_person())()
             />
         // ω <plus-pg-view>
         </div>
@@ -97,6 +86,32 @@ impl CollectionGrid for Person {
             view! { <div class="cgc-header-cell">{self.age_assumptions.map(|aa| aa.retirement_age.to_string()).unwrap_or(DEFAULT_RETIREMENT_AGE.to_string())}</div> }.into_view(),
         ]
         // ω <fn CollectionGrid::get_fields for Person>
+    }
+
+    /// Get the header for the rows.
+    ///
+    ///   * _return_ - The header
+    fn get_header() -> Vec<String> {
+        // α <fn CollectionGrid::get_header for Person>
+
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+
+        vec![
+            I18nPersonsGrid::Name(lang_selector.get()).to_string(),
+            I18nPersonsGrid::Role(lang_selector.get()).to_string(),
+            I18nPersonsGrid::RetirementAge(lang_selector.get()).to_string(),
+        ]
+        // ω <fn CollectionGrid::get_header for Person>
+    }
+
+    /// Get the text for `Add New Item`.
+    ///
+    ///   * _return_ - The add item label
+    fn get_add_item_label() -> String {
+        // α <fn CollectionGrid::get_add_item_label for Person>
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+        I18nPersonsGrid::NewPerson(lang_selector.get()).to_string()
+        // ω <fn CollectionGrid::get_add_item_label for Person>
     }
 
     /// Get key that uniquely identifies the element.

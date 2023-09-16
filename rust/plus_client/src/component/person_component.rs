@@ -168,8 +168,8 @@ pub fn PersonComponent(
                         is_hidden=is_dependent
                     />
                 </div>
-                </fieldset>
-            // ω <plus-pc-view>
+            </fieldset>
+        // ω <plus-pc-view>
         </div>
     }
 }

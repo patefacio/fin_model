@@ -360,7 +360,7 @@ where
         }
     });
 
-    /* TODO: ADD BACK when leptos_use updated 
+    /* TODO: ADD BACK when leptos_use updated
     #[cfg(not(feature = "ssr"))]
     let _ = leptos_use::use_event_listener(document(), mousedown, move |ev| {
         if let Some(container_div) = mcs_grid_ref.get_untracked() {

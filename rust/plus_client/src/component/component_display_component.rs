@@ -566,8 +566,6 @@ pub fn ComponentDisplayComponent() -> impl IntoView {
                         show_update(format!("Account shared context updated -> {sc:?}"));
                     },
                 )
-
-                header=vec!["Account".to_string(), "Type".to_string(), "Market Value".to_string(),]
             />
 
             <div style="margin: 2rem;">"Dispose Test"</div>

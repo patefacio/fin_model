@@ -48,22 +48,12 @@ pub fn AccountsGrid(
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-ag";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_name = move || I18nAccountsGrid::Name(lang_selector.get()).to_string();
     let i18n_accounts = move || I18nAccountsGrid::Accounts(lang_selector.get()).to_string();
-    let i18n_mv = move || I18nAccountsGrid::Mv(lang_selector.get()).to_string();
-    let i18n_type = move || I18nAccountsGrid::Type(lang_selector.get()).to_string();
-    let i18n_new_account = move || I18nAccountsGrid::NewAccount(lang_selector.get()).to_string();
     let i18n_grid_help = move || I18nAccountsGrid::GridHelp(lang_selector.get()).to_string();
     // α <fn accounts_grid>
 
     use crate::CollectionGridComponent;
     use leptos::SignalWith;
-
-    let header = move || {
-        lang_selector.track();
-        let header = vec![i18n_name(), i18n_type(), i18n_mv()];
-        header
-    };
 
     // ω <fn accounts_grid>
     view! {
@@ -74,8 +64,6 @@ pub fn AccountsGrid(
             <CollectionGridComponent
                 rows_updatable=accounts_updatable
                 shared_context_updatable=shared_context_updatable
-                header=(move || header())()
-                add_item_label=i18n_new_account()
             />
         // ω <plus-ag-view>
         </div>
@@ -113,6 +101,33 @@ impl CollectionGrid for Account {
             view! { <div class="cgc-header-cell" style:text-align="right">{"MV-TODO".to_string()}</div> }.into_view(),
         ]
         // ω <fn CollectionGrid::get_fields for Account>
+    }
+
+    /// Get the header for the rows.
+    ///
+    ///   * _return_ - The header
+    fn get_header() -> Vec<String> {
+        // α <fn CollectionGrid::get_header for Account>
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+
+        vec![
+            I18nAccountsGrid::Name(lang_selector.get()).to_string(),
+            I18nAccountsGrid::Type(lang_selector.get()).to_string(),
+            I18nAccountsGrid::Mv(lang_selector.get()).to_string(),
+        ]
+        // ω <fn CollectionGrid::get_header for Account>
+    }
+
+    /// Get the text for `Add New Item`.
+    ///
+    ///   * _return_ - The add item label
+    fn get_add_item_label() -> String {
+        // α <fn CollectionGrid::get_add_item_label for Account>
+
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+        I18nAccountsGrid::NewAccount(lang_selector.get()).to_string()
+
+        // ω <fn CollectionGrid::get_add_item_label for Account>
     }
 
     /// Get key that uniquely identifies the element.

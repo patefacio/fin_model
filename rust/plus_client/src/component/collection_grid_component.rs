@@ -70,6 +70,16 @@ pub trait CollectionGrid: Sized {
     ///   * _return_ - The fields as elements
     fn get_fields(&self) -> Vec<View>;
 
+    /// Get the header for the rows.
+    ///
+    ///   * _return_ - The header
+    fn get_header() -> Vec<String>;
+
+    /// Get the text for `Add New Item`.
+    ///
+    ///   * _return_ - The add item label
+    fn get_add_item_label() -> String;
+
     /// Get key that uniquely identifies the element.
     ///
     ///   * _return_ - The key for the element
@@ -138,11 +148,9 @@ where
 ///
 ///   * **rows_updatable** - Items to show
 ///   * **shared_context_updatable** - Shared context
-///   * **header** - Header for the grid
 ///   * **on_state_change** - Enables parent to track state changes.
 /// For example, parent may want different behavior when editing an entry
 /// versus just displaying the rows.
-///   * **add_item_label** - Label to show on add button
 ///   * _return_ - View for collection_grid_component
 #[component]
 pub fn CollectionGridComponent<T, S>(
@@ -150,16 +158,11 @@ pub fn CollectionGridComponent<T, S>(
     rows_updatable: Updatable<Vec<T>>,
     /// Shared context
     shared_context_updatable: Updatable<S>,
-    /// Header for the grid
-    header: Vec<String>,
     /// Enables parent to track state changes.
     /// For example, parent may want different behavior when editing an entry
     /// versus just displaying the rows.
     #[prop(default=None)]
     on_state_change: Option<WriteSignal<CollectionGridState>>,
-    /// Label to show on add button
-    #[prop(default="Add New Item".to_string())]
-    add_item_label: String,
 ) -> impl IntoView
 where
     T: 'static + Clone + Debug + CollectionGrid<SharedContext = S>,
@@ -190,6 +193,7 @@ where
     /// HoldingsGrid). When user opens an account and then a holding within it, without
     /// this logic there would be to <Ok/Cancel> bars showing which could be quite confusing.
     /// This ensures only the innermost <Ok/Cancel> bar is shown.
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
 
     let add_to_active_count = move || {
@@ -208,7 +212,12 @@ where
 
     let initial_grid_edit_active_count = grid_edit_active_count.get_untracked() + 1;
     let ok_cancel_enabled = move || grid_edit_active_count.get() == initial_grid_edit_active_count;
-    let add_item_label = move || add_item_label.clone();
+
+    let add_item_label = move || {
+        use leptos::SignalWith;
+        lang_selector.track();
+        <T as CollectionGrid>::get_add_item_label()
+    };
 
     // Used to signal state change (e.g. going from Display to EditNew or EditSelection and back)
     let state_change_signal = create_rw_signal(());
@@ -239,7 +248,7 @@ where
         state_change_signal.track();
         let new_state =
             cgc_data_stored_value.with_value(|cgc_data| cgc_data.component_state.clone());
-        log!("STATE CHANGE REACTIVE: State has changed to {new_state:?}");
+        tracing::info!("STATE CHANGE REACTIVE: State has changed to {new_state:?}");
         new_state
     };
 
@@ -249,8 +258,9 @@ where
     let is_disabled_reactive = move || {
         use leptos::SignalWith;
         state_change_signal.track();
-        cgc_data_stored_value
-            .with_value(|cgc_data| cgc_data.component_state != CollectionGridState::Display)
+        let result = cgc_data_stored_value
+            .with_value(|cgc_data| cgc_data.component_state != CollectionGridState::Display);
+        result
     };
 
     // Called to get a new item and enter into CollectionGridState::NewEdit.
@@ -260,15 +270,12 @@ where
         state_change_signal.set(());
     };
 
-    // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
-    let grid_column_end = 3 + header.len();
-    // The number of columns is 2 for edit and delete buttons and one for each cell in the header
-    let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", header.len());
-
     // A header for the component, including empty fields for our `Edit` and `Delete` buttons,
     // so the shape matches that of the displayed rows
-    let header = {
-        let mut fields = header;
+    let header_reactive = move || {
+        use leptos::SignalWith;
+        lang_selector.track();
+        let mut fields = <T as CollectionGrid>::get_header();
         fields.insert(0, String::default());
         fields.insert(0, String::default());
         fields
@@ -278,6 +285,13 @@ where
             })
             .collect::<Vec<HtmlElement<Div>>>()
     };
+
+    let initial_header = header_reactive();
+
+    // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
+    let grid_column_end = 1 + initial_header.len();
+    // The number of columns is 2 for edit and delete buttons and one for each cell in the header
+    let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", initial_header.len() - 2);
 
     let editable_style =
         move || format!("grid-column-start: 1; grid-column-end: {grid_column_end}");
@@ -298,7 +312,6 @@ where
 
     let make_edit_button = move |key: &str| {
         let key = key.to_string();
-
         view! {
             <button
                 on:click=move |_| {
@@ -314,7 +327,9 @@ where
                             log!("Signalling `{key}` to refresh -> {key_index_signal:?}");
                             key_index_signal
                         })
-                        .update(|_| ())
+                        .update(|_| ());
+                    log!("SIGNALLING STATE CHANGE!");
+                    state_change_signal.set(());
                 }
 
                 disabled=move || is_disabled_reactive()
@@ -341,9 +356,6 @@ where
         }
         .into_view()
     };
-
-    let is_this_row_edit =
-        move |key: &str| cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(key));
 
     let on_ok_cancel = move |ok_cancel: OkCancel| {
         log!("Processing ok_cancel -> {ok_cancel:?}");
@@ -418,37 +430,37 @@ where
             class="collection-grid"
             style=format!("display: grid; grid-template-columns: {grid_template_columns}")
         >
-            {header}
+            {header_reactive}
             <For
                 each=move || { 0..row_count_reactive() }
                 key=move |&i| { nth_key(i) }
                 view=move |i| {
-                    let call_count = create_rw_signal(0);
-                    let make_view = move || {
-                        let key = nth_key(i);
-                        let key_index_signal = key_index_signal(&key);
-                        let index = key_index_signal.get();
-                        // log!("count({}): Remaking view ({i},{index},`{key}`) -> {key_index_signal:?}", {
-                        //     call_count.update(|i| *i=*i+1);
-                        //     call_count.get_untracked()
-                        // });
+                    let key = nth_key(i);
+                    let key_index_signal = key_index_signal(&key);
+                    let is_this_row_edit = move |key: &str| {
+                        use leptos::SignalWith;
+                        key_index_signal.track();
+                        cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(key))
+                    };
+                    let user_fields = move || {
                         let mut user_fields = cgc_data_stored_value
                             .with_value(|cgc_data| {
-                                let row = cgc_data.rows_updatable.value.get(index).unwrap();
+                                let row = cgc_data
+                                    .rows_updatable
+                                    .value
+                                    .get(key_index_signal.get())
+                                    .unwrap();
                                 row.get_fields()
                             });
                         user_fields.insert(0, make_delete_button(&key));
                         user_fields.insert(0, make_edit_button(&key));
-                        view! {
-                            {user_fields.into_view()}
-                            <Show when=move || is_this_row_edit(&key) fallback=|| ()>
-                                {edit_row_view}
-                            </Show>
-                        }
-                    }.into_view();
+                        user_fields.into_view()
+                    };
                     view! {
-                        {}  // TAKE THIS OUT AND THINGS STOP WORKING 😔
-                        {move || vec![make_view()]}
+                        {move || user_fields()}
+                        <Show when=move || is_this_row_edit(&nth_key(i)) fallback=|| ()>
+                            {edit_row_view}
+                        </Show>
                     }
                 }
             />
@@ -646,7 +658,10 @@ where
         use leptos::create_rw_signal;
         use leptos::SignalGetUntracked;
 
-        log!("Processing edit complete {ok_cancel:?} with {:?}", self.component_state);
+        log!(
+            "Processing edit complete {ok_cancel:?} with {:?}",
+            self.component_state
+        );
         let mut result = EditCompleteResult::Accepted;
 
         match ok_cancel {

@@ -53,18 +53,18 @@ where
         <div class=SELF_CLASS>
             // α <plus-occ-view>
             <button
-            class="ok-button"
-            on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }
-        >
-            {i18n_ok}
-        </button>
-        <button
-            class="cancel-button"
-            on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }
-        >
-            {i18n_cancel}
-        </button>
-            // ω <plus-occ-view>
+                class="ok-button"
+                on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }
+            >
+                {i18n_ok}
+            </button>
+            <button
+                class="cancel-button"
+                on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }
+            >
+                {i18n_cancel}
+            </button>
+        // ω <plus-occ-view>
         </div>
     }
 }

@@ -64,19 +64,10 @@ pub fn HoldingsGrid(
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-hg";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_symbol = move || I18nHoldingsGrid::Symbol(lang_selector.get()).to_string();
-    let i18n_mv = move || I18nHoldingsGrid::Mv(lang_selector.get()).to_string();
-    let i18n_cb = move || I18nHoldingsGrid::Cb(lang_selector.get()).to_string();
-    let i18n_ugl = move || I18nHoldingsGrid::Ugl(lang_selector.get()).to_string();
     let i18n_holdings = move || I18nHoldingsGrid::Holdings(lang_selector.get()).to_string();
-    let i18n_new_holding = move || I18nHoldingsGrid::NewHolding(lang_selector.get()).to_string();
     // α <fn holdings_grid>
 
     use crate::CollectionGridComponent;
-    let header = move || {
-        let header = vec![i18n_symbol(), i18n_mv(), i18n_cb(), i18n_ugl()];
-        header
-    };
 
     // ω <fn holdings_grid>
     view! {
@@ -84,10 +75,8 @@ pub fn HoldingsGrid(
             // α <plus-hg-view>
             <div class="grid-label">{i18n_holdings}</div>
             <CollectionGridComponent
-                header=(move || header())()
                 rows_updatable=holdings_updatable
                 shared_context_updatable=shared_context_updatable
-                add_item_label=(move || i18n_new_holding())()
             />
         // ω <plus-hg-view>
         </div>
@@ -171,6 +160,34 @@ impl CollectionGrid for Holding {
         ]
 
         // ω <fn CollectionGrid::get_fields for Holding>
+    }
+
+    /// Get the header for the rows.
+    ///
+    ///   * _return_ - The header
+    fn get_header() -> Vec<String> {
+        // α <fn CollectionGrid::get_header for Holding>
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+
+        vec![
+            I18nHoldingsGrid::Symbol(lang_selector.get()).to_string(),
+            I18nHoldingsGrid::Mv(lang_selector.get()).to_string(),
+            I18nHoldingsGrid::Cb(lang_selector.get()).to_string(),
+            I18nHoldingsGrid::Ugl(lang_selector.get()).to_string(),
+        ]
+        // ω <fn CollectionGrid::get_header for Holding>
+    }
+
+    /// Get the text for `Add New Item`.
+    ///
+    ///   * _return_ - The add item label
+    fn get_add_item_label() -> String {
+        // α <fn CollectionGrid::get_add_item_label for Holding>
+
+        let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+        I18nHoldingsGrid::NewHolding(lang_selector.get()).to_string()
+
+        // ω <fn CollectionGrid::get_add_item_label for Holding>
     }
 
     /// Get key that uniquely identifies the element.
