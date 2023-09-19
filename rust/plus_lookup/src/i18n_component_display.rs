@@ -205,6 +205,15 @@ pub enum I18nPersonsGrid {
     GridHelp(LangSelector),
 }
 
+/// Strings for `tax_determinants_component`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nTaxDeterminantsComponent {
+    /// Strings for component SimpleEffectiveRate
+    SimpleEffectiveRate(LangSelector),
+    /// Strings for component ByCountry
+    ByCountry(LangSelector),
+}
+
 /// Strings for `worth_component`
 #[derive(Debug, Copy, Clone)]
 pub enum I18nWorthComponent {
@@ -805,6 +814,33 @@ impl Display for I18nPersonsGrid {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "persons_grid.grid_help"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
+impl Display for I18nTaxDeterminantsComponent {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nTaxDeterminantsComponent::SimpleEffectiveRate(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "tax_determinants_component.simple_effective_rate"
+                    )
+                    .unwrap_or_default(),
+                I18nTaxDeterminantsComponent::ByCountry(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "tax_determinants_component.by_country"
                     )
                     .unwrap_or_default(),
             }

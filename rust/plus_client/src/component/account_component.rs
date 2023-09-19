@@ -46,8 +46,6 @@ pub fn AccountComponent(
     use crate::HoldingsGrid;
     use crate::Updatable;
     use leptos::create_node_ref;
-    use leptos::create_signal;
-    use leptos::store_value;
     use leptos::use_context;
     use leptos::IntoAttribute;
     use leptos::SignalGet;

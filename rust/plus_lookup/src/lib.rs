@@ -17,6 +17,7 @@ pub use i18n_component_display::I18nHoldingsGrid;
 pub use i18n_component_display::I18nOkCancelComponent;
 pub use i18n_component_display::I18nPersonComponent;
 pub use i18n_component_display::I18nPersonsGrid;
+pub use i18n_component_display::I18nTaxDeterminantsComponent;
 pub use i18n_component_display::I18nWorthComponent;
 pub use i18n_component_display::I18nWorthsGrid;
 pub use i18n_enum_display::I18nEnums;
