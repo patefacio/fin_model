@@ -31,11 +31,15 @@ pub fn AppComponent() -> impl IntoView {
     use leptos_router::Routes;
     use plus_modeled::LangSelector;
 
+
+    // TODO: Clean up
+    leptos_dom::log!("where do I run?");
+
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
     let grid_edit_active_count = create_rw_signal(0);
-   
+
     let app_context = AppContext {
         lang_selector: create_rw_signal(LangSelector::UsEnglish),
         grid_edit_active_count,

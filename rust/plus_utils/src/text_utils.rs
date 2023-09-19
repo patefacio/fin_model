@@ -100,4 +100,9 @@ pub mod unit_tests {
 }
 
 // α <mod-def text_utils>
+
+/// Return string representation of the type of the passed argument
+pub fn print_type_of<T>(_: &T) -> &'static str {
+    std::any::type_name::<T>()
+}
 // ω <mod-def text_utils>

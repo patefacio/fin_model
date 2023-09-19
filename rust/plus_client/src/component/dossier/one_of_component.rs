@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::SelectDirection;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
@@ -20,6 +21,7 @@ use strum::{IntoEnumIterator, VariantNames};
 ///   * **name** - Used for the name of radio buttons
 ///   * **labels** - Labels to show
 ///   * **views** - Function to create view from option
+///   * **direction** - Specifies whether items flows from top to bottom or left to right.
 ///   * _return_ - View for one_of_component
 #[component]
 pub fn OneOfComponent<E, L, F, IV>(
@@ -32,6 +34,9 @@ pub fn OneOfComponent<E, L, F, IV>(
     labels: Option<L>,
     /// Function to create view from option
     views: F,
+    /// Specifies whether items flows from top to bottom or left to right.
+    #[prop(default=SelectDirection::LeftToRight)]
+    direction: SelectDirection,
 ) -> impl IntoView
 where
     E: Clone + Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
@@ -54,12 +59,18 @@ where
     let labels_store_value = store_value(labels);
     let value = create_rw_signal(selection.clone());
     let column_count = E::VARIANTS.len();
-    let container_style = format!(
-        "display: grid; grid-template-columns: {}; margin: 3px;",
-        "1fr ".repeat(column_count)
-    );
+    let container_style = match direction {
+        SelectDirection::LeftToRight => format!(
+            "display: grid; grid-template-columns: {}; margin: 3px;",
+            "1fr ".repeat(column_count)
+        ),
+        SelectDirection::TopToBottom => format!(
+            "display: grid; grid-template-rows: {}; margin: 3px;",
+            "1fr ".repeat(column_count)
+        ),
+    };
 
-    let make_radio_button = move |e: E, name: String| -> View {
+    let make_radio_button = move |i: usize, e: E, name: String| -> View {
         let handler_e = e.clone();
         let checked_e = e.clone();
         let id = name.to_lowercase().replace(" ", "-");
@@ -72,8 +83,13 @@ where
             }
         });
 
+        let (class, location) = match direction {
+            SelectDirection::LeftToRight => ("one-of-rb-ltr", format!("grid-column: {} / {};", i+1, i+2)),
+            SelectDirection::TopToBottom => ("one-of-rb-ttb", format!("grid-row: {} / {};", i+1, i+2))
+        };
+
         view! {
-            <div style="margin-bottom: 0.3em;">
+            <div class=class style=format!("margin-bottom: 0.3em; {location}")>
                 <label>
                     <input
                         style="vertical-align: baseline;"
@@ -92,20 +108,34 @@ where
     };
 
     let radio_buttons = zip(E::iter(), E::VARIANTS)
-        .map(|(e, &label)| make_radio_button(e, label.to_string()))
+        .enumerate()
+        .map(|(i, (e, &label))| make_radio_button(i, e, label.to_string()))
         .collect::<Vec<_>>();
 
+    let content_view = move || {
+        let mut result = None;
+        let content_view = views_store_value
+            .update_value(|views| {
+                result = Some(
+                    views(&value.get()).into_view()
+                );
+            });
+        result
+    };
+
+    let content_location = match direction {
+        SelectDirection::LeftToRight => format!("grid-row: 2 / 3; grid-column: 1 / {}", column_count + 1),
+        SelectDirection::TopToBottom => format!("grid-column: 2 / 3; grid-row: 1 / {}", column_count + 1)
+    };
+
     view! {
-        <div style=container_style>{radio_buttons}</div>
+        <div class="one-of" style=container_style>
+        {radio_buttons}
         <hr/>
-        {move || {
-            let mut result = None;
-            views_store_value
-                .update_value(|views| {
-                    result = Some(views(&value.get()).into_view());
-                });
-            result
-        }}
+        <div style=content_location >
+        {content_view}
+        </div>
+        </div>
     }
     // ω <fn one_of_component>
 }

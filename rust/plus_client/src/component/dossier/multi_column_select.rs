@@ -9,6 +9,7 @@ use crate::utils::constants::{
 };
 use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::HtmlTag;
+use crate::SelectDirection;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 use leptos_dom::ev::{focusin, mousedown};
@@ -31,15 +32,6 @@ pub enum InitialValue {
     Placeholder(String),
     /// Specifies the initial selection that may be changed by the component.
     SelectionIndex(usize),
-}
-
-/// Indicates direction to flow the select items: can be displayed left-to-right or top-to-bottom.
-#[derive(Debug, Copy, Clone)]
-pub enum SelectDirection {
-    /// Fill in values row by row.
-    LeftToRight,
-    /// Fill in values column by column.
-    TopToBottom,
 }
 
 /// Enumerates the types of options that have labels appear in the select menu.
@@ -360,7 +352,6 @@ where
         }
     });
 
-    /* TODO: ADD BACK when leptos_use updated
     #[cfg(not(feature = "ssr"))]
     let _ = leptos_use::use_event_listener(document(), mousedown, move |ev| {
         if let Some(container_div) = mcs_grid_ref.get_untracked() {
@@ -390,7 +381,6 @@ where
             }
         }
     });
-    */
 
     view! {
         <div class="mcs-grid" disabled=move || { !menu_is_hidden.get() } node_ref=mcs_grid_ref>

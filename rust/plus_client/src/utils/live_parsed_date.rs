@@ -1,3 +1,5 @@
+//! Support for parsing dates as characters are entered (ie live parsing)
+
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -435,76 +437,5 @@ pub mod unit_tests {
 }
 
 // α <mod-def live_parsed_date>
-
-///////////////////////////////////////////////////////////////////////////////////////////
-/// Following is original date clean routines
-
-fn size_clamp(mut s: String, lower_bound: u32, upper_bound: u32, fill: char) -> String {
-    for _i in 0..(s.len() as i32 - upper_bound as i32) {
-        s.pop();
-    }
-    for _i in 0..(lower_bound as i32 - s.len() as i32) {
-        s.push(fill);
-    }
-    return s;
-}
-
-fn date_string(mut s: String) -> String {
-    if s.len() > 2 {
-        s.insert(2, '/');
-    }
-    if s.len() > 5 {
-        s.insert(5, '/');
-    }
-    return s;
-}
-
-pub fn clean_date(mut value: String) -> (String, Option<Date>) {
-    const YEAR_SIZE: u32 = 4;
-
-    tracing::info!("{} size {}", value, value.len());
-    let last_letter = value.chars().last().unwrap_or(' ');
-
-    if value.len() == 2 && last_letter == '/' {
-        value.insert(0, '0');
-    }
-    if value.len() == 5 && last_letter == '/' {
-        value.insert(3, '0')
-    }
-
-    value = value.chars().filter(|c| c.is_ascii_digit()).collect();
-    value = size_clamp(date_string(value), 0, 6 + YEAR_SIZE, '0');
-
-    if value.len() >= 2 && value[0..2].parse::<u32>().unwrap() > 12 {
-        value.remove(0);
-        value.remove(0);
-        value.insert_str(0, "12")
-    }
-    if value.len() >= 5 && value[3..5].parse::<u32>().unwrap() > 31 {
-        value.remove(3);
-        value.remove(3);
-        value.insert_str(3, "31")
-    }
-
-    let full_date = size_clamp(value.clone(), 6 + YEAR_SIZE, 6 + YEAR_SIZE, '0');
-    //value = full_date[0..value.len()].to_string();
-
-    tracing::info!("DateInput: filtered -> {value:?}");
-
-    if value.is_empty() {
-        (value, None)
-    } else {
-        (
-            value,
-            Some(Date {
-                month: full_date[0..2].parse::<u32>().unwrap(),
-                day: full_date[3..5].parse::<u32>().unwrap(),
-                year: full_date[6..(6 + YEAR_SIZE as usize)]
-                    .parse::<u32>()
-                    .unwrap(),
-            }),
-        )
-    }
-}
 
 // ω <mod-def live_parsed_date>

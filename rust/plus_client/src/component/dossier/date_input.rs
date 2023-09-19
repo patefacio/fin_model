@@ -170,8 +170,7 @@ pub fn DateInput(
     view! {
         <input
             node_ref=node_ref
-            class="date-input"
-            class=class.to_string()
+            class=class
             class:invalid=move || { !is_in_range.get() }
             on:input=move |_| update_value()
             on:keydown=key_down_handler

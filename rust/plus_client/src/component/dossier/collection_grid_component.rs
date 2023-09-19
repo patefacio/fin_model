@@ -508,6 +508,20 @@ where
     ) -> CgcData<T, S> {
         // α <fn CgcData[T,S]::new>
 
+        // TODO: Clean up
+        cfg_if::cfg_if! {
+            if #[cfg(feature = "csr")] {
+              tracing::info!("CSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
+              leptos_dom::log!("CSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
+            } else if #[cfg(feature = "ssr")] {
+              tracing::info!("SSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
+              leptos_dom::log!("SSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
+            } else {
+              tracing::info!("HYD: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
+              leptos_dom::log!("HYD: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
+            }
+          }
+
         use leptos::create_rw_signal;
         use leptos::store_value;
 
@@ -760,7 +774,10 @@ where
     pub fn key_index_signal(&self, key: &str) -> RwSignal<usize> {
         // α <fn CgcData[T,S]::key_index_signal>
 
-        *self.row_signals.get(key).expect(&format!("Row index signal `{key}`"))
+        *self
+            .row_signals
+            .get(key)
+            .expect(&format!("Row index signal `{key}`"))
 
         // ω <fn CgcData[T,S]::key_index_signal>
     }
@@ -995,13 +1012,6 @@ pub mod unit_tests {
             });
 
             // ω <fn test CgcData[T,S]::key_index_signal>
-        }
-
-        #[test]
-        fn log_state() {
-            // α <fn test CgcData[T,S]::log_state>
-            todo!("Test log_state")
-            // ω <fn test CgcData[T,S]::log_state>
         }
 
         // α <mod-def test_cgc_data_ts>

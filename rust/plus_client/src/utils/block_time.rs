@@ -1,3 +1,5 @@
+//! Basic RAII support for timing blocks of code
+
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -12,12 +14,15 @@ cfg_if! {
     if #[cfg(feature = "ssr")] {
         use std::time::{Duration, Instant};
 
+        /// Tracks when a block with `label` is entered in order to time on exit
         pub struct BlockTime {
             label: String,
             start: Instant
         }
 
     } else {
+
+        /// Tracks when a block with `label` is entered in order to time on exit
         pub struct BlockTime {
             label: String,
             start: f64
@@ -39,12 +44,16 @@ cfg_if! {
 
 impl BlockTime {
     cfg_if! {
-        // server-only stuff
+
+        
         if #[cfg(feature = "ssr")] {
+            /// Create new time for block with `label`
             pub fn new(label: &str) -> BlockTime {
                 BlockTime { label: label.into(), start: Instant::now() }
             }
         } else {
+
+            /// Create new time for block with `label`
             pub fn new(label: &str) -> BlockTime {
                 log!("Open block `{}`", label);
                 BlockTime { label: label.into(), start: web_now() }

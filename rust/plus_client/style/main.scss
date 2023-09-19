@@ -552,3 +552,17 @@ input.invalid:focus {
 	font-weight: bold;
 	font-size: 1.05rem;
 }
+
+.one-of {
+	row-gap: 1rem;
+}
+
+.one-of-rb-ltr {
+	padding-bottom: 8px;
+	border-bottom: 2px solid black;
+}
+
+.one-of-rb-ttb {
+	padding-right: 8px;
+	//border-right: 2px solid black;
+}

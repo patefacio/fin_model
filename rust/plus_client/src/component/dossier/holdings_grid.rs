@@ -170,7 +170,10 @@ impl CollectionGrid for Holding {
 
         use leptos::SignalGetUntracked;
 
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
+        let lang_selector = use_context::<AppContext>()
+            .unwrap()
+            .lang_selector
+            .get_untracked();
 
         vec![
             I18nHoldingsGrid::Symbol(lang_selector).to_string(),
@@ -189,7 +192,10 @@ impl CollectionGrid for Holding {
 
         use leptos::SignalGetUntracked;
 
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
+        let lang_selector = use_context::<AppContext>()
+            .unwrap()
+            .lang_selector
+            .get_untracked();
         I18nHoldingsGrid::NewHolding(lang_selector).to_string()
 
         // ω <fn CollectionGrid::get_add_item_label for Holding>

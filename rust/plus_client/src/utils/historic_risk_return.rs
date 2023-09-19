@@ -1,3 +1,5 @@
+//! Support for plotting a normal spec against a set of historic risk return values
+
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +175,7 @@ pub mod unit_tests {
 use once_cell::sync::Lazy;
 use plotters::prelude::{BLUE, GREEN, MAGENTA, RED, YELLOW};
 
+/// Historic risk return samples to give context to a candidate normal spec
 pub static HISTORIC_RISK_RETURN_SAMPLES: Lazy<Vec<HistoricRiskReturn>> = Lazy::new(|| {
     vec![
         // Samples pulled from here: https://www.bogleheads.org/wiki/Historical_and_expected_returns

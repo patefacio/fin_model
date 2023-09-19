@@ -109,7 +109,10 @@ impl CollectionGrid for Account {
     fn get_header() -> Vec<String> {
         // α <fn CollectionGrid::get_header for Account>
         use leptos::SignalGetUntracked;
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
+        let lang_selector = use_context::<AppContext>()
+            .unwrap()
+            .lang_selector
+            .get_untracked();
 
         vec![
             I18nAccountsGrid::Name(lang_selector).to_string(),
@@ -126,7 +129,10 @@ impl CollectionGrid for Account {
         // α <fn CollectionGrid::get_add_item_label for Account>
 
         use leptos::SignalGetUntracked;
-        let lang_selector = use_context::<AppContext>().unwrap().lang_selector.get_untracked();
+        let lang_selector = use_context::<AppContext>()
+            .unwrap()
+            .lang_selector
+            .get_untracked();
         I18nAccountsGrid::NewAccount(lang_selector).to_string()
 
         // ω <fn CollectionGrid::get_add_item_label for Account>

@@ -29,6 +29,7 @@ pub const DOWN_KEY: u32 = 40;
 use once_cell::sync::Lazy;
 use plotters::prelude::*;
 
+/// Default style for plots
 pub const PLOT_TEXT_STYLE: Lazy<TextStyle> = Lazy::new(|| ("sans-serif", 18).into());
 
 // ω <mod-def constants>
