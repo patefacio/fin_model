@@ -133,6 +133,8 @@ pub fn YearValueSeriesComponent(
 
     let on_accept = move || {
         if let (Some(new_year), Some(new_value)) = entry_complete_read.get() {
+            tracing::info!("Accepting {new_year:?} and  {new_value:?}!");
+
             curve_write.update_untracked(move |curve| {
                 curve.push(YearValue {
                     year: new_year,
@@ -212,6 +214,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     Some(year_value.year),
                     move |year| {
+                        tracing::info!("Updating display year to {year:?}");
                         entry_complete_write.update(|entry_complete| entry_complete.0 = *year);
                         add_enabled_write
                             .update(|add_enabled| {
@@ -235,14 +238,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |percent| {
-                        entry_complete_write.update(|entry_complete| entry_complete.1 = *percent);
-                        add_enabled_write
-                            .update(|add_enabled| {
-                                *add_enabled = entry_complete_read
-                                    .with(|entry_complete| {
-                                        entry_complete.0.is_some() && entry_complete.1.is_some()
-                                    });
-                            });
+                        tracing::info!("Updated display percent to {percent:?}");
                     },
                 )
 
@@ -263,14 +259,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |value| {
-                        entry_complete_write.update(|entry_complete| entry_complete.1 = *value);
-                        add_enabled_write
-                            .update(|add_enabled| {
-                                *add_enabled = entry_complete_read
-                                    .with(|entry_complete| {
-                                        entry_complete.0.is_some() && entry_complete.1.is_some()
-                                    });
-                            });
+                        tracing::info!("Updated display value to {value:?}");
                     },
                 )
 
@@ -301,6 +290,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     None,
                     move |percent| {
+                        tracing::info!("Updating live percent to {percent:?}");
                         entry_complete_write.update(|entry_complete| entry_complete.1 = *percent);
                         add_enabled_write
                             .update(|add_enabled| {
@@ -330,6 +320,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     None,
                     move |value| {
+                        tracing::info!("Updating live value to {value:?}");
                         entry_complete_write.update(|entry_complete| entry_complete.1 = *value);
                         add_enabled_write
                             .update(|add_enabled| {
@@ -426,6 +417,7 @@ pub fn YearValueSeriesComponent(
                             entry_complete_write.update(|entry_complete| entry_complete.0 = *year);
                             add_enabled_write
                                 .update(|add_enabled| {
+                                    tracing::info!("Updating live year to {year:?}");
                                     *add_enabled = entry_complete_read
                                         .with(|entry_complete| {
                                             entry_complete.0.is_some() && entry_complete.1.is_some()
