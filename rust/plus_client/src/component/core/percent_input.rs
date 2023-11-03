@@ -22,7 +22,6 @@ use std::ops::RangeInclusive;
 ///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * **size** - The size attribute, which one hopes would make the size of the
 /// input field roughly that number of characters. But YMMV.
-///
 ///   * **max_len** - The maximum number of characters for the percent input.
 ///
 ///   * **range** - Range of valid values for input.
@@ -61,6 +60,7 @@ pub fn PercentInput(
     #[prop(into, optional)]
     disabled: MaybeSignal<bool>,
 ) -> impl IntoView {
+    crate::log_component!("`PercentInput`");
     // α <fn percent_input>
 
     use crate::scale_by;

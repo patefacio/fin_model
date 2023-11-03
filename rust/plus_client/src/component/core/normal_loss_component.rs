@@ -25,26 +25,28 @@ pub fn NormalLossComponent(
     #[prop(default=MaybeSignal::Static(vec![0.7, 0.3, 0.1, 0.05, 0.01, 0.0, -0.01, -0.05, -0.1, -0.3, -0.7]))]
     loss_vec: MaybeSignal<Vec<f64>>,
 ) -> impl IntoView {
+    crate::log_component!("`NormalLossComponent`");
     // α <fn normal_loss_component>
 
     use crate::scale_by;
+    use crate::CssClasses;
     use crate::DistributionCdf;
     use crate::Modification;
     use crate::NumericInput;
     use crate::Updatable;
     use leptos::create_signal;
     use leptos::For;
+    use leptos::IntoAttribute;
     use leptos::SignalGet;
-    use leptos::SignalSet;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
     use leptos::SignalWithUntracked;
 
-    let (sample_loss, set_sample_loss) = create_signal(
+    let (sample_loss_read, sample_loss_write) = create_signal(
         normal_spec.with_untracked(|normal_spec| normal_spec.cdf_sigmoid_approx(0.0)),
     );
     let sample_loss_updatable = Updatable::new(Some(0.0), move |loss| {
-        set_sample_loss.update(|sample_loss| *sample_loss = *loss);
+        sample_loss_write.update(|sample_loss| *sample_loss = *loss);
     });
 
     view! {
@@ -58,16 +60,12 @@ pub fn NormalLossComponent(
 
                 </h4>
             </div>
-            <div style="text-align: right;" class="header">
-                "Gain < (%)"
-            </div>
-            <div style="text-align: right;" class="header">
-                "Probability(%)"
-            </div>
+            <div class=CssClasses::HeaderRight.to_string()>"Gain < (%)"</div>
+            <div class=CssClasses::HeaderRight.to_string()>"Probability(%)"</div>
             <For
                 each=move || loss_vec.get()
                 key=|item| { format!("{item:?}") }
-                view=move |cdf_input| {
+                children=move |cdf_input| {
                     view! {
                         <div style="text-align: right;">
                             {move || { format!("{:.2}%", scale_by(cdf_input, 2)) }}
@@ -113,7 +111,7 @@ pub fn NormalLossComponent(
                 {move || {
                     normal_spec
                         .with(move |normal_spec| {
-                            sample_loss
+                            sample_loss_read
                                 .get()
                                 .map(|loss| {
                                     let loss = scale_by(loss, -2);

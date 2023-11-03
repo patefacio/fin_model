@@ -4,14 +4,13 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::lang_selector_to_language_id;
-use crate::{FRENCH, GERMAN, LOCALES, US_ENGLISH};
-use core::fmt::Display;
-use core::fmt::Formatter;
+use crate::LOCALES;
+use ::core::fmt::Display;
+use ::core::fmt::Formatter;
 use fluent_templates::Loader;
 use plus_modeled::AccountType;
 use plus_modeled::BasicAllocationType;
 use plus_modeled::Country;
-use plus_modeled::Currency;
 use plus_modeled::DistributionInstrument;
 use plus_modeled::DistributionInstrumentType;
 use plus_modeled::DossierItemType;
@@ -24,24 +23,206 @@ use plus_modeled::HoldingType;
 use plus_modeled::LangSelector;
 use plus_modeled::NamedRateCurve;
 use plus_modeled::PersonType;
-use plus_modeled::StateOfResidence;
 use plus_modeled::TaxTreatment;
 use plus_modeled::TaxUsCategory;
 use plus_modeled::TaxUsFilingStatus;
 use plus_modeled::WorthType;
-use unic_langid::lang;
-use unic_langid::LanguageIdentifier;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
 ////////////////////////////////////////////////////////////////////////////////////
+/// Common strings referenced by various components, tables, etc
+#[derive(Debug, Copy, Clone)]
+pub enum CommonStrings {
+    /// i18n value for `account`
+    Account,
+    /// i18n value for `accounts`
+    Accounts,
+    /// i18n value for `adjusted_gross_income`
+    AdjustedGrossIncome,
+    /// i18n value for `as_of`
+    AsOf,
+    /// i18n value for `assumptions`
+    Assumptions,
+    /// i18n value for `balance_sheet`
+    BalanceSheet,
+    /// i18n value for `capital_gain`
+    CapitalGain,
+    /// i18n value for `capital_gain_distributions`
+    CapitalGainDistributions,
+    /// i18n value for `cash_flow`
+    CashFlow,
+    /// i18n value for `cash_flows`
+    CashFlows,
+    /// i18n value for `category`
+    Category,
+    /// i18n value for `cost`
+    Cost,
+    /// i18n value for `current`
+    Current,
+    /// i18n value for `current_price`
+    CurrentPrice,
+    /// i18n value for `current_value`
+    CurrentValue,
+    /// i18n value for `death_age`
+    DeathAge,
+    /// i18n value for `deterministic`
+    Deterministic,
+    /// i18n value for `display_currency`
+    DisplayCurrency,
+    /// i18n value for `distributions`
+    Distributions,
+    /// i18n value for `distributions_reinvested`
+    DistributionsReinvested,
+    /// i18n value for `distributions_spendable`
+    DistributionsSpendable,
+    /// i18n value for `dossier_name`
+    DossierName,
+    /// i18n value for `earned_income`
+    EarnedIncome,
+    /// i18n value for `end_placeholder`
+    EndPlaceholder,
+    /// i18n value for `end_value`
+    EndValue,
+    /// i18n value for `expenses`
+    Expenses,
+    /// i18n value for `forecast`
+    Forecast,
+    /// i18n value for `from`
+    From,
+    /// i18n value for `geometric_mean_forecast`
+    GeometricMeanForecast,
+    /// i18n value for `growth`
+    Growth,
+    /// i18n value for `holding`
+    Holding,
+    /// i18n value for `holding_type`
+    HoldingType,
+    /// i18n value for `holdings`
+    Holdings,
+    /// i18n value for `in_flow`
+    InFlow,
+    /// i18n value for `incomes`
+    Incomes,
+    /// i18n value for `interest`
+    Interest,
+    /// i18n value for `investments`
+    Investments,
+    /// i18n value for `linked_investments`
+    LinkedInvestments,
+    /// i18n value for `linked_sales`
+    LinkedSales,
+    /// i18n value for `long_term_capital_gain`
+    LongTermCapitalGain,
+    /// i18n value for `mean_placeholder`
+    MeanPlaceholder,
+    /// i18n value for `mean`
+    Mean,
+    /// i18n value for `medicare`
+    Medicare,
+    /// i18n value for `mv`
+    Mv,
+    /// i18n value for `name`
+    Name,
+    /// i18n value for `net_flows`
+    NetFlows,
+    /// i18n value for `obligation_sale`
+    ObligationSale,
+    /// i18n value for `other_ordinary_income`
+    OtherOrdinaryIncome,
+    /// i18n value for `out_flow`
+    OutFlow,
+    /// i18n value for `outlook`
+    Outlook,
+    /// i18n value for `passive_income`
+    PassiveIncome,
+    /// i18n value for `people`
+    People,
+    /// i18n value for `person`
+    Person,
+    /// i18n value for `price`
+    Price,
+    /// i18n value for `primary_owner`
+    PrimaryOwner,
+    /// i18n value for `qualified_div`
+    QualifiedDiv,
+    /// i18n value for `quantity`
+    Quantity,
+    /// i18n value for `rate`
+    Rate,
+    /// i18n value for `rate_placeholder`
+    RatePlaceholder,
+    /// i18n value for `random`
+    Random,
+    /// i18n value for `retirement_age`
+    RetirementAge,
+    /// i18n value for `rmd_sales`
+    RmdSales,
+    /// i18n value for `role`
+    Role,
+    /// i18n value for `start_placeholder`
+    StartPlaceholder,
+    /// i18n value for `start_value`
+    StartValue,
+    /// i18n value for `social_security`
+    SocialSecurity,
+    /// i18n value for `standard_deduction`
+    StandardDeduction,
+    /// i18n value for `std_dev_placeholder`
+    StdDevPlaceholder,
+    /// i18n value for `std_dev`
+    StdDev,
+    /// i18n value for `symbol`
+    Symbol,
+    /// i18n value for `target`
+    Target,
+    /// i18n value for `tax`
+    Tax,
+    /// i18n value for `tax_basis`
+    TaxBasis,
+    /// i18n value for `tax_bill`
+    TaxBill,
+    /// i18n value for `taxable_distributions`
+    TaxableDistributions,
+    /// i18n value for `taxes`
+    Taxes,
+    /// i18n value for `total`
+    Total,
+    /// i18n value for `toward`
+    Toward,
+    /// i18n value for `type`
+    Type,
+    /// i18n value for `ugl`
+    Ugl,
+    /// i18n value for `unqualified_div`
+    UnqualifiedDiv,
+    /// i18n value for `us_taxes`
+    UsTaxes,
+    /// i18n value for `user`
+    User,
+    /// i18n value for `value`
+    Value,
+    /// i18n value for `value_placeholder`
+    ValuePlaceholder,
+    /// i18n value for `worth`
+    Worth,
+    /// i18n value for `worths`
+    Worths,
+    /// i18n value for `year`
+    Year,
+    /// i18n value for `year_placeholder`
+    YearPlaceholder,
+    /// i18n value for `year_range`
+    YearRange,
+    /// i18n value for `zoom`
+    Zoom,
+}
+
 /// Enumeration of all protobuf enums
 #[derive(Debug, Copy, Clone)]
 pub enum I18nEnums<'a> {
     /// Enumerates supported enums and implements display to dispatch on language and value
     LangSelector(LangSelector, &'a LangSelector),
-    /// Enumerates supported enums and implements display to dispatch on language and value
-    Currency(LangSelector, &'a Currency),
     /// Enumerates supported enums and implements display to dispatch on language and value
     AccountType(LangSelector, &'a AccountType),
     /// Enumerates supported enums and implements display to dispatch on language and value
@@ -71,8 +252,6 @@ pub enum I18nEnums<'a> {
     /// Enumerates supported enums and implements display to dispatch on language and value
     Country(LangSelector, &'a Country),
     /// Enumerates supported enums and implements display to dispatch on language and value
-    StateOfResidence(LangSelector, &'a StateOfResidence),
-    /// Enumerates supported enums and implements display to dispatch on language and value
     NamedRateCurve(LangSelector, &'a NamedRateCurve),
     /// Enumerates supported enums and implements display to dispatch on language and value
     WorthType(LangSelector, &'a WorthType),
@@ -80,6 +259,8 @@ pub enum I18nEnums<'a> {
     HoldingType(LangSelector, &'a HoldingType),
     /// Enumerates supported enums and implements display to dispatch on language and value
     FlowType(LangSelector, &'a FlowType),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    CommonStrings(LangSelector, &'a CommonStrings),
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +271,7 @@ impl<'a> Display for I18nEnums<'a> {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         write!(
             f,
             "{}",
@@ -115,51 +296,13 @@ impl<'a> Display for I18nEnums<'a> {
                         )
                         .unwrap_or_default(),
                 },
-                I18nEnums::Currency(lang_selector, e) => match e {
-                    Currency::Usd => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.usd")
-                        .unwrap_or_default(),
-                    Currency::Eur => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.eur")
-                        .unwrap_or_default(),
-                    Currency::Jpy => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.jpy")
-                        .unwrap_or_default(),
-                    Currency::Gbp => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.gbp")
-                        .unwrap_or_default(),
-                    Currency::Aud => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.aud")
-                        .unwrap_or_default(),
-                    Currency::Cad => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.cad")
-                        .unwrap_or_default(),
-                    Currency::Chf => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.chf")
-                        .unwrap_or_default(),
-                    Currency::Cny => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.cny")
-                        .unwrap_or_default(),
-                    Currency::Hkd => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.hkd")
-                        .unwrap_or_default(),
-                    Currency::Nzd => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.nzd")
-                        .unwrap_or_default(),
-                    Currency::Crc => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.crc")
-                        .unwrap_or_default(),
-                    Currency::Rub => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.rub")
-                        .unwrap_or_default(),
-                    Currency::Krw => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.krw")
-                        .unwrap_or_default(),
-                    Currency::Sek => LOCALES
-                        .lookup(lang_selector_to_language_id(lang_selector), "currency.sek")
-                        .unwrap_or_default(),
-                },
                 I18nEnums::AccountType(lang_selector, e) => match e {
+                    AccountType::Taxable => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "account_type.taxable"
+                        )
+                        .unwrap_or_default(),
                     AccountType::RothIrs401K => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
@@ -182,12 +325,6 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "account_type.traditional_ira"
-                        )
-                        .unwrap_or_default(),
-                    AccountType::Taxable => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "account_type.taxable"
                         )
                         .unwrap_or_default(),
                     AccountType::Demand => LOCALES
@@ -514,314 +651,6 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "country.united_kingdom"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::StateOfResidence(lang_selector, e) => match e {
-                    StateOfResidence::None => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.none"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Al => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.al"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ak => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ak"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Az => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.az"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ar => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ar"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ca => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ca"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Co => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.co"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ct => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ct"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::De => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.de"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Fl => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.fl"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ga => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ga"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Hi => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.hi"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Id => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.id"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Il => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.il"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::In => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.in"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ia => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ia"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ks => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ks"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ky => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ky"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::La => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.la"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Me => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.me"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Md => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.md"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ma => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ma"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Mi => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.mi"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Mn => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.mn"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ms => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ms"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Mo => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.mo"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Mt => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.mt"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ne => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ne"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Nv => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.nv"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Nh => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.nh"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Nj => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.nj"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Nm => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.nm"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ny => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ny"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Nc => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.nc"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Nd => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.nd"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Oh => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.oh"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ok => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ok"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Or => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.or"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Pa => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.pa"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ri => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ri"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Sc => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.sc"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Sd => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.sd"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Tn => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.tn"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Tx => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.tx"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Ut => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.ut"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Vt => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.vt"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Va => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.va"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Wa => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.wa"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Wv => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.wv"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Wi => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.wi"
-                        )
-                        .unwrap_or_default(),
-                    StateOfResidence::Wy => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "state_of_residence.wy"
                         )
                         .unwrap_or_default(),
                 },
@@ -1184,6 +1013,560 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "flow_type.other_out_flow"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::CustomFlow => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.custom_flow"
+                        )
+                        .unwrap_or_default(),
+                },
+                I18nEnums::CommonStrings(lang_selector, e) => match e {
+                    CommonStrings::Account => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.account"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Accounts => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.accounts"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::AdjustedGrossIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.adjusted_gross_income"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::AsOf => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.as_of"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Assumptions => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.assumptions"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::BalanceSheet => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.balance_sheet"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::CapitalGain => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.capital_gain"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::CapitalGainDistributions => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.capital_gain_distributions"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::CashFlow => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.cash_flow"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::CashFlows => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.cash_flows"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Category => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.category"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Cost => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.cost"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Current => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.current"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::CurrentPrice => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.current_price"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::CurrentValue => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.current_value"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::DeathAge => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.death_age"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Deterministic => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.deterministic"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::DisplayCurrency => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.display_currency"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Distributions => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.distributions"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::DistributionsReinvested => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.distributions_reinvested"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::DistributionsSpendable => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.distributions_spendable"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::DossierName => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.dossier_name"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::EarnedIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.earned_income"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::EndPlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.end_placeholder"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::EndValue => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.end_value"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Expenses => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.expenses"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Forecast => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.forecast"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::From => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.from"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::GeometricMeanForecast => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.geometric_mean_forecast"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Growth => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.growth"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Holding => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.holding"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::HoldingType => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.holding_type"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Holdings => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.holdings"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::InFlow => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.in_flow"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Incomes => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.incomes"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Interest => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.interest"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Investments => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.investments"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::LinkedInvestments => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.linked_investments"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::LinkedSales => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.linked_sales"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::LongTermCapitalGain => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.long_term_capital_gain"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::MeanPlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.mean_placeholder"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Mean => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.mean"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Medicare => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.medicare"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Mv => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.mv"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Name => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.name"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::NetFlows => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.net_flows"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::ObligationSale => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.obligation_sale"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::OtherOrdinaryIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.other_ordinary_income"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::OutFlow => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.out_flow"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Outlook => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.outlook"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::PassiveIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.passive_income"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::People => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.people"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Person => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.person"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Price => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.price"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::PrimaryOwner => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.primary_owner"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::QualifiedDiv => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.qualified_div"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Quantity => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.quantity"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Rate => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.rate"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::RatePlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.rate_placeholder"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Random => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.random"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::RetirementAge => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.retirement_age"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::RmdSales => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.rmd_sales"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Role => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.role"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::StartPlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.start_placeholder"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::StartValue => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.start_value"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::SocialSecurity => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.social_security"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::StandardDeduction => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.standard_deduction"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::StdDevPlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.std_dev_placeholder"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::StdDev => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.std_dev"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Symbol => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.symbol"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Target => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.target"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Tax => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.tax"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::TaxBasis => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.tax_basis"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::TaxBill => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.tax_bill"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::TaxableDistributions => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.taxable_distributions"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Taxes => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.taxes"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Total => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.total"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Toward => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.toward"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Type => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.type"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Ugl => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.ugl"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::UnqualifiedDiv => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.unqualified_div"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::UsTaxes => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.us_taxes"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::User => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.user"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Value => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.value"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::ValuePlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.value_placeholder"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Worth => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.worth"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Worths => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.worths"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Year => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.year"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::YearPlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.year_placeholder"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::YearRange => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.year_range"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Zoom => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.zoom"
                         )
                         .unwrap_or_default(),
                 },

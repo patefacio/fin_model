@@ -3,10 +3,15 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::Updatable;
+use leptos::use_context;
+use leptos::IntoAttribute;
+use leptos::SignalGet;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
+use plus_lookup::I18nYearCurrencyValueInput;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -33,9 +38,14 @@ pub fn YearCurrencyValueInput(
     #[prop(default="year".to_string())]
     year_placeholder: String,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-ycvi";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_as_of = move || I18nYearCurrencyValueInput::AsOf(lang_selector.get()).to_string();
+    crate::log_component!("`YearCurrencyValueInput`");
     // α <fn year_currency_value_input>
 
     use crate::to_currency_symbol;
+    use crate::CssClasses;
     use crate::CurrencySelect;
     use crate::Modification;
     use crate::NumericInput;
@@ -62,7 +72,7 @@ pub fn YearCurrencyValueInput(
         .and_then(|ycv| Currency::from_i32(ycv.currency))
         .unwrap_or_default();
 
-    let updatable = store_value(updatable);
+    let updatable_stored_value = store_value(updatable);
 
     let (currency_prefix, set_currency_prefix) =
         create_signal(to_currency_symbol(initial_currency).to_string());
@@ -71,7 +81,7 @@ pub fn YearCurrencyValueInput(
         set_currency_prefix.update(|currency_prefix| {
             *currency_prefix = to_currency_symbol(*new_currency).to_string();
         });
-        updatable.update_value(|updatable| {
+        updatable_stored_value.update_value(|updatable| {
             updatable.update_and_then_signal(|ycv| {
                 if let Some(ycv) = ycv {
                     ycv.currency = *new_currency as i32;
@@ -88,7 +98,7 @@ pub fn YearCurrencyValueInput(
 
     let year_updatable = Updatable::new(initial_year, move |new_year| {
         if let Some(new_year) = new_year.clone() {
-            updatable.update_value(|updatable| {
+            updatable_stored_value.update_value(|updatable| {
                 updatable.update_and_then_signal(|ycv| {
                     if let Some(ycv) = ycv {
                         ycv.year = new_year
@@ -106,7 +116,7 @@ pub fn YearCurrencyValueInput(
 
     let value_updatable = Updatable::new(initial_value, move |new_value| {
         if let Some(new_input) = new_value.clone() {
-            updatable.update_value(|updatable| {
+            updatable_stored_value.update_value(|updatable| {
                 updatable.update_and_then_signal(|ycv| {
                     if let Some(ycv) = ycv {
                         ycv.value = new_input;
@@ -126,30 +136,31 @@ pub fn YearCurrencyValueInput(
         currency_prefix.into(),
     )));
 
+    // ω <fn year_currency_value_input>
     view! {
-        <div class="ycv" style="display: flex">
-            <div class="ycv-currency">
+        <div class=SELF_CLASS>
+            // α <plus-ycvi-view>
+
+            <div class=CssClasses::YcvCurrency.to_string()>
                 <CurrencySelect updatable=currency_select_updatable/>
             </div>
-            <div class="ycv-value">
-                <NumericInput
-                    updatable=value_updatable
-                    placeholder=value_placeholder
-                    modification=modification
-                />
-            </div>
-            <div class="ycv-as-of">"As Of"</div>
-            <div class="ycv-year">
-                <YearInput
-                    updatable=year_updatable
-                    year_range=year_range
-                    placeholder=year_placeholder
-                />
-            </div>
+            <NumericInput
+                input_class=Some(CssClasses::YcvCurrency.to_string())
+                updatable=value_updatable
+                placeholder=value_placeholder
+                modification=modification
+            />
+            <div class=CssClasses::YcvAsOf.to_string()>{i18n_as_of}</div>
+            <YearInput
+                input_class=Some(CssClasses::YcvYear.to_string())
+                updatable=year_updatable
+                year_range=year_range
+                placeholder=year_placeholder
+            />
+
+        // ω <plus-ycvi-view>
         </div>
     }
-
-    // ω <fn year_currency_value_input>
 }
 
 // α <mod-def year_currency_value_input>

@@ -3,13 +3,17 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::Updatable;
 use crate::Year;
+use leptos::use_context;
+use leptos::IntoAttribute;
 use leptos::ReadSignal;
+use leptos::SignalGet;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
-use plus_modeled::Currency;
+use plus_lookup::I18nYearValueSeriesComponent;
 use plus_modeled::YearRange;
 use plus_modeled::YearValue;
 
@@ -24,7 +28,7 @@ pub enum YearValueSeriesType {
     /// The data are market values of provided currency
     MarketValue {
         /// The currency of the values.
-        currency: ReadSignal<String>,
+        currency_read: ReadSignal<String>,
     },
 }
 
@@ -52,9 +56,27 @@ pub fn YearValueSeriesComponent(
     #[prop(default=YearValueSeriesType::RateCurve)]
     series_type: YearValueSeriesType,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-yvsc";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_show_rate_curve =
+        move || I18nYearValueSeriesComponent::ShowRateCurve(lang_selector.get()).to_string();
+    let i18n_hide_rate_curve =
+        move || I18nYearValueSeriesComponent::HideRateCurve(lang_selector.get()).to_string();
+    let i18n_rate_placeholder =
+        move || I18nYearValueSeriesComponent::RatePlaceholder(lang_selector.get()).to_string();
+    let i18n_rate_percent =
+        move || I18nYearValueSeriesComponent::RatePercent(lang_selector.get()).to_string();
+    let i18n_value = move || I18nYearValueSeriesComponent::Value(lang_selector.get()).to_string();
+    let i18n_year = move || I18nYearValueSeriesComponent::Year(lang_selector.get()).to_string();
+    let i18n_value_placeholder =
+        move || I18nYearValueSeriesComponent::ValuePlaceholder(lang_selector.get()).to_string();
+    let i18n_year_placeholder =
+        move || I18nYearValueSeriesComponent::YearPlaceholder(lang_selector.get()).to_string();
+    crate::log_component!("`YearValueSeriesComponent`");
     // α <fn year_value_series_component>
     use crate::utils::plot_data::PlotData;
     use crate::CollapsibleComponent;
+    use crate::CssClasses;
     use crate::Modification;
     use crate::NumericInput;
     use crate::PercentInput;
@@ -65,11 +87,9 @@ pub fn YearValueSeriesComponent(
     use leptos::create_signal;
     use leptos::store_value;
     use leptos::For;
-    use leptos::IntoAttribute;
     use leptos::MaybeSignal;
     use leptos::RwSignal;
     use leptos::Show;
-    use leptos::SignalGet;
     use leptos::SignalGetUntracked;
     use leptos::SignalUpdate;
     use leptos::SignalUpdateUntracked;
@@ -83,18 +103,18 @@ pub fn YearValueSeriesComponent(
     clean_curve(&mut updatable.value);
 
     let is_rate_curve_data = matches!(series_type, YearValueSeriesType::RateCurve);
-    let (updatable, set_updatable) = create_signal(updatable);
-    let (curve, set_curve) =
-        create_signal({ updatable.with_untracked(|updatable| updatable.value.clone()) });
+    let (updatable_read, updatable_write) = create_signal(updatable);
+    let (curve_read, curve_write) =
+        create_signal(updatable_read.with_untracked(|updatable| updatable.value.clone()));
 
-    let (entry_complete, set_entry_complete) = create_signal((None, None));
-    let (add_enabled, set_add_enabled) = create_signal(false);
-    let (clear_fields, set_clear_fields) = create_signal(());
-    let (year_input_focus, set_year_input_focus) = create_signal(());
+    let (entry_complete_read, entry_complete_write) = create_signal((None, None));
+    let (add_enabled_read, add_enabled_write) = create_signal(false);
+    let (clear_fields_read, clear_fields_write) = create_signal(());
+    let (year_input_focus_read, year_input_focus_write) = create_signal(());
 
     let signal_parent_update = move || {
-        curve.with_untracked(|curve| {
-            set_updatable.update(|updatable| {
+        curve_read.with_untracked(|curve| {
+            updatable_write.update(|updatable| {
                 updatable.update_and_then_signal(|client_curve| {
                     *client_curve = curve.clone();
                 })
@@ -102,8 +122,8 @@ pub fn YearValueSeriesComponent(
         })
     };
 
-    let signals = store_value(
-        curve
+    let signals_stored_value = store_value(
+        curve_read
             .get_untracked()
             .iter()
             .enumerate()
@@ -112,15 +132,15 @@ pub fn YearValueSeriesComponent(
     );
 
     let on_accept = move || {
-        if let (Some(new_year), Some(new_value)) = entry_complete.get() {
-            set_curve.update_untracked(move |curve| {
+        if let (Some(new_year), Some(new_value)) = entry_complete_read.get() {
+            curve_write.update_untracked(move |curve| {
                 curve.push(YearValue {
                     year: new_year,
                     value: new_value,
                 });
                 let _deduped_years = clean_curve(curve);
             });
-            let position = curve.with(|curve| {
+            let position = curve_read.with(|curve| {
                 curve
                     .iter()
                     .enumerate()
@@ -129,44 +149,45 @@ pub fn YearValueSeriesComponent(
                     .0
             });
 
-            signals.update_value(|signals_map| {
+            signals_stored_value.update_value(|signals_map| {
                 if let Some(current_signal) = signals_map.get(&new_year) {
                     current_signal.update(|index| *index = position);
                 } else {
                     signals_map.insert(new_year, create_rw_signal(position));
                 }
             });
-            set_curve.update(|_curve| {});
-            set_clear_fields.update(|_| {});
-            set_year_input_focus.update(|_| {});
-            set_add_enabled.update(|enabled| *enabled = false);
+            curve_write.update(|_curve| {});
+            clear_fields_write.update(|_| {});
+            year_input_focus_write.update(|_| {});
+            add_enabled_write.update(|enabled| *enabled = false);
 
             signal_parent_update()
         };
     };
     let on_accept_evt = move |_| on_accept();
 
-    let num_elements = move || curve.with(|curve| curve.len());
+    let num_elements = move || curve_read.with(|curve| curve.len());
     let nth_key = move |n: usize| {
-        curve.with_untracked(|curve| curve.get(n).map(|year_value| year_value.year))
+        curve_read.with_untracked(|curve| curve.get(n).map(|year_value| year_value.year))
     };
 
-    let key_signal =
-        move |key: &u32| signals.with_value(|signals| signals.get(key).unwrap().clone());
+    let key_signal = move |key: &u32| {
+        signals_stored_value.with_value(|signals| signals.get(key).unwrap().clone())
+    };
 
     let delete_by_key = move |key: &u32| {
-        if let Some(position) =
-            signals.with_value(|signals| signals.get(key).cloned().map(|signal| signal.get()))
+        if let Some(position) = signals_stored_value
+            .with_value(|signals| signals.get(key).cloned().map(|signal| signal.get()))
         {
             let mut position_to_end_range: Option<Range<usize>> = None;
-            set_curve.update(|curve| {
+            curve_write.update(|curve| {
                 let _removed_value = curve.remove(position);
                 let end = curve.len();
                 position_to_end_range = Some(position..end);
             });
 
-            signals.update_value(|signals| {
-                curve.with(|curve| {
+            signals_stored_value.update_value(|signals| {
+                curve_read.with(|curve| {
                     let elements_after = &curve[position_to_end_range.unwrap()];
                     for (i, year_value) in elements_after.iter().enumerate() {
                         let key = year_value.year;
@@ -182,19 +203,19 @@ pub fn YearValueSeriesComponent(
         }
     };
 
-    let (disabled, _set_disabled) = create_signal(true);
+    let (disabled_read, _disabled_write) = create_signal(true);
     let year_input = move |year_value: YearValue| {
         view! {
             <YearInput
                 input_class=Some("rcc-yi".to_string())
-                disabled=disabled
+                disabled=disabled_read
                 updatable=Updatable::new(
                     Some(year_value.year),
                     move |year| {
-                        set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
-                        set_add_enabled
+                        entry_complete_write.update(|entry_complete| entry_complete.0 = *year);
+                        add_enabled_write
                             .update(|add_enabled| {
-                                *add_enabled = entry_complete
+                                *add_enabled = entry_complete_read
                                     .with(|entry_complete| {
                                         entry_complete.0.is_some() && entry_complete.1.is_some()
                                     });
@@ -202,7 +223,7 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder="year"
+                placeholder=i18n_year_placeholder()
             />
         }
     };
@@ -210,14 +231,14 @@ pub fn YearValueSeriesComponent(
     let percent_display = move |year_value: YearValue| {
         view! {
             <PercentInput
-                disabled=disabled
+                disabled=disabled_read
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |percent| {
-                        set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
-                        set_add_enabled
+                        entry_complete_write.update(|entry_complete| entry_complete.1 = *percent);
+                        add_enabled_write
                             .update(|add_enabled| {
-                                *add_enabled = entry_complete
+                                *add_enabled = entry_complete_read
                                     .with(|entry_complete| {
                                         entry_complete.0.is_some() && entry_complete.1.is_some()
                                     });
@@ -225,7 +246,7 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder="rate"
+                placeholder=i18n_rate_placeholder()
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();
@@ -238,14 +259,14 @@ pub fn YearValueSeriesComponent(
     let value_display = move |year_value: YearValue| {
         view! {
             <NumericInput
-                disabled=disabled
+                disabled=disabled_read
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |value| {
-                        set_entry_complete.update(|entry_complete| entry_complete.1 = *value);
-                        set_add_enabled
+                        entry_complete_write.update(|entry_complete| entry_complete.1 = *value);
+                        add_enabled_write
                             .update(|add_enabled| {
-                                *add_enabled = entry_complete
+                                *add_enabled = entry_complete_read
                                     .with(|entry_complete| {
                                         entry_complete.0.is_some() && entry_complete.1.is_some()
                                     });
@@ -256,16 +277,15 @@ pub fn YearValueSeriesComponent(
                 modification=Some(
                     Modification::Prefix(
                         match series_type {
-                            YearValueSeriesType::MarketValue { currency } => {
-                                MaybeSignal::Dynamic(currency.into())
+                            YearValueSeriesType::MarketValue { currency_read } => {
+                                MaybeSignal::Dynamic(currency_read.into())
                             }
                             _ => panic!("Must be market value data with currency"),
                         },
                     ),
                 )
 
-                // modification=Some(Modification::Prefix(MaybeSignal::Static("$".into())))
-                placeholder="value"
+                placeholder=i18n_value_placeholder()
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();
@@ -281,10 +301,10 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     None,
                     move |percent| {
-                        set_entry_complete.update(|entry_complete| entry_complete.1 = *percent);
-                        set_add_enabled
+                        entry_complete_write.update(|entry_complete| entry_complete.1 = *percent);
+                        add_enabled_write
                             .update(|add_enabled| {
-                                *add_enabled = entry_complete
+                                *add_enabled = entry_complete_read
                                     .with(|entry_complete| {
                                         entry_complete.0.is_some() && entry_complete.1.is_some()
                                     });
@@ -292,8 +312,8 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder="rate"
-                clear_input=Some(clear_fields)
+                placeholder=i18n_rate_placeholder()
+                clear_input=Some(clear_fields_read)
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();
@@ -310,10 +330,10 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     None,
                     move |value| {
-                        set_entry_complete.update(|entry_complete| entry_complete.1 = *value);
-                        set_add_enabled
+                        entry_complete_write.update(|entry_complete| entry_complete.1 = *value);
+                        add_enabled_write
                             .update(|add_enabled| {
-                                *add_enabled = entry_complete
+                                *add_enabled = entry_complete_read
                                     .with_untracked(|entry_complete| {
                                         entry_complete.0.is_some() && entry_complete.1.is_some()
                                     });
@@ -324,16 +344,16 @@ pub fn YearValueSeriesComponent(
                 modification=Some(
                     Modification::Prefix(
                         match series_type {
-                            YearValueSeriesType::MarketValue { currency } => {
-                                MaybeSignal::Dynamic(currency.into())
+                            YearValueSeriesType::MarketValue { currency_read } => {
+                                MaybeSignal::Dynamic(currency_read.into())
                             }
                             _ => panic!("Must be market value data with currency"),
                         },
                     ),
                 )
 
-                placeholder="value"
-                clear_input=Some(clear_fields)
+                placeholder=i18n_value_placeholder()
+                clear_input=Some(clear_fields_read)
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();
@@ -344,27 +364,32 @@ pub fn YearValueSeriesComponent(
         .into_view()
     };
 
-    let value_header = if is_rate_curve_data {
-        "Rate(%)"
-    } else {
-        "Value"
+    let value_header = move || {
+        if is_rate_curve_data {
+            i18n_rate_percent()
+        } else {
+            i18n_value()
+        }
     };
 
+    // ω <fn year_value_series_component>
     view! {
-        <div class="rate-curve-data">
+        <div class=SELF_CLASS>
+            // α <plus-yvsc-view>
+
             <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
-                <div class="header"></div>
-                <div class="header">"Year"</div>
-                <div class="header">{value_header}</div>
+                <div class=CssClasses::HeaderRight.to_string()></div>
+                <div class=CssClasses::HeaderRight.to_string()>{i18n_year}</div>
+                <div class=CssClasses::HeaderRight.to_string()>{value_header}</div>
                 <For
                     each=move || 0..num_elements()
                     key=move |&i| nth_key(i)
-                    view=move |i| {
+                    children=move |i| {
                         let key = nth_key(i).unwrap();
                         let key_signal = key_signal(&key);
                         let year_value = move || {
                             let year_value_index = key_signal.get();
-                            curve
+                            curve_read
                                 .with_untracked(|curve| {
                                     if let Some(year_value) = curve.get(year_value_index).cloned() {
                                         year_value
@@ -391,17 +416,17 @@ pub fn YearValueSeriesComponent(
                     }
                 />
 
-                <button disabled=move || !add_enabled.get() on:click=on_accept_evt>
+                <button disabled=move || !add_enabled_read.get() on:click=on_accept_evt>
                     "+"
                 </button>
                 <YearInput
                     updatable=Updatable::new(
                         None,
                         move |year| {
-                            set_entry_complete.update(|entry_complete| entry_complete.0 = *year);
-                            set_add_enabled
+                            entry_complete_write.update(|entry_complete| entry_complete.0 = *year);
+                            add_enabled_write
                                 .update(|add_enabled| {
-                                    *add_enabled = entry_complete
+                                    *add_enabled = entry_complete_read
                                         .with(|entry_complete| {
                                             entry_complete.0.is_some() && entry_complete.1.is_some()
                                         });
@@ -409,35 +434,35 @@ pub fn YearValueSeriesComponent(
                         },
                     )
 
-                    placeholder="year"
-                    clear_input=Some(clear_fields)
-                    set_focus=Some(year_input_focus)
+                    placeholder=i18n_year_placeholder()
+                    clear_input=Some(clear_fields_read)
+                    set_focus=Some(year_input_focus_read)
                     year_range=year_range
                     live_clamp=true
                 />
                 {if is_rate_curve_data { percent_input() } else { value_input() }}
 
             </div>
+            <Show when=move || curve_read.with(|curve| curve.len() > 1) fallback=|| ()>
+                <CollapsibleComponent
+                    collapsed_header=i18n_show_rate_curve()
+                    expanded_header=Some(i18n_hide_rate_curve())
+                    is_expanded=false
+                >
+                    <div inner_html=move || {
+                        updatable_read
+                            .with(|updatable| {
+                                RateCurveData {
+                                    curve: &updatable.value,
+                                }
+                                    .plot()
+                            })
+                    }></div>
+                </CollapsibleComponent>
+            </Show>
+        // ω <plus-yvsc-view>
         </div>
-        <Show when=move || curve.with(|curve| curve.len() > 1) fallback=|| ()>
-            <CollapsibleComponent
-                collapsed_header="Show Rate Curve".to_string()
-                expanded_header=Some("Hide Curve".to_string())
-                is_expanded=false
-            >
-                <div inner_html=move || {
-                    updatable
-                        .with(|updatable| {
-                            RateCurveData {
-                                curve: &updatable.value,
-                            }
-                                .plot()
-                        })
-                }></div>
-            </CollapsibleComponent>
-        </Show>
     }
-    // ω <fn year_value_series_component>
 }
 
 /// Sorts the [YearValue] entries by year and removes any duplicates

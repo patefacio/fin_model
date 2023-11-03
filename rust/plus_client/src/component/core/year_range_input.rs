@@ -3,10 +3,15 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::Updatable;
+use leptos::use_context;
+use leptos::IntoAttribute;
+use leptos::SignalGet;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
+use plus_lookup::I18nYearRangeInput;
 use plus_modeled::YearRange;
 use std::ops::RangeInclusive;
 
@@ -30,8 +35,16 @@ pub fn YearRangeInput(
     #[prop(default = false)]
     align_left: bool,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-yri";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_start_placeholder =
+        move || I18nYearRangeInput::StartPlaceholder(lang_selector.get()).to_string();
+    let i18n_end_placeholder =
+        move || I18nYearRangeInput::EndPlaceholder(lang_selector.get()).to_string();
+    crate::log_component!("`YearRangeInput`");
     // α <fn year_range_input>
 
+    use crate::CssClasses;
     use crate::Year;
     use crate::YearInput;
     use leptos::store_value;
@@ -52,7 +65,7 @@ pub fn YearRangeInput(
         updatable: Updatable<Option<YearRange>>,
     }
 
-    let stored_updatable = store_value(YearRangeData {
+    let updatable_stored_value = store_value(YearRangeData {
         start,
         end,
         updatable,
@@ -71,17 +84,31 @@ pub fn YearRangeInput(
         }
     }
 
+    let range_for_start = range.clone();
     let start_year_updatable = Updatable::new(start, move |new_start| {
-        stored_updatable.update_value(|year_range_data| {
+        updatable_stored_value.update_value(|year_range_data| {
             year_range_data.start = *new_start;
-            signal_pair(year_range_data);
+            if range_for_start
+                .as_ref()
+                .map(|range| range.contains(&new_start.unwrap()))
+                .unwrap_or(true)
+            {
+                signal_pair(year_range_data);
+            }
         })
     });
 
+    let range_for_end = range.clone();
     let end_year_updatable = Updatable::new(end, move |new_end| {
-        stored_updatable.update_value(|year_range_data| {
+        updatable_stored_value.update_value(|year_range_data| {
             year_range_data.end = *new_end;
-            signal_pair(year_range_data);
+            if range_for_end
+                .as_ref()
+                .map(|range| range.contains(&new_end.unwrap()))
+                .unwrap_or(true)
+            {
+                signal_pair(year_range_data);
+            }
         })
     });
 
@@ -95,10 +122,13 @@ pub fn YearRangeInput(
             end: 2400,
         });
 
+    // ω <fn year_range_input>
     view! {
-        <div style="display: inline-flex;">
+        <div class=SELF_CLASS>
+            // α <plus-yri-view>
+
             <YearInput
-                input_class=Some("yri-start".to_string())
+                input_class=Some(CssClasses::YriStart.to_string())
                 placeholder="start"
                 updatable=start_year_updatable
                 year_range=year_range
@@ -106,16 +136,17 @@ pub fn YearRangeInput(
                 align_left=align_left
             />
             <YearInput
-                input_class=Some("yri-end".to_string())
+                input_class=Some(CssClasses::YriEnd.to_string())
                 placeholder="end"
                 updatable=end_year_updatable
                 year_range=year_range
                 live_clamp=true
                 align_left=align_left
             />
+
+        // ω <plus-yri-view>
         </div>
     }
-    // ω <fn year_range_input>
 }
 
 // α <mod-def year_range_input>

@@ -34,7 +34,7 @@ pub struct YearValue {
 }
 ///
 /// Pairs a <em>currency</em> with a <em>value</em>.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, PartialOrd)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CurrencyValue {

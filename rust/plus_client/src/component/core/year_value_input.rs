@@ -25,6 +25,7 @@ pub fn YearValueInput(
     #[prop(default = false)]
     align_left: bool,
 ) -> impl IntoView {
+    crate::log_component!("`YearValueInput`");
     // α <fn year_value_input>
 
     use crate::Modification;
@@ -42,7 +43,7 @@ pub fn YearValueInput(
         updatable: Updatable<Option<YearValue>>,
     }
 
-    let stored_updatable = store_value(YearValueData {
+    let updatable_stored_value = store_value(YearValueData {
         year,
         value,
         updatable,
@@ -62,14 +63,14 @@ pub fn YearValueInput(
     }
 
     let year_updatable = Updatable::new(year, move |new_year| {
-        stored_updatable.update_value(|year_value_data| {
+        updatable_stored_value.update_value(|year_value_data| {
             year_value_data.year = *new_year;
             signal_pair(year_value_data);
         })
     });
 
     let value_updatable = Updatable::new(value, move |new_value| {
-        stored_updatable.update_value(|year_value_data| {
+        updatable_stored_value.update_value(|year_value_data| {
             year_value_data.value = *new_value;
             signal_pair(year_value_data);
         })
@@ -88,7 +89,7 @@ pub fn YearValueInput(
                 placeholder="value"
                 updatable=value_updatable
                 non_negative=true
-                modification=Some(Modification::Prefix(("$".into())))
+                modification=Some(Modification::Prefix("$".into()))
                 align_left=align_left
             />
         </div>

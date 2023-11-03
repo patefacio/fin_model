@@ -27,6 +27,8 @@ pub enum SystemUnicodes {
     MathSampleMean,
     /// Character(s) - Indicates value is sample standard deviation
     MathSampleStdDev,
+    /// Character(μg) - Indicates the estimate for geometric mean
+    MathGeometricMeanEst,
     /// Character(σ) - Indicates value is a standard deviation (e.g. in a normal spec.
     MathSigma,
     /// Character(μ) - Indicates value is a mean (e.g. in a normal spec).
@@ -119,6 +121,7 @@ impl SystemUnicodes {
             SystemUnicodes::UserAssumptionSourced => "⚙️",
             SystemUnicodes::MathSampleMean => "X̄",
             SystemUnicodes::MathSampleStdDev => "s",
+            SystemUnicodes::MathGeometricMeanEst => "μg",
             SystemUnicodes::MathSigma => "σ",
             SystemUnicodes::MathMu => "μ",
             SystemUnicodes::MathRho => "ρ",

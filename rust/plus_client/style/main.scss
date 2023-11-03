@@ -1,22 +1,14 @@
-//@import url("https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css");
-//@import url("https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css");
-
 :root {
 	box-sizing: border-box;
-	--mcs-btn-color: cyan;
-	--mcs-tbl-color: white;
-	--plus-btn-color: hsl(120, 50%, 90%);
-	--plus-btn-padding: 0.1rem 0.30rem;
-	--plus-btn-margin: 0.15rem;
-	--plus-background: white;
-	--plus-label-bg: white;
-	--plus-label-margin: 0 0.5rem 0.5rem 0;
-	--plus-form-bg: white;
-	--plus-sm-fnt: 0.75rem;
-	--plus-label-margin-top: 0.3rem;
-	--plus-label-margin-bottom: 0.3rem;
-	--plus-label-margin-left: 0.3rem;
-	--plus-label-margin-right: 0.3rem;
+	--plus-btn-color: hsl(120, 50%, 86%);
+	--plus-btn-hover-color: hsla(120, 50%, 73%, 1.0);
+	--plus-btn-padding: 0.1rem 0.3rem 0.1rem 0.3rem;
+	--plus-txt-padding: 4px 4px 4px 4px;
+	--plus-lbl-color: blue;
+	--plus-lbl-margin: 0.3rem 0.3rem 0.3rem 0.3rem;
+	--plus-sm-fnt: 0.74rem;
+	--plus-lbl-sz: 0.9rem;
+	--plus-title-sz: 1.1rem;
 }
 
 *,
@@ -25,91 +17,1029 @@
 	box-sizing: inherit;
 }
 
+// α <custom_use_sparingly>
+
+@keyframes grow-width {
+	0% {
+	  width: 0;
+	  left:  0%;
+	}
+	100% {
+	  width: 100%;
+	  left: 0;
+	}
+  }
+
+  @keyframes shrink-width {
+	0% {
+	  width: 0;
+	  left:  0%;
+	}
+	100% {
+	  width: 100%;
+	  left: 0;
+	}
+  }
+
+// ω <custom_use_sparingly>
+
 body {
+	// α <elm-body>
 	// background-color: #709b90;
 	font-family: Helvetica, Arial, sans-serif;
 	font-family: sans-serif;
 	font-size: 14px;
-	max-width: 800px;
+	//max-width: 700px;
+	// ω <elm-body>
 }
-
 
 button {
+	// α <elm-button>
 	background-color: var(--plus-btn-color);
-	border-radius: 0.25em;
+	border-radius: 0.3rem;
 	border: 1px solid;
 	font-size: var(--plus-sm-fnt);
-}
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
-button:hover {
-	background-color: hsl(120, 50%, 80%);
-}
+	&:hover {
+		background-color: var(--plus-btn-hover-color);
+	}
 
-.form {
-	background: #fff;
+	&:disabled {
+		background-color: lightgray;
+	}
+
+	// ω <elm-button>
 }
 
 form {
+	// α <elm-form>
+
 	display: inline-block;
+
+	p {
+		margin: 0;
+	}
+
+	// ω <elm-form>
 }
 
+fieldset {
+	// α <elm-fieldset>
+	border-radius: 5px;
+	margin: 1rem;
+	margin-bottom: 15px;
+	// ω <elm-fieldset>
+}
 
 label {
-	// This pushes the entries onto separate line
-	display: block;
+	// α <elm-label>
+	//display: inline-block;
 	white-space: nowrap;
-	background-color: white;
 	color: blue;
+	font-size: var(--plus-lbl-sz);
+	vertical-align: text-bottom;
+
+	* {
+		margin-left: 3px;
+		margin-right: 3px;
+		vertical-align: baseline;
+	}
+
+	// ω <elm-label>
 }
 
-label > * {
-	margin-left: 5px;
-	margin-right: 5px;
+legend {
+	// α <elm-legend>
+	margin: 0.8rem;
+	//padding: 1rem;
+	font-weight: bold;
+	font-size: 1.05rem;
+	//max-width: 800px;
+	// ω <elm-legend>
 }
 
-form p {
-	margin: 0;
+input {
+	// α <elm-input>
+	// ω <elm-input>
 }
 
-// Whenever nesting input in label, space between text and input
-// label > input {
-// 	margin-left: 5px;
-// }
-
-.explore-normal {
-	vertical-align: bottom;
+/*
+  Style text that is a title to some data like a chart.
+*/
+.title {
+	// α <title>
+	display: inline-block;
+	font-size: var(--plus-title-sz);
+	//font-weight: bold;
+	margin: 0.5rem;
+	margin-right: 5rem;
+	white-space: nowrap;
+	// ω <title>
 }
 
-.info-label {
+/*
+  Style for invalid content
+*/
+.invalid {
+	// α <invalid>
+	//textarea {
+	background-color: rgb(237, 199, 199);
+	//box-sizing:border-box;
+	//border: 2px solid red;
+
+	&:focus {
+		border: 2px solid red;
+		//box-sizing: border-box;
+	}
+
+	//}
+	// ω <invalid>
+}
+
+/*
+  Style table caption
+*/
+.tbl-caption {
+	// α <tbl_caption>
+	font-size: 1.0rem;
+	font-weight: bold;
+	margin-bottom: 6px;
+	// ω <tbl_caption>
+}
+
+/*
+  Style in flow text
+*/
+.in-flow {
+	// α <in_flow>
+	color: darkolivegreen;
+	// ω <in_flow>
+}
+
+/*
+  Style out flow text
+*/
+.out-flow {
+	// α <out_flow>
+	color: darkred;
+	// ω <out_flow>
+}
+
+/*
+  Styles a button toolbar to the top
+*/
+.btn-tb-top {
+	// α <btn_tb_top>
+	display: flex;
+	justify-content: center;
+	// This pushes the button to the top
+	align-items: first;
+	background-color: rgb(225, 243, 191);
+	// ω <btn_tb_top>
+}
+
+/*
+  Styles a button toolbar to the right
+*/
+.btn-tb-right {
+	// α <btn_tb_right>
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	// This pushes the button to the top
+	background-color: rgb(225, 243, 191);
+
+	// ω <btn_tb_right>
+}
+
+/*
+  Styles a button toolbar to the bottom
+*/
+.btn-tb-bottom {
+	// α <btn_tb_bottom>
+
+	display: flex;
+	justify-content: center;
+	align-items: first;
+	background-color: lightblue;
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	// ω <btn_tb_bottom>
+}
+
+/*
+  Styles a button toolbar to the left
+*/
+.btn-tb-left {
+	// α <btn_tb_left>
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	// This pushes the button to the top
+	background-color: rgb(225, 243, 191);
+
+	// ω <btn_tb_left>
+}
+
+/*
+  Styles an image button with a label beneath
+*/
+.lbl-btn {
+	// α <lbl_btn>
+
+	margin: 0.2rem;
+	padding: 0.5rem;
+
+	button {
+		border: 3px solid;
+		border-radius: 6px;
+	}
+
+	label {
+		margin-top: 0.4rem;
+		white-space: normal;
+	}
+
+	// ω <lbl_btn>
+}
+
+/*
+  Styles the image in a ToggleImageButton
+*/
+.tib-img {
+	// α <tib_img>
+
+	background-color: white;
+	// ω <tib_img>
+}
+
+/*
+  Styles the label for a ToggleImageButton
+*/
+.tib-lbl {
+	// α <tib_lbl>
+	margin-top: 7.5px;
+	white-space: nowrap;
+	// ω <tib_lbl>
+}
+
+/*
+  Style grid label in various CollectionGridComponents
+*/
+.grid-lbl {
+	// α <grid_lbl>
+	margin-top: 5px;
+	margin-bottom: 5px;
+	font-weight: bold;
+	font-size: 1.05rem;
+	// ω <grid_lbl>
+}
+
+/*
+  Style header to left
+*/
+.header-left {
+	// α <header_left>
+	background-color: #009879;
+	color: #ffffff;
+	text-align: left;
+	font-weight: bold;
+	padding: var(--plus-txt-padding);
+	// ω <header_left>
+}
+
+/*
+  Style header to right
+*/
+.header-right {
+	// α <header_right>
+	background-color: #009879;
+	color: #ffffff;
+	text-align: right;
+	font-weight: bold;
+	padding: var(--plus-txt-padding);
+
+	// ω <header_right>
+}
+
+/*
+  Style used on askama tables.
+  Used extensively and the css class will not show up in a search
+  that does not include askama html templates
+*/
+.content-table {
+	// α <content_table>
+	border-collapse: collapse;
+	margin: 10px 5px;
+	font-size: 0.9em;
+	min-width: 250px;
+	overflow: scroll;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+	border-radius: 5px 5px 0 0;
+	//overflow: hidden;
+
+	tr>td.divider {
+		border-bottom: solid 1px;
+	}
+
+	.numeric-summary-row {
+		border-top: solid 1.3px;
+		border-bottom: solid 2px;
+	}
+
+	.numeric-summary-row-stark {
+		border-top: solid 2px;
+		border-bottom: solid 2px;
+	}
+
+	.numeric-summary-row-2 {
+		border-bottom: solid 3px;
+	}
+
+	th {
+		margin: 5px;
+		padding: 3px 8px;
+		white-space: nowrap;
+	}
+
+	td {
+		margin: 5px;
+		padding: 3px 8px;
+		white-space: nowrap;
+	}
+
+	td.left-1rem {
+		text-indent: -1rem;
+	}
+
+	td.left-2rem {
+		text-indent: -2rem;
+	}
+
+	td.right-1rem {
+		text-indent: 1rem;
+	}
+
+	td.right-2rem {
+		text-indent: 2rem;
+	}
+
+	td.numeric {
+		text-align: right;
+	}
+
+	th.numeric {
+		text-align: right;
+	}
+
+	thead tr {
+		background-color: #009879;
+		color: #ffffff;
+		text-align: left;
+		font-weight: bold;
+	}
+
+	tbody tr {
+		border-bottom: 1px solid #dddddd;
+	}
+
+	tbody tr:nth-of-type(even) {
+		background-color: rgb(231, 228, 228);
+	}
+
+	tbody tr:last-of-type {
+		border-bottom: 4px solid #009879;
+	}
+
+	tbody tr.active-row {
+		font-weight: bold;
+		color: #009879;
+	}
+
+
+	// ω <content_table>
+}
+
+/*
+  Styles numeric `td` elements
+*/
+.numeric {
+	// α <numeric>
+	// ω <numeric>
+}
+
+/*
+  Tax bill statement's tax bill row
+*/
+.tax-bill-tr {
+	// α <tax_bill_tr>
+
+	border-top: 2px solid;
+	background-color: peru;
+	font-weight: bold;
+
+	td {
+		color: darkgreen;
+	}
+
+	// ω <tax_bill_tr>
+}
+
+/*
+  Style form content
+*/
+.form {
+	// α <form>
+
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin-left: 0.5rem;
+	width: 100%;
+
+	// fieldset {
+	// 	width: 100%;
+
+	// 	// legend {
+	// 	// 	width: 100%;
+	// 	// }
+	// }
+
+	max-width: 600px;
+	//@media (max-width: 600px) {
+	grid-template-columns: 1fr;
+	//}
+
+	// ω <form>
+}
+
+/*
+  Style form row
+*/
+.form-row {
+	// α <form_row>
+
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin-left: 1rem;
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+
+	label {
+		margin-top: 0.5rem;
+		margin-bottom: 0.5rem;
+
+		// The goal with this is to make all labeled items
+		// have the label and content in one line. Doing this
+		// messes up the mcs select buttons because the entire
+		// content is inside the label
+		// input {
+		// 	display: inline-block;
+		// }
+	}
+
+
+	// ω <form_row>
+}
+
+/*
+  Styles dynamic labels such as HoldingComponent's _market value_
+  and _unrealized gain/loss_ and ItemGrowthSelect display of the NormalSpec
+*/
+.info-lbl {
+	// α <info_lbl>
 	font-weight: bold;
 	color: green;
-	margin-top: var(--plus-label-margin-top);
-	margin-bottom: var(--plus-label-margin-bottom);
-	margin-left: var(--plus-label-margin-left);
-	margin-right: var(--plus-label-margin-right);
+	margin-top: var(--plus-lbl-margin-top);
+	margin-bottom: var(--plus-lbl-margin-bottom);
+	margin-left: var(--plus-lbl-margin-left);
+	margin-right: var(--plus-lbl-margin-right);
+	// ω <info_lbl>
 }
 
-//////////////////////////////
+/*
+  Style AccountComponent holdings
+*/
+.ac-holdings {
+	// α <ac_holdings>
+	// ω <ac_holdings>
+}
 
-div.mcs-grid {
+/*
+  Styles the view portion of the MultiButtonSelect
+*/
+.mbs-view {
+	// α <mbs_view>
+
+	// display: flex;
+	// flex-grow: 1;
+	min-width: 100px;
+	min-height: 100px;
+	background-color: peachpuff;
+	overflow-x: scroll;
+
+
+	// ω <mbs_view>
+}
+
+/*
+  Style of bar under ToggleImageButton when selected (ie on)
+*/
+.tib-on {
+	// α <tib_on>
+
 	position: relative;
+	width: 80%;
+	margin-bottom: 3px;
+	margin-top: 7px;
+	height: 7px;
+	border-style: solid;
+	border-width: 3px;
+	border-radius: 4px;
+	background-color: rgb(20, 20, 161);
+	animation: grow-width 0.5s ease-in-out;
+
+	// ω <tib_on>
+}
+
+/*
+  Style of bar under ToggleImageButton when selected (ie on)
+*/
+.tib-off {
+	// α <tib_off>
+
+	position: relative;
+	width: 80%;
+	margin-bottom: 3px;
+	margin-top: 7px;
+	height: 7px;
+	border-style: solid;
+	border-width: 3px;
+	border-radius: 4px;
+	// This is transparent
+	background-color: rgba(255, 255, 255, 0.5);
+	animation: shrink-width 0.5s ease-in-out;
+
+	// ω <tib_off>
+}
+
+/*
+  Style the dossier toolbar
+*/
+.dossier-toolbar {
+	// α <dossier_toolbar>
+	display: grid;
+	grid-template-columns: repeat(6, 1fr) auto;
+	min-width: 690px;
+	max-width: 700px;
+	// Center the toolbar
+	margin: 0 auto;
+	// ω <dossier_toolbar>
+}
+
+/*
+  Style the shown area of dossier editor
+*/
+.dossier-show {
+	// α <dossier_show>
+	min-height: 10px;
+	background-color: hsl(120, 50%, 90%);
+	// ω <dossier_show>
+}
+
+/*
+  Style the dossier name input in the editor
+*/
+.dossier-name-input {
+	// α <dossier_name_input>
+	margin: 1.0rem;
+	// ω <dossier_name_input>
+}
+
+/*
+  Style the language select in the nav bar
+*/
+.app-lang-select {
+	// α <app_lang_select>
+	margin-left: auto;
+	position: relative;
+	display: inline-flex;
+	//align-items: baseline;
+	//right: 2rem;
+	// ω <app_lang_select>
+}
+
+/*
+  Style the inner div of lang select
+*/
+.app-lang-select-inner {
+	// α <app_lang_select_inner>
+	display: flex;
+	align-items: baseline;
+	width: 7rem;
+	// ω <app_lang_select_inner>
+}
+
+/*
+  Style the currency select in the nav bar
+*/
+.app-currency-select {
+	// α <app_currency_select>
+	margin-right: 3rem;
+	display: flex;
+	align-items: baseline;
+	vertical-align: middle;
+	// ω <app_currency_select>
+}
+
+/*
+  Style the collapsible header
+*/
+.collapsible-header {
+	// α <collapsible_header>
+	display: flex;
+	justify-content: space-between;
+	margin: 0.35rem;
+	background-color: lightgray;
+	font-weight: bold;
+	// ω <collapsible_header>
+}
+
+/*
+  Style the collapse button of collapsible
+*/
+.collapse-button {
+	// α <collapse_button>
+	margin-left: 0.3rem;
+	// ω <collapse_button>
+}
+
+/*
+  Style the collection grid container
+*/
+.collection-grid {
+	// α <collection_grid>
+
+	display: grid;
+
+	// ω <collection_grid>
+}
+
+/*
+  Style CollectionGridComponent editable section
+*/
+.cgc-editable {
+	// α <cgc_editable>
+	// ω <cgc_editable>
+}
+
+/*
+  Style the cell contents
+*/
+.cgc-cell {
+	// α <cgc_cell>
+
+	padding: var(--plus-txt-padding);
+	text-align: right;
+	white-space: nowrap;
+
+	&.odd {
+		background-color: cyan;
+	}
+
+	&.even {
+		background-color: lightgoldenrodyellow;
+	}
+
+	// ω <cgc_cell>
+}
+
+/*
+  Style the add row button
+*/
+.cgc-add-row {
+	// α <cgc_add_row>
+
+	display: grid;
+	background-color: hsl(120, 50%, 95%);
+	border: solid 1.5px;
+	border-radius: 3px;
+	grid-column-start: 1;
+	grid-column-end: 6;
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+	margin-top: 4px;
+	margin-bottom: 8px;
+	font-size: 0.85rem;
+	padding: 3px;
+
+	// ω <cgc_add_row>
+}
+
+/*
+  Style the CashFlowTimeline zoom div
+*/
+.cft-zoom {
+	// α <cft_zoom>
+	margin-left: 3rem;
+	display: inline;
+	//align-items: flex-end;
+	font-size: 0.7rem;
+	// ω <cft_zoom>
+}
+
+/*
+  Style the OkCancelBar
+*/
+.ok-cancel-bar {
+	// α <ok_cancel_bar>
+	display: flex;
+	margin: 7px;
+	justify-content: center;
+	//background-color: hsl(120, 50%, 95%);
+	border: 1px solid green;
+	border-radius: 3px;
+	margin-inline-start: 2px;
+	margin-inline-end: 2px;
+	// ω <ok_cancel_bar>
+}
+
+/*
+  Style the container (grid) for the FlowSpecComponent
+*/
+.fsc-ctnr {
+	// α <fsc_ctnr>
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+	grid-template-rows: 1fr 1fr 3fr;
+	// ω <fsc_ctnr>
+}
+
+/*
+  Style/Position the name in the FlowSpecComponent
+*/
+.fsc-name-input {
+	// α <fsc_name_input>
+	grid-column: 1;
+	grid-row: 1;
+	// ω <fsc_name_input>
+}
+
+/*
+  Style/Position the OneOfComponent outlining the Growth vs Custom in the FlowSpecComponent.
+  Used to position this element within the grid
+*/
+.fsc-type {
+	// α <fsc_type>
+	grid-column: 2;
+	grid-row: 1 / span 3;
+	// ω <fsc_type>
+}
+
+/*
+  Style/Position the _in_ vs _out_ radio buttons in the FlowSpecComponent
+*/
+.fsc-direction-rbs {
+	// α <fsc_direction_rbs>
+	display: grid;
+	grid-column: 1;
+	grid-row: 3;
+	place-self: center stretch;
+
+	input {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	// ω <fsc_direction_rbs>
+}
+
+/*
+  YearRangeInput start entry
+*/
+.yri-start {
+	// α <yri_start>
+	margin-left: 0.25em // ω <yri_start>
+}
+
+/*
+  YearRangeInput end entry
+*/
+.yri-end {
+	// α <yri_end>
+	margin-left: 0.25em // ω <yri_end>
+}
+
+/*
+  Style the MultiColumnSelect labels
+*/
+.mcs-label {
+	// α <mcs_label>
+	text-align: left;
+	padding: 2px;
+	margin-left: 0.3rem;
+	white-space: nowrap;
+	// ω <mcs_label>
+}
+
+/*
+  Style the MultiColumnSelect labels
+*/
+.mcs-select-label {
+	// α <mcs_select_label>
+	margin-left: 5px;
+	text-align: right;
+	vertical-align: baseline;
+	white-space: nowrap;
+	// ω <mcs_select_label>
+}
+
+/*
+  Style the icon label in MultiColumnSelect
+*/
+.mcs-icon-label {
+	// α <mcs_icon_label>
+	display: grid;
+	grid-template-columns: 2.5em 1fr;
+	padding: 2px;
+	margin-left: 0.3rem;
+	// ω <mcs_icon_label>
+}
+
+/*
+  Style the icon in MultiColumnSelect
+*/
+.mcs-icon {
+	// α <mcs_icon>
+	text-align: left;
+	// ω <mcs_icon>
+}
+
+/*
+  Style the NormalSpecComponent fieldset
+*/
+.nsc-fieldset {
+	// α <nsc_fieldset>
+	// ω <nsc_fieldset>
+}
+
+/*
+  Style the explore normal div
+*/
+.nsc-explore {
+	// α <nsc_explore>
+	vertical-align: bottom;
+	// ω <nsc_explore>
+}
+
+/*
+  Value Flow Spec container
+*/
+.vfsc-container {
+	// α <vfsc_container>
+	display: inline-flex;
+	justify-content: center;
+	// ω <vfsc_container>
+}
+
+/*
+  Value Flow Spec category
+*/
+.vfsc-category {
+	// α <vfsc_category>
+	margin-right: 1rem;
+	display: inline;
+	// ω <vfsc_category>
+}
+
+/*
+  Value Flow Spec currency
+*/
+.vfsc-currency {
+	// α <vfsc_currency>
+	margin-right: 1rem;
+	// ω <vfsc_currency>
+}
+
+/*
+  Value Flow Spec flows
+*/
+.vfsc-flows {
+	// α <vfsc_flows>
+	display: inline-block;
+	// ω <vfsc_flows>
+}
+
+/*
+  YearCurrencyValue currency element
+*/
+.ycv-currency {
+	// α <ycv_currency>
+	// ω <ycv_currency>
+}
+
+/*
+  YearCurrencyValue value element
+*/
+.ycv-value {
+	// α <ycv_value>
+	align-self: flex-end;
+	margin-left: 0.25rem;
+	// ω <ycv_value>
+}
+
+/*
+  YearCurrencyValue _as of_ element
+*/
+.ycv-as-of {
+	// α <ycv_as_of>
+	align-self: flex-end;
+	padding: 2px 7px;
+	// ω <ycv_as_of>
+}
+
+/*
+  YearCurrencyValue year input element
+*/
+.ycv-year {
+	// α <ycv_year>
+	align-self: flex-end;
+	// ω <ycv_year>
+}
+
+/*
+  Wraps the MultiColumnSelect
+*/
+.mcs-grid {
+	// α <mcs_grid>
+	position: relative;
+	display: inline;
+	align-items: baseline;
 	//float: left;
 	//overflow-x: hidden;
 	// overflow-y: visible;
+	// ω <mcs_grid>
 }
 
-.mcs-grid .main-button {
-	background-color: var(--plus-btn-color);
-	width: fit-content;
-	width: -moz-fit-content;
+/*
+  Main button in MultiColumnSelect
+*/
+.mcs-main-btn {
+	// α <mcs_main_btn>
 	border: 1px solid;
 	border-radius: 0.3rem;
 	padding: var(--plus-btn-padding);
 	margin-top: var(--plus-btn-margin);
 	white-space: nowrap;
+
+	&:hover {
+		background-color: "purple";
+	}
+
+	// ω <mcs_main_btn>
 }
 
-.mcs-grid .container {
+/*
+  Select button in MultiColumnSelect
+*/
+.mcs-select-btn {
+	// α <mcs_select_btn>
+	background-color: hsl(120, 50%, 98%);
+	white-space: nowrap;
+	font-size: 0.8em;
+	border: none;
+	margin: 3px;
+	padding: var(--plus-btn-padding);
+
+	&:focus {
+		background-color: hsl(120, 50%, 90%);
+	}
+
+	&.using-mouse:hover {
+		background-color: hsl(120, 50%, 90%);
+	}
+
+	&:not(.using-mouse) {
+		//background-color: lightyellow;
+		cursor: none;
+		margin-left: 0.3rem;
+	}
+
+	// ω <mcs_select_btn>
+}
+
+/*
+  Container holding selections of MultiColumnSelect
+*/
+.mcs-ctnr {
+	// α <mcs_ctnr>
 	position: absolute;
 	top: 10px;
 	left: 10px;
@@ -119,450 +1049,996 @@ div.mcs-grid {
 	z-index: 10;
 	background-color: white;
 	overflow-x: scroll;
+
+	&.hidden {
+		visibility: hidden;
+	}
+
+	// ω <mcs_ctnr>
 }
 
-.mcs-grid .select-button {
-	background-color: hsl(120, 50%, 98%);
-	white-space: nowrap;
-	font-size: 0.8em;
-	border: none;
-	margin: 3px;
-	padding: var(--plus-btn-padding);
-}
-
-.mcs-grid .select-button.using-mouse:hover {
-	background-color: hsl(120, 50%, 90%);
-}
-
-.mcs-grid .select-button:focus {
-	background-color: hsl(120, 50%, 90%);
-}
-
-.mcs-grid .container.hidden {
-	visibility: hidden;
-}
-
-.mcs-grid .icon-label {
-	display: grid;
-	grid-template-columns: 2.5em 1fr;
-	padding: 2px;
-	margin-left: 0.3rem;
-}
-
-.mcs-grid .icon {
-	// background-color: lightcyan;
-	text-align: left;
-}
-
-.mcs-grid .select-button:not(.using-mouse) {
-	//background-color: lightyellow;
-	cursor: none;
-	margin-left: 0.3rem;
-}
-
-.mcs-label {
-	text-align: left;
-	padding: 2px;
-	margin-left: 0.3rem;
-	white-space: nowrap;
-}
-
-//// Holding
-
-fieldset {
-	border-radius: 5px;
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
-
-legend {
+/*
+  OkCancel component ok button
+*/
+.occ-ok-btn {
+	// α <occ_ok_btn>
+	margin-right: 0.4em;
+	font-size: 0.9em;
 	font-weight: bold;
-	font-size: 1.05rem;
+	// ω <occ_ok_btn>
 }
 
-fieldset.disabled {
-	background-color: lightgray;
-}
-
-input {
-	font-size: var(--plus-sm-fnt);
-	// has no effect since input is not an inline element: vertical-align: middle;
-	margin-top: 3px;
-	//margin-left: 0.5em;
-}
-
-label {
-	vertical-align: bottom;
-}
-
-.holding .form {
-	background-color: var(--plus-form-bg);
-}
-
-.collapsible-header {
-	margin: 0.35rem;
-	background-color: lightgray;
+/*
+  OkCancel component cancel button
+*/
+.occ-cancel-btn {
+	// α <occ_cancel_btn>
+	margin-right: 0.4em;
+	font-size: 0.9em;
 	font-weight: bold;
-	//font-size: 1.2rem;
+	// ω <occ_cancel_btn>
 }
 
-.form-row {
+/*
+  Internal OneOfComponent container
+*/
+.ooc-ctnr {
+	// α <ooc_ctnr>
+	row-gap: 1rem;
+	// ω <ooc_ctnr>
+}
+
+/*
+  OneOfComponent radio button left-to-right
+*/
+.ooc-rb-ltr {
+	// α <ooc_rb_ltr>
+	padding-bottom: 8px;
+	border-bottom: 2px solid black;
+	// ω <ooc_rb_ltr>
+}
+
+/*
+  OneOfComponent radio button top-to-bottom
+*/
+.ooc-rb-ttb {
+	// α <ooc_rb_ttb>
+	padding-right: 8px;
+
+	// ω <ooc_rb_ttb>
+}
+
+/*
+  Input field in YearInput
+*/
+.yi-input {
+	// α <yi_input>
+	// ω <yi_input>
+}
+
+/*
+  The slider inside SliderWithNumericInput
+*/
+.swni-slider {
+	// α <swni_slider>
+	display: inline-block;
+	vertical-align: sub;
+	color: "green";
+	width: 6rem;
+	// ω <swni_slider>
+}
+
+/*
+  CoreComponentDisplay container below the top notify section
+*/
+.ccd-ctnr {
+	// α <ccd_ctnr>
+
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	margin-left: 1rem;
-	@media (max-width: 600px) {
-		grid-template-columns: 1fr;
-	}
+	column-gap: 2rem;
+
+	// ω <ccd_ctnr>
 }
 
-.form-row label {
-	margin-bottom: 0.5rem;
-	margin-bottom: 0.5rem;
+/*
+  CoreComponentDisplay top section for update announcements
+*/
+.ccd-top-notify {
+	// α <ccd_top_notify>
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+	right: 0;
+	width: 1140px;
+	background-color: #bbb;
+	padding: 6px;
+	border-style: inset solid;
+	border-color: green;
+	border-width: 6px;
+	z-index: 2;
+	max-height: 250px;
+	overflow-y: scroll;
+	// ω <ccd_top_notify>
 }
 
-.holding .currency-button {
-	margin-top: -0.5rem;
-	vertical-align: top;
-}
+/*
+  CoreComponentDisplay number section
+*/
+.ccd-numbers {
+	// α <ccd_numbers>
 
-///////// ItemGrowthComponent
-.icg-select {
-	padding: 5px;
-}
-
-.ig {
-	display: flex;
-}
-
-.ig-growth-label {
-	//background-color: yellow;
-}
-
-.invalid,
-textarea {
-	background-color: rgb(237, 199, 199);
-	box-sizing: content-box;
-}
-
-input.invalid:focus {
-	border: 3px solid red;
-}
-
-.ycv {
-	box-sizing: content-box;
-}
-
-.ycv-value {
-	align-self: flex-end;
-	margin-left: 0.25rem;
-}
-
-.ycv-as-of {
-	align-self: flex-end;
-	padding: 2px 7px;
-}
-
-.ycv-year {
-	align-self: flex-end;
-}
-
-.rate-curve-data {
-	display: block;
-	align-items: center;
-	width: 10rem;
-}
-
-.yri-start,
-.yri-end,
-.yvi-year,
-.yvi-value {
-	margin-left: 0.25em
-}
-
-.header {
-	background-color: hsl(120, 90%, 25%);
-	text-align: right;
-	font-weight: bold;
-	padding-top: 4px;
-	padding-bottom: 4px;
-}
-
-.cgc-insert {
-	background-color: hsl(120, 50%, 90%);
-}
-
-.account-holdings {
-	//margin: 2rem;
-	margin-left: 1%;
-	margin-right: 1%;
-}
-
-.cgc-header-cell {
-	padding-top: 3px;
-	padding-left: 1rem;
-	text-align: right;
-}
-
-.cgc-add-row {
-	background-color: hsl(120, 50%, 88%);
-	grid-column-start: 1;
-	grid-column-end: 6;
-}
-
-.tooltip {
-	position: relative;
-	border-bottom: 1px dashed #000;
-}
-
-.tooltip:before {
-	content: attr(data-text);
-	position: absolute;
-
-	top: 50%;
-	transform: translateY(-150%);
-	left: 100%;
-	margin-left: 15px;
-	width: 200px;
-	padding: 10px;
-	background: #000;
-	color: #fff;
-	text-align: center;
-
-	display: none;
-	opacity: 0;
-	transition: .3s opacity;
-
-}
-
-.tooltip:hover:before {
-	display: block;
-	opacity: 1;
-}
-
-.tooltip:hover:after {
-	opacity: 1;
-}
-
-.tooltip.left:before {
-	left: initial;
-	margin: initial;
-}
-
-.tooltip:after {
-	content: "";
-	position: absolute;
-	left: 100%;
-	margin-left: -5px;
-	top: 50%;
-	transform: translateY(-50%);
-	border: 10px solid #000;
-	border-color: transparent black transparent transparent;
-	display: none;
-	opacity: 0;
-	transition: .3s;
-}
-
-.tooltip:hover:before,
-.tooltip:hover:after {
-	display: block;
-}
-
-.ok-button {
-	margin-right: 0.4em;
-}
-
-.dot {
-  height: 25px;
-  width: 25px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;	
-}
-
-.historic-legend {
-	font-size: var(--plus-sm-fnt);
-}
-.inactive-edit {
-	background-color: lightgrey;
-}
-
-.collapse-button {
-	margin-left: 0.3rem;
-}
-
-.ok-cancel-bar {
-	display: flex; 
-	margin-top: 3px;
-	justify-content: center; 
-	background-color: hsl(120, 50%, 95%);
-	border: 1px solid green;
-	border-radius: 3px;
-	margin-inline-start: 2px;
-	margin-inline-end: 2px;
-}
-
-.dossier-toolbar {
 	display: grid;
-	grid-template-columns: repeat(6, 1fr) auto;
-	max-width: 600px;
-	// Center the toolbar
-	margin: 0 auto;
+	grid-template-columns: 1fr 1fr 1fr;
+	border: 3px solid;
+	border-radius: 5px;
+	width: 550px;
+
+	// ω <ccd_numbers>
 }
 
-.label-button {
-	margin: 0.2rem;
-	padding: 0.5rem;
-	button {
-		border: 3px solid;
-		border-radius: 6px;
-	}
-	label {
-		margin-top: 0.4rem;
-		white-space: normal;
-	}
-}
+/*
+  CoreComponentDisplay years and dates
+*/
+.ccd-time {
+	// α <ccd_time>
 
-.label-button > button:disabled {
-	background-color: lightgray;
-}
-
-.dossier-show {
-	min-height: 140px;
-	//background-color: hsl(120, 50%, 90%);
-}
-
-.dossier {
-	max-width: 800px;
-}
-
-.cf-container {
 	display: grid;
-	grid-template-columns: 1fr 3fr;
-	grid-template-rows: 1fr 1fr 3fr;
+	grid-template-columns: 2fr 1.5fr;
+	border: 3px solid;
+	border-radius: 5px;
+	width: 550px;
+
+	// ω <ccd_time>
 }
 
-.cf-name-input {
-	grid-column: 1;
-	grid-row: 1;
-}
-
-.cf-one-of {
-	grid-column: 2;
-	grid-row: 1 / span 3;
-}
-
-.cf-direction-rbs {
+/*
+  CoreComponentDisplay multi column select, enums, currency select
+*/
+.ccd-selects {
+	// α <ccd_selects>
 	display: grid;
-	grid-column: 1;
-	grid-row: 3;
-	place-self: center stretch;
-	input {
-		margin-top: 1rem;
-		margin-bottom: 1rem;
-	}
-
+	grid-auto-flow: row;
+	grid-template-columns: 3fr 1fr;
+	border: 3px solid;
+	border-radius: 5px;
+	width: 550px;
+	// ω <ccd_selects>
 }
 
-.labeled-ycv {
-	display: inline-block; 
-	margin-left: 0.45rem;
+/*
+  CoreComponentDisplay ok/cancel
+*/
+.ccd-ok-cancel {
+	// α <ccd_ok_cancel>
+	// display: grid;
+	// grid-auto-flow: column;
+	// grid-template-columns: auto;
+	border: 3px solid;
+	border-radius: 5px;
+	width: 550px;
+	// ω <ccd_ok_cancel>
 }
 
-.vfsc {
-	display: inline-flex;
-	justify-content: center;
+/*
+  CoreComponentDisplay rate curve
+*/
+.ccd-rate-curve {
+	// α <ccd_rate_curve>
+	display: grid;
+	grid-auto-flow: column;
+	grid-template-columns: auto;
+	border: 3px solid;
+	border-radius: 5px;
+	width: 550px;
+	// ω <ccd_rate_curve>
 }
 
-.vfsc-category {
-	margin-right: 1rem;
+/*
+  CoreComponentDisplay normal spec section
+*/
+.ccd-normal-spec {
+	// α <ccd_normal_spec>
+	display: grid;
+	grid-template-columns: 1fr;
+	border: 3px solid;
+	border-radius: 5px;
+	width: 550px;
+	// ω <ccd_normal_spec>
 }
 
-.vfsc-currency {
-	margin-right: 1rem;
-}
-
-.vfsc-flows {
-	display: inline-block;
-}
-
-.mcs-select-label {
-	margin-left: 5px;
-	text-align: right;
-	vertical-align: baseline;
-	white-space: nowrap;
-}
-
-.in-flow {
-	color: darkolivegreen;
-}
-
-.out-flow {
-	color: darkred;
-}
-
-.cdc {
-	max-width: 850px;
-}
-
-.app-component {
+/*
+  AppCenterComponent
+*/
+.plus-acc {
+	max-width: 850.0px;
+	// α <app_center_component>
 	height: 100vh;
 	display: grid;
 	grid-template-columns: 10px 1fr;
 	grid-template-rows: 40px 1fr;
+	// ω <app_center_component>
 }
 
-.app-nav-bar {
-	background-color: cyan;
-	grid-row: 1;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
+/*
+  AppComponent
+*/
+.plus-app-component {
+	max-width: 100%;
+	// α <app_component>
+	// ω <app_component>
 }
 
-.app-lang-select {
-	margin-left: auto;
-	position: relative;
-	//right: 2rem;
+/*
+  AppNavBar
+*/
+.plus-anb {
+	max-width: 100%;
+	// α <app_nav_bar>
+	// width: 100%;
+	// background-color: cyan;
+	// grid-row: 1;
+	// display: flex;
+	// flex-direction: row;
+	// justify-content: flex-start;
+
+
+	//box-sizing: border-box;
+	width: 100%;
+	width: 800px;
+	background-color: #0ff;
+	flex-grow: 1;
+	//grid-row: 1;
+	//display: flex;
+	//flex-direction: row;
+	//justify-content: flex-end;
+
+	// ω <app_nav_bar>
 }
 
-.app-lang-select-inner {
-	width: 7rem;
-}
+/*
+  AppSideBar
+*/
+.plus-asb {
+	max-width: 850.0px;
+	// α <app_side_bar>
 
-.app-side-bar {
 	background-color: peachpuff;
 	grid-row: 1 / span 2;
 	grid-column: 1;
+
+	// ω <app_side_bar>
 }
 
-.plus-hc {
-	background-color: beige;
+/*
+  CollapsibleComponent
+*/
+.plus-cc {
+	max-width: 850.0px;
+	// α <collapsible_component>
+	// ω <collapsible_component>
 }
 
-.plus-hg {
-	background-color: beige;
+/*
+  CollectionGridComponent
+*/
+.plus-cgc {
+	max-width: 850.0px;
+	// α <collection_grid_component>
+	// ω <collection_grid_component>
 }
 
+/*
+  CoreComponentDisplay
+*/
+.plus-ccd {
+	max-width: 850.0px;
+	// α <core_component_display>
+	width: 100%;
+
+	.title {
+		color: blue;
+		font-size: large;
+	}
+
+	// ω <core_component_display>
+}
+
+/*
+  CurrencySelect
+*/
+.plus-cs {
+	max-width: 850.0px;
+	// α <currency_select>
+	// ω <currency_select>
+}
+
+/*
+  DateInput
+*/
+.plus-di {
+	max-width: 850.0px;
+	// α <date_input>
+	// ω <date_input>
+}
+
+/*
+  DisposeTest
+*/
+.plus-dt {
+	max-width: 850.0px;
+	// α <dispose_test>
+	// ω <dispose_test>
+}
+
+/*
+  DistributionCdfComponent
+*/
+.plus-dcc {
+	max-width: 850.0px;
+	// α <distribution_cdf_component>
+	// ω <distribution_cdf_component>
+}
+
+/*
+  DistributionPdfComponent
+*/
+.plus-dist-pdf-comp {
+	max-width: 850.0px;
+	// α <distribution_pdf_component>
+	// ω <distribution_pdf_component>
+}
+
+/*
+  EnumSelect
+*/
+.plus-es {
+	max-width: 850.0px;
+	// α <enum_select>
+	// ω <enum_select>
+}
+
+/*
+  HistoricRiskReturnComponent
+*/
+.plus-hrrc {
+	max-width: 850.0px;
+	// α <historic_risk_return_component>
+
+	display: grid;
+	grid-template-rows: 1fr 3fr 1fr;
+	grid-template-columns: 1fr;
+	max-width: 600px // ω <historic_risk_return_component>
+}
+
+/*
+  IntegerInput
+*/
+.plus-ii {
+	max-width: 850.0px;
+	// α <integer_input>
+	// ω <integer_input>
+}
+
+/*
+  MultiButtonSelect
+*/
+.plus-mbs {
+	max-width: 850.0px;
+	// α <multi_button_select>
+
+	border: #000;
+	border-width: 3px;
+	border-style: dashed;
+
+	// ω <multi_button_select>
+}
+
+/*
+  MultiColumnSelect
+*/
+.plus-mcs {
+	max-width: 850.0px;
+	// α <multi_column_select>
+	display: inline;
+	// ω <multi_column_select>
+}
+
+/*
+  NormalLossComponent
+*/
+.plus-nlc {
+	max-width: 850.0px;
+	// α <normal_loss_component>
+	// ω <normal_loss_component>
+}
+
+/*
+  NormalSpecComponent
+*/
+.plus-nsc {
+	max-width: 850.0px;
+	// α <normal_spec_component>
+	// ω <normal_spec_component>
+}
+
+/*
+  NumericInput
+*/
+.plus-ni {
+	max-width: 850.0px;
+	// α <numeric_input>
+	// ω <numeric_input>
+}
+
+/*
+  OkCancelComponent
+*/
+.plus-occ {
+	max-width: 850.0px;
+	// α <ok_cancel_component>
+	margin: 2px;
+	// ω <ok_cancel_component>
+}
+
+/*
+  OneOfComponent
+*/
+.plus-ooc {
+	max-width: 850.0px;
+	// α <one_of_component>
+	margin: 2px;
+	// ω <one_of_component>
+}
+
+/*
+  PercentInput
+*/
+.plus-pi {
+	max-width: 850.0px;
+	// α <percent_input>
+	// ω <percent_input>
+}
+
+/*
+  SliderWithNumericInput
+*/
+.plus-swni {
+	max-width: 850.0px;
+	color: red;
+	// α <slider_with_numeric_input>
+	display: inline-block;
+	vertical-align: text-bottom;
+	// ω <slider_with_numeric_input>
+}
+
+/*
+  ToggleImageButton
+*/
+.plus-tib {
+	max-width: 850.0px;
+	// α <toggle_image_button>
+
+	display: flex;
+	flex-direction: column;
+
+	margin: 0.2rem;
+	padding: 0.5rem;
+	align-items: center;
+
+	button {
+		border: 3px solid;
+		border-radius: 6px;
+	}
+
+	// ω <toggle_image_button>
+}
+
+/*
+  YearCurrencyValueInput
+*/
+.plus-ycvi {
+	max-width: 850.0px;
+	// α <year_currency_value_input>
+	box-sizing: content-box;
+	display: inline-flex;
+	// ω <year_currency_value_input>
+}
+
+/*
+  YearInput
+*/
+.plus-yi {
+	max-width: 850.0px;
+	// α <year_input>
+	display: inline;
+	// ω <year_input>
+}
+
+/*
+  YearRangeInput
+*/
+.plus-yri {
+	max-width: 850.0px;
+	// α <year_range_input>
+	display: inline-flex;
+	// ω <year_range_input>
+}
+
+/*
+  YearValueInput
+*/
+.plus-yvi {
+	max-width: 850.0px;
+	// α <year_value_input>
+	// ω <year_value_input>
+}
+
+/*
+  YearValueSeriesComponent
+*/
+.plus-yvsc {
+	max-width: 850.0px;
+	// α <year_value_series_component>
+
+	display: block;
+	align-items: center;
+	width: 10rem;
+
+	// ω <year_value_series_component>
+}
+
+/*
+  AccountComponent
+*/
+.plus-ac {
+	max-width: 850.0px;
+	// α <account_component>
+	// ω <account_component>
+}
+
+/*
+  AccountsGrid
+*/
+.plus-ag {
+	max-width: 850.0px;
+	// α <accounts_grid>
+	// ω <accounts_grid>
+}
+
+/*
+  AgeAssumptionsComponent
+*/
 .plus-aac {
-	background-color: pink;
-	color: pink;
+	max-width: 850.0px;
+	// α <age_assumptions_component>
+	// ω <age_assumptions_component>
 }
 
-.grid-label {
-	font-weight: bold;
-	font-size: 1.05rem;
+/*
+  BondSpecComponent
+*/
+.plus-bsc {
+	max-width: 850.0px;
+	// α <bond_spec_component>
+	// ω <bond_spec_component>
 }
 
-.one-of {
-	row-gap: 1rem;
+/*
+  ComponentDisplayComponent
+*/
+.plus-cdc {
+	max-width: 850.0px;
+	// α <component_display_component>
+	// ω <component_display_component>
 }
 
-.one-of-rb-ltr {
-	padding-bottom: 8px;
-	border-bottom: 2px solid black;
+/*
+  DistributionPolicyComponent
+*/
+.plus-dpc {
+	max-width: 850.0px;
+	// α <distribution_policy_component>
+	// ω <distribution_policy_component>
 }
 
-.one-of-rb-ttb {
-	padding-right: 8px;
-	//border-right: 2px solid black;
+/*
+  DistributionSpecComponent
+*/
+.plus-dsc {
+	max-width: 850.0px;
+	// α <distribution_spec_component>
+	// ω <distribution_spec_component>
+}
+
+/*
+  GrowthAssumptionComponent
+*/
+.plus-gac {
+	max-width: 850.0px;
+	// α <growth_assumption_component>
+	// ω <growth_assumption_component>
+}
+
+/*
+  HoldingComponent
+*/
+.plus-hc {
+	max-width: 850.0px;
+	// α <holding_component>
+	// ω <holding_component>
+}
+
+/*
+  HoldingsGrid
+*/
+.plus-hg {
+	max-width: 850.0px;
+	// α <holdings_grid>
+	// ω <holdings_grid>
+}
+
+/*
+  ItemGrowthComponent
+*/
+.plus-igc {
+	max-width: 850.0px;
+	// α <item_growth_component>
+	// ω <item_growth_component>
+}
+
+/*
+  ItemGrowthSelect
+*/
+.plus-igs {
+	max-width: 850.0px;
+	// α <item_growth_select>
+	display: flex;
+
+	// ω <item_growth_select>
+}
+
+/*
+  NameInput
+*/
+.plus-name-input {
+	max-width: 850.0px;
+	// α <name_input>
+	// ω <name_input>
+}
+
+/*
+  PersonComponent
+*/
+.plus-pc {
+	max-width: 850.0px;
+	// α <person_component>
+	// ω <person_component>
+}
+
+/*
+  PersonsGrid
+*/
+.plus-pg {
+	max-width: 850.0px;
+	// α <persons_grid>
+	// ω <persons_grid>
+}
+
+/*
+  SymbolInput
+*/
+.plus-si {
+	max-width: 850.0px;
+	// α <symbol_input>
+	// ω <symbol_input>
+}
+
+/*
+  DossierEditor
+*/
+.plus-de {
+	max-width: 800px;
+	// α <dossier_editor>
+	background-color: wheat;
+	//border: solid 2px;
+	//border-radius: 4px 4px;
+	padding: 5px;
+	margin-bottom: 10px;
+	// ω <dossier_editor>
+}
+
+/*
+  FinModelDisplayComponent
+*/
+.plus-fmdc {
+	max-width: 850.0px;
+	// α <fin_model_display_component>
+	// ω <fin_model_display_component>
+}
+
+/*
+  FlowSpecComponent
+*/
+.plus-fsc {
+	max-width: 850.0px;
+	// α <flow_spec_component>
+	// ω <flow_spec_component>
+}
+
+/*
+  FlowSpecsGrid
+*/
+.plus-fsg {
+	max-width: 850.0px;
+	// α <flow_specs_grid>
+	// ω <flow_specs_grid>
+}
+
+/*
+  GrowingFlowSpecComponent
+*/
+.plus-gfsc {
+	max-width: 850.0px;
+	// α <growing_flow_spec_component>
+	// ω <growing_flow_spec_component>
+}
+
+/*
+  StringInput
+*/
+.plus-string-input {
+	max-width: 850.0px;
+	// α <string_input>
+	// ω <string_input>
+}
+
+/*
+  ValueFlowSpecComponent
+*/
+.plus-vfsc {
+	max-width: 850.0px;
+	// α <value_flow_spec_component>
+	// ω <value_flow_spec_component>
+}
+
+/*
+  WorthComponent
+*/
+.plus-wc {
+	max-width: 850.0px;
+	// α <worth_component>
+	// ω <worth_component>
+}
+
+/*
+  WorthsGrid
+*/
+.plus-wg {
+	max-width: 850.0px;
+	// α <worths_grid>
+	// ω <worths_grid>
+}
+
+/*
+  TaxDeterminantsComponent
+*/
+.plus-tdc {
+	max-width: 850.0px;
+	// α <tax_determinants_component>
+	// ω <tax_determinants_component>
+}
+
+/*
+  DossierViewer
+*/
+.plus-dv {
+	max-width: 850.0px;
+	// α <dossier_viewer>
+	// ω <dossier_viewer>
+}
+
+/*
+  AssetLiabilityComponent
+*/
+.plus-alc {
+	max-width: 850.0px;
+	// α <asset_liability_component>
+	// ω <asset_liability_component>
+}
+
+/*
+  DossierResolvedView
+*/
+.plus-drv {
+	max-width: 850.0px;
+	// α <dossier_resolved_view>
+	// ω <dossier_resolved_view>
+}
+
+/*
+  ForecastConfigComponent
+*/
+.plus-fcc {
+	max-width: 850.0px;
+	// α <forecast_config_component>
+
+	label {
+		white-space: nowrap;
+		padding: 1rem;
+	}
+
+	// ω <forecast_config_component>
+}
+
+/*
+  ForecastIdSelector
+*/
+.plus-fis {
+	max-width: 850.0px;
+	// α <forecast_id_selector>
+	// ω <forecast_id_selector>
+}
+
+/*
+  ForecasterComponent
+*/
+.plus-fc {
+	max-width: 850.0px;
+	// α <forecaster_component>
+	// ω <forecaster_component>
+}
+
+/*
+  MatrixResolvedView
+*/
+.plus-mrv {
+	max-width: 850.0px;
+	// α <matrix_resolved_view>
+	// ω <matrix_resolved_view>
+}
+
+/*
+  ForecastSummaryComponent
+*/
+.plus-forecast-summary {
+	max-width: 850.0px;
+	// α <forecast_summary_component>
+	// ω <forecast_summary_component>
+}
+
+/*
+  TimelineGroupComponent
+*/
+.plus-tgc {
+	max-width: 850.0px;
+	// α <timeline_group_component>
+	// ω <timeline_group_component>
+}
+
+/*
+  BalanceSheetStatement
+*/
+.plus-bss {
+	max-width: 850.0px;
+	// α <balance_sheet_statement>
+	// ω <balance_sheet_statement>
+}
+
+/*
+  InvestmentPlanView
+*/
+.plus-ipv {
+	max-width: 850.0px;
+	// α <investment_plan_view>
+	// ω <investment_plan_view>
+}
+
+/*
+  SalesPlanView
+*/
+.plus-spv {
+	max-width: 850.0px;
+	// α <sales_plan_view>
+	// ω <sales_plan_view>
+}
+
+/*
+  CashFlowStatement
+*/
+.plus-cfs {
+	max-width: 850.0px;
+	// α <cash_flow_statement>
+	// ω <cash_flow_statement>
+}
+
+/*
+  UsTaxStatementView
+*/
+.plus-utsv {
+	max-width: 850.0px;
+	// α <us_tax_statement_view>
+	// ω <us_tax_statement_view>
+}
+
+/*
+  ForecastPrimaryView
+*/
+.plus-fpv {
+	max-width: 850.0px;
+	// α <forecast_primary_view>
+	// ω <forecast_primary_view>
+}
+
+/*
+  AssetLiabilityTimeline
+*/
+.plus-alt {
+	max-width: 850.0px;
+	// α <asset_liability_timeline>
+	// ω <asset_liability_timeline>
+}
+
+/*
+  CashFlowTimeline
+*/
+.plus-cft {
+	max-width: 850.0px;
+	// α <cash_flow_timeline>
+	// ω <cash_flow_timeline>
+}
+
+/*
+  SelectedYearGroupComponent
+*/
+.plus-sygc {
+	max-width: 850.0px;
+	// α <selected_year_group_component>
+	// ω <selected_year_group_component>
+}
+
+/*
+  MonteConfigComponent
+*/
+.plus-mcc {
+	max-width: 850.0px;
+	// α <monte_config_component>
+	// ω <monte_config_component>
+}
+
+/*
+  MonteSimulatorComponent
+*/
+.plus-msc {
+	max-width: 850.0px;
+	// α <monte_simulator_component>
+	//display: none;
+	// ω <monte_simulator_component>
+}
+
+/*
+  MonteSimulationSummaryComponent
+*/
+.plus-mssc {
+	max-width: 850.0px;
+	// α <monte_simulation_summary_component>
+	// ω <monte_simulation_summary_component>
+}
+
+/*
+  DossierSpinOffSelector
+*/
+.plus-dsos {
+	max-width: 850.0px;
+	// α <dossier_spin_off_selector>
+	// ω <dossier_spin_off_selector>
+}
+
+/*
+  DossierBundleComponent
+*/
+.plus-dbc {
+	max-width: 850.0px;
+	// α <dossier_bundle_component>
+	// ω <dossier_bundle_component>
 }

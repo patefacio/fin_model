@@ -3,22 +3,21 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::utils::block_time::BlockTime;
 use crate::utils::constants::{
     DOWN_KEY, ENTER_KEY, ESCAPE_KEY, LEFT_KEY, RIGHT_KEY, SPACE_KEY, TAB_KEY, UP_KEY,
 };
 use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::HtmlTag;
 use crate::SelectDirection;
+use leptos::IntoAttribute;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
-use leptos_dom::ev::{focusin, mousedown};
-use leptos_dom::html::{Button, Div};
+use leptos_dom::html::Div;
 #[allow(unused_imports)]
 use leptos_dom::log;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
-use web_sys::{Element, Event, FocusEvent, KeyboardEvent, MouseEvent};
+use web_sys::{Element, KeyboardEvent, MouseEvent};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -115,8 +114,11 @@ pub fn MultiColumnSelect<F>(
 where
     F: FnMut(String) + 'static,
 {
+    pub const SELF_CLASS: &str = "plus-mcs";
+    crate::log_component!("`MultiColumnSelect`");
     // α <fn multi_column_select>
 
+    use crate::CssClasses;
     use leptos::create_node_ref;
     use leptos::create_rw_signal;
     use leptos::ev::{focusin, mousedown};
@@ -302,21 +304,18 @@ where
             for column in 0..column_count {
                 let flat_index = indexer.two_d_to_flat_index(row, column);
                 let cell = if let Some(select_option) = mcs_data.options.get(flat_index) {
-                    let button_ref = mcs_data.selection_vec[flat_index];
                     let (value, button_content) = match select_option {
                         SelectOption::Label(label) => (
                             label,
-                            view! { <div class="mcs-label">{label}</div> }.into_view(),
+                            view! { <div class=CssClasses::McsLabel.to_string()>{label}</div> }
+                                .into_view(),
                         ),
                         SelectOption::KeyLabel { key, label } => (
                             key,
                             view! {
-                                <div
-                                    style="display: grid; grid-template-columns: 1fr 1fr;"
-                                    class="icon-label"
-                                >
-                                    <div class="icon">{key}</div>
-                                    <div class="mcs-select-label">{label}</div>
+                                <div class=CssClasses::McsIconLabel.to_string()>
+                                    <div class=CssClasses::McsIcon.to_string()>{key}</div>
+                                    <div class=CssClasses::McsSelectLabel.to_string()>{label}</div>
                                 </div>
                             }
                             .into_view(),
@@ -327,10 +326,11 @@ where
                     let wrapped_handle_click = move |ev| wrapped_click(ev);
                     let wrapped_handle_keydown = handle_key_down.clone();
                     let wrapped_handle_keydown = move |ev| wrapped_handle_keydown(ev);
+                    let button_ref = mcs_data.selection_vec[flat_index];
 
                     view! {
                         <button
-                            class="select-button"
+                            class=CssClasses::McsSelectBtn.to_string()
                             on:click=wrapped_handle_click
                             on:mouseover=handle_mouseover
                             on:mousemove=handle_mousemove
@@ -382,27 +382,37 @@ where
         }
     });
 
+    // ω <fn multi_column_select>
     view! {
-        <div class="mcs-grid" disabled=move || { !menu_is_hidden.get() } node_ref=mcs_grid_ref>
-            <button
-                on:mousedown=handle_main_button_mousedown
-                on:keydown=handle_main_button_key_activate
-                class="main-button"
-                node_ref=main_button_ref
-                disabled=disabled
-            >
-                {move || { mcs_data.with(|mcs_data| mcs_data.main_button_label.clone()) }}
-            </button>
+        <div class=SELF_CLASS>
+            // α <plus-mcs-view>
+
             <div
-                class="container"
-                class:hidden=move || menu_is_hidden.get()
-                style=format!("grid-template-columns: {}", "1fr ".repeat(column_count))
+                class=CssClasses::McsGrid.to_string()
+                disabled=move || { !menu_is_hidden.get() }
+                node_ref=mcs_grid_ref
             >
-                {cells.into_view()}
+                <button
+                    on:mousedown=handle_main_button_mousedown
+                    on:keydown=handle_main_button_key_activate
+                    class=CssClasses::McsMainBtn.to_string()
+                    node_ref=main_button_ref
+                    disabled=disabled
+                >
+                    {move || { mcs_data.with(|mcs_data| mcs_data.main_button_label.clone()) }}
+                </button>
+                <div
+                    class=CssClasses::McsCtnr.to_string()
+                    class:hidden=move || menu_is_hidden.get()
+                    style=format!("grid-template-columns: {}", "1fr ".repeat(column_count))
+                >
+                    {cells.into_view()}
+                </div>
             </div>
+
+        // ω <plus-mcs-view>
         </div>
     }
-    // ω <fn multi_column_select>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

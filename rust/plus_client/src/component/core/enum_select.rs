@@ -59,6 +59,7 @@ pub fn EnumSelect<E>(
 where
     E: Clone + Debug + VariantNames + IntoEnumIterator + PartialEq + 'static,
 {
+    crate::log_component!("`EnumSelect`");
     // α <fn enum_select>
 
     use crate::{InitialValue, MultiColumnSelect, SelectOption};

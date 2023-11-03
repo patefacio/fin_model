@@ -34,9 +34,11 @@ pub fn DateInput(
     #[prop(default=String::from("date-input"), into)]
     class: String,
 ) -> impl IntoView {
+    crate::log_component!("`DateInput`");
     // α <fn date_input>
 
     use crate::utils::constants::{LEFT_KEY, RIGHT_KEY, TAB_KEY};
+    use crate::CssClasses;
     use crate::LiveParsedDate;
     use leptos::create_node_ref;
     use leptos::create_signal;
@@ -69,7 +71,7 @@ pub fn DateInput(
         .unwrap_or_else(|| LiveParsedDate::new(year_range));
 
     // Track whether year is valid to give hint to user - reactive to update class
-    let (is_in_range, set_is_in_range) = create_signal(is_in_range);
+    let (is_in_range_read, is_in_range_write) = create_signal(is_in_range);
 
     let initial_value = if updatable.value.is_some() {
         live_parsed_date.formatted.clone()
@@ -77,7 +79,7 @@ pub fn DateInput(
         String::default()
     };
 
-    let date_data = store_value(DateData {
+    let data_stored_value = store_value(DateData {
         updatable,
         live_parsed_date,
     });
@@ -91,18 +93,18 @@ pub fn DateInput(
             .unwrap_or_default()
             .unwrap_or_default();
 
-        date_data.update_value(|date_data| {
+        data_stored_value.update_value(|date_data| {
             let live_parsed_date = &mut date_data.live_parsed_date;
             let (new_value, new_date, new_position) = live_parsed_date.parse_date(&value, position);
             input_ref.set_value(&new_value);
             _ = input_ref.set_selection_range(new_position, new_position);
             if let Some(new_date) = new_date.as_ref() {
                 date_data.updatable.update_and_then_signal(|date| {
-                    set_is_in_range.set(true);
+                    is_in_range_write.set(true);
                     *date = Some(new_date.clone());
                 });
             } else {
-                set_is_in_range.set(false);
+                is_in_range_write.set(false);
             }
         });
     };
@@ -146,7 +148,7 @@ pub fn DateInput(
                         }
                     }
                     RIGHT_KEY => {
-                        date_data.with_value(|date_data| {
+                        data_stored_value.with_value(|date_data| {
                             let position = input_ref
                                 .selection_start()
                                 .unwrap_or_default()
@@ -171,7 +173,7 @@ pub fn DateInput(
         <input
             node_ref=node_ref
             class=class
-            class:invalid=move || { !is_in_range.get() }
+            class:invalid=move || { !is_in_range_read.get() }
             on:input=move |_| update_value()
             on:keydown=key_down_handler
             value=initial_value

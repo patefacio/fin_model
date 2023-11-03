@@ -33,9 +33,12 @@ pub fn CollapsibleComponent(
     #[prop(default = false)]
     is_expanded: bool,
 ) -> impl IntoView {
+    crate::log_component!("`CollapsibleComponent`");
     // α <fn collapsible_component>
 
+    use crate::CssClasses;
     use leptos::create_rw_signal;
+    use leptos::IntoAttribute;
     use leptos::Show;
     use leptos::SignalGet;
     use leptos::SignalUpdate;
@@ -52,7 +55,7 @@ pub fn CollapsibleComponent(
     };
 
     view! {
-        <div class="collapsible-header" style="display: flex; justify-content: space-between;">
+        <div class=CssClasses::CollapsibleHeader.to_string()>
             <div>{move || header()}</div>
             <button on:click=move |_| {
                 is_expanded.update(|is_expanded| *is_expanded = !*is_expanded)

@@ -22,11 +22,11 @@ actix-files = { version = "0.6", optional = true }
 actix-web = { version = "4", optional = true, features = ["macros"] }
 console_error_panic_hook = "0.1"
 cfg-if = "1"
-leptos = { version = "0.5.0-rc2", default-features = false, features = ["serde", "tracing"] }
-leptos_actix = { version = "0.5.0-rc2", optional = true }
-leptos_meta = { version = "0.5.0-rc2", default-features = false}
-leptos_router = { version = "0.5.0-rc2", default-features = false}
-leptos_dom = { version = "0.5.0-rc2" }
+leptos = { version = "0.5.2", default-features = false, features = ["serde", "tracing"] }
+leptos_actix = { version = "0.5.2", optional = true }
+leptos_meta = { version = "0.5.2", default-features = false}
+leptos_router = { version = "0.5.2", default-features = false}
+leptos_dom = { version = "0.5.2" }
 wasm-bindgen = "=0.2.87"
 web-sys = { version = "0.3", features = [ "Performance"] }
 num-format = "0.4.3"
@@ -44,6 +44,7 @@ once_cell = "1.17.1"
 tracing-subscriber-wasm = "0.1.0"
 tracing-wasm = "0.2.1"
 leptos-use = { git = "https://github.com/Synphonyte/leptos-use" }
+instant = "0.1.12"
 
 ##  TODO: Bringing this incaused build issues
 ## leptonic = "0.1.0"
@@ -67,6 +68,12 @@ ssr = [
 ]
 # ω <features>
 # α <additional>
+
+# [profile.wasm-release]
+# inherits = "release"
+# opt-level = 'z'
+# lto = true
+# codegen-units = 1
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name   
@@ -120,6 +127,7 @@ lib-default-features = false
 
 bin-target = "plus_client"
 
+#lib-profile-release = "wasm-release"
 
 [dev-dependencies]
 criterion = "0.4.0"

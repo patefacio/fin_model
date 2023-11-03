@@ -43,25 +43,30 @@ where
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let i18n_ok = move || I18nOkCancelComponent::Ok(lang_selector.get()).to_string();
     let i18n_cancel = move || I18nOkCancelComponent::Cancel(lang_selector.get()).to_string();
+    crate::log_component!("`OkCancelComponent`");
     // α <fn ok_cancel_component>
 
+    use crate::CssClasses;
     use leptos::store_value;
-    let on_ok_cancel = store_value(on_ok_cancel);
+    let on_ok_cancel_stored_value = store_value(on_ok_cancel);
 
     // ω <fn ok_cancel_component>
     view! {
         <div class=SELF_CLASS>
             // α <plus-occ-view>
             <button
-                class="ok-button"
-                on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Ok)) }
+                class=CssClasses::OccOkBtn.to_string()
+                on:click=move |_| { on_ok_cancel_stored_value.update_value(|f| f(OkCancel::Ok)) }
             >
                 {i18n_ok}
             </button>
             <button
-                class="cancel-button"
-                on:click=move |_| { on_ok_cancel.update_value(|f| f(OkCancel::Cancel)) }
+                class=CssClasses::OccCancelBtn.to_string()
+                on:click=move |_| {
+                    on_ok_cancel_stored_value.update_value(|f| f(OkCancel::Cancel))
+                }
             >
+
                 {i18n_cancel}
             </button>
         // ω <plus-occ-view>

@@ -54,15 +54,14 @@ pub enum Modification {
 ///   * **placeholder** - Placeholder shown if entry is empty.
 ///   * **size** - The size attribute, which one hopes would make the size of the
 /// input field roughly that number of characters. But YMMV.
-///
 ///   * **max_len** - The maximum number of characters for the input.
-///
 ///   * **range** - Range of valid values for input.
 ///   * **on_enter** - Called if user hits enter, passes current input value.
 ///   * **clear_input** - Signal requesting to clear the input.
 ///   * **no_decimal** - Indicates decimals disallowed.
 ///   * **disabled** - Signal allowing the disabling of the select button.
 ///   * **validator** - Called on update to check if value is valid.
+///   * **parent_override** - A way for parent to control the value in the input.
 ///   * _return_ - View for numeric_input
 #[component]
 pub fn NumericInput(
@@ -108,7 +107,11 @@ pub fn NumericInput(
     /// Called on update to check if value is valid.
     #[prop(default=None)]
     validator: Option<Box<dyn FnMut(f64) -> bool>>,
+    /// A way for parent to control the value in the input.
+    #[prop(default=None)]
+    parent_override: Option<ReadSignal<f64>>,
 ) -> impl IntoView {
+    crate::log_component!("`NumericInput`");
     // α <fn numeric_input>
 
     use crate::LenientFormatted;
@@ -161,7 +164,7 @@ pub fn NumericInput(
         })
         .unwrap_or_default();
 
-    let (is_valid, set_is_valid) = create_signal(is_valid);
+    let (is_valid_read, is_valid_write) = create_signal(is_valid);
 
     #[derive(Debug, Copy, Clone)]
     enum TrackedKey {
@@ -188,7 +191,7 @@ pub fn NumericInput(
         tracked_key: None,
     };
 
-    let numeric_input_data = store_value(numeric_input_data);
+    let numeric_input_data_stored_value = store_value(numeric_input_data);
     let node_ref = create_node_ref::<Input>();
 
     create_effect(move |_| {
@@ -202,7 +205,7 @@ pub fn NumericInput(
 
     let update_value = move |mut value: String| {
         if let Some(input_ref) = node_ref.get_untracked() {
-            numeric_input_data.update_value(|numeric_input_data| {
+            numeric_input_data_stored_value.update_value(|numeric_input_data| {
                 let mut selection_start = input_ref
                     .selection_start()
                     .unwrap_or_default()
@@ -223,6 +226,8 @@ pub fn NumericInput(
                         selection_start = selection_start.min(value.len() as u32);
                     }
                 }
+
+                selection_start = selection_start.min(value.len() as u32);
 
                 // `format_number_lenient` will return the input with all non-digit
                 // characters stripped in `new_value` excluding separator (',').
@@ -258,7 +263,11 @@ pub fn NumericInput(
                         _ = input_ref.set_selection_range(final_position, final_position);
                     }
                 } else {
-                    let final_position = digit_position(&new_value, numeric_to_caret);
+                    let final_position = if new_value == "0" {
+                        1
+                    } else {
+                        digit_position(&new_value, numeric_to_caret)
+                    };
                     input_ref.set_value(&new_value);
                     _ = input_ref.set_selection_range(final_position, final_position);
                 }
@@ -275,7 +284,7 @@ pub fn NumericInput(
                     .map(move |range| range.contains(&value))
                     .unwrap_or(true);
 
-                set_is_valid.set(custom_valid && is_in_range);
+                is_valid_write.set(custom_valid && is_in_range);
 
                 numeric_input_data
                     .updatable
@@ -286,45 +295,58 @@ pub fn NumericInput(
 
     let update_value = leptos::store_value(update_value);
 
+    create_effect(move |_| {
+        if let Some(parent_override) = parent_override {
+            parent_override.track();
+            if let Some(input_ref) = node_ref.get() {
+                let override_value = parent_override.get().to_string();
+                input_ref.set_value(&override_value);
+                update_value.with_value(|update_value| update_value(override_value));
+            }
+        };
+    });
+
     let key_movement = move |ev: KeyboardEvent| {
         let key_code = ev.key_code();
 
         match key_code {
-            DELETE_KEY => numeric_input_data.update_value(|numeric_input_data| {
+            DELETE_KEY => numeric_input_data_stored_value.update_value(|numeric_input_data| {
                 numeric_input_data.tracked_key = Some(TrackedKey::DeleteKey);
             }),
 
-            BACKSPACE_KEY => numeric_input_data.update_value(|numeric_input_data| {
+            BACKSPACE_KEY => numeric_input_data_stored_value.update_value(|numeric_input_data| {
                 numeric_input_data.tracked_key = Some(TrackedKey::BackspaceKey);
             }),
             _ => {
-                numeric_input_data.update_value(|numeric_input_data| {
+                numeric_input_data_stored_value.update_value(|numeric_input_data| {
                     numeric_input_data.tracked_key = Some(TrackedKey::Other(key_code))
                 });
             }
         };
 
         match key_code {
-            LEFT_KEY | RIGHT_KEY => numeric_input_data.with_value(|numeric_input_data| {
-                if let Some(modification) = numeric_input_data.modification.as_ref() {
-                    let input_ref = node_ref.get().expect("Input node");
-                    let mut selection_start = input_ref
-                        .selection_start()
-                        .unwrap_or_default()
-                        .unwrap_or_default();
+            LEFT_KEY | RIGHT_KEY => {
+                numeric_input_data_stored_value.with_value(|numeric_input_data| {
+                    if let Some(modification) = numeric_input_data.modification.as_ref() {
+                        let input_ref = node_ref.get().expect("Input node");
+                        let mut selection_start = input_ref
+                            .selection_start()
+                            .unwrap_or_default()
+                            .unwrap_or_default();
 
-                    selection_start = modification
-                        .position_in_number(input_ref.value().len(), selection_start as usize)
-                        as u32;
+                        selection_start = modification
+                            .position_in_number(input_ref.value().len(), selection_start as usize)
+                            as u32;
 
-                    if key_code == LEFT_KEY {}
-                    _ = input_ref.set_selection_range(selection_start, selection_start);
-                    ev.stop_immediate_propagation();
-                }
-            }),
+                        if key_code == LEFT_KEY {}
+                        _ = input_ref.set_selection_range(selection_start, selection_start);
+                        ev.stop_immediate_propagation();
+                    }
+                })
+            }
 
             ENTER_KEY => {
-                numeric_input_data.update_value(|numeric_input_data| {
+                numeric_input_data_stored_value.update_value(|numeric_input_data| {
                     if let Some(on_enter) = numeric_input_data.on_enter.as_mut() {
                         if let Some(input_ref) = node_ref.get() {
                             (on_enter.borrow_mut().as_mut())(input_ref.value());
@@ -334,76 +356,58 @@ pub fn NumericInput(
             }
 
             UP_KEY | DOWN_KEY => {
+                use crate::utils::numeric_text::{get_number, update_digit};
+
                 let input_ref = node_ref.get().expect("Input node");
                 let mut value = input_ref.value();
                 let selection_start = input_ref
                     .selection_start()
                     .unwrap_or_default()
                     .unwrap_or_default();
+                let shift_key = ev.shift_key();
 
-                if selection_start > 0 {
-                    let digit_index = (selection_start - 1) as usize;
-                    if let Some(c) = value.chars().nth(digit_index) {
-                        if c.is_ascii_digit() {
-                            let digit = c.to_digit(10).unwrap();
-                            let first_digit_pos = value.chars().position(|c| c.is_ascii_digit());
-
-                            // If the first digit is the digit in question we may need to protect from
-                            // rolling to 0
-                            let c_is_first_digit = first_digit_pos
-                                .map(|p| p == digit_index)
-                                .unwrap_or_default();
-
-                            // Protect when first digit is the digit in question *and* the following digit
-                            // is not a decimal point. If the following digit is a decimal point then scrolling
-                            // through 0 makes sense. If it is not then we protect against the first digit going
-                            // to 0.
-                            let protect_range = c_is_first_digit
-                                && first_digit_pos
-                                    .and_then(|fdp| value.chars().nth(fdp + 1).map(|c| c != '.'))
-                                    .unwrap_or_default();
-
-                            let new_digit = char::from_digit(
-                                match key_code {
-                                    UP_KEY => {
-                                        if digit == 9 {
-                                            if protect_range {
-                                                9
-                                            } else {
-                                                0
-                                            }
-                                        } else {
-                                            digit + 1
-                                        }
-                                    }
+                if !shift_key {
+                    let updated_number =
+                        numeric_input_data_stored_value.with_value(|numeric_input_data| {
+                            if let Some(mut number) = if let Some(modification) =
+                                numeric_input_data.modification.as_ref()
+                            {
+                                modification.get_number(&value)
+                            } else {
+                                get_number(&value)
+                            } {
+                                number += match key_code {
+                                    UP_KEY => 1.0,
                                     DOWN_KEY => {
-                                        if digit == 0 {
-                                            9
+                                        // Ensure decrement does not go negative if non_negative
+                                        if non_negative && number == 0.0 {
+                                            0.0
                                         } else {
-                                            if protect_range && digit == 1 {
-                                                1
-                                            } else {
-                                                digit - 1
-                                            }
+                                            -1.0
                                         }
                                     }
-                                    _ => panic!("Is a digit"),
-                                },
-                                10,
-                            )
-                            .unwrap();
-                            value.replace_range(
-                                value
-                                    .char_indices()
-                                    .nth(digit_index)
-                                    .map(|(pos, _ch)| (pos..pos + 1))
-                                    .unwrap(),
-                                &new_digit.to_string(),
-                            );
+                                    _ => 0.0,
+                                };
+                                Some(number.to_string())
+                            } else {
+                                None
+                            }
+                        });
 
-                            update_value.with_value(|update_value| update_value(value));
+                    if let Some(updated_number) = updated_number {
+                        if updated_number != value {
+                            // Now that we have the new value with incremented/decremented digit,
+                            // put cursor at end of number.
+                            let new_start_position = value.len() as u32;
+                            let _ = input_ref
+                                .set_selection_range(new_start_position, new_start_position);
+                            update_value.with_value(|update_value| update_value(updated_number));
                         }
                     }
+                } else if selection_start > 0 {
+                    let digit_index = (selection_start - 1) as usize;
+                    update_digit(&mut value, matches!(key_code, UP_KEY), digit_index);
+                    update_value.with_value(|update_value| update_value(value));
                 }
                 ev.prevent_default();
             }
@@ -424,14 +428,14 @@ pub fn NumericInput(
     view! {
         <input
             class=input_class
-            class:invalid=move || { !is_valid.get() }
+            class:invalid=move || { !is_valid_read.get() }
             style:text-align=move || { if align_left { "left" } else { "right" } }
             node_ref=node_ref
             on:keydown=key_movement
             on:input=move |_| {
                 if let Some(input_ref) = node_ref.get_untracked() {
                     let input_value = input_ref.value();
-                    let is_effectively_empty = numeric_input_data
+                    let is_effectively_empty = numeric_input_data_stored_value
                         .with_value(|numeric_input_data| {
                             numeric_input_data
                                 .modification
@@ -494,6 +498,57 @@ impl Modification {
         constrained
 
         // ω <fn Modification::position_in_number>
+    }
+
+    /// Gets the number from the input string.
+    /// First assume prefix and/or suffix are present and gets the number positionally.
+    /// If that fails, indicating input text has no or different prefix/suffixes,
+    /// this pulls the first string of numbers encountered. This is problematic if
+    /// prefix or suffix has numbers themselves.
+    ///
+    ///   * **input** - Input to get number from
+    ///   * _return_ - The number in between any prefix/suffix
+    #[inline]
+    pub fn get_number(&self, input: &str) -> Option<f64> {
+        // α <fn Modification::get_number>
+
+        use crate::utils::numeric_text::get_number;
+
+        let number_range = match &self {
+            Modification::Prefix(maybe_signal) => maybe_signal.with(|p| {
+                if input.starts_with(p) {
+                    p.len()..input.len()
+                } else {
+                    0..input.len()
+                }
+            }),
+            Modification::Suffix(s) => {
+                if input.ends_with(s) {
+                    0..(input.len() - s.len())
+                } else {
+                    0..input.len()
+                }
+            }
+            Modification::PrefixAndSuffix { prefix, suffix } => {
+                if input.starts_with(prefix) {
+                    if input.ends_with(suffix) {
+                        prefix.len()..input.len()
+                    } else {
+                        0..input.len()
+                    }
+                } else {
+                    if input.ends_with(suffix) {
+                        0..(input.len() - suffix.len())
+                    } else {
+                        0..input.len()
+                    }
+                }
+            }
+        };
+
+        get_number(&input[number_range])
+
+        // ω <fn Modification::get_number>
     }
 
     /// Attaches the modification (prefix/suffix) to the input
@@ -569,6 +624,32 @@ pub mod unit_tests {
             assert_eq!(3, suffix_modification.position_in_number(7, 3));
 
             // ω <fn test Modification::position_in_number>
+        }
+
+        #[test]
+        fn get_number() {
+            // α <fn test Modification::get_number>
+
+            let prefix_suffix_modification = Modification::PrefixAndSuffix {
+                prefix: "prefix:".into(),
+                suffix: ":suffix".into(),
+            };
+            assert_eq!(
+                Some(123456.0),
+                prefix_suffix_modification.get_number("prefix: 123,456.0 :suffix")
+            );
+            assert_eq!(
+                Some(123456.0),
+                prefix_suffix_modification.get_number("prefix: 123,456 :suffix")
+            );
+            assert_eq!(
+                Some(-123456.0),
+                prefix_suffix_modification.get_number("prefix:-123,456.0:suffix")
+            );
+
+            let modification = Modification::Prefix(MaybeSignal::Static("$".to_string()));
+            assert_eq!(Some(780000.0), modification.get_number("$780,000"));
+            // ω <fn test Modification::get_number>
         }
 
         #[test]

@@ -1,6 +1,11 @@
 //! Utilities for dealing with money in components.
 
 ////////////////////////////////////////////////////////////////////////////////////
+// --- module uses ---
+////////////////////////////////////////////////////////////////////////////////////
+use std::ops::Range;
+
+////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// Enumerates constraints on a number
@@ -113,11 +118,7 @@ pub fn digit_position(s: &str, mut numeric_count: u32) -> u32 {
             break;
         }
 
-        if match c {
-            '-' | '.' => true,
-            c if c.is_ascii_digit() => true,
-            _ => false,
-        } {
+        if is_ascii_numeric(c) {
             numeric_count -= 1;
         }
 
@@ -165,6 +166,170 @@ pub fn format_number_lenient(n: &str, current_caret: u32) -> LenientFormatted {
     char_state.finalize_number()
 
     // ω <fn format_number_lenient>
+}
+
+/// Returns true if digit, decimal point, or negative sign
+///
+///   * **c** - Character to check
+///   * _return_ - True if char is digit, decimal point, or negative sign
+#[inline]
+pub fn is_ascii_numeric(c: char) -> bool {
+    // α <fn is_ascii_numeric>
+
+    match c {
+        '-' | '.' => true,
+        _ => c.is_ascii_digit(),
+    }
+
+    // ω <fn is_ascii_numeric>
+}
+
+/// Given a string with a number potentially having a prefix and/or a suffix,
+/// pulls number from the string. It does this by only considering ascii digits,
+/// '.', '-', ',' and finding the _last_ stream of more than one such character.
+/// **Note** This assumes the prefix does not have digits.
+///
+///   * **input** - String to pull number from
+///   * _return_ - The number if found and parsed correctly
+#[inline]
+pub fn get_number(input: &str) -> Option<f64> {
+    // α <fn get_number>
+
+    get_number_range(input).and_then(|(has_separator, range)| {
+        if has_separator {
+            let mut s = input[range].to_string();
+            s = s.replace(",", "");
+            s.parse::<f64>().ok()
+        } else {
+            input[range].parse::<f64>().ok()
+        }
+    })
+
+    // ω <fn get_number>
+}
+
+/// Given a string with a number potentially having a prefix and/or a suffix,
+/// pulls the range associated. It does this by only considering ascii digits,
+/// '.', '-', ',' and finding the _last_ stream of more than one such character.
+/// **Note** This assumes the prefix does not have digits.
+///
+///
+///   * **input** - String to pull number from
+///   * _return_ - An indicator if commas were encountered and a *non-empty* range of
+/// numeric characters potentially including commas that are numeric
+#[inline]
+pub fn get_number_range(input: &str) -> Option<(bool, Range<usize>)> {
+    // α <fn get_number_range>
+
+    enum State {
+        FirstDigit,
+        MultipleDigits,
+        NotInNumber,
+    }
+
+    let mut state = State::NotInNumber;
+    let mut has_separator = false;
+    // Allowed characters are ascii numeric chars and comma
+    let mut first_allowed_char = None;
+    let mut last_allowed_char = None;
+
+    for (i, c) in input.char_indices() {
+        state = match c {
+            c if is_ascii_numeric(c) || c == ',' => {
+                if c == ',' {
+                    has_separator = true;
+                }
+                last_allowed_char = Some(i);
+
+                match state {
+                    State::NotInNumber => {
+                        first_allowed_char = Some(i);
+                        State::FirstDigit
+                    }
+                    State::FirstDigit => State::MultipleDigits,
+                    _ => state,
+                }
+            }
+            _ => State::NotInNumber,
+        }
+    }
+
+    first_allowed_char.and_then(|first_digit| {
+        last_allowed_char.map(|last_digit| (has_separator, first_digit..last_digit + 1))
+    })
+
+    // ω <fn get_number_range>
+}
+
+/// Either increment or decrement the digit at specified position
+///
+///   * **input** - The input number
+///   * **increment** - If true increments, else decrements
+///   * **digit_index** - Position of digit to increment/decrement
+#[inline]
+pub fn update_digit(input: &mut String, increment: bool, digit_index: usize) {
+    // α <fn update_digit>
+
+    if let Some(c) = input.chars().nth(digit_index) {
+        if c.is_ascii_digit() {
+            let digit = c.to_digit(10).unwrap();
+            let first_digit_pos = input.chars().position(|c| c.is_ascii_digit());
+
+            // If the first digit is the digit in question we may need to protect from
+            // rolling to 0
+            let c_is_first_digit = first_digit_pos
+                .map(|p| p == digit_index)
+                .unwrap_or_default();
+
+            // Protect when first digit is the digit in question *and* the following digit
+            // is not a decimal point. If the following digit is a decimal point then scrolling
+            // through 0 makes sense. If it is not then we protect against the first digit going
+            // to 0.
+            let protect_range = c_is_first_digit
+                && first_digit_pos
+                    .and_then(|fdp| input.chars().nth(fdp + 1).map(|c| c != '.'))
+                    .unwrap_or_default();
+
+            let new_digit = char::from_digit(
+                match increment {
+                    true => {
+                        if digit == 9 {
+                            if protect_range {
+                                9
+                            } else {
+                                0
+                            }
+                        } else {
+                            digit + 1
+                        }
+                    }
+                    false => {
+                        if digit == 0 {
+                            9
+                        } else {
+                            if protect_range && digit == 1 {
+                                1
+                            } else {
+                                digit - 1
+                            }
+                        }
+                    }
+                },
+                10,
+            )
+            .unwrap();
+            input.replace_range(
+                input
+                    .char_indices()
+                    .nth(digit_index)
+                    .map(|(pos, _ch)| (pos..pos + 1))
+                    .unwrap(),
+                &new_digit.to_string(),
+            );
+        }
+    }
+
+    // ω <fn update_digit>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -511,6 +676,99 @@ pub mod unit_tests {
             assert_eq!(expected, format_number_lenient(n, current_caret));
         }
         // ω <fn test_format_number_lenient>
+    }
+
+    #[test]
+    fn test_get_number() {
+        // α <fn test_get_number>
+
+        assert_eq!(None, get_number(""));
+        assert_eq!(Some(4.0), get_number("4"));
+        assert_eq!(Some(43.0), get_number("43"));
+        assert_eq!(Some(432.0), get_number("432"));
+        assert_eq!(Some(432.5), get_number("432.5"));
+        assert_eq!(Some(-432.5), get_number("-432.5"));
+
+        assert_eq!(Some(4.0), get_number("prefix: 4"));
+        assert_eq!(Some(43.0), get_number("prefix: 43"));
+        assert_eq!(Some(432.0), get_number("prefix: 432"));
+        assert_eq!(Some(432.5), get_number("prefix: 432.5"));
+        assert_eq!(Some(-432.5), get_number("prefix: -432.5"));
+
+        assert_eq!(Some(4.0), get_number("4 suffix"));
+        assert_eq!(Some(43.0), get_number("43 suffix"));
+        assert_eq!(Some(432.0), get_number("432 suffix"));
+        assert_eq!(Some(432.5), get_number("432.5 suffix"));
+        assert_eq!(Some(-432.5), get_number("-432.5 suffix"));
+
+        assert_eq!(Some(4.0), get_number("prefix: 4 suffix"));
+        assert_eq!(Some(43.0), get_number("prefix: 43 suffix"));
+        assert_eq!(Some(432.0), get_number("prefix: 432 suffix"));
+        assert_eq!(Some(432.5), get_number("prefix: 432.5 suffix"));
+        assert_eq!(Some(-432.5), get_number("prefix: -432.5 suffix"));
+        assert_eq!(Some(-432.5), get_number("1st_prefix: -432.5 suffix"));
+
+        assert_eq!(Some(4434332.0), get_number("prefix: 4,434,332 suffix"));
+        assert_eq!(Some(-4434332.0), get_number("prefix: -4,434,332 suffix"));
+
+        // ω <fn test_get_number>
+    }
+
+    #[test]
+    fn test_get_number_range() {
+        // α <fn test_get_number_range>
+
+        assert_eq!(None, get_number_range(""));
+        assert_eq!(Some((false, 0..1)), get_number_range("4"));
+        assert_eq!(Some((false, 0..2)), get_number_range("43"));
+        assert_eq!(Some((false, 0..3)), get_number_range("432"));
+        assert_eq!(Some((false, 0..5)), get_number_range("432.5"));
+        assert_eq!(Some((false, 0..6)), get_number_range("-432.5"));
+
+        assert_eq!(Some((false, 8..9)), get_number_range("prefix: 4"));
+        assert_eq!(Some((false, 8..10)), get_number_range("prefix: 43"));
+        assert_eq!(Some((false, 8..11)), get_number_range("prefix: 432"));
+        assert_eq!(Some((false, 8..13)), get_number_range("prefix: 432.5"));
+        assert_eq!(Some((false, 8..14)), get_number_range("prefix: -432.5"));
+
+        assert_eq!(Some((false, 0..1)), get_number_range("4 suffix"));
+        assert_eq!(Some((false, 0..2)), get_number_range("43 suffix"));
+        assert_eq!(Some((false, 0..3)), get_number_range("432 suffix"));
+        assert_eq!(Some((false, 0..5)), get_number_range("432.5 suffix"));
+        assert_eq!(Some((false, 0..6)), get_number_range("-432.5 suffix"));
+
+        assert_eq!(Some((false, 8..9)), get_number_range("prefix: 4 suffix"));
+        assert_eq!(Some((false, 8..10)), get_number_range("prefix: 43 suffix"));
+        assert_eq!(Some((false, 8..11)), get_number_range("prefix: 432 suffix"));
+        assert_eq!(
+            Some((false, 8..13)),
+            get_number_range("prefix: 432.5 suffix")
+        );
+        assert_eq!(
+            Some((false, 8..14)),
+            get_number_range("prefix: -432.5 suffix")
+        );
+
+        // ω <fn test_get_number_range>
+    }
+
+    #[test]
+    fn test_update_digit() {
+        // α <fn test_update_digit>
+
+        let mut s = "$1,999".to_string();
+
+        update_digit(&mut s, true, 1);
+        assert_eq!("$2,999", &s, "1 updated to 2");
+        update_digit(&mut s, false, 1);
+        assert_eq!("$1,999", &s, "2 updated to 1");
+
+        update_digit(&mut s, true, 3);
+        assert_eq!("$1,099", &s, "9 updated to 0");
+        update_digit(&mut s, false, 3);
+        assert_eq!("$1,999", &s, "0 updated to 9");
+
+        // ω <fn test_update_digit>
     }
 
     // α <mod-def unit_tests>

@@ -1,37 +1,68 @@
 //! Top module
+#![feature(variant_count)]
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- pub module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-pub use i18n_component_display::I18nAccountComponent;
-pub use i18n_component_display::I18nAccountsGrid;
-pub use i18n_component_display::I18nAgeAssumptionsComponent;
-pub use i18n_component_display::I18nBondSpecComponent;
-pub use i18n_component_display::I18nDistributionPolicyComponent;
-pub use i18n_component_display::I18nDistributionSpecComponent;
-pub use i18n_component_display::I18nDossierComponent;
-pub use i18n_component_display::I18nFlowSpecComponent;
-pub use i18n_component_display::I18nFlowSpecsGrid;
-pub use i18n_component_display::I18nHoldingComponent;
-pub use i18n_component_display::I18nHoldingsGrid;
-pub use i18n_component_display::I18nOkCancelComponent;
-pub use i18n_component_display::I18nPersonComponent;
-pub use i18n_component_display::I18nPersonsGrid;
-pub use i18n_component_display::I18nTaxDeterminantsComponent;
-pub use i18n_component_display::I18nWorthComponent;
-pub use i18n_component_display::I18nWorthsGrid;
-pub use i18n_enum_display::I18nEnums;
+pub use self::currency_exchange::CurrencyExchange;
+pub use self::currency_exchange::WEB_CURRENCY_EXCHANGE;
+pub use self::currency_value::CurrencyValue;
+pub use self::i18n_component_display::I18nAccountComponent;
+pub use self::i18n_component_display::I18nAccountsGrid;
+pub use self::i18n_component_display::I18nAgeAssumptionsComponent;
+pub use self::i18n_component_display::I18nAssetLiabilityTimeline;
+pub use self::i18n_component_display::I18nBalanceSheetStatement;
+pub use self::i18n_component_display::I18nBondSpecComponent;
+pub use self::i18n_component_display::I18nCashFlowStatement;
+pub use self::i18n_component_display::I18nCashFlowTimeline;
+pub use self::i18n_component_display::I18nDistributionPolicyComponent;
+pub use self::i18n_component_display::I18nDistributionSpecComponent;
+pub use self::i18n_component_display::I18nDossierEditor;
+pub use self::i18n_component_display::I18nDossierResolvedView;
+pub use self::i18n_component_display::I18nFlowSpecComponent;
+pub use self::i18n_component_display::I18nFlowSpecsGrid;
+pub use self::i18n_component_display::I18nForecastConfigComponent;
+pub use self::i18n_component_display::I18nForecastIdSelector;
+pub use self::i18n_component_display::I18nForecastSummaryComponent;
+pub use self::i18n_component_display::I18nForecasterComponent;
+pub use self::i18n_component_display::I18nGrowingFlowSpecComponent;
+pub use self::i18n_component_display::I18nGrowthAssumptionComponent;
+pub use self::i18n_component_display::I18nHistoricRiskReturnComponent;
+pub use self::i18n_component_display::I18nHoldingComponent;
+pub use self::i18n_component_display::I18nHoldingsGrid;
+pub use self::i18n_component_display::I18nInvestmentPlanView;
+pub use self::i18n_component_display::I18nItemGrowthComponent;
+pub use self::i18n_component_display::I18nMatrixResolvedView;
+pub use self::i18n_component_display::I18nMonteConfigComponent;
+pub use self::i18n_component_display::I18nMonteSimulationSummaryComponent;
+pub use self::i18n_component_display::I18nMonteSimulatorComponent;
+pub use self::i18n_component_display::I18nNormalSpecComponent;
+pub use self::i18n_component_display::I18nOkCancelComponent;
+pub use self::i18n_component_display::I18nPersonComponent;
+pub use self::i18n_component_display::I18nPersonsGrid;
+pub use self::i18n_component_display::I18nSalesPlanView;
+pub use self::i18n_component_display::I18nTaxDeterminantsComponent;
+pub use self::i18n_component_display::I18nTimelineGroupComponent;
+pub use self::i18n_component_display::I18nUsTaxStatementView;
+pub use self::i18n_component_display::I18nWorthComponent;
+pub use self::i18n_component_display::I18nWorthsGrid;
+pub use self::i18n_component_display::I18nYearCurrencyValueInput;
+pub use self::i18n_component_display::I18nYearRangeInput;
+pub use self::i18n_component_display::I18nYearValueSeriesComponent;
+pub use self::i18n_enum_display::CommonStrings;
+pub use self::i18n_enum_display::I18nEnums;
+pub use self::system_defaults::SystemDefaults;
 pub use plus_modeled::LangSelector;
 pub use plus_utils::SystemUnicodes;
-pub use system_lookup::SystemLookup;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
-pub mod generated_system_lookup;
+pub mod currency_exchange;
+pub mod currency_value;
 pub mod i18n_component_display;
 pub mod i18n_enum_display;
-pub mod system_lookup;
+pub mod system_defaults;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -55,8 +86,6 @@ pub(crate) fn lang_selector_to_language_id<'a>(
 
 // α <mod-def lib>
 use fluent_templates::static_loader;
-pub use generated_system_lookup::GENERATED_SYSTEM_LOOKUP;
-pub use plus_modeled::FLOW_DIRECTIONS_MAP;
 use unic_langid::{langid, LanguageIdentifier};
 
 pub(crate) static US_ENGLISH: LanguageIdentifier = langid!("en-US");

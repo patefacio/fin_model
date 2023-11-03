@@ -5,8 +5,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::IntegerClamp;
 use crate::Updatable;
+use leptos::IntoAttribute;
 use leptos::{component, view, IntoView};
-use leptos::{create_node_ref, MaybeSignal, ReadSignal};
+use leptos::{MaybeSignal, ReadSignal};
 use leptos_dom::html::Input;
 #[allow(unused_imports)]
 use leptos_dom::log;
@@ -62,20 +63,25 @@ pub fn YearInput(
     #[prop(default = false)]
     align_left: bool,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-yi";
+    crate::log_component!("`YearInput`");
     // α <fn year_input>
 
+    use crate::utils::constants::{DOWN_KEY, UP_KEY};
+    use crate::CssClasses;
     use crate::ParsedNum;
     use leptos::create_effect;
+    use leptos::create_rw_signal;
     use leptos::create_signal;
-    use leptos::IntoAttribute;
     use leptos::SignalGet;
     use leptos::*;
+    use web_sys::KeyboardEvent;
 
     // Determine if year is in the provided range
     let year_is_valid = move |year| year >= year_range.start && year <= year_range.end;
 
     // Track whether year is valid to give hint to user - reactive to update class
-    let (is_in_range, set_is_in_range) = create_signal(
+    let (is_in_range_read, is_in_range_write) = create_signal(
         updatable
             .value
             .map(|year| year_is_valid(year))
@@ -116,7 +122,7 @@ pub fn YearInput(
         }
     });
 
-    let mut update_value = move || {
+    let update_value = move || {
         // First get the HtmlElement<Input>, think of it as a handle that provides
         // access to the input element in the DOM that holds our number.
         let input_ref = node_ref.get().expect("Year input node");
@@ -144,29 +150,53 @@ pub fn YearInput(
                 .map(|year_clamp| year_clamp.clamp(&value))
                 .unwrap_or_else(|| ParsedNum::from_str(&value));
             updatable.update_and_then_signal(|year| *year = Some(clamped.as_u32));
-            set_is_in_range.set(year_is_valid(clamped.as_u32));
+            is_in_range_write.set(year_is_valid(clamped.as_u32));
             input_ref.set_value(&clamped.as_string);
         }
     };
 
-    view! {
-        <input
-            node_ref=node_ref
-            class="year-input"
-            class=input_class
-            class:invalid=move || { !is_in_range.get() }
-            on:input=move |_| update_value()
-            value=initial_value
-            size=5
-            maxlength=4
-            style:text-align=move || { if align_left { "left" } else { "right" } }
-            placeholder=placeholder.to_string()
-            type="text"
-            disabled=disabled
-        />
-    }
+    let update_value = create_rw_signal(update_value);
+
+    let key_down = move |ev: KeyboardEvent| {
+        let key_code = ev.key_code();
+        match key_code {
+            UP_KEY | DOWN_KEY => {
+                let input_ref = node_ref.get().expect("Input node");
+                let mut value = input_ref.value();
+                if let Ok(year) = value.parse::<i32>() {
+                    value = (year + if key_code == UP_KEY { 1 } else { -1 }).to_string();
+                    input_ref.set_value(&value);
+                    update_value.update(|update_value| update_value());
+                    ev.prevent_default();
+                }
+            }
+            _ => {}
+        }
+    };
 
     // ω <fn year_input>
+    view! {
+        <div class=SELF_CLASS>
+            // α <plus-yi-view>
+
+            <input
+                node_ref=node_ref
+                class=CssClasses::YiInput.to_string()
+                class=input_class
+                class:invalid=move || { !is_in_range_read.get() }
+                on:input=move |_| update_value.update(|update_value| update_value())
+                on:keydown=key_down
+                value=initial_value
+                size=5
+                maxlength=4
+                style:text-align=move || { if align_left { "left" } else { "right" } }
+                placeholder=placeholder.to_string()
+                type="text"
+                disabled=disabled
+            />
+        // ω <plus-yi-view>
+        </div>
+    }
 }
 
 // α <mod-def year_input>

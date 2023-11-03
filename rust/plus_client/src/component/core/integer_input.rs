@@ -30,6 +30,7 @@ use std::ops::RangeInclusive;
 ///   * **align_left** - If set, numeric text aligned to left.
 ///   * **disabled** - Signal allowing the disabling of the input.
 ///   * **validator** - Called on update to check if value is valid.
+///   * **parent_override** - A way for parent to control the value in the input.
 ///   * _return_ - View for integer_input
 #[component]
 pub fn IntegerInput(
@@ -69,7 +70,11 @@ pub fn IntegerInput(
     /// Called on update to check if value is valid.
     #[prop(default=None)]
     validator: Option<Box<dyn FnMut(i32) -> bool>>,
+    /// A way for parent to control the value in the input.
+    #[prop(default=None)]
+    parent_override: Option<ReadSignal<f64>>,
 ) -> impl IntoView {
+    crate::log_component!("`IntegerInput`");
     // α <fn integer_input>
 
     let float_value = updatable.value.map(|value| value as f64);
@@ -103,6 +108,7 @@ pub fn IntegerInput(
             align_left=align_left
             validator=casting_validator
             disabled=disabled
+            parent_override=parent_override
         />
     }
 

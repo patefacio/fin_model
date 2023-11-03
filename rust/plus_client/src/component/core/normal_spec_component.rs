@@ -3,13 +3,17 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use crate::Modification;
 use crate::NumericInput;
 use crate::Updatable;
-use leptos::Show;
+use leptos::use_context;
+use leptos::IntoAttribute;
+use leptos::SignalGet;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
+use plus_lookup::I18nNormalSpecComponent;
 use plus_modeled::core::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -28,10 +32,18 @@ pub fn NormalSpecComponent(
     #[prop(default = false)]
     non_negative_mean: bool,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-nsc";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_mean_placeholder =
+        move || I18nNormalSpecComponent::MeanPlaceholder(lang_selector.get()).to_string();
+    let i18n_std_dev_placeholder =
+        move || I18nNormalSpecComponent::StdDevPlaceholder(lang_selector.get()).to_string();
+    crate::log_component!("`NormalSpecComponent`");
     // α <fn normal_spec_component>
 
     use crate::scale_by;
     use crate::CollapsibleComponent;
+    use crate::CssClasses;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
     use crate::HistoricRiskReturnComponent;
@@ -67,14 +79,14 @@ pub fn NormalSpecComponent(
     let (spec_signal, set_spec_signal) =
         create_signal(updatable.value.as_ref().map(|ns| *ns).unwrap_or_default());
 
-    let normal_bits_store_value = store_value(NormalBits {
+    let normal_bits_stored_value = store_value(NormalBits {
         mean: initial_mean,
         std_dev: initial_std_dev,
         updatable,
     });
 
     let signal_update = move || {
-        normal_bits_store_value.update_value(|normal_bits| {
+        normal_bits_stored_value.update_value(|normal_bits| {
             if let (Some(mean), Some(std_dev)) = (normal_bits.mean, normal_bits.std_dev) {
                 let normal_spec = NormalSpec {
                     mean: scale_by(mean, -2),
@@ -90,14 +102,14 @@ pub fn NormalSpecComponent(
     };
 
     let mean_updatable = Updatable::new(initial_mean, move |mean| {
-        normal_bits_store_value.update_value(|normal_bits| {
+        normal_bits_stored_value.update_value(|normal_bits| {
             normal_bits.mean = *mean;
         });
         signal_update();
     });
 
     let std_dev_updatable = Updatable::new(initial_std_dev, move |std_dev| {
-        normal_bits_store_value.update_value(|normal_bits| {
+        normal_bits_stored_value.update_value(|normal_bits| {
             normal_bits.std_dev = *std_dev;
             if normal_bits.std_dev.unwrap_or_default() == 0.0 {
                 normal_bits.std_dev = None
@@ -106,34 +118,37 @@ pub fn NormalSpecComponent(
         signal_update();
     });
 
-    let (enable_graphs, set_disable_graphs) = create_signal(GraphDisplay::Historic);
+    let (graph_display_read, graph_display_write) = create_signal(GraphDisplay::Historic);
 
     let show_pdf = move |_| {
-        set_disable_graphs.update(|v| {
+        graph_display_write.update(|v| {
             *v = GraphDisplay::Pdf;
         })
     };
     let show_cdf = move |_| {
-        set_disable_graphs.update(|v| {
+        graph_display_write.update(|v| {
             *v = GraphDisplay::Cdf;
         })
     };
     let show_hist = move |_| {
-        set_disable_graphs.update(|v| {
+        graph_display_write.update(|v| {
             *v = GraphDisplay::Historic;
         })
     };
 
     const INPUT_SIZE: u32 = 7;
 
+    // ω <fn normal_spec_component>
     view! {
-        <div class="ns">
-            <fieldset class="nsg">
+        <div class=SELF_CLASS>
+            // α <plus-nsc-view>
+
+            <fieldset class=CssClasses::NscFieldset.to_string()>
                 <div style="display: flex;">
                     <div style="display: inline;">
                         <span>"N("</span>
                         <NumericInput
-                            placeholder="mean"
+                            placeholder=i18n_mean_placeholder()
                             modification=Some(Modification::PrefixAndSuffix {
                                 prefix: "μ=".into(),
                                 suffix: "%".into(),
@@ -146,7 +161,7 @@ pub fn NormalSpecComponent(
                         />
                         <span>", "</span>
                         <NumericInput
-                            placeholder="std. dev"
+                            placeholder=i18n_std_dev_placeholder()
                             modification=Some(Modification::PrefixAndSuffix {
                                 prefix: "σ=".into(),
                                 suffix: "%".into(),
@@ -158,7 +173,7 @@ pub fn NormalSpecComponent(
                             max_len=INPUT_SIZE
                         />
                         <span>")"</span>
-                        <div class="explore-normal">
+                        <div class=CssClasses::NscExplore.to_string()>
                             <CollapsibleComponent
                                 collapsed_header="Explore Normal Detail".to_string()
                                 expanded_header=Some("Hide Normal Detail".to_string())
@@ -210,7 +225,8 @@ pub fn NormalSpecComponent(
                                 <div style="margin-top: 10px">
                                     <Show
                                         when=move || {
-                                            enable_graphs.with(|v| matches!(v, GraphDisplay::Historic))
+                                            graph_display_read
+                                                .with(|v| matches!(v, GraphDisplay::Historic))
                                         }
 
                                         fallback=|| ()
@@ -221,7 +237,7 @@ pub fn NormalSpecComponent(
                                     </Show>
                                     <Show
                                         when=move || {
-                                            enable_graphs.with(|v| matches!(v, GraphDisplay::Pdf))
+                                            graph_display_read.with(|v| matches!(v, GraphDisplay::Pdf))
                                         }
 
                                         fallback=|| ()
@@ -232,7 +248,7 @@ pub fn NormalSpecComponent(
                                     </Show>
                                     <Show
                                         when=move || {
-                                            enable_graphs.with(|v| matches!(v, GraphDisplay::Cdf))
+                                            graph_display_read.with(|v| matches!(v, GraphDisplay::Cdf))
                                         }
 
                                         fallback=|| ()
@@ -249,10 +265,10 @@ pub fn NormalSpecComponent(
 
                 </div>
             </fieldset>
+
+        // ω <plus-nsc-view>
         </div>
     }
-
-    // ω <fn normal_spec_component>
 }
 
 // α <mod-def normal_spec_component>

@@ -135,10 +135,7 @@ impl LiveParsedDate {
         }
         self.position = position;
 
-        input_date
-            .chars()
-            .enumerate()
-            .for_each(|(index, c)| self.put_char(c, index as u32));
+        input_date.chars().for_each(|c| self.put_char(c));
 
         if self.position == 2 {
             // If the position is at the first '/' then move beyond it
@@ -198,8 +195,7 @@ impl LiveParsedDate {
     /// Put the input character int its proper place and update the state
     ///
     ///   * **c** - The next character
-    ///   * **index** - Index of character being processed
-    fn put_char(&mut self, c: char, index: u32) {
+    fn put_char(&mut self, c: char) {
         // α <fn LiveParsedDate::put_char>
 
         self.parsed_state = match c {

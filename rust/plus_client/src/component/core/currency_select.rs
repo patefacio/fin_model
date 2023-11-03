@@ -21,6 +21,7 @@ pub fn CurrencySelect(
     /// Currency update callback
     updatable: Updatable<Currency>,
 ) -> impl IntoView {
+    crate::log_component!("`CurrencySelect`");
     // α <fn currency_select>
 
     use crate::{InitialValue, MultiColumnSelect, SelectOption};

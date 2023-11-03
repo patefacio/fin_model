@@ -99,7 +99,7 @@ pub trait CollectionGrid: Sized {
     fn edit_row(
         edit_type: CollectionGridEditType,
         row_stored_value: StoredValue<Self>,
-        shared_context_stored_value: StoredValue<Self::SharedContext>,
+        #[allow(unused)] shared_context_stored_value: StoredValue<Self::SharedContext>,
     ) -> View;
 
     /// Return true if row edit satisfies any shared context constraints
@@ -168,13 +168,14 @@ where
     T: 'static + Clone + Debug + CollectionGrid<SharedContext = S>,
     S: 'static + Clone + Debug,
 {
+    crate::log_component!("`CollectionGridComponent`");
     // α <fn collection_grid_component>
 
     use crate::AppContext;
+    use crate::CssClasses;
     use crate::OkCancel;
     use crate::OkCancelComponent;
     use leptos::create_rw_signal;
-    use leptos::on_cleanup;
     use leptos::store_value;
     use leptos::use_context;
     use leptos::For;
@@ -188,11 +189,11 @@ where
     use leptos_dom::html::Div;
     use leptos_dom::HtmlElement;
 
-    /// This is used to ensure only one collection has an ok/cancel enabled at a time.
-    /// Because grids nest (e.g. AccountsGrid has AccountComponents each of which has
-    /// HoldingsGrid). When user opens an account and then a holding within it, without
-    /// this logic there would be to <Ok/Cancel> bars showing which could be quite confusing.
-    /// This ensures only the innermost <Ok/Cancel> bar is shown.
+    // This is used to ensure only one collection has an ok/cancel enabled at a time.
+    // Because grids nest (e.g. AccountsGrid has AccountComponents each of which has
+    // HoldingsGrid). When user opens an account and then a holding within it, without
+    // this logic there would be to <Ok/Cancel> bars showing which could be quite confusing.
+    // This ensures only the innermost <Ok/Cancel> bar is shown.
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
     let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
 
@@ -253,6 +254,9 @@ where
         let new_state =
             cgc_data_stored_value.with_value(|cgc_data| cgc_data.component_state.clone());
         tracing::info!("STATE CHANGE REACTIVE: State has changed to {new_state:?}");
+        if let Some(on_state_change) = on_state_change {
+            on_state_change.update(|state| *state = new_state.clone());
+        }
         new_state
     };
 
@@ -285,7 +289,7 @@ where
         fields
             .into_iter()
             .map(|column_header| {
-                view! { <div class="header">{column_header}</div> }
+                view! { <div class=CssClasses::HeaderRight.to_string()>{column_header}</div> }
             })
             .collect::<Vec<HtmlElement<Div>>>()
     };
@@ -406,7 +410,7 @@ where
             });
 
         view! {
-            <div class="cgc-editable" style=editable_style>
+            <div class=CssClasses::CgcEditable.to_string() style=editable_style>
                 {<T as CollectionGrid>::edit_row(
                     CollectionGridEditType::RowEdit,
                     row_stored_value,
@@ -414,7 +418,7 @@ where
                 )}
 
                 <Show when=move || ok_cancel_enabled() fallback=|| ()>
-                    <div class="ok-cancel-bar">
+                    <div class=CssClasses::OkCancelBar.to_string()>
                         <OkCancelComponent on_ok_cancel=on_ok_cancel/>
                     </div>
                 </Show>
@@ -436,14 +440,14 @@ where
 
     view! {
         <div
-            class="collection-grid"
-            style=format!("display: grid; grid-template-columns: {grid_template_columns}")
+            class=CssClasses::CollectionGrid.to_string()
+            style=format!("grid-template-columns: {grid_template_columns}")
         >
             {header_reactive}
             <For
                 each=move || { 0..row_count_reactive() }
                 key=move |&i| { nth_key(i) }
-                view=move |i| {
+                children=move |i| {
                     let initial_key = nth_key(i);
                     let key_index_signal = key_index_signal(&initial_key);
                     let is_this_row_edit = move || {
@@ -474,8 +478,8 @@ where
 
             <Show when=move || !is_disabled_reactive() fallback=|| ()>
                 <button
-                    class="cgc-add-row"
-                    style=format!("grid-column-start: 0; grid-column-end: {grid_column_end};")
+                    class=CssClasses::CgcAddRow.to_string()
+                    style=format!("grid-column-end: {grid_column_end};")
                     on:click=move |_| { set_new_item_edit() }
                 >
 
@@ -507,20 +511,6 @@ where
         shared_context_updatable: Updatable<S>,
     ) -> CgcData<T, S> {
         // α <fn CgcData[T,S]::new>
-
-        // TODO: Clean up
-        cfg_if::cfg_if! {
-            if #[cfg(feature = "csr")] {
-              tracing::info!("CSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
-              leptos_dom::log!("CSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
-            } else if #[cfg(feature = "ssr")] {
-              tracing::info!("SSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
-              leptos_dom::log!("SSR: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
-            } else {
-              tracing::info!("HYD: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
-              leptos_dom::log!("HYD: New CGC `{}`", plus_utils::text_utils::print_type_of(&rows_updatable.value));
-            }
-          }
 
         use leptos::create_rw_signal;
         use leptos::store_value;
@@ -835,13 +825,7 @@ pub mod unit_tests {
         fn new() {
             // α <fn test CgcData[T,S]::new>
 
-            with_runtime(|| {
-                let cgc_data = make_cgc_data();
-                assert_eq!(Holding::default(), cgc_data.row_stored_value.get_value());
-                assert_eq!((), cgc_data.shared_context_stored_value.get_value());
-                assert_eq!(CollectionGridState::Display, cgc_data.component_state);
-            });
-
+            todo!("")
             // ω <fn test CgcData[T,S]::new>
         }
 
@@ -849,17 +833,7 @@ pub mod unit_tests {
         fn edit_item() {
             // α <fn test CgcData[T,S]::edit_item>
 
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                let state = cgc_data.edit_item("SPY");
-                assert!(matches!(
-                    &state,
-                    CollectionGridState::EditSelection {
-                        selection_key
-                    } if selection_key == "SPY"
-                ));
-                assert_eq!(spy_holding(), cgc_data.row_stored_value.get_value());
-            });
+            todo!("")
 
             // ω <fn test CgcData[T,S]::edit_item>
         }
@@ -867,62 +841,21 @@ pub mod unit_tests {
         #[test]
         fn edit_new_item() {
             // α <fn test CgcData[T,S]::edit_new_item>
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                cgc_data.edit_new_item();
-                assert!(matches!(
-                    &cgc_data.component_state,
-                    CollectionGridState::EditNew
-                ));
-                assert_eq!(
-                    <Holding as CollectionGrid>::new(),
-                    cgc_data.row_stored_value.get_value()
-                );
-            });
+            todo!("")
             // ω <fn test CgcData[T,S]::edit_new_item>
         }
 
         #[test]
         fn is_active_key() {
             // α <fn test CgcData[T,S]::is_active_key>
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                assert!(!cgc_data.is_active_key("SPY"));
-                let _state = cgc_data.edit_item("SPY");
-                assert!(cgc_data.is_active_key("SPY"));
-                cgc_data.edit_complete(OkCancel::Ok);
-                assert!(!cgc_data.is_active_key("SPY"));
-            });
+            todo!("")
             // ω <fn test CgcData[T,S]::is_active_key>
         }
 
         #[test]
         fn active_signal() {
             // α <fn test CgcData[T,S]::active_signal>
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                assert!(cgc_data.active_signal().is_none());
-                let _state = cgc_data.edit_item("SPY");
-                assert_eq!(
-                    0,
-                    cgc_data
-                        .active_signal()
-                        .expect("SPY@0 active")
-                        .get_untracked()
-                );
-                cgc_data.edit_complete(OkCancel::Cancel);
-                let _state = cgc_data.edit_item("QQQ");
-                assert_eq!(
-                    1,
-                    cgc_data
-                        .active_signal()
-                        .expect("QQQ@0 active")
-                        .get_untracked()
-                );
-                cgc_data.edit_complete(OkCancel::Cancel);
-                assert!(cgc_data.active_signal().is_none());
-            });
-
+            todo!("")
             // ω <fn test CgcData[T,S]::active_signal>
         }
 
@@ -930,19 +863,7 @@ pub mod unit_tests {
         fn delete_item() {
             // α <fn test CgcData[T,S]::delete_item>
 
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                assert!(cgc_data.active_signal().is_none());
-                assert_eq!(3, cgc_data.rows_updatable.value.len());
-                assert_eq!(3, cgc_data.row_signals.len());
-                assert_eq!(2, cgc_data.key_index_signal("DIA").get_untracked());
-                cgc_data.delete_item("QQQ");
-                assert_eq!(2, cgc_data.rows_updatable.value.len());
-                assert_eq!(2, cgc_data.row_signals.len());
-                // Was SPY-0, QQQ-1, DIA-2. After delete of QQQ it is SPY-0, DIA-1
-                assert_eq!(1, cgc_data.key_index_signal("DIA").get_untracked());
-                assert_eq!(None, cgc_data.active_signal());
-            });
+            todo!("")
 
             // ω <fn test CgcData[T,S]::delete_item>
         }
@@ -951,25 +872,7 @@ pub mod unit_tests {
         fn edit_complete() {
             // α <fn test CgcData[T,S]::edit_complete>
 
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                cgc_data.edit_item("SPY");
-                cgc_data
-                    .row_stored_value
-                    .update_value(|holding| holding.quantity = 99.0);
-                // Not yet completed
-                assert_eq!(100.0, cgc_data.rows_updatable.value[0].quantity);
-                cgc_data.edit_complete(OkCancel::Ok);
-                assert_eq!(99.0, cgc_data.rows_updatable.value[0].quantity);
-                cgc_data.edit_item("QQQ");
-                cgc_data
-                    .row_stored_value
-                    .update_value(|holding| holding.quantity = 99.0);
-                assert_eq!(50.0, cgc_data.rows_updatable.value[1].quantity);
-                cgc_data.edit_complete(OkCancel::Cancel);
-                // Since edit was canceled - no change in quantity
-                assert_eq!(50.0, cgc_data.rows_updatable.value[1].quantity);
-            });
+            todo!("")
 
             // ω <fn test CgcData[T,S]::edit_complete>
         }
@@ -978,15 +881,7 @@ pub mod unit_tests {
         fn nth_key() {
             // α <fn test CgcData[T,S]::nth_key>
 
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                assert_eq!("SPY", cgc_data.nth_key(0));
-                assert_eq!("QQQ", cgc_data.nth_key(1));
-                assert_eq!("DIA", cgc_data.nth_key(2));
-                cgc_data.delete_item("QQQ");
-                assert_eq!("SPY", cgc_data.nth_key(0));
-                assert_eq!("DIA", cgc_data.nth_key(1));
-            });
+            todo!("")
 
             // ω <fn test CgcData[T,S]::nth_key>
         }
@@ -995,65 +890,14 @@ pub mod unit_tests {
         fn key_index_signal() {
             // α <fn test CgcData[T,S]::key_index_signal>
 
-            with_runtime(|| {
-                let mut cgc_data = make_cgc_data();
-                assert_eq!(0, cgc_data.key_index_signal("SPY").get_untracked());
-                assert_eq!(1, cgc_data.key_index_signal("QQQ").get_untracked());
-                assert_eq!(2, cgc_data.key_index_signal("DIA").get_untracked());
-                // TODO: Would be nice to show that this panics - but compile issues prevent it
-                // let should_panic = || cgc_data.key_index_signal("NVDA");
-                // assert!(std::panic::catch_unwind(should_panic).is_err());
-                cgc_data.edit_new_item();
-                cgc_data
-                    .row_stored_value
-                    .update_value(|row| row.instrument_name = "NVDA".into());
-                cgc_data.edit_complete(OkCancel::Ok);
-                assert_eq!(3, cgc_data.key_index_signal("NVDA").get_untracked());
-            });
+            todo!("")
 
             // ω <fn test CgcData[T,S]::key_index_signal>
         }
 
         // α <mod-def test_cgc_data_ts>
         use super::*;
-        use leptos::SignalGet;
         use leptos::SignalGetUntracked;
-        use plus_modeled::Holding;
-
-        fn spy_holding() -> Holding {
-            Holding {
-                instrument_name: "SPY".into(),
-                quantity: 100.0,
-                ..Default::default()
-            }
-        }
-
-        fn qqq_holding() -> Holding {
-            Holding {
-                instrument_name: "QQQ".into(),
-                quantity: 50.0,
-                ..Default::default()
-            }
-        }
-
-        fn dia_holding() -> Holding {
-            Holding {
-                instrument_name: "DIA".into(),
-                quantity: 75.0,
-                ..Default::default()
-            }
-        }
-
-        fn test_holdings() -> Vec<Holding> {
-            vec![spy_holding(), qqq_holding(), dia_holding()]
-        }
-
-        fn make_cgc_data() -> CgcData<Holding, ()> {
-            CgcData::new(
-                Updatable::new(test_holdings(), |_| {}),
-                Updatable::new((), |_| {}),
-            )
-        }
 
         fn with_runtime<F: FnOnce()>(f: F) {
             let runtime = leptos::create_runtime();

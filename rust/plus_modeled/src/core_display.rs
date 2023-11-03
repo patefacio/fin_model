@@ -17,8 +17,8 @@ use crate::YearCurrencyValue;
 use crate::YearRange;
 use crate::YearValue;
 use crate::YearValueSeries;
-use core::fmt::Display;
-use core::fmt::Formatter;
+use ::core::fmt::Display;
+use ::core::fmt::Formatter;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
@@ -28,7 +28,7 @@ impl Display for Date {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for Date>
         write!(f, "{:0>2}/{:0>2}/{}", self.month, self.day, self.year)
         // ω <fn Display::fmt for Date>
@@ -40,7 +40,7 @@ impl Display for YearValue {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for YearValue>
         use num_format::{Locale, ToFormattedString};
 
@@ -60,9 +60,10 @@ impl Display for CurrencyValue {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for CurrencyValue>
 
+        use crate::Currency;
         use num_format::{Locale, ToFormattedString};
 
         let unsigned = format!(
@@ -94,7 +95,7 @@ impl Display for YearCurrencyValue {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for YearCurrencyValue>
 
         write!(
@@ -116,7 +117,7 @@ impl Display for YearRange {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for YearRange>
         write!(f, "({}->{})", self.start, self.end)
         // ω <fn Display::fmt for YearRange>
@@ -128,7 +129,7 @@ impl Display for NormalSpec {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for NormalSpec>
         use crate::SystemUnicodes;
         use plus_utils::scale_by;
@@ -153,7 +154,7 @@ impl Display for RateCurve {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for RateCurve>
         write!(f, "RateCurve({} entries)", self.curve.len())
         // ω <fn Display::fmt for RateCurve>
@@ -165,7 +166,7 @@ impl Display for YearValueSeries {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for YearValueSeries>
         write!(
             f,
@@ -189,7 +190,7 @@ impl Display for DbId {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for DbId>
         write!(f, "DbId({})", self.id)
         // ω <fn Display::fmt for DbId>
@@ -201,7 +202,7 @@ impl Display for DossierHoldingIndex {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for DossierHoldingIndex>
         use crate::SystemUnicodes;
         write!(
@@ -221,7 +222,7 @@ impl Display for DossierItemIndex {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for DossierItemIndex>
         use crate::core::dossier_item_index::ItemIndex;
         use crate::SystemUnicodes;
@@ -250,7 +251,7 @@ impl Display for DossierCorrelationEntry {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for DossierCorrelationEntry>
         write!(
             f,
@@ -272,7 +273,7 @@ impl Display for DossierCorrelationMatrix {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for DossierCorrelationMatrix>
         write!(f, "DCM({} mappings)", self.mappings.len())
         // ω <fn Display::fmt for DossierCorrelationMatrix>
@@ -284,7 +285,7 @@ impl Display for PeriodBalance {
     ///
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
         // α <fn Display::fmt for PeriodBalance>
         use plus_utils::commify_float;
         write!(
@@ -298,75 +299,5 @@ impl Display for PeriodBalance {
 }
 
 // α <mod-def core_display>
-
-use crate::Currency;
-
-impl Currency {
-    #[inline]
-    pub fn to_currency_symbol(&self) -> &'static str {
-        match self {
-            Currency::Usd => "$",
-            Currency::Eur => "€",
-            Currency::Jpy => "¥",
-            Currency::Gbp => "£",
-            Currency::Aud => "A$",
-            Currency::Cad => "C$",
-            Currency::Chf => "CHF",
-            Currency::Cny => "CN¥",
-            Currency::Hkd => "HK$",
-            Currency::Nzd => "NZ$",
-            Currency::Crc => "₡",
-            Currency::Rub => "₽",
-            Currency::Krw => "₩",
-            Currency::Sek => "kr",
-        }
-    }
-
-    #[inline]
-    pub fn from_currency_symbol(currency_symbol: &str) -> Option<Currency> {
-        match currency_symbol {
-            "$" => Some(Currency::Usd),
-            "€" => Some(Currency::Eur),
-            "¥" => Some(Currency::Jpy),
-            "£" => Some(Currency::Gbp),
-            "A$" => Some(Currency::Aud),
-            "C$" => Some(Currency::Cad),
-            "CHF" => Some(Currency::Chf),
-            "CN¥" => Some(Currency::Cny),
-            "HK$" => Some(Currency::Hkd),
-            "NZ$" => Some(Currency::Nzd),
-            "₡" => Some(Currency::Crc),
-            "₽" => Some(Currency::Rub),
-            "₩" => Some(Currency::Krw),
-            "kr" => Some(Currency::Sek),
-            _ => None,
-        }
-    }
-
-    #[inline]
-    fn as_money(&self, value: f64) -> String {
-        // α <fn CurrencyFunctions::as_money for Currency>
-        use num_format::{Locale, ToFormattedString};
-
-        if value < -10.0 {
-            format!(
-                "{}({})",
-                self.to_currency_symbol(),
-                (-(value.round()) as i64).to_formatted_string(&Locale::en)
-            )
-        } else if value < 0.0 {
-            format!("{}({:.2})", self.to_currency_symbol(), -value)
-        } else if value < 10.0 {
-            format!("{}{:.2}", self.to_currency_symbol(), value)
-        } else {
-            format!(
-                "{}{}",
-                self.to_currency_symbol(),
-                (value.round() as i64).to_formatted_string(&Locale::en)
-            )
-        }
-        // ω <fn CurrencyFunctions::as_money for Currency>
-    }
-}
 
 // ω <mod-def core_display>

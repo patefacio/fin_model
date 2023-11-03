@@ -4,7 +4,10 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use leptos::RwSignal;
+use plus_lookup::CurrencyExchange;
+use plus_modeled::Currency;
 use plus_modeled::LangSelector;
+use std::sync::Arc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
@@ -17,9 +20,40 @@ use plus_modeled::LangSelector;
 pub struct AppContext {
     /// Selector of language for display
     pub lang_selector: RwSignal<LangSelector>,
+    /// Selector of the display currency
+    pub display_currency: RwSignal<Currency>,
     /// Number of active nested grid component edits.
     /// When more than 1 level only the inner-most `ok/cancel` is displayed.
     pub grid_edit_active_count: RwSignal<u32>,
+    /// Provides ability to convert values between currencies
+    pub currency_exchange: RwSignal<Arc<CurrencyExchange>>,
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// --- type impls ---
+////////////////////////////////////////////////////////////////////////////////////
+impl AppContext {
+    /// Create new instance of AppContext
+    ///
+    ///   * **lang_selector** - Selector of language for display
+    ///   * **display_currency** - Selector of the display currency
+    ///   * **grid_edit_active_count** - Number of active nested grid component edits.
+    /// When more than 1 level only the inner-most `ok/cancel` is displayed.
+    ///   * **currency_exchange** - Provides ability to convert values between currencies
+    ///   * _return_ - The new instance
+    pub fn new(
+        lang_selector: RwSignal<LangSelector>,
+        display_currency: RwSignal<Currency>,
+        grid_edit_active_count: RwSignal<u32>,
+        currency_exchange: RwSignal<Arc<CurrencyExchange>>,
+    ) -> AppContext {
+        AppContext {
+            lang_selector,
+            display_currency,
+            grid_edit_active_count,
+            currency_exchange,
+        }
+    }
 }
 
 // α <mod-def app_context>

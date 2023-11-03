@@ -136,20 +136,20 @@ impl Currency {
 #[repr(i32)]
 pub enum AccountType {
     ///
+    /// An account whose investment returns are taxable.
+    Taxable = 0,
+    ///
     /// A tax sheltered account with funds whose taxes have been paid.
-    RothIrs401K = 0,
+    RothIrs401K = 1,
     ///
     /// A tax sheltered account for funds taxed in retirement.
-    TraditionalIrs401K = 1,
+    TraditionalIrs401K = 2,
     ///
     /// A tax sheltered account for qualified education expenses.
-    CollegeIrs529 = 2,
+    CollegeIrs529 = 3,
     ///
     /// A tax sheltered account with funds taxed in retirement
-    TraditionalIra = 3,
-    ///
-    /// An account whose investment returns are taxable.
-    Taxable = 4,
+    TraditionalIra = 4,
     ///
     /// An account that allow a relatively quick access to funds, including checking, savings.
     Demand = 5,
@@ -167,11 +167,11 @@ impl AccountType {
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
+            AccountType::Taxable => "TAXABLE",
             AccountType::RothIrs401K => "ROTH_IRS_401_K",
             AccountType::TraditionalIrs401K => "TRADITIONAL_IRS_401_K",
             AccountType::CollegeIrs529 => "COLLEGE_IRS_529",
             AccountType::TraditionalIra => "TRADITIONAL_IRA",
-            AccountType::Taxable => "TAXABLE",
             AccountType::Demand => "DEMAND",
             AccountType::HealthSavingsAccount => "HEALTH_SAVINGS_ACCOUNT",
             AccountType::OtherAccountType => "OTHER_ACCOUNT_TYPE",
@@ -180,11 +180,11 @@ impl AccountType {
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
+            "TAXABLE" => Some(Self::Taxable),
             "ROTH_IRS_401_K" => Some(Self::RothIrs401K),
             "TRADITIONAL_IRS_401_K" => Some(Self::TraditionalIrs401K),
             "COLLEGE_IRS_529" => Some(Self::CollegeIrs529),
             "TRADITIONAL_IRA" => Some(Self::TraditionalIra),
-            "TAXABLE" => Some(Self::Taxable),
             "DEMAND" => Some(Self::Demand),
             "HEALTH_SAVINGS_ACCOUNT" => Some(Self::HealthSavingsAccount),
             "OTHER_ACCOUNT_TYPE" => Some(Self::OtherAccountType),
@@ -193,7 +193,7 @@ impl AccountType {
     }
 }
 ///
-/// To identify holdings as one of the basic allocaiton types.
+/// To identify holdings as one of the basic allocation types.
 #[derive(Serialize, Deserialize, EnumVariantNames, EnumIter)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -1404,6 +1404,9 @@ pub enum FlowType {
     ///
     /// An _atypical_ out flow not represented by other categories
     OtherOutFlow = 19,
+    ///
+    /// An flow defined with values and growth is not applicable
+    CustomFlow = 20,
 }
 impl FlowType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1432,6 +1435,7 @@ impl FlowType {
             FlowType::IraContributions => "IRA_CONTRIBUTIONS",
             FlowType::OtherInFlow => "OTHER_IN_FLOW",
             FlowType::OtherOutFlow => "OTHER_OUT_FLOW",
+            FlowType::CustomFlow => "CUSTOM_FLOW",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1457,6 +1461,7 @@ impl FlowType {
             "IRA_CONTRIBUTIONS" => Some(Self::IraContributions),
             "OTHER_IN_FLOW" => Some(Self::OtherInFlow),
             "OTHER_OUT_FLOW" => Some(Self::OtherOutFlow),
+            "CUSTOM_FLOW" => Some(Self::CustomFlow),
             _ => None,
         }
     }
