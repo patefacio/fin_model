@@ -123,6 +123,8 @@ pub enum I18nDistributionPolicyComponent {
 /// Strings for `distribution_spec_component`
 #[derive(Debug, Copy, Clone)]
 pub enum I18nDistributionSpecComponent {
+    /// Strings for component AnnualPctPlaceholder
+    AnnualPctPlaceholder(LangSelector),
     /// Strings for component QualifiedDiv
     QualifiedDiv(LangSelector),
     /// Strings for component UnqualifiedDiv
@@ -250,6 +252,10 @@ pub enum I18nGrowingFlowSpecComponent {
     Initial(LangSelector),
     /// Strings for component YearRange
     YearRange(LangSelector),
+    /// Strings for component YearPlaceholder
+    YearPlaceholder(LangSelector),
+    /// Strings for component ValuePlaceholder
+    ValuePlaceholder(LangSelector),
 }
 
 /// Strings for `growth_assumption_component`
@@ -283,12 +289,20 @@ pub enum I18nHoldingComponent {
     Holding(LangSelector),
     /// Strings for component Mv
     Mv(LangSelector),
+    /// Strings for component Price
+    Price(LangSelector),
+    /// Strings for component PricePlaceholder
+    PricePlaceholder(LangSelector),
+    /// Strings for component QtyPlaceholder
+    QtyPlaceholder(LangSelector),
     /// Strings for component Quantity
     Quantity(LangSelector),
     /// Strings for component Symbol
     Symbol(LangSelector),
     /// Strings for component Ugl
     Ugl(LangSelector),
+    /// Strings for component YearPlaceholder
+    YearPlaceholder(LangSelector),
 }
 
 /// Strings for `holdings_grid`
@@ -366,6 +380,23 @@ pub enum I18nMonteSimulatorComponent {
     RunSimulation(LangSelector),
     /// Strings for component ForecastCount
     ForecastCount(LangSelector),
+}
+
+/// Strings for `normal_loss_component`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nNormalLossComponent {
+    /// Strings for component GainPct
+    GainPct(LangSelector),
+    /// Strings for component ProbPct
+    ProbPct(LangSelector),
+    /// Strings for component ProbAbbrev
+    ProbAbbrev(LangSelector),
+    /// Strings for component CdfSample
+    CdfSample(LangSelector),
+    /// Strings for component GainPrefix
+    GainPrefix(LangSelector),
+    /// Strings for component LossTable
+    LossTable(LangSelector),
 }
 
 /// Strings for `normal_spec_component`
@@ -517,6 +548,10 @@ pub enum I18nWorthComponent {
     CurrentValue(LangSelector),
     /// Strings for component Cost
     Cost(LangSelector),
+    /// Strings for component YearPlaceholder
+    YearPlaceholder(LangSelector),
+    /// Strings for component ValuePlaceholder
+    ValuePlaceholder(LangSelector),
 }
 
 /// Strings for `worths_grid`
@@ -907,6 +942,12 @@ impl Display for I18nDistributionSpecComponent {
             f,
             "{}",
             match self {
+                I18nDistributionSpecComponent::AnnualPctPlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "distribution_spec_component.annual_pct_placeholder"
+                    )
+                    .unwrap_or_default(),
                 I18nDistributionSpecComponent::QualifiedDiv(lang_selector) => LOCALES
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
@@ -1288,6 +1329,18 @@ impl Display for I18nGrowingFlowSpecComponent {
                         "growing_flow_spec_component.year_range"
                     )
                     .unwrap_or_default(),
+                I18nGrowingFlowSpecComponent::YearPlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "growing_flow_spec_component.year_placeholder"
+                    )
+                    .unwrap_or_default(),
+                I18nGrowingFlowSpecComponent::ValuePlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "growing_flow_spec_component.value_placeholder"
+                    )
+                    .unwrap_or_default(),
             }
         )
     }
@@ -1387,6 +1440,24 @@ impl Display for I18nHoldingComponent {
                         "holding_component.mv"
                     )
                     .unwrap_or_default(),
+                I18nHoldingComponent::Price(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "holding_component.price"
+                    )
+                    .unwrap_or_default(),
+                I18nHoldingComponent::PricePlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "holding_component.price_placeholder"
+                    )
+                    .unwrap_or_default(),
+                I18nHoldingComponent::QtyPlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "holding_component.qty_placeholder"
+                    )
+                    .unwrap_or_default(),
                 I18nHoldingComponent::Quantity(lang_selector) => LOCALES
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
@@ -1403,6 +1474,12 @@ impl Display for I18nHoldingComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "holding_component.ugl"
+                    )
+                    .unwrap_or_default(),
+                I18nHoldingComponent::YearPlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "holding_component.year_placeholder"
                     )
                     .unwrap_or_default(),
             }
@@ -1634,6 +1711,57 @@ impl Display for I18nMonteSimulatorComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "monte_simulator_component.forecast_count"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
+impl Display for I18nNormalLossComponent {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nNormalLossComponent::GainPct(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "normal_loss_component.gain_pct"
+                    )
+                    .unwrap_or_default(),
+                I18nNormalLossComponent::ProbPct(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "normal_loss_component.prob_pct"
+                    )
+                    .unwrap_or_default(),
+                I18nNormalLossComponent::ProbAbbrev(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "normal_loss_component.prob_abbrev"
+                    )
+                    .unwrap_or_default(),
+                I18nNormalLossComponent::CdfSample(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "normal_loss_component.cdf_sample"
+                    )
+                    .unwrap_or_default(),
+                I18nNormalLossComponent::GainPrefix(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "normal_loss_component.gain_prefix"
+                    )
+                    .unwrap_or_default(),
+                I18nNormalLossComponent::LossTable(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "normal_loss_component.loss_table"
                     )
                     .unwrap_or_default(),
             }
@@ -2087,6 +2215,18 @@ impl Display for I18nWorthComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "worth_component.cost"
+                    )
+                    .unwrap_or_default(),
+                I18nWorthComponent::YearPlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "worth_component.year_placeholder"
+                    )
+                    .unwrap_or_default(),
+                I18nWorthComponent::ValuePlaceholder(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "worth_component.value_placeholder"
                     )
                     .unwrap_or_default(),
             }

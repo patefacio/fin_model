@@ -10,8 +10,6 @@ use leptos::StoredValue;
 use leptos::View;
 use leptos::WriteSignal;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt::Debug;

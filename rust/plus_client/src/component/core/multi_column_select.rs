@@ -13,8 +13,6 @@ use leptos::IntoAttribute;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 use leptos_dom::html::Div;
-#[allow(unused_imports)]
-use leptos_dom::log;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, KeyboardEvent, MouseEvent};
@@ -167,7 +165,7 @@ where
 
     impl<F> Drop for MCSData<F> {
         fn drop(&mut self) {
-            //log!("DROPPING MCSData -> {self:?}");
+            //tracing::info!("DROPPING MCSData -> {self:?}");
         }
     }
 

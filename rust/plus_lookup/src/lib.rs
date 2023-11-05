@@ -36,6 +36,7 @@ pub use self::i18n_component_display::I18nMatrixResolvedView;
 pub use self::i18n_component_display::I18nMonteConfigComponent;
 pub use self::i18n_component_display::I18nMonteSimulationSummaryComponent;
 pub use self::i18n_component_display::I18nMonteSimulatorComponent;
+pub use self::i18n_component_display::I18nNormalLossComponent;
 pub use self::i18n_component_display::I18nNormalSpecComponent;
 pub use self::i18n_component_display::I18nOkCancelComponent;
 pub use self::i18n_component_display::I18nPersonComponent;

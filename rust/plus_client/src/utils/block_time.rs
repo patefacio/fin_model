@@ -33,7 +33,6 @@ cfg_if! {
             fn drop(&mut self) {
                 let duration = instant::now() - self.start;
                 let message = format!("`{}`: Duration {:?}ms", self.label, duration);
-                leptos_dom::log!("{}", message);
                 tracing::info!("{message}");
             }
         }
@@ -59,7 +58,6 @@ cfg_if! {
             fn drop(&mut self) {
                 let duration = self.start.elapsed();
                 let message = format!("`{}`: Duration {:?}", self.label, duration);
-                leptos_dom::log!("{}", message);
                 tracing::info!("{message}");
             }
         }

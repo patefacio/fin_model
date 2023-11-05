@@ -11,8 +11,6 @@ use leptos::IntoAttribute;
 use leptos::ReadSignal;
 use leptos::SignalGet;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use plus_lookup::I18nYearValueSeriesComponent;
 use plus_modeled::YearRange;
 use plus_modeled::YearValue;
@@ -227,7 +225,7 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder=i18n_year_placeholder()
+                placeholder=Signal::derive(move || i18n_year_placeholder())
             />
         }
     };
@@ -239,11 +237,11 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |percent| {
-                        tracing::info!("Updated display percent to {percent:?}");
+                        tracing::error!("Unexpected update display percent to {percent:?}");
                     },
                 )
 
-                placeholder=i18n_rate_placeholder()
+                placeholder=Signal::derive(move || i18n_rate_placeholder())
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();

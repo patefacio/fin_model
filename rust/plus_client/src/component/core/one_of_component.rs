@@ -8,8 +8,6 @@ use crate::Updatable;
 use leptos::IntoAttribute;
 use leptos::View;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use std::cmp::PartialEq;
 use std::fmt::Debug;
 use strum::{IntoEnumIterator, VariantNames};

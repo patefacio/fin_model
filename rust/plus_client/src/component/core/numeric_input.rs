@@ -12,8 +12,6 @@ use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 use leptos::{create_effect, create_node_ref, create_signal, store_value, ReadSignal, SignalWith};
 use leptos_dom::html::Input;
-#[allow(unused_imports)]
-use leptos_dom::log;
 use std::ops::RangeInclusive;
 use web_sys::KeyboardEvent;
 

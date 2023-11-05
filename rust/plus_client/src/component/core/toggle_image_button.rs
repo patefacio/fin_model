@@ -6,8 +6,6 @@
 use crate::Updatable;
 use leptos::IntoAttribute;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---

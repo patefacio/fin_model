@@ -11,8 +11,6 @@ use leptos::use_context;
 use leptos::IntoAttribute;
 use leptos::SignalGet;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use plus_lookup::I18nNormalSpecComponent;
 use plus_modeled::core::NormalSpec;
 

@@ -3,10 +3,13 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
+use leptos::use_context;
+use leptos::IntoAttribute;
 use leptos::MaybeSignal;
+use leptos::SignalGet;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
+use plus_lookup::I18nNormalLossComponent;
 use plus_modeled::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +28,18 @@ pub fn NormalLossComponent(
     #[prop(default=MaybeSignal::Static(vec![0.7, 0.3, 0.1, 0.05, 0.01, 0.0, -0.01, -0.05, -0.1, -0.3, -0.7]))]
     loss_vec: MaybeSignal<Vec<f64>>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-nlc";
+    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let i18n_gain_pct = move || I18nNormalLossComponent::GainPct(lang_selector.get()).to_string();
+    let i18n_prob_pct = move || I18nNormalLossComponent::ProbPct(lang_selector.get()).to_string();
+    let i18n_prob_abbrev =
+        move || I18nNormalLossComponent::ProbAbbrev(lang_selector.get()).to_string();
+    let i18n_cdf_sample =
+        move || I18nNormalLossComponent::CdfSample(lang_selector.get()).to_string();
+    let i18n_gain_prefix =
+        move || I18nNormalLossComponent::GainPrefix(lang_selector.get()).to_string();
+    let i18n_loss_table =
+        move || I18nNormalLossComponent::LossTable(lang_selector.get()).to_string();
     crate::log_component!("`NormalLossComponent`");
     // α <fn normal_loss_component>
 
@@ -36,8 +51,7 @@ pub fn NormalLossComponent(
     use crate::Updatable;
     use leptos::create_signal;
     use leptos::For;
-    use leptos::IntoAttribute;
-    use leptos::SignalGet;
+    use leptos::Signal;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
     use leptos::SignalWithUntracked;
@@ -49,19 +63,24 @@ pub fn NormalLossComponent(
         sample_loss_write.update(|sample_loss| *sample_loss = *loss);
     });
 
+    // ω <fn normal_loss_component>
     view! {
-        <div style="display: grid; grid-template-columns: 1fr 1fr">
+        <div class=SELF_CLASS>
+            // α <plus-nlc-view>
+
             <div style="grid-column-start: 1; grid-column-end: 3; text-align: center">
                 <h4>
                     {move || {
                         normal_spec
-                            .with(|normal_spec| { format!("Loss Table For {}", normal_spec) })
+                            .with(|normal_spec| {
+                                format!("{} {}", i18n_loss_table(), normal_spec)
+                            })
                     }}
 
                 </h4>
             </div>
-            <div class=CssClasses::HeaderRight.to_string()>"Gain < (%)"</div>
-            <div class=CssClasses::HeaderRight.to_string()>"Probability(%)"</div>
+            <div class=CssClasses::HeaderRight.to_string()>{i18n_gain_pct}</div>
+            <div class=CssClasses::HeaderRight.to_string()>{i18n_prob_pct}</div>
             <For
                 each=move || loss_vec.get()
                 key=|item| { format!("{item:?}") }
@@ -96,9 +115,9 @@ pub fn NormalLossComponent(
             </div>
             <div style="text-align: right">
                 <NumericInput
-                    placeholder="CDF Sample"
+                    placeholder=Signal::derive(i18n_cdf_sample)
                     modification=Some(Modification::PrefixAndSuffix {
-                        prefix: "gain < ".into(),
+                        prefix: i18n_gain_prefix(),
                         suffix: "%".into(),
                     })
 
@@ -121,8 +140,8 @@ pub fn NormalLossComponent(
                                             || String::default(),
                                             |probability| {
                                                 format!(
-                                                    "Prob({:.2}%) => {:.2}%", scale_by(loss, 2),
-                                                    scale_by(probability, 2)
+                                                    "{}({:.2}%) => {:.2}%", i18n_prob_abbrev(), scale_by(loss,
+                                                    2), scale_by(probability, 2)
                                                 )
                                             },
                                         )
@@ -131,10 +150,9 @@ pub fn NormalLossComponent(
                 }}
 
             </div>
+        // ω <plus-nlc-view>
         </div>
     }
-
-    // ω <fn normal_loss_component>
 }
 
 // α <mod-def normal_loss_component>

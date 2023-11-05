@@ -6,8 +6,6 @@
 use crate::Updatable;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use plus_modeled::Date;
 use plus_modeled::YearRange;
 
@@ -39,14 +37,12 @@ pub fn DateInput(
     // α <fn date_input>
 
     use crate::utils::constants::{LEFT_KEY, RIGHT_KEY, TAB_KEY};
-    use crate::CssClasses;
     use crate::LiveParsedDate;
     use leptos::create_node_ref;
     use leptos::create_signal;
     use leptos::store_value;
     use leptos::IntoAttribute;
     use leptos::IntoClass;
-    use leptos::Signal;
     use leptos::SignalGet;
     use leptos::SignalSet;
     use leptos_dom::html::Input;

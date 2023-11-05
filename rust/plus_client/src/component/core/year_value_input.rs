@@ -4,9 +4,9 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+use leptos::IntoAttribute;
+use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use plus_modeled::YearValue;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@ use plus_modeled::YearValue;
 ///
 ///   * **updatable** - The [YearValue] being edited
 ///   * **align_left** - If set, numeric text aligned to left.
+///   * **year_placeholder** - Placeholder shown if entry is empty.
+///   * **value_placeholder** - Placeholder shown if entry is empty.
 ///   * _return_ - View for year_value_input
 #[component]
 pub fn YearValueInput(
@@ -24,7 +26,14 @@ pub fn YearValueInput(
     /// If set, numeric text aligned to left.
     #[prop(default = false)]
     align_left: bool,
+    /// Placeholder shown if entry is empty.
+    #[prop(default=MaybeSignal::Static(String::from("year")), into)]
+    year_placeholder: MaybeSignal<String>,
+    /// Placeholder shown if entry is empty.
+    #[prop(default=MaybeSignal::Static(String::from("value")), into)]
+    value_placeholder: MaybeSignal<String>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-yvi";
     crate::log_component!("`YearValueInput`");
     // α <fn year_value_input>
 
@@ -76,26 +85,29 @@ pub fn YearValueInput(
         })
     });
 
+    // ω <fn year_value_input>
     view! {
-        <div style="display: inline-flex">
+        <div class=SELF_CLASS>
+            // α <plus-yvi-view>
+
             <YearInput
                 input_class=Some("yvi-year".to_string())
                 updatable=year_updatable
-                placeholder="year"
+                placeholder=year_placeholder
                 align_left=align_left
             />
             <NumericInput
                 input_class=Some("yvi-value".to_string())
-                placeholder="value"
+                placeholder=value_placeholder
                 updatable=value_updatable
                 non_negative=true
                 modification=Some(Modification::Prefix("$".into()))
                 align_left=align_left
             />
+
+        // ω <plus-yvi-view>
         </div>
     }
-
-    // ω <fn year_value_input>
 }
 
 // α <mod-def year_value_input>

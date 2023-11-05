@@ -7,8 +7,6 @@ use crate::SelectDirection;
 use crate::Updatable;
 use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use std::boxed::Box;
 use std::cmp::PartialEq;
 use std::fmt::Debug;

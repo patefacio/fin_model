@@ -40,6 +40,8 @@ pub enum CommonStrings {
     Accounts,
     /// i18n value for `adjusted_gross_income`
     AdjustedGrossIncome,
+    /// i18n value for `annual_pct_placeholder`
+    AnnualPctPlaceholder,
     /// i18n value for `as_of`
     AsOf,
     /// i18n value for `assumptions`
@@ -142,8 +144,12 @@ pub enum CommonStrings {
     Person,
     /// i18n value for `price`
     Price,
+    /// i18n value for `price_placeholder`
+    PricePlaceholder,
     /// i18n value for `primary_owner`
     PrimaryOwner,
+    /// i18n value for `qty_placeholder`
+    QtyPlaceholder,
     /// i18n value for `qualified_div`
     QualifiedDiv,
     /// i18n value for `quantity`
@@ -1041,6 +1047,12 @@ impl<'a> Display for I18nEnums<'a> {
                             "common_strings.adjusted_gross_income"
                         )
                         .unwrap_or_default(),
+                    CommonStrings::AnnualPctPlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.annual_pct_placeholder"
+                        )
+                        .unwrap_or_default(),
                     CommonStrings::AsOf => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
@@ -1347,10 +1359,22 @@ impl<'a> Display for I18nEnums<'a> {
                             "common_strings.price"
                         )
                         .unwrap_or_default(),
+                    CommonStrings::PricePlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.price_placeholder"
+                        )
+                        .unwrap_or_default(),
                     CommonStrings::PrimaryOwner => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.primary_owner"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::QtyPlaceholder => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.qty_placeholder"
                         )
                         .unwrap_or_default(),
                     CommonStrings::QualifiedDiv => LOCALES

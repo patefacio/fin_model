@@ -9,8 +9,6 @@ use leptos::IntoAttribute;
 use leptos::MaybeSignal;
 use leptos::ReadSignal;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use std::ops::RangeInclusive;
 
 ////////////////////////////////////////////////////////////////////////////////////

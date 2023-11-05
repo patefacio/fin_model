@@ -9,8 +9,6 @@ use leptos::use_context;
 use leptos::IntoAttribute;
 use leptos::SignalGet;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use plus_lookup::I18nYearRangeInput;
 use plus_modeled::YearRange;
 use std::ops::RangeInclusive;
@@ -48,6 +46,7 @@ pub fn YearRangeInput(
     use crate::Year;
     use crate::YearInput;
     use leptos::store_value;
+    use leptos::Signal;
 
     let start = updatable
         .value
@@ -129,7 +128,7 @@ pub fn YearRangeInput(
 
             <YearInput
                 input_class=Some(CssClasses::YriStart.to_string())
-                placeholder="start"
+                placeholder=Signal::derive(move || i18n_start_placeholder())
                 updatable=start_year_updatable
                 year_range=year_range
                 live_clamp=true
@@ -137,7 +136,7 @@ pub fn YearRangeInput(
             />
             <YearInput
                 input_class=Some(CssClasses::YriEnd.to_string())
-                placeholder="end"
+                placeholder=Signal::derive(move || i18n_end_placeholder())
                 updatable=end_year_updatable
                 year_range=year_range
                 live_clamp=true

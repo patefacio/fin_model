@@ -10,8 +10,6 @@ use leptos::MaybeSignal;
 use leptos::ReadSignal;
 use leptos::{component, view, IntoView};
 use leptos_dom::html::Input;
-#[allow(unused_imports)]
-use leptos_dom::log;
 use plus_modeled::core::YearRange;
 
 ////////////////////////////////////////////////////////////////////////////////////

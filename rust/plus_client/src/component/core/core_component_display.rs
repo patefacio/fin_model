@@ -5,8 +5,6 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use leptos::IntoAttribute;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -66,7 +64,7 @@ pub fn CoreComponentDisplay() -> impl IntoView {
 
     let show_update = move |s: String| {
         last_update_write.update(|original| {
-            log!("{}", &s);
+            tracing::info!("{}", &s);
             *original = s;
         });
     };

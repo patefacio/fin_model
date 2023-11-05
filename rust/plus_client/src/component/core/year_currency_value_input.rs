@@ -7,10 +7,9 @@ use crate::AppContext;
 use crate::Updatable;
 use leptos::use_context;
 use leptos::IntoAttribute;
+use leptos::MaybeSignal;
 use leptos::SignalGet;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 use plus_lookup::I18nYearCurrencyValueInput;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
 
@@ -21,8 +20,8 @@ use plus_modeled::core::{YearCurrencyValue, YearRange};
 ///
 ///   * **updatable** - Initial value and callback
 ///   * **year_range** - Range of valid years.
-///   * **value_placeholder** - Placeholder for the value field
-///   * **year_placeholder** - Placeholder for the year field
+///   * **year_placeholder** - Placeholder shown if entry is empty.
+///   * **value_placeholder** - Placeholder shown if entry is empty.
 ///   * _return_ - View for year_currency_value_input
 #[component]
 pub fn YearCurrencyValueInput(
@@ -31,12 +30,12 @@ pub fn YearCurrencyValueInput(
     /// Range of valid years.
     #[prop(default=YearRange{ start: 1900, end: 2400 })]
     year_range: YearRange,
-    /// Placeholder for the value field
-    #[prop(default="value".to_string())]
-    value_placeholder: String,
-    /// Placeholder for the year field
-    #[prop(default="year".to_string())]
-    year_placeholder: String,
+    /// Placeholder shown if entry is empty.
+    #[prop(default=MaybeSignal::Static(String::from("year")), into)]
+    year_placeholder: MaybeSignal<String>,
+    /// Placeholder shown if entry is empty.
+    #[prop(default=MaybeSignal::Static(String::from("value")), into)]
+    value_placeholder: MaybeSignal<String>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-ycvi";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;

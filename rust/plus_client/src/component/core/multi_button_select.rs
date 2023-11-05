@@ -9,8 +9,6 @@ use crate::ViewSide;
 use leptos::IntoAttribute;
 use leptos::View;
 use leptos::{component, view, IntoView};
-#[allow(unused_imports)]
-use leptos_dom::log;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
@@ -57,8 +55,6 @@ pub fn MultiButtonSelect(
     use leptos::Show;
     use leptos::SignalSet;
     use leptos::SignalWith;
-
-    tracing::warn!("Creating mbs on {button_data:?}");
 
     let (mbs_grid, toolbar_span, view_span, toolbar_class) = match button_bar_side {
         ViewSide::Top => (
@@ -117,7 +113,6 @@ pub fn MultiButtonSelect(
             let mut button_selection = ButtonSelection::default();
             swap(&mut button_selection, &mut button_data.button_selection);
 
-            tracing::warn!("Creating content for {button_selection:?} and {displayed_view:?}");
             let content_view = view! {
                 <Show when=move || button_view_is_shown(i) fallback=|| ()>
                     {displayed_view.clone()}
