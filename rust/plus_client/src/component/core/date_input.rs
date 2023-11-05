@@ -4,6 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+use leptos::MaybeSignal;
 use leptos::{component, view, IntoView};
 #[allow(unused_imports)]
 use leptos_dom::log;
@@ -28,8 +29,8 @@ pub fn DateInput(
     #[prop(default=Some(YearRange{ start: 1900, end: 2350 }))]
     year_range: Option<YearRange>,
     /// Placeholder shown if entry is empty.
-    #[prop(default=String::from("MM/DD/YYYY"), into)]
-    placeholder: String,
+    #[prop(default=MaybeSignal::Static(String::from("MM/DD/YYYY")), into)]
+    placeholder: MaybeSignal<String>,
     /// Class to decorate input element for styling
     #[prop(default=String::from("date-input"), into)]
     class: String,
@@ -45,6 +46,7 @@ pub fn DateInput(
     use leptos::store_value;
     use leptos::IntoAttribute;
     use leptos::IntoClass;
+    use leptos::Signal;
     use leptos::SignalGet;
     use leptos::SignalSet;
     use leptos_dom::html::Input;
@@ -178,7 +180,7 @@ pub fn DateInput(
             on:keydown=key_down_handler
             value=initial_value
             size=12
-            placeholder=placeholder.to_string()
+            placeholder=placeholder
             type="text"
         />
     }

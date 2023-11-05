@@ -29,13 +29,14 @@ pub fn CoreComponentDisplay() -> impl IntoView {
     use crate::EnumSelect;
     use crate::IntegerInput;
     use crate::Modification;
-    use crate::MultiButtonSelect;
     use crate::MultiButtonData;
+    use crate::MultiButtonSelect;
     use crate::NormalSpecComponent;
     use crate::NumericInput;
     use crate::OkCancelComponent;
     use crate::PercentInput;
     use crate::SelectDirection;
+    use crate::SliderWithNumericInput;
     use crate::ToggleState;
     use crate::Updatable;
     use crate::ViewSide;
@@ -130,7 +131,7 @@ pub fn CoreComponentDisplay() -> impl IntoView {
             </div>
 
             <div class=CssClasses::CcdCtnr.to_string()>
-              //  {multi_button_example}
+                // {multi_button_example}
 
                 <div>
                     <div class=CssClasses::Title.to_string()>"Numbers"</div>
@@ -531,6 +532,54 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                             <OkCancelComponent on_ok_cancel=move |ok_cancel| {
                                 show_update(format!("Ok/Cancel -> {ok_cancel:?}"))
                             }/>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class=CssClasses::Title.to_string()>"Sliders"</div>
+                        <div class=CssClasses::CcdSliders.to_string()>
+                            <SliderWithNumericInput
+                                updatable=Updatable::new(
+                                    50.0,
+                                    move |new_value| {
+                                        show_update(format!("Slider Value -> {new_value:?}"))
+                                    },
+                                )
+
+                                label=MaybeSignal::Static("Value".into())
+                                slider_id="value-sldr".into()
+                                range=-100.0..=100.0
+                                step=1.0
+                                size=6
+                            />
+                            <SliderWithNumericInput
+                                updatable=Updatable::new(
+                                    50.0,
+                                    move |new_value| {
+                                        show_update(format!("Slider Value -> {new_value:?}"))
+                                    },
+                                )
+
+                                label=MaybeSignal::Static("μ *".into())
+                                slider_id="mean-sldr".into()
+                                range=0.0..=100.0
+                                step=1.0
+                                size=6
+                            />
+                            <SliderWithNumericInput
+                                updatable=Updatable::new(
+                                    0.0,
+                                    move |new_value| {
+                                        show_update(format!("Slider Value -> {new_value:?}"))
+                                    },
+                                )
+
+                                label=MaybeSignal::Static("σ *".into())
+                                slider_id="std-dev-fact-sldr".into()
+                                range=-6.0..=6.0
+                                step=0.25
+                                size=6
+                            />
                         </div>
                     </div>
 

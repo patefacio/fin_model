@@ -80,8 +80,8 @@ pub fn NumericInput(
     #[prop(default = false)]
     align_left: bool,
     /// Placeholder shown if entry is empty.
-    #[prop(default=String::from("value"), into)]
-    placeholder: String,
+    #[prop(default=MaybeSignal::Static(String::from("value")), into)]
+    placeholder: MaybeSignal<String>,
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
     #[prop(default = 9)]
@@ -454,7 +454,7 @@ pub fn NumericInput(
                 }
             }
 
-            placeholder=placeholder.to_string()
+            placeholder=placeholder
             value=initial_value
             maxlength=max_len
             size=size

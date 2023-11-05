@@ -90,6 +90,7 @@ pub fn YearValueSeriesComponent(
     use leptos::MaybeSignal;
     use leptos::RwSignal;
     use leptos::Show;
+    use leptos::Signal;
     use leptos::SignalGetUntracked;
     use leptos::SignalUpdate;
     use leptos::SignalUpdateUntracked;
@@ -274,7 +275,7 @@ pub fn YearValueSeriesComponent(
                     ),
                 )
 
-                placeholder=i18n_value_placeholder()
+                placeholder=Signal::derive(move || i18n_value_placeholder())
                 on_enter=Some(
                     Box::new(move |_| {
                         on_accept();
@@ -302,7 +303,7 @@ pub fn YearValueSeriesComponent(
                     },
                 )
 
-                placeholder=i18n_rate_placeholder()
+                placeholder=Signal::derive(move || i18n_rate_placeholder())
                 clear_input=Some(clear_fields_read)
                 on_enter=Some(
                     Box::new(move |_| {
@@ -343,7 +344,7 @@ pub fn YearValueSeriesComponent(
                     ),
                 )
 
-                placeholder=i18n_value_placeholder()
+                placeholder=Signal::derive(move || i18n_value_placeholder())
                 clear_input=Some(clear_fields_read)
                 on_enter=Some(
                     Box::new(move |_| {
@@ -426,7 +427,7 @@ pub fn YearValueSeriesComponent(
                         },
                     )
 
-                    placeholder=i18n_year_placeholder()
+                    placeholder=Signal::derive(move || i18n_year_placeholder())
                     clear_input=Some(clear_fields_read)
                     set_focus=Some(year_input_focus_read)
                     year_range=year_range

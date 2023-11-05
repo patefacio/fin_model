@@ -36,7 +36,7 @@ pub fn PercentInput(
     updatable: Updatable<Option<f64>>,
     /// Placeholder shown if entry is empty.
     #[prop(into, optional)]
-    placeholder: String,
+    placeholder: MaybeSignal<String>,
     /// The size attribute, which one hopes would make the size of the
     /// input field roughly that number of characters. But YMMV.
     #[prop(default = 9)]

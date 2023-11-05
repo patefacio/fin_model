@@ -174,6 +174,8 @@ pub enum CssClasses {
     CcdSelects,
     /// CoreComponentDisplay ok/cancel
     CcdOkCancel,
+    /// CoreComponentDisplay sliders
+    CcdSliders,
     /// CoreComponentDisplay rate curve
     CcdRateCurve,
     /// CoreComponentDisplay normal spec section
@@ -269,6 +271,7 @@ impl Display for CssClasses {
                 CssClasses::CcdTime => "ccd-time",
                 CssClasses::CcdSelects => "ccd-selects",
                 CssClasses::CcdOkCancel => "ccd-ok-cancel",
+                CssClasses::CcdSliders => "ccd-sliders",
                 CssClasses::CcdRateCurve => "ccd-rate-curve",
                 CssClasses::CcdNormalSpec => "ccd-normal-spec",
             }

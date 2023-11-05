@@ -52,6 +52,7 @@ pub fn NormalSpecComponent(
     use leptos::store_value;
     use leptos::MaybeSignal;
     use leptos::Show;
+    use leptos::Signal;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
 
@@ -148,7 +149,7 @@ pub fn NormalSpecComponent(
                     <div style="display: inline;">
                         <span>"N("</span>
                         <NumericInput
-                            placeholder=i18n_mean_placeholder()
+                            placeholder=Signal::derive(move || i18n_mean_placeholder())
                             modification=Some(Modification::PrefixAndSuffix {
                                 prefix: "μ=".into(),
                                 suffix: "%".into(),
@@ -161,7 +162,7 @@ pub fn NormalSpecComponent(
                         />
                         <span>", "</span>
                         <NumericInput
-                            placeholder=i18n_std_dev_placeholder()
+                            placeholder=Signal::derive(move || i18n_std_dev_placeholder())
                             modification=Some(Modification::PrefixAndSuffix {
                                 prefix: "σ=".into(),
                                 suffix: "%".into(),

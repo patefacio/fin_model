@@ -21,25 +21,27 @@
 
 @keyframes grow-width {
 	0% {
-	  width: 0;
-	  left:  0%;
+		width: 0;
+		left: 0%;
 	}
-	100% {
-	  width: 100%;
-	  left: 0;
-	}
-  }
 
-  @keyframes shrink-width {
-	0% {
-	  width: 0;
-	  left:  0%;
-	}
 	100% {
-	  width: 100%;
-	  left: 0;
+		width: 100%;
+		left: 0;
 	}
-  }
+}
+
+@keyframes shrink-width {
+	0% {
+		width: 0;
+		left: 0%;
+	}
+
+	100% {
+		width: 100%;
+		left: 0;
+	}
+}
 
 // ω <custom_use_sparingly>
 
@@ -1218,6 +1220,20 @@ input {
 	border-radius: 5px;
 	width: 550px;
 	// ω <ccd_ok_cancel>
+}
+
+/*
+  CoreComponentDisplay sliders
+*/
+.ccd-sliders {
+	// α <ccd_sliders>
+
+	//background-color: yellow;
+	input[type="range"] {
+		width: 90px;
+	}
+
+	// ω <ccd_sliders>
 }
 
 /*
