@@ -6,11 +6,14 @@
 use crate::AppContext;
 use crate::Updatable;
 use crate::Year;
+use leptos::component;
 use leptos::use_context;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::ReadSignal;
 use leptos::SignalGet;
-use leptos::{component, view, IntoView};
 use plus_lookup::I18nYearValueSeriesComponent;
 use plus_modeled::YearRange;
 use plus_modeled::YearValue;
@@ -132,7 +135,7 @@ pub fn YearValueSeriesComponent(
 
     let on_accept = move || {
         if let (Some(new_year), Some(new_value)) = entry_complete_read.get() {
-            tracing::info!("Accepting {new_year:?} and  {new_value:?}!");
+            tracing::debug!("Accepting {new_year:?} and  {new_value:?}!");
 
             curve_write.update_untracked(move |curve| {
                 curve.push(YearValue {
@@ -213,7 +216,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     Some(year_value.year),
                     move |year| {
-                        tracing::info!("Updating display year to {year:?}");
+                        tracing::debug!("Updating display year to {year:?}");
                         entry_complete_write.update(|entry_complete| entry_complete.0 = *year);
                         add_enabled_write
                             .update(|add_enabled| {
@@ -258,7 +261,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     Some(year_value.value),
                     move |value| {
-                        tracing::info!("Updated display value to {value:?}");
+                        tracing::debug!("Updated display value to {value:?}");
                     },
                 )
 
@@ -289,7 +292,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     None,
                     move |percent| {
-                        tracing::info!("Updating live percent to {percent:?}");
+                        tracing::debug!("Updating live percent to {percent:?}");
                         entry_complete_write.update(|entry_complete| entry_complete.1 = *percent);
                         add_enabled_write
                             .update(|add_enabled| {
@@ -319,7 +322,7 @@ pub fn YearValueSeriesComponent(
                 updatable=Updatable::new(
                     None,
                     move |value| {
-                        tracing::info!("Updating live value to {value:?}");
+                        tracing::debug!("Updating live value to {value:?}");
                         entry_complete_write.update(|entry_complete| entry_complete.1 = *value);
                         add_enabled_write
                             .update(|add_enabled| {
@@ -368,9 +371,9 @@ pub fn YearValueSeriesComponent(
             // α <plus-yvsc-view>
 
             <div style="display: grid; grid-template-columns: 0.1fr 0.4fr 0.6fr;">
-                <div class=CssClasses::HeaderRight.to_string()></div>
-                <div class=CssClasses::HeaderRight.to_string()>{i18n_year}</div>
-                <div class=CssClasses::HeaderRight.to_string()>{value_header}</div>
+                <div class=CssClasses::HeaderRight.as_str()></div>
+                <div class=CssClasses::HeaderRight.as_str()>{i18n_year}</div>
+                <div class=CssClasses::HeaderRight.as_str()>{value_header}</div>
                 <For
                     each=move || 0..num_elements()
                     key=move |&i| nth_key(i)
@@ -416,7 +419,7 @@ pub fn YearValueSeriesComponent(
                             entry_complete_write.update(|entry_complete| entry_complete.0 = *year);
                             add_enabled_write
                                 .update(|add_enabled| {
-                                    tracing::info!("Updating live year to {year:?}");
+                                    tracing::debug!("Updating live year to {year:?}");
                                     *add_enabled = entry_complete_read
                                         .with(|entry_complete| {
                                             entry_complete.0.is_some() && entry_complete.1.is_some()

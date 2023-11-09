@@ -672,7 +672,7 @@ pub mod unit_tests {
             ("--", 2, LenientFormatted::Zero(String::from("-"), 1)),
         ] {
             let (n, current_caret, expected) = ele;
-            tracing::info!("format_number_lenient on `{n}` with caret -> {current_caret}");
+            tracing::debug!("format_number_lenient on `{n}` with caret -> {current_caret}");
             assert_eq!(expected, format_number_lenient(n, current_caret));
         }
         // ω <fn test_format_number_lenient>

@@ -3,8 +3,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
+use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView};
 use plus_modeled::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -19,21 +23,24 @@ pub fn DistributionCdfComponent(
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-dcc";
     crate::log_component!("`DistributionCdfComponent`");
     // α <fn distribution_cdf_component>
 
     use crate::DistributionCdf;
-    use leptos::IntoAttribute;
     use leptos::SignalGet;
 
-    let plot = move || {
+    let _plot = move || {
         let normal_spec = normal_spec.get();
         normal_spec.get_cdf_chart(200)
     };
 
-    view! { <div style="display: flex; justify-content: center;" inner_html=plot></div> }
-
     // ω <fn distribution_cdf_component>
+    view! {
+        <div class=SELF_CLASS inner_html=_plot>
+
+        </div>
+    }
 }
 
 // α <mod-def distribution_cdf_component>

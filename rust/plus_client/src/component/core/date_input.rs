@@ -4,8 +4,12 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
+use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView};
 use plus_modeled::Date;
 use plus_modeled::YearRange;
 
@@ -33,6 +37,7 @@ pub fn DateInput(
     #[prop(default=String::from("date-input"), into)]
     class: String,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-di";
     crate::log_component!("`DateInput`");
     // α <fn date_input>
 
@@ -41,7 +46,7 @@ pub fn DateInput(
     use leptos::create_node_ref;
     use leptos::create_signal;
     use leptos::store_value;
-    use leptos::IntoAttribute;
+    #[allow(unused)]
     use leptos::IntoClass;
     use leptos::SignalGet;
     use leptos::SignalSet;
@@ -167,20 +172,24 @@ pub fn DateInput(
         }
     };
 
-    view! {
-        <input
-            node_ref=node_ref
-            class=class
-            class:invalid=move || { !is_in_range_read.get() }
-            on:input=move |_| update_value()
-            on:keydown=key_down_handler
-            value=initial_value
-            size=12
-            placeholder=placeholder
-            type="text"
-        />
-    }
     // ω <fn date_input>
+    view! {
+        <div class=SELF_CLASS>
+            // α <plus-di-view>
+            <input
+                node_ref=node_ref
+                class=class
+                class:invalid=move || { !is_in_range_read.get() }
+                on:input=move |_| update_value()
+                on:keydown=key_down_handler
+                value=initial_value
+                size=12
+                placeholder=placeholder
+                type="text"
+            />
+        // ω <plus-di-view>
+        </div>
+    }
 }
 
 // α <mod-def date_input>

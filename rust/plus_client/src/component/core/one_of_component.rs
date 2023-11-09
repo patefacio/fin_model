@@ -5,9 +5,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::SelectDirection;
 use crate::Updatable;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::View;
-use leptos::{component, view, IntoView};
 use std::cmp::PartialEq;
 use std::fmt::Debug;
 use strum::{IntoEnumIterator, VariantNames};
@@ -48,7 +51,6 @@ where
 
     use crate::CssClasses;
     use leptos::create_rw_signal;
-    use leptos::IntoAttribute;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
     use std::rc::Rc;
@@ -70,7 +72,7 @@ where
     };
 
     let radio_buttons = move || {
-        //lang_selector.track();
+        // TODO: lang_selector.track();
         E::iter()
             .enumerate()
             .map(|(i, e)| {
@@ -80,11 +82,11 @@ where
                 // The class and location are dynamically created
                 let (class, location) = match direction {
                     SelectDirection::LeftToRight => (
-                        CssClasses::OocRbLtr.to_string(),
+                        CssClasses::OocRbLtr.as_str(),
                         format!("grid-column: {} / {};", i + 1, i + 2),
                     ),
                     SelectDirection::TopToBottom => (
-                        CssClasses::OocRbTtb.to_string(),
+                        CssClasses::OocRbTtb.as_str(),
                         format!("grid-row: {} / {};", i + 1, i + 2),
                     ),
                 };
@@ -133,7 +135,7 @@ where
     view! {
         <div class=SELF_CLASS>
             // α <plus-ooc-view>
-            <div class=CssClasses::OocCtnr.to_string() style=container_style>
+            <div class=CssClasses::OocCtnr.as_str() style=container_style>
                 {radio_buttons}
                 <hr/>
                 <div style=content_location>{content_view}</div>

@@ -5,10 +5,13 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Modification;
 use crate::Updatable;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView};
 use std::ops::RangeInclusive;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +125,7 @@ pub fn SliderWithNumericInput(
             <label>
                 <input
                     node_ref=slider_input_node_ref
-                    class=CssClasses::SwniSlider.to_string()
+                    class=CssClasses::SwniSlider.as_str()
                     class=slider_input_class
                     type="range"
                     id=slider_id.clone()

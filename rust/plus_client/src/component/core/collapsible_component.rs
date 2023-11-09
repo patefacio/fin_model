@@ -3,8 +3,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use leptos::component;
+use leptos::view;
 use leptos::ChildrenFn;
-use leptos::{component, view, IntoView};
+#[allow(unused_imports)]
+use leptos::IntoAttribute;
+use leptos::IntoView;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -31,12 +35,12 @@ pub fn CollapsibleComponent(
     #[prop(default = false)]
     is_expanded: bool,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-cc";
     crate::log_component!("`CollapsibleComponent`");
     // α <fn collapsible_component>
 
     use crate::CssClasses;
     use leptos::create_rw_signal;
-    use leptos::IntoAttribute;
     use leptos::Show;
     use leptos::SignalGet;
     use leptos::SignalUpdate;
@@ -52,28 +56,32 @@ pub fn CollapsibleComponent(
         }
     };
 
-    view! {
-        <div class=CssClasses::CollapsibleHeader.to_string()>
-            <div>{move || header()}</div>
-            <button on:click=move |_| {
-                is_expanded.update(|is_expanded| *is_expanded = !*is_expanded)
-            }>
-                {move || {
-                    if is_expanded.get() {
-                        SystemUnicodes::UpTriangle.as_unicode()
-                    } else {
-                        SystemUnicodes::DownTriangle.as_unicode()
-                    }
-                }}
-
-            </button>
-        </div>
-        <Show when=move || is_expanded.get() fallback=|| ()>
-            {children()}
-        </Show>
-    }
-
     // ω <fn collapsible_component>
+    view! {
+        <div class=SELF_CLASS>
+            // α <plus-cc-view>
+
+            <div class=CssClasses::CollapsibleHeader.as_str()>
+                <div>{move || header()}</div>
+                <button on:click=move |_| {
+                    is_expanded.update(|is_expanded| *is_expanded = !*is_expanded)
+                }>
+                    {move || {
+                        if is_expanded.get() {
+                            SystemUnicodes::UpTriangle.as_unicode()
+                        } else {
+                            SystemUnicodes::DownTriangle.as_unicode()
+                        }
+                    }}
+
+                </button>
+            </div>
+            <Show when=move || is_expanded.get() fallback=|| ()>
+                {children()}
+            </Show>
+        // ω <plus-cc-view>
+        </div>
+    }
 }
 
 // α <mod-def collapsible_component>

@@ -33,7 +33,7 @@ cfg_if! {
             fn drop(&mut self) {
                 let duration = instant::now() - self.start;
                 let message = format!("`{}`: Duration {:?}ms", self.label, duration);
-                tracing::info!("{message}");
+                tracing::debug!("{message}");
             }
         }
     } else {
@@ -58,7 +58,7 @@ cfg_if! {
             fn drop(&mut self) {
                 let duration = self.start.elapsed();
                 let message = format!("`{}`: Duration {:?}", self.label, duration);
-                tracing::info!("{message}");
+                tracing::debug!("{message}");
             }
         }
     }

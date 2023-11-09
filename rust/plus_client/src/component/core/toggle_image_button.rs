@@ -4,8 +4,11 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::Updatable;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
-use leptos::{component, view, IntoView};
+use leptos::IntoView;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -94,10 +97,10 @@ pub fn ToggleImageButton(
             // α <plus-tib-view>
 
             <button on:click=click_handler>
-                <img class=CssClasses::TibImg.to_string() src=img/>
+                <img class=CssClasses::TibImg.as_str() src=img/>
             </button>
             <div class=state_indicator></div>
-            <label class=CssClasses::TibLbl.to_string()>{label}</label>
+            <label class=CssClasses::TibLbl.as_str()>{label}</label>
 
         // ω <plus-tib-view>
         </div>

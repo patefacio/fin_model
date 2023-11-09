@@ -6,9 +6,12 @@
 use crate::ButtonSelection;
 use crate::ToggleImageButton;
 use crate::ViewSide;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::View;
-use leptos::{component, view, IntoView};
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
@@ -56,30 +59,30 @@ pub fn MultiButtonSelect(
     use leptos::SignalSet;
     use leptos::SignalWith;
 
-    let (mbs_grid, toolbar_span, view_span, toolbar_class) = match button_bar_side {
+    let (mbs_grid_style, toolbar_span_style, view_span, toolbar_class) = match button_bar_side {
         ViewSide::Top => (
             "display: grid; grid-template-rows: 1fr auto; grid-template-columns: 1fr auto;",
             "grid-row: 1; grid-column: 1 / span 2;",
             "grid-row: 2; grid-column: 1 / span 2",
-            CssClasses::BtnTbTop.to_string(),
+            CssClasses::BtnTbTop.as_str(),
         ),
         ViewSide::Right => (
             "display: grid; grid-template-rows: 1fr auto; grid-template-columns: 1fr auto;",
             "grid-column: 2; grid-row: 1 / span 2;",
             "grid-column: 1; grid-row: 1 / span 2;",
-            CssClasses::BtnTbRight.to_string(),
+            CssClasses::BtnTbRight.as_str(),
         ),
         ViewSide::Bottom => (
             "display: grid; grid-template-rows: 1fr auto; grid-template-columns: 1fr auto;",
             "grid-row: 2; grid-column: 1 / span 2;",
             "grid-row: 1; grid-column: 1 / span 2",
-            CssClasses::BtnTbBottom.to_string(),
+            CssClasses::BtnTbBottom.as_str(),
         ),
         ViewSide::Left => (
             "display: grid; grid-template-rows: 1fr auto; grid-template-columns: auto 1fr;",
             "grid-column: 1; grid-row: 1 / span 2;",
             "grid-column: 2; grid-row: 1 / span 2;",
-            CssClasses::BtnTbLeft.to_string(),
+            CssClasses::BtnTbLeft.as_str(),
         ),
     };
 
@@ -136,16 +139,67 @@ pub fn MultiButtonSelect(
         })
         .unzip();
 
+    /////////////////////
+    use leptos::create_resource;
+    use leptos::IntoClass;
+    use leptos::SignalGet;
+    use leptos::Transition;
+    let (tab, set_tab) = create_signal(0);
+
+    // this will reload every time `tab` changes
+    // let user_data = create_resource(move || tab.get(), |tab| async move { important_api_call(tab).await });
+
+    // let tab_button_example = view! {
+    //     <div class="buttons">
+    //         <button
+    //             on:click=move |_| set_tab.set(0)
+    //             class:selected=move || tab.get() == 0
+    //         >
+    //             "Tab A"
+    //         </button>
+    //         <button
+    //             on:click=move |_| set_tab.set(1)
+    //             class:selected=move || tab.get() == 1
+    //         >
+    //             "Tab B"
+    //         </button>
+    //         <button
+    //             on:click=move |_| set_tab.set(2)
+    //             class:selected=move || tab.get() == 2
+    //         >
+    //             "Tab C"
+    //         </button>
+    //         {move || if user_data.loading().get() {
+    //             "Loading..."
+    //         } else {
+    //             ""
+    //         }}
+    //     </div>
+    //     <Transition
+    //         // the fallback will show initially
+    //         // on subsequent reloads, the current child will
+    //         // continue showing
+    //         fallback=move || view! { <p>"Loading..."</p> }
+    //     >
+    //         <p>
+    //             {move || user_data.get()}
+    //         </p>
+    //     </Transition>
+    // }
+    // .into_view();
+
+
+
     // ω <fn multi_button_select>
     view! {
         <div class=SELF_CLASS>
             // α <plus-mbs-view>
 
-            <div style=mbs_grid>
-                <div class=toolbar_class style=toolbar_span>
+            <div style=mbs_grid_style>
+                <div class=toolbar_class style=toolbar_span_style>
                     {button_views}
                 </div>
-                <div class=CssClasses::MbsView.to_string() style=view_span>
+                <div class=CssClasses::MbsView.as_str() style=view_span>
                     {content_views}
                 </div>
             </div>
@@ -173,4 +227,32 @@ impl MultiButtonData {
 }
 
 // α <mod-def multi_button_select>
+
+
+async fn important_api_call(id: usize) -> String {
+    use cfg_if::cfg_if;
+
+    cfg_if! {
+        if #[cfg(feature = "ssr")] {
+            tracing::warn!("SERVER SLEEPING 1,000 millis");
+            std::thread::sleep(std::time::Duration::from_millis(1_000));
+        }
+        else
+        {
+            tracing::warn!("CLIENT SLEEPING 1,000 millis");
+
+            use gloo_timers::future::TimeoutFuture;
+            TimeoutFuture::new(1_000).await;
+        }
+    }
+
+    match id {
+        0 => "Alice",
+        1 => "Bob",
+        2 => "Carol",
+        _ => "User not found",
+    }
+    .to_string()
+}
+
 // ω <mod-def multi_button_select>

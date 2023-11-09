@@ -14,6 +14,7 @@ pub use self::component::app::app_center_component::AppCenterComponent;
 pub use self::component::app::app_component::AppComponent;
 pub use self::component::app::app_nav_bar::AppNavBar;
 pub use self::component::app::app_side_bar::AppSideBar;
+pub use self::component::app::error_display_component::ErrorDisplayComponent;
 pub use self::component::core::collapsible_component::CollapsibleComponent;
 pub use self::component::core::collection_grid_component::CollectionGrid;
 pub use self::component::core::collection_grid_component::CollectionGridComponent;
@@ -77,6 +78,8 @@ pub use plus_utils::scale_by;
 pub mod component;
 pub mod context;
 pub mod enums;
+#[cfg(feature = "ssr")]
+pub mod file_serve;
 pub mod utils;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -103,12 +106,6 @@ if #[cfg(feature = "hydrate")] {
 
       console_error_panic_hook::set_once();
       tracing_wasm::set_as_global_default();
-
-      tracing::debug!("Tracing debug message - test!");
-      tracing::trace!("Tracing tracing message - test!");
-      tracing::warn!("Tracing warning message - test!");
-
-
 
       leptos::mount_to_body(move || {
           view! { <AppComponent/> }

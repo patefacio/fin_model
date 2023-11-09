@@ -4,11 +4,14 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
+use leptos::component;
 use leptos::use_context;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
-use leptos::{component, view, IntoView};
 use plus_lookup::I18nHistoricRiskReturnComponent;
 use plus_modeled::NormalSpec;
 
@@ -36,7 +39,6 @@ pub fn HistoricRiskReturnComponent(
     use crate::utils::historic_risk_return::HISTORIC_RISK_RETURN_SAMPLES;
     use crate::CssClasses;
     use leptos::For;
-    use leptos::IntoAttribute;
     use leptos::SignalWith;
 
     let plot =
@@ -48,27 +50,21 @@ pub fn HistoricRiskReturnComponent(
             // α <plus-hrrc-view>
 
             <div>
-                <div class=CssClasses::GridLbl.to_string()>{i18n_holding_type}</div>
+                <div class=CssClasses::GridLbl.as_str()>{i18n_holding_type}</div>
                 <For
                     each=move || HISTORIC_RISK_RETURN_SAMPLES.clone()
                     key=|hrr| hrr.label.clone()
                     children=move |hrr| {
                         view! {
-                            <div style="display:flex; text-align: right;">
-                                <div style=format!(
-                                    "height: 15px;
-                                            width: 15px;
-                                            margin: 0.35em;
-                                            text-align:right;
-                                            bottom:0;
-                                            left: 0;
-                                            background-color: rgb({}, {}, {});
-                                            border-radius: 50%;
-                                            display: inline-block;",
+                            <div class=CssClasses::HrrcCtnr.as_str()>
+                                <div 
+                                class=CssClasses::HrrcDot.as_str() 
+                                style=format!(
+                                    "background-color: rgb({}, {}, {});",
                                     hrr.color.0, hrr.color.1, hrr.color.2
                                 )></div>
-                                <div style="position: relative;">
-                                    <div style="position: absolute; bottom: 16.5%; left: 0; white-space:nowrap;">
+                                <div class=CssClasses::HrrcLblCtnr.as_str()>
+                                    <div class=CssClasses::HrrcLbl.as_str()>
                                         {move || {
                                             format!(
                                                 "{} - {}", hrr.label.clone(), NormalSpec { mean : hrr
@@ -84,7 +80,7 @@ pub fn HistoricRiskReturnComponent(
                 />
 
             </div>
-            <div style="grid-row-start:1; grid-row-end:4;" inner_html=plot></div>
+            <div class=CssClasses::HrrcPlot.as_str() inner_html=plot></div>
 
         // ω <plus-hrrc-view>
         </div>

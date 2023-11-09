@@ -18,6 +18,12 @@ pub mod log_component;
 ////////////////////////////////////////////////////////////////////////////////////
 /// All css classes not directly associated with a component.
 pub enum CssClasses {
+    /// Adds `text-align=right;`
+    TxtRight,
+    /// Adds `text-align=right; padding-left=1rem;`
+    TxtRightPadLeft,
+    /// Adds `padding-left=1rem;`
+    PlLeft1,
     /// Style text that is a title to some data like a chart.
     Title,
     /// Style for invalid content
@@ -180,6 +186,123 @@ pub enum CssClasses {
     CcdRateCurve,
     /// CoreComponentDisplay normal spec section
     CcdNormalSpec,
+    /// HistoricRiskReturn container
+    HrrcCtnr,
+    /// HistoricRiskReturn dot
+    HrrcDot,
+    /// HistoricRiskReturn label container
+    HrrcLblCtnr,
+    /// HistoricRiskReturn label
+    HrrcLbl,
+    /// HistoricRiskReturn plot
+    HrrcPlot,
+    /// NormalLossComponent label
+    NlcLblCtnr,
+    /// HoldingComponent container for growth and distributions
+    HcExtrasCtnr,
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// --- type impls ---
+////////////////////////////////////////////////////////////////////////////////////
+impl CssClasses {
+    /// Get the class name
+    ///
+    ///   * _return_ - The class name
+    #[inline]
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            CssClasses::TxtRight => "txt-right",
+            CssClasses::TxtRightPadLeft => "txt-right-pad-left",
+            CssClasses::PlLeft1 => "pl-left-1",
+            CssClasses::Title => "title",
+            CssClasses::Invalid => "invalid",
+            CssClasses::TblCaption => "tbl-caption",
+            CssClasses::InFlow => "in-flow",
+            CssClasses::OutFlow => "out-flow",
+            CssClasses::BtnTbTop => "btn-tb-top",
+            CssClasses::BtnTbRight => "btn-tb-right",
+            CssClasses::BtnTbBottom => "btn-tb-bottom",
+            CssClasses::BtnTbLeft => "btn-tb-left",
+            CssClasses::LblBtn => "lbl-btn",
+            CssClasses::TibImg => "tib-img",
+            CssClasses::TibLbl => "tib-lbl",
+            CssClasses::GridLbl => "grid-lbl",
+            CssClasses::HeaderLeft => "header-left",
+            CssClasses::HeaderRight => "header-right",
+            CssClasses::ContentTable => "content-table",
+            CssClasses::Numeric => "numeric",
+            CssClasses::TaxBillTr => "tax-bill-tr",
+            CssClasses::Form => "form",
+            CssClasses::FormRow => "form-row",
+            CssClasses::InfoLbl => "info-lbl",
+            CssClasses::AcHoldings => "ac-holdings",
+            CssClasses::MbsView => "mbs-view",
+            CssClasses::TibOn => "tib-on",
+            CssClasses::TibOff => "tib-off",
+            CssClasses::DossierToolbar => "dossier-toolbar",
+            CssClasses::DossierShow => "dossier-show",
+            CssClasses::DossierNameInput => "dossier-name-input",
+            CssClasses::AppLangSelect => "app-lang-select",
+            CssClasses::AppLangSelectInner => "app-lang-select-inner",
+            CssClasses::AppCurrencySelect => "app-currency-select",
+            CssClasses::CollapsibleHeader => "collapsible-header",
+            CssClasses::CollapseButton => "collapse-button",
+            CssClasses::CollectionGrid => "collection-grid",
+            CssClasses::CgcEditable => "cgc-editable",
+            CssClasses::CgcCell => "cgc-cell",
+            CssClasses::CgcAddRow => "cgc-add-row",
+            CssClasses::CftZoom => "cft-zoom",
+            CssClasses::OkCancelBar => "ok-cancel-bar",
+            CssClasses::FscCtnr => "fsc-ctnr",
+            CssClasses::FscNameInput => "fsc-name-input",
+            CssClasses::FscType => "fsc-type",
+            CssClasses::FscDirectionRbs => "fsc-direction-rbs",
+            CssClasses::YriStart => "yri-start",
+            CssClasses::YriEnd => "yri-end",
+            CssClasses::McsLabel => "mcs-label",
+            CssClasses::McsSelectLabel => "mcs-select-label",
+            CssClasses::McsIconLabel => "mcs-icon-label",
+            CssClasses::McsIcon => "mcs-icon",
+            CssClasses::NscFieldset => "nsc-fieldset",
+            CssClasses::NscExplore => "nsc-explore",
+            CssClasses::VfscContainer => "vfsc-container",
+            CssClasses::VfscCategory => "vfsc-category",
+            CssClasses::VfscCurrency => "vfsc-currency",
+            CssClasses::VfscFlows => "vfsc-flows",
+            CssClasses::YcvCurrency => "ycv-currency",
+            CssClasses::YcvValue => "ycv-value",
+            CssClasses::YcvAsOf => "ycv-as-of",
+            CssClasses::YcvYear => "ycv-year",
+            CssClasses::McsGrid => "mcs-grid",
+            CssClasses::McsMainBtn => "mcs-main-btn",
+            CssClasses::McsSelectBtn => "mcs-select-btn",
+            CssClasses::McsCtnr => "mcs-ctnr",
+            CssClasses::OccOkBtn => "occ-ok-btn",
+            CssClasses::OccCancelBtn => "occ-cancel-btn",
+            CssClasses::OocCtnr => "ooc-ctnr",
+            CssClasses::OocRbLtr => "ooc-rb-ltr",
+            CssClasses::OocRbTtb => "ooc-rb-ttb",
+            CssClasses::YiInput => "yi-input",
+            CssClasses::SwniSlider => "swni-slider",
+            CssClasses::CcdCtnr => "ccd-ctnr",
+            CssClasses::CcdTopNotify => "ccd-top-notify",
+            CssClasses::CcdNumbers => "ccd-numbers",
+            CssClasses::CcdTime => "ccd-time",
+            CssClasses::CcdSelects => "ccd-selects",
+            CssClasses::CcdOkCancel => "ccd-ok-cancel",
+            CssClasses::CcdSliders => "ccd-sliders",
+            CssClasses::CcdRateCurve => "ccd-rate-curve",
+            CssClasses::CcdNormalSpec => "ccd-normal-spec",
+            CssClasses::HrrcCtnr => "hrrc-ctnr",
+            CssClasses::HrrcDot => "hrrc-dot",
+            CssClasses::HrrcLblCtnr => "hrrc-lbl-ctnr",
+            CssClasses::HrrcLbl => "hrrc-lbl",
+            CssClasses::HrrcPlot => "hrrc-plot",
+            CssClasses::NlcLblCtnr => "nlc-lbl-ctnr",
+            CssClasses::HcExtrasCtnr => "hc-extras-ctnr",
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -191,91 +314,7 @@ impl Display for CssClasses {
     ///   * **f** - Formatter to push formatted item to.
     ///   * _return_ - Formatted instance
     fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                CssClasses::Title => "title",
-                CssClasses::Invalid => "invalid",
-                CssClasses::TblCaption => "tbl-caption",
-                CssClasses::InFlow => "in-flow",
-                CssClasses::OutFlow => "out-flow",
-                CssClasses::BtnTbTop => "btn-tb-top",
-                CssClasses::BtnTbRight => "btn-tb-right",
-                CssClasses::BtnTbBottom => "btn-tb-bottom",
-                CssClasses::BtnTbLeft => "btn-tb-left",
-                CssClasses::LblBtn => "lbl-btn",
-                CssClasses::TibImg => "tib-img",
-                CssClasses::TibLbl => "tib-lbl",
-                CssClasses::GridLbl => "grid-lbl",
-                CssClasses::HeaderLeft => "header-left",
-                CssClasses::HeaderRight => "header-right",
-                CssClasses::ContentTable => "content-table",
-                CssClasses::Numeric => "numeric",
-                CssClasses::TaxBillTr => "tax-bill-tr",
-                CssClasses::Form => "form",
-                CssClasses::FormRow => "form-row",
-                CssClasses::InfoLbl => "info-lbl",
-                CssClasses::AcHoldings => "ac-holdings",
-                CssClasses::MbsView => "mbs-view",
-                CssClasses::TibOn => "tib-on",
-                CssClasses::TibOff => "tib-off",
-                CssClasses::DossierToolbar => "dossier-toolbar",
-                CssClasses::DossierShow => "dossier-show",
-                CssClasses::DossierNameInput => "dossier-name-input",
-                CssClasses::AppLangSelect => "app-lang-select",
-                CssClasses::AppLangSelectInner => "app-lang-select-inner",
-                CssClasses::AppCurrencySelect => "app-currency-select",
-                CssClasses::CollapsibleHeader => "collapsible-header",
-                CssClasses::CollapseButton => "collapse-button",
-                CssClasses::CollectionGrid => "collection-grid",
-                CssClasses::CgcEditable => "cgc-editable",
-                CssClasses::CgcCell => "cgc-cell",
-                CssClasses::CgcAddRow => "cgc-add-row",
-                CssClasses::CftZoom => "cft-zoom",
-                CssClasses::OkCancelBar => "ok-cancel-bar",
-                CssClasses::FscCtnr => "fsc-ctnr",
-                CssClasses::FscNameInput => "fsc-name-input",
-                CssClasses::FscType => "fsc-type",
-                CssClasses::FscDirectionRbs => "fsc-direction-rbs",
-                CssClasses::YriStart => "yri-start",
-                CssClasses::YriEnd => "yri-end",
-                CssClasses::McsLabel => "mcs-label",
-                CssClasses::McsSelectLabel => "mcs-select-label",
-                CssClasses::McsIconLabel => "mcs-icon-label",
-                CssClasses::McsIcon => "mcs-icon",
-                CssClasses::NscFieldset => "nsc-fieldset",
-                CssClasses::NscExplore => "nsc-explore",
-                CssClasses::VfscContainer => "vfsc-container",
-                CssClasses::VfscCategory => "vfsc-category",
-                CssClasses::VfscCurrency => "vfsc-currency",
-                CssClasses::VfscFlows => "vfsc-flows",
-                CssClasses::YcvCurrency => "ycv-currency",
-                CssClasses::YcvValue => "ycv-value",
-                CssClasses::YcvAsOf => "ycv-as-of",
-                CssClasses::YcvYear => "ycv-year",
-                CssClasses::McsGrid => "mcs-grid",
-                CssClasses::McsMainBtn => "mcs-main-btn",
-                CssClasses::McsSelectBtn => "mcs-select-btn",
-                CssClasses::McsCtnr => "mcs-ctnr",
-                CssClasses::OccOkBtn => "occ-ok-btn",
-                CssClasses::OccCancelBtn => "occ-cancel-btn",
-                CssClasses::OocCtnr => "ooc-ctnr",
-                CssClasses::OocRbLtr => "ooc-rb-ltr",
-                CssClasses::OocRbTtb => "ooc-rb-ttb",
-                CssClasses::YiInput => "yi-input",
-                CssClasses::SwniSlider => "swni-slider",
-                CssClasses::CcdCtnr => "ccd-ctnr",
-                CssClasses::CcdTopNotify => "ccd-top-notify",
-                CssClasses::CcdNumbers => "ccd-numbers",
-                CssClasses::CcdTime => "ccd-time",
-                CssClasses::CcdSelects => "ccd-selects",
-                CssClasses::CcdOkCancel => "ccd-ok-cancel",
-                CssClasses::CcdSliders => "ccd-sliders",
-                CssClasses::CcdRateCurve => "ccd-rate-curve",
-                CssClasses::CcdNormalSpec => "ccd-normal-spec",
-            }
-        )
+        write!(f, "{}", self.as_str())
     }
 }
 

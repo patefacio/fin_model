@@ -3,8 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
-use leptos::{component, view, IntoView};
+use leptos::IntoView;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -50,14 +53,14 @@ pub fn AppNavBar() -> impl IntoView {
         <div class=SELF_CLASS>
             // α <plus-anb-view>
 
-            <div class=CssClasses::AppLangSelect.to_string()>
-                <div class=CssClasses::AppCurrencySelect.to_string()>
+            <div class=CssClasses::AppLangSelect.as_str()>
+                <div class=CssClasses::AppCurrencySelect.as_str()>
                     <label>
                         <CurrencySelect updatable=display_currency_updatable/>
                         "Display Currency"
                     </label>
                 </div>
-                <div class=CssClasses::AppLangSelectInner.to_string()>
+                <div class=CssClasses::AppLangSelectInner.as_str()>
                     <EnumSelect
                         updatable=lang_selector_updatable
                         column_count=1

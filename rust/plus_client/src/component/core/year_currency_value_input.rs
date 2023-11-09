@@ -5,11 +5,14 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
 use crate::Updatable;
+use leptos::component;
 use leptos::use_context;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
-use leptos::{component, view, IntoView};
 use plus_lookup::I18nYearCurrencyValueInput;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
 
@@ -140,7 +143,7 @@ pub fn YearCurrencyValueInput(
         <div class=SELF_CLASS>
             // α <plus-ycvi-view>
 
-            <div class=CssClasses::YcvCurrency.to_string()>
+            <div class=CssClasses::YcvCurrency.as_str()>
                 <CurrencySelect updatable=currency_select_updatable/>
             </div>
             <NumericInput
@@ -149,7 +152,7 @@ pub fn YearCurrencyValueInput(
                 placeholder=value_placeholder
                 modification=modification
             />
-            <div class=CssClasses::YcvAsOf.to_string()>{i18n_as_of}</div>
+            <div class=CssClasses::YcvAsOf.as_str()>{i18n_as_of}</div>
             <YearInput
                 input_class=Some(CssClasses::YcvYear.to_string())
                 updatable=year_updatable

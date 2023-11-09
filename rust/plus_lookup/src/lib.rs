@@ -42,6 +42,7 @@ pub use self::i18n_component_display::I18nOkCancelComponent;
 pub use self::i18n_component_display::I18nPersonComponent;
 pub use self::i18n_component_display::I18nPersonsGrid;
 pub use self::i18n_component_display::I18nSalesPlanView;
+pub use self::i18n_component_display::I18nSymbolInput;
 pub use self::i18n_component_display::I18nTaxDeterminantsComponent;
 pub use self::i18n_component_display::I18nTimelineGroupComponent;
 pub use self::i18n_component_display::I18nUsTaxStatementView;

@@ -218,8 +218,6 @@ pub enum I18nForecastConfigComponent {
     ScopedYearRange(LangSelector),
     /// Strings for component YearRangeOverride
     YearRangeOverride(LangSelector),
-    /// Strings for component DisplayCurrency
-    DisplayCurrency(LangSelector),
 }
 
 /// Strings for `forecast_id_selector`
@@ -289,8 +287,6 @@ pub enum I18nHoldingComponent {
     Holding(LangSelector),
     /// Strings for component Mv
     Mv(LangSelector),
-    /// Strings for component Price
-    Price(LangSelector),
     /// Strings for component PricePlaceholder
     PricePlaceholder(LangSelector),
     /// Strings for component QtyPlaceholder
@@ -333,8 +329,6 @@ pub enum I18nInvestmentPlanView {
     Current(LangSelector),
     /// Strings for component Target
     Target(LangSelector),
-    /// Strings for component TowardTarget
-    TowardTarget(LangSelector),
     /// Strings for component TotalInvestments
     TotalInvestments(LangSelector),
     /// Strings for component InvestmentPlan
@@ -468,6 +462,13 @@ pub enum I18nSalesPlanView {
     SalesPlan(LangSelector),
 }
 
+/// Strings for `symbol_input`
+#[derive(Debug, Copy, Clone)]
+pub enum I18nSymbolInput {
+    /// Strings for component Symbol
+    Symbol(LangSelector),
+}
+
 /// Strings for `tax_determinants_component`
 #[derive(Debug, Copy, Clone)]
 pub enum I18nTaxDeterminantsComponent {
@@ -486,8 +487,6 @@ pub enum I18nTimelineGroupComponent {
     Deterministic(LangSelector),
     /// Strings for component Random
     Random(LangSelector),
-    /// Strings for component TimelineDetail
-    TimelineDetail(LangSelector),
     /// Strings for component Year
     Year(LangSelector),
     /// Strings for component Forecast
@@ -1227,12 +1226,6 @@ impl Display for I18nForecastConfigComponent {
                         "forecast_config_component.year_range_override"
                     )
                     .unwrap_or_default(),
-                I18nForecastConfigComponent::DisplayCurrency(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "forecast_config_component.display_currency"
-                    )
-                    .unwrap_or_default(),
             }
         )
     }
@@ -1440,12 +1433,6 @@ impl Display for I18nHoldingComponent {
                         "holding_component.mv"
                     )
                     .unwrap_or_default(),
-                I18nHoldingComponent::Price(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "holding_component.price"
-                    )
-                    .unwrap_or_default(),
                 I18nHoldingComponent::PricePlaceholder(lang_selector) => LOCALES
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
@@ -1570,12 +1557,6 @@ impl Display for I18nInvestmentPlanView {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "investment_plan_view.target"
-                    )
-                    .unwrap_or_default(),
-                I18nInvestmentPlanView::TowardTarget(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "investment_plan_view.toward_target"
                     )
                     .unwrap_or_default(),
                 I18nInvestmentPlanView::TotalInvestments(lang_selector) => LOCALES
@@ -1976,6 +1957,27 @@ impl Display for I18nSalesPlanView {
     }
 }
 
+impl Display for I18nSymbolInput {
+    /// Format the instance.
+    ///
+    ///   * **f** - Formatter to push formatted item to.
+    ///   * _return_ - Formatted instance
+    fn fmt(&self, #[allow(unused)] f: &mut Formatter<'_>) -> ::core::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                I18nSymbolInput::Symbol(lang_selector) => LOCALES
+                    .lookup(
+                        lang_selector_to_language_id(lang_selector),
+                        "symbol_input.symbol"
+                    )
+                    .unwrap_or_default(),
+            }
+        )
+    }
+}
+
 impl Display for I18nTaxDeterminantsComponent {
     /// Format the instance.
     ///
@@ -2029,12 +2031,6 @@ impl Display for I18nTimelineGroupComponent {
                     .lookup(
                         lang_selector_to_language_id(lang_selector),
                         "timeline_group_component.random"
-                    )
-                    .unwrap_or_default(),
-                I18nTimelineGroupComponent::TimelineDetail(lang_selector) => LOCALES
-                    .lookup(
-                        lang_selector_to_language_id(lang_selector),
-                        "timeline_group_component.timeline_detail"
                     )
                     .unwrap_or_default(),
                 I18nTimelineGroupComponent::Year(lang_selector) => LOCALES

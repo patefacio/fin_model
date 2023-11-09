@@ -7,10 +7,13 @@ use crate::AppContext;
 use crate::Modification;
 use crate::NumericInput;
 use crate::Updatable;
+use leptos::component;
 use leptos::use_context;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::SignalGet;
-use leptos::{component, view, IntoView};
 use plus_lookup::I18nNormalSpecComponent;
 use plus_modeled::core::NormalSpec;
 
@@ -142,7 +145,7 @@ pub fn NormalSpecComponent(
         <div class=SELF_CLASS>
             // α <plus-nsc-view>
 
-            <fieldset class=CssClasses::NscFieldset.to_string()>
+            <fieldset class=CssClasses::NscFieldset.as_str()>
                 <div style="display: flex;">
                     <div style="display: inline;">
                         <span>"N("</span>
@@ -172,7 +175,7 @@ pub fn NormalSpecComponent(
                             max_len=INPUT_SIZE
                         />
                         <span>")"</span>
-                        <div class=CssClasses::NscExplore.to_string()>
+                        <div class=CssClasses::NscExplore.as_str()>
                             <CollapsibleComponent
                                 collapsed_header="Explore Normal Detail".to_string()
                                 expanded_header=Some("Hide Normal Detail".to_string())

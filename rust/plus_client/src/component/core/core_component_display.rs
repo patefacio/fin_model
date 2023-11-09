@@ -3,8 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
-use leptos::{component, view, IntoView};
+use leptos::IntoView;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -44,7 +47,12 @@ pub fn CoreComponentDisplay() -> impl IntoView {
     use crate::YearValueInput;
     use crate::YearValueSeriesComponent;
     use crate::YearValueSeriesType;
-    use leptos::*;
+
+    use leptos::create_signal;
+    use leptos::use_context;
+    use leptos::MaybeSignal;
+    use leptos::SignalGetUntracked;
+    use leptos::SignalUpdate;
 
     use plus_modeled::Currency;
     use plus_modeled::NormalSpec;
@@ -55,7 +63,7 @@ pub fn CoreComponentDisplay() -> impl IntoView {
 
     let (last_update_read, last_update_write) = create_signal(String::default());
     let display_currency = use_context::<AppContext>().unwrap().display_currency;
-    let (currency_read, currency_write) = create_signal(
+    let (currency_read, _currency_write) = create_signal(
         display_currency
             .get_untracked()
             .to_currency_symbol()
@@ -64,11 +72,12 @@ pub fn CoreComponentDisplay() -> impl IntoView {
 
     let show_update = move |s: String| {
         last_update_write.update(|original| {
-            tracing::info!("{}", &s);
+            tracing::debug!("{}", &s);
             *original = s;
         });
     };
 
+    #[allow(unused)]
     let multi_button_example = move || {
         let button_data = vec![
             MultiButtonData::new(
@@ -122,18 +131,20 @@ pub fn CoreComponentDisplay() -> impl IntoView {
     view! {
         <div class=SELF_CLASS>
             // α <plus-ccd-view>
+	    
+	    {multi_button_example}
 
-            <div class=CssClasses::CcdTopNotify.to_string()>
+            <div class=CssClasses::CcdTopNotify.as_str()>
                 <h4>"Last Update"</h4>
                 <p>{last_update_read}</p>
             </div>
 
-            <div class=CssClasses::CcdCtnr.to_string()>
+            <div class=CssClasses::CcdCtnr.as_str()>
                 // {multi_button_example}
 
                 <div>
-                    <div class=CssClasses::Title.to_string()>"Numbers"</div>
-                    <div class=CssClasses::CcdNumbers.to_string()>
+                    <div class=CssClasses::Title.as_str()>"Numbers"</div>
+                    <div class=CssClasses::CcdNumbers.as_str()>
                         <div style="padding: 1em;">
                             <h4>"Numeric Input Range(-5.0,5.0)"</h4>
                             <p>"Models a single floating point number."</p>
@@ -302,8 +313,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                 </div>
 
                 <div>
-                    <div class=CssClasses::Title.to_string()>"Years and Dates"</div>
-                    <div class=CssClasses::CcdTime.to_string()>
+                    <div class=CssClasses::Title.as_str()>"Years and Dates"</div>
+                    <div class=CssClasses::CcdTime.as_str()>
 
                         <div style="padding: 1em;">
                             <h4>"Year Input"</h4>
@@ -440,8 +451,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                 </div>
 
                 <div>
-                    <div class=CssClasses::Title.to_string()>"Select Lists"</div>
-                    <div class=CssClasses::CcdSelects.to_string()>
+                    <div class=CssClasses::Title.as_str()>"Select Lists"</div>
+                    <div class=CssClasses::CcdSelects.as_str()>
                         <div style="padding: 1em;">
                             <h4>"Mutli-Column Select (Top To Bottom)"</h4>
                             <p inner_html="
@@ -510,8 +521,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
 
                 <div>
                     <div>
-                        <div class=CssClasses::Title.to_string()>"Normal Spec With Values"</div>
-                        <div class=CssClasses::CcdNormalSpec.to_string()>
+                        <div class=CssClasses::Title.as_str()>"Normal Spec With Values"</div>
+                        <div class=CssClasses::CcdNormalSpec.as_str()>
                             <NormalSpecComponent updatable=Updatable::new(
                                 Some(NormalSpec {
                                     mean: 0.1,
@@ -525,8 +536,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                     </div>
 
                     <div>
-                        <div class=CssClasses::Title.to_string()>"Ok/Cancel"</div>
-                        <div class=CssClasses::CcdOkCancel.to_string()>
+                        <div class=CssClasses::Title.as_str()>"Ok/Cancel"</div>
+                        <div class=CssClasses::CcdOkCancel.as_str()>
                             <OkCancelComponent on_ok_cancel=move |ok_cancel| {
                                 show_update(format!("Ok/Cancel -> {ok_cancel:?}"))
                             }/>
@@ -534,8 +545,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                     </div>
 
                     <div>
-                        <div class=CssClasses::Title.to_string()>"Sliders"</div>
-                        <div class=CssClasses::CcdSliders.to_string()>
+                        <div class=CssClasses::Title.as_str()>"Sliders"</div>
+                        <div class=CssClasses::CcdSliders.as_str()>
                             <SliderWithNumericInput
                                 updatable=Updatable::new(
                                     50.0,
@@ -582,8 +593,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                     </div>
 
                     <div>
-                        <div class=CssClasses::Title.to_string()>"Rate Curves"</div>
-                        <div class=CssClasses::CcdRateCurve.to_string()>
+                        <div class=CssClasses::Title.as_str()>"Rate Curves"</div>
+                        <div class=CssClasses::CcdRateCurve.as_str()>
                             <div>
                                 <h4>"Empty Rate Curve"</h4>
                                 <YearValueSeriesComponent updatable=Updatable::new(

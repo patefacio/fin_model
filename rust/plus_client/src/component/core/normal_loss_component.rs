@@ -4,11 +4,14 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
+use leptos::component;
 use leptos::use_context;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
-use leptos::{component, view, IntoView};
 use plus_lookup::I18nNormalLossComponent;
 use plus_modeled::NormalSpec;
 
@@ -68,7 +71,7 @@ pub fn NormalLossComponent(
         <div class=SELF_CLASS>
             // α <plus-nlc-view>
 
-            <div style="grid-column-start: 1; grid-column-end: 3; text-align: center">
+            <div class=CssClasses::NlcLblCtnr.as_str()>
                 <h4>
                     {move || {
                         normal_spec
@@ -79,17 +82,17 @@ pub fn NormalLossComponent(
 
                 </h4>
             </div>
-            <div class=CssClasses::HeaderRight.to_string()>{i18n_gain_pct}</div>
-            <div class=CssClasses::HeaderRight.to_string()>{i18n_prob_pct}</div>
+            <div class=CssClasses::HeaderRight.as_str()>{i18n_gain_pct}</div>
+            <div class=CssClasses::HeaderRight.as_str()>{i18n_prob_pct}</div>
             <For
                 each=move || loss_vec.get()
                 key=|item| { format!("{item:?}") }
                 children=move |cdf_input| {
                     view! {
-                        <div style="text-align: right;">
+                        <div class=CssClasses::TxtRightPadLeft.as_str()>
                             {move || { format!("{:.2}%", scale_by(cdf_input, 2)) }}
                         </div>
-                        <div style="text-align: right;">
+                        <div class=CssClasses::TxtRightPadLeft.as_str()>
                             {move || {
                                 normal_spec
                                     .with(|normal_spec| {
@@ -113,7 +116,7 @@ pub fn NormalLossComponent(
             <div>
                 <hr/>
             </div>
-            <div style="text-align: right">
+            <div class=CssClasses::TxtRightPadLeft.as_str()>
                 <NumericInput
                     placeholder=Signal::derive(i18n_cdf_sample)
                     modification=Some(Modification::PrefixAndSuffix {
@@ -126,7 +129,7 @@ pub fn NormalLossComponent(
                     max_len=14
                 />
             </div>
-            <div style="text-align: right">
+            <div class=CssClasses::TxtRightPadLeft.as_str()>
                 {move || {
                     normal_spec
                         .with(move |normal_spec| {

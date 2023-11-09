@@ -9,6 +9,7 @@
 	--plus-sm-fnt: 0.74rem;
 	--plus-lbl-sz: 0.9rem;
 	--plus-title-sz: 1.1rem;
+	--plus-max-width: 1200px;
 }
 
 *,
@@ -124,6 +125,34 @@ legend {
 input {
 	// α <elm-input>
 	// ω <elm-input>
+}
+
+/*
+  Adds `text-align=right;`
+*/
+.txt-right {
+	// α <txt_right>
+	text-align: right;
+	// ω <txt_right>
+}
+
+/*
+  Adds `text-align=right; padding-left=1rem;`
+*/
+.txt-right-pad-left {
+	// α <txt_right_pad_left>
+	text-align: right;
+	padding-left: 1rem;
+	// ω <txt_right_pad_left>
+}
+
+/*
+  Adds `padding-left=1rem;`
+*/
+.pl-left-1 {
+	// α <pl_left_1>
+	padding-left: 1rem;
+	// ω <pl_left_1>
 }
 
 /*
@@ -869,7 +898,7 @@ input {
 .mcs-icon-label {
 	// α <mcs_icon_label>
 	display: grid;
-	grid-template-columns: 2.5em 1fr;
+	grid-template-columns: 1fr 1fr;
 	padding: 2px;
 	margin-left: 0.3rem;
 	// ω <mcs_icon_label>
@@ -1264,10 +1293,88 @@ input {
 }
 
 /*
+  HistoricRiskReturn container
+*/
+.hrrc-ctnr {
+	// α <hrrc_ctnr>
+	display: flex;
+	text-align: right;
+	// ω <hrrc_ctnr>
+}
+
+/*
+  HistoricRiskReturn dot
+*/
+.hrrc-dot {
+	// α <hrrc_dot>
+	height: 15px;
+	width: 15px;
+	margin: 0.35em;
+	text-align: right;
+	bottom: 0;
+	left: 0;
+	border-radius: 50%;
+	display: inline-block;
+	// ω <hrrc_dot>
+}
+
+/*
+  HistoricRiskReturn label container
+*/
+.hrrc-lbl-ctnr {
+	// α <hrrc_lbl_ctnr>
+	position: relative;
+	// ω <hrrc_lbl_ctnr>
+}
+
+/*
+  HistoricRiskReturn label
+*/
+.hrrc-lbl {
+	// α <hrrc_lbl>
+	position: absolute;
+	bottom: 16.5%;
+	left: 0;
+	white-space: nowrap;
+	// ω <hrrc_lbl>
+}
+
+/*
+  HistoricRiskReturn plot
+*/
+.hrrc-plot {
+	// α <hrrc_plot>
+	grid-row-start: 1;
+	grid-row-end: 4;
+	// ω <hrrc_plot>
+}
+
+/*
+  NormalLossComponent label
+*/
+.nlc-lbl-ctnr {
+	// α <nlc_lbl_ctnr>
+	grid-column-start: 1;
+	grid-column-end: 3;
+	text-align: center;
+	// ω <nlc_lbl_ctnr>
+}
+
+/*
+  HoldingComponent container for growth and distributions
+*/
+.hc-extras-ctnr {
+	// α <hc_extras_ctnr>
+	grid-column-start: 1;
+	grid-column-end: 2;
+	// ω <hc_extras_ctnr>
+}
+
+/*
   AppCenterComponent
 */
 .plus-acc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <app_center_component>
 	width: 1150px;
 	height: 100vh;
@@ -1317,7 +1424,7 @@ input {
   AppSideBar
 */
 .plus-asb {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <app_side_bar>
 
 	background-color: peachpuff;
@@ -1328,10 +1435,19 @@ input {
 }
 
 /*
+  ErrorDisplayComponent
+*/
+.plus-edc {
+	max-width: var(--plus-max-width);
+	// α <error_display_component>
+	// ω <error_display_component>
+}
+
+/*
   CollapsibleComponent
 */
 .plus-cc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <collapsible_component>
 	// ω <collapsible_component>
 }
@@ -1340,7 +1456,7 @@ input {
   CollectionGridComponent
 */
 .plus-cgc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <collection_grid_component>
 	// ω <collection_grid_component>
 }
@@ -1349,7 +1465,7 @@ input {
   CoreComponentDisplay
 */
 .plus-ccd {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <core_component_display>
 	width: 100%;
 
@@ -1365,7 +1481,7 @@ input {
   CurrencySelect
 */
 .plus-cs {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <currency_select>
 	// ω <currency_select>
 }
@@ -1374,8 +1490,9 @@ input {
   DateInput
 */
 .plus-di {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <date_input>
+	display: inline;
 	// ω <date_input>
 }
 
@@ -1383,7 +1500,7 @@ input {
   DisposeTest
 */
 .plus-dt {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <dispose_test>
 	// ω <dispose_test>
 }
@@ -1392,8 +1509,12 @@ input {
   DistributionCdfComponent
 */
 .plus-dcc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <distribution_cdf_component>
+
+	display: flex;
+	justify-content: center;
+
 	// ω <distribution_cdf_component>
 }
 
@@ -1401,7 +1522,7 @@ input {
   DistributionPdfComponent
 */
 .plus-dist-pdf-comp {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <distribution_pdf_component>
 	// ω <distribution_pdf_component>
 }
@@ -1410,8 +1531,9 @@ input {
   EnumSelect
 */
 .plus-es {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <enum_select>
+	display: inline;
 	// ω <enum_select>
 }
 
@@ -1419,7 +1541,7 @@ input {
   HistoricRiskReturnComponent
 */
 .plus-hrrc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <historic_risk_return_component>
 
 	display: grid;
@@ -1432,7 +1554,7 @@ input {
   IntegerInput
 */
 .plus-ii {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <integer_input>
 	// ω <integer_input>
 }
@@ -1441,7 +1563,7 @@ input {
   MultiButtonSelect
 */
 .plus-mbs {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <multi_button_select>
 
 	border: #000;
@@ -1455,7 +1577,7 @@ input {
   MultiColumnSelect
 */
 .plus-mcs {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <multi_column_select>
 	display: inline;
 	// ω <multi_column_select>
@@ -1465,18 +1587,17 @@ input {
   NormalLossComponent
 */
 .plus-nlc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <normal_loss_component>
-	display: grid; 
-	grid-template-columns: 1fr 1fr
-	// ω <normal_loss_component>
+	display: grid;
+	grid-template-columns: 1fr 1fr // ω <normal_loss_component>
 }
 
 /*
   NormalSpecComponent
 */
 .plus-nsc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <normal_spec_component>
 	// ω <normal_spec_component>
 }
@@ -1485,8 +1606,10 @@ input {
   NumericInput
 */
 .plus-ni {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <numeric_input>
+
+	display: inline;
 	// ω <numeric_input>
 }
 
@@ -1494,7 +1617,7 @@ input {
   OkCancelComponent
 */
 .plus-occ {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <ok_cancel_component>
 	margin: 2px;
 	// ω <ok_cancel_component>
@@ -1504,7 +1627,7 @@ input {
   OneOfComponent
 */
 .plus-ooc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <one_of_component>
 	margin: 2px;
 	// ω <one_of_component>
@@ -1514,7 +1637,7 @@ input {
   PercentInput
 */
 .plus-pi {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <percent_input>
 	// ω <percent_input>
 }
@@ -1523,11 +1646,17 @@ input {
   SliderWithNumericInput
 */
 .plus-swni {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	color: red;
 	// α <slider_with_numeric_input>
 	display: inline-block;
 	vertical-align: text-bottom;
+
+	input[type="range"] {
+		width: 90px;
+	}
+
+	//width: 60;
 	// ω <slider_with_numeric_input>
 }
 
@@ -1535,7 +1664,7 @@ input {
   ToggleImageButton
 */
 .plus-tib {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <toggle_image_button>
 
 	display: flex;
@@ -1557,10 +1686,15 @@ input {
   YearCurrencyValueInput
 */
 .plus-ycvi {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <year_currency_value_input>
 	box-sizing: content-box;
 	display: inline-flex;
+
+	button {
+		margin-right: 3px;
+	}
+
 	// ω <year_currency_value_input>
 }
 
@@ -1568,7 +1702,7 @@ input {
   YearInput
 */
 .plus-yi {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <year_input>
 	display: inline;
 	// ω <year_input>
@@ -1578,7 +1712,7 @@ input {
   YearRangeInput
 */
 .plus-yri {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <year_range_input>
 	display: inline-flex;
 	// ω <year_range_input>
@@ -1588,7 +1722,7 @@ input {
   YearValueInput
 */
 .plus-yvi {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <year_value_input>
 	display: inline-flex;
 	// ω <year_value_input>
@@ -1598,7 +1732,7 @@ input {
   YearValueSeriesComponent
 */
 .plus-yvsc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <year_value_series_component>
 
 	display: block;
@@ -1612,7 +1746,7 @@ input {
   AccountComponent
 */
 .plus-ac {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <account_component>
 	// ω <account_component>
 }
@@ -1621,7 +1755,7 @@ input {
   AccountsGrid
 */
 .plus-ag {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <accounts_grid>
 	// ω <accounts_grid>
 }
@@ -1630,7 +1764,7 @@ input {
   AgeAssumptionsComponent
 */
 .plus-aac {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <age_assumptions_component>
 	// ω <age_assumptions_component>
 }
@@ -1639,7 +1773,7 @@ input {
   BondSpecComponent
 */
 .plus-bsc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <bond_spec_component>
 	// ω <bond_spec_component>
 }
@@ -1648,7 +1782,7 @@ input {
   ComponentDisplayComponent
 */
 .plus-cdc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <component_display_component>
 	// ω <component_display_component>
 }
@@ -1657,8 +1791,10 @@ input {
   DistributionPolicyComponent
 */
 .plus-dpc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <distribution_policy_component>
+	display: flex;
+	justify-content: center;
 	// ω <distribution_policy_component>
 }
 
@@ -1666,7 +1802,7 @@ input {
   DistributionSpecComponent
 */
 .plus-dsc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <distribution_spec_component>
 	// ω <distribution_spec_component>
 }
@@ -1675,7 +1811,7 @@ input {
   GrowthAssumptionComponent
 */
 .plus-gac {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <growth_assumption_component>
 	// ω <growth_assumption_component>
 }
@@ -1684,7 +1820,7 @@ input {
   HoldingComponent
 */
 .plus-hc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <holding_component>
 	// ω <holding_component>
 }
@@ -1693,7 +1829,7 @@ input {
   HoldingsGrid
 */
 .plus-hg {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <holdings_grid>
 	// ω <holdings_grid>
 }
@@ -1702,7 +1838,7 @@ input {
   ItemGrowthComponent
 */
 .plus-igc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <item_growth_component>
 	// ω <item_growth_component>
 }
@@ -1711,7 +1847,7 @@ input {
   ItemGrowthSelect
 */
 .plus-igs {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <item_growth_select>
 	display: flex;
 
@@ -1722,7 +1858,7 @@ input {
   NameInput
 */
 .plus-name-input {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <name_input>
 	// ω <name_input>
 }
@@ -1731,7 +1867,7 @@ input {
   PersonComponent
 */
 .plus-pc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <person_component>
 	// ω <person_component>
 }
@@ -1740,7 +1876,7 @@ input {
   PersonsGrid
 */
 .plus-pg {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <persons_grid>
 	// ω <persons_grid>
 }
@@ -1749,8 +1885,9 @@ input {
   SymbolInput
 */
 .plus-si {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <symbol_input>
+	display: inline;
 	// ω <symbol_input>
 }
 
@@ -1758,7 +1895,7 @@ input {
   DossierEditor
 */
 .plus-de {
-	max-width: 800px;
+	max-width: var(--plus-max-width);
 	// α <dossier_editor>
 	background-color: wheat;
 	//border: solid 2px;
@@ -1772,7 +1909,7 @@ input {
   FinModelDisplayComponent
 */
 .plus-fmdc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <fin_model_display_component>
 	// ω <fin_model_display_component>
 }
@@ -1781,7 +1918,7 @@ input {
   FlowSpecComponent
 */
 .plus-fsc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <flow_spec_component>
 	// ω <flow_spec_component>
 }
@@ -1790,7 +1927,7 @@ input {
   FlowSpecsGrid
 */
 .plus-fsg {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <flow_specs_grid>
 	// ω <flow_specs_grid>
 }
@@ -1799,7 +1936,7 @@ input {
   GrowingFlowSpecComponent
 */
 .plus-gfsc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <growing_flow_spec_component>
 	// ω <growing_flow_spec_component>
 }
@@ -1808,7 +1945,7 @@ input {
   StringInput
 */
 .plus-string-input {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <string_input>
 	// ω <string_input>
 }
@@ -1817,7 +1954,7 @@ input {
   ValueFlowSpecComponent
 */
 .plus-vfsc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <value_flow_spec_component>
 	// ω <value_flow_spec_component>
 }
@@ -1826,7 +1963,7 @@ input {
   WorthComponent
 */
 .plus-wc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <worth_component>
 	// ω <worth_component>
 }
@@ -1835,7 +1972,7 @@ input {
   WorthsGrid
 */
 .plus-wg {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <worths_grid>
 	// ω <worths_grid>
 }
@@ -1844,7 +1981,7 @@ input {
   TaxDeterminantsComponent
 */
 .plus-tdc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <tax_determinants_component>
 	// ω <tax_determinants_component>
 }
@@ -1853,7 +1990,7 @@ input {
   DossierViewer
 */
 .plus-dv {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <dossier_viewer>
 	// ω <dossier_viewer>
 }
@@ -1862,7 +1999,7 @@ input {
   AssetLiabilityComponent
 */
 .plus-alc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <asset_liability_component>
 	// ω <asset_liability_component>
 }
@@ -1871,7 +2008,7 @@ input {
   DossierResolvedView
 */
 .plus-drv {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <dossier_resolved_view>
 	// ω <dossier_resolved_view>
 }
@@ -1880,8 +2017,10 @@ input {
   ForecastConfigComponent
 */
 .plus-fcc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <forecast_config_component>
+
+	display: none;
 
 	label {
 		white-space: nowrap;
@@ -1895,8 +2034,11 @@ input {
   ForecastIdSelector
 */
 .plus-fis {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <forecast_id_selector>
+
+	width: 1500px;
+
 	// ω <forecast_id_selector>
 }
 
@@ -1904,7 +2046,7 @@ input {
   ForecasterComponent
 */
 .plus-fc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <forecaster_component>
 	width: 1150;
 	// ω <forecaster_component>
@@ -1914,7 +2056,7 @@ input {
   MatrixResolvedView
 */
 .plus-mrv {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <matrix_resolved_view>
 	// ω <matrix_resolved_view>
 }
@@ -1923,7 +2065,7 @@ input {
   ForecastSummaryComponent
 */
 .plus-forecast-summary {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <forecast_summary_component>
 	// ω <forecast_summary_component>
 }
@@ -1932,8 +2074,13 @@ input {
   TimelineGroupComponent
 */
 .plus-tgc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <timeline_group_component>
+
+	display: grid;
+	column-gap: 0.5rem;
+	grid-template-columns: 1fr 1fr;
+
 	// ω <timeline_group_component>
 }
 
@@ -1941,7 +2088,7 @@ input {
   BalanceSheetStatement
 */
 .plus-bss {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <balance_sheet_statement>
 	// ω <balance_sheet_statement>
 }
@@ -1950,7 +2097,7 @@ input {
   InvestmentPlanView
 */
 .plus-ipv {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <investment_plan_view>
 	// ω <investment_plan_view>
 }
@@ -1959,7 +2106,7 @@ input {
   SalesPlanView
 */
 .plus-spv {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <sales_plan_view>
 	// ω <sales_plan_view>
 }
@@ -1968,7 +2115,7 @@ input {
   CashFlowStatement
 */
 .plus-cfs {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <cash_flow_statement>
 	// ω <cash_flow_statement>
 }
@@ -1977,7 +2124,7 @@ input {
   UsTaxStatementView
 */
 .plus-utsv {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <us_tax_statement_view>
 	// ω <us_tax_statement_view>
 }
@@ -1986,7 +2133,7 @@ input {
   ForecastPrimaryView
 */
 .plus-fpv {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <forecast_primary_view>
 	// ω <forecast_primary_view>
 }
@@ -1995,8 +2142,9 @@ input {
   AssetLiabilityTimeline
 */
 .plus-alt {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <asset_liability_timeline>
+	width: 400px;
 	// ω <asset_liability_timeline>
 }
 
@@ -2004,8 +2152,9 @@ input {
   CashFlowTimeline
 */
 .plus-cft {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <cash_flow_timeline>
+	width: 400px;
 	// ω <cash_flow_timeline>
 }
 
@@ -2013,7 +2162,7 @@ input {
   SelectedYearGroupComponent
 */
 .plus-sygc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <selected_year_group_component>
 	// ω <selected_year_group_component>
 }
@@ -2022,7 +2171,7 @@ input {
   MonteConfigComponent
 */
 .plus-mcc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <monte_config_component>
 	// ω <monte_config_component>
 }
@@ -2031,7 +2180,7 @@ input {
   MonteSimulatorComponent
 */
 .plus-msc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <monte_simulator_component>
 	//display: none;
 	// ω <monte_simulator_component>
@@ -2041,7 +2190,7 @@ input {
   MonteSimulationSummaryComponent
 */
 .plus-mssc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <monte_simulation_summary_component>
 	// ω <monte_simulation_summary_component>
 }
@@ -2050,7 +2199,7 @@ input {
   DossierSpinOffSelector
 */
 .plus-dsos {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <dossier_spin_off_selector>
 	// ω <dossier_spin_off_selector>
 }
@@ -2059,7 +2208,7 @@ input {
   DossierBundleComponent
 */
 .plus-dbc {
-	max-width: 850.0px;
+	max-width: var(--plus-max-width);
 	// α <dossier_bundle_component>
 	// ω <dossier_bundle_component>
 }

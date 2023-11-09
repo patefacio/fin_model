@@ -4,10 +4,13 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
+use leptos::component;
 use leptos::use_context;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::SignalGet;
-use leptos::{component, view, IntoView};
 use plus_lookup::I18nOkCancelComponent;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -53,13 +56,13 @@ where
         <div class=SELF_CLASS>
             // α <plus-occ-view>
             <button
-                class=CssClasses::OccOkBtn.to_string()
+                class=CssClasses::OccOkBtn.as_str()
                 on:click=move |_| { on_ok_cancel_stored_value.update_value(|f| f(OkCancel::Ok)) }
             >
                 {i18n_ok}
             </button>
             <button
-                class=CssClasses::OccCancelBtn.to_string()
+                class=CssClasses::OccCancelBtn.as_str()
                 on:click=move |_| {
                     on_ok_cancel_stored_value.update_value(|f| f(OkCancel::Cancel))
                 }

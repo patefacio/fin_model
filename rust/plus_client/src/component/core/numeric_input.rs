@@ -8,8 +8,12 @@ use crate::utils::constants::{
 };
 use crate::utils::numeric_text::{digit_position, format_number_lenient};
 use crate::Updatable;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
+use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView};
 use leptos::{create_effect, create_node_ref, create_signal, store_value, ReadSignal, SignalWith};
 use leptos_dom::html::Input;
 use std::ops::RangeInclusive;
@@ -109,11 +113,11 @@ pub fn NumericInput(
     #[prop(default=None)]
     parent_override: Option<ReadSignal<f64>>,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-ni";
     crate::log_component!("`NumericInput`");
     // α <fn numeric_input>
 
     use crate::LenientFormatted;
-    use leptos::IntoAttribute;
     use leptos::IntoClass;
     use leptos::IntoStyle;
     use leptos::SignalGet;
@@ -423,44 +427,51 @@ pub fn NumericInput(
         });
     };
 
+    // ω <fn numeric_input>
     view! {
-        <input
-            class=input_class
-            class:invalid=move || { !is_valid_read.get() }
-            style:text-align=move || { if align_left { "left" } else { "right" } }
-            node_ref=node_ref
-            on:keydown=key_movement
-            on:input=move |_| {
-                if let Some(input_ref) = node_ref.get_untracked() {
-                    let input_value = input_ref.value();
-                    let is_effectively_empty = numeric_input_data_stored_value
-                        .with_value(|numeric_input_data| {
-                            numeric_input_data
-                                .modification
-                                .as_ref()
-                                .map(|modification| {
-                                    let modified_value = modification.modify("");
-                                    modified_value == input_value
-                                })
-                                .unwrap_or_default()
-                        });
-                    if is_effectively_empty {
-                        input_ref.set_value("");
-                    } else {
-                        update_value.update_value(|update_value| update_value(input_ref.value()));
+        <div class=SELF_CLASS>
+            // α <plus-ni-view>
+
+            <input
+                class=input_class
+                class:invalid=move || { !is_valid_read.get() }
+                style:text-align=move || { if align_left { "left" } else { "right" } }
+                node_ref=node_ref
+                on:keydown=key_movement
+                on:input=move |_| {
+                    if let Some(input_ref) = node_ref.get_untracked() {
+                        let input_value = input_ref.value();
+                        let is_effectively_empty = numeric_input_data_stored_value
+                            .with_value(|numeric_input_data| {
+                                numeric_input_data
+                                    .modification
+                                    .as_ref()
+                                    .map(|modification| {
+                                        let modified_value = modification.modify("");
+                                        modified_value == input_value
+                                    })
+                                    .unwrap_or_default()
+                            });
+                        if is_effectively_empty {
+                            input_ref.set_value("");
+                        } else {
+                            update_value
+                                .update_value(|update_value| update_value(input_ref.value()));
+                        }
                     }
                 }
-            }
 
-            placeholder=placeholder
-            value=initial_value
-            maxlength=max_len
-            size=size
-            type="text"
-            disabled=disabled
-        />
+                placeholder=placeholder
+                value=initial_value
+                maxlength=max_len
+                size=size
+                type="text"
+                disabled=disabled
+            />
+
+        // ω <plus-ni-view>
+        </div>
     }
-    // ω <fn numeric_input>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

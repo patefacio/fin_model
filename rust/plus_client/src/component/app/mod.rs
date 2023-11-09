@@ -7,6 +7,7 @@ pub mod app_center_component;
 pub mod app_component;
 pub mod app_nav_bar;
 pub mod app_side_bar;
+pub mod error_display_component;
 
 // α <mod-def app>
 // ω <mod-def app>

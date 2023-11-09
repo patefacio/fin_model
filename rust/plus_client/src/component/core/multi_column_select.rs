@@ -9,9 +9,12 @@ use crate::utils::constants::{
 use crate::utils::element_sugar::{element_from_event, find_element_up};
 use crate::HtmlTag;
 use crate::SelectDirection;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView};
 use leptos_dom::html::Div;
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
@@ -121,7 +124,6 @@ where
     use leptos::create_rw_signal;
     use leptos::ev::{focusin, mousedown};
     use leptos::html::Button;
-    use leptos::IntoAttribute;
     use leptos::IntoClass;
     use leptos::NodeRef;
     use leptos::SignalGet;
@@ -165,7 +167,7 @@ where
 
     impl<F> Drop for MCSData<F> {
         fn drop(&mut self) {
-            //tracing::info!("DROPPING MCSData -> {self:?}");
+            //tracing::debug!("DROPPING MCSData -> {self:?}");
         }
     }
 
@@ -305,15 +307,15 @@ where
                     let (value, button_content) = match select_option {
                         SelectOption::Label(label) => (
                             label,
-                            view! { <div class=CssClasses::McsLabel.to_string()>{label}</div> }
+                            view! { <div class=CssClasses::McsLabel.as_str()>{label}</div> }
                                 .into_view(),
                         ),
                         SelectOption::KeyLabel { key, label } => (
                             key,
                             view! {
-                                <div class=CssClasses::McsIconLabel.to_string()>
-                                    <div class=CssClasses::McsIcon.to_string()>{key}</div>
-                                    <div class=CssClasses::McsSelectLabel.to_string()>{label}</div>
+                                <div class=CssClasses::McsIconLabel.as_str()>
+                                    <div class=CssClasses::McsIcon.as_str()>{key}</div>
+                                    <div class=CssClasses::McsSelectLabel.as_str()>{label}</div>
                                 </div>
                             }
                             .into_view(),
@@ -324,11 +326,11 @@ where
                     let wrapped_handle_click = move |ev| wrapped_click(ev);
                     let wrapped_handle_keydown = handle_key_down.clone();
                     let wrapped_handle_keydown = move |ev| wrapped_handle_keydown(ev);
-                    let button_ref = mcs_data.selection_vec[flat_index];
+                    let _button_ref = mcs_data.selection_vec[flat_index];
 
                     view! {
                         <button
-                            class=CssClasses::McsSelectBtn.to_string()
+                            class=CssClasses::McsSelectBtn.as_str()
                             on:click=wrapped_handle_click
                             on:mouseover=handle_mouseover
                             on:mousemove=handle_mousemove
@@ -336,7 +338,7 @@ where
                             class:using-mouse=move || using_mouse.get()
                             data-flat-index=flat_index
                             data-value=value
-                            node_ref=button_ref
+                            node_ref=_button_ref
                         >
                             {button_content}
                         </button>
@@ -386,21 +388,21 @@ where
             // α <plus-mcs-view>
 
             <div
-                class=CssClasses::McsGrid.to_string()
+                class=CssClasses::McsGrid.as_str()
                 disabled=move || { !menu_is_hidden.get() }
                 node_ref=mcs_grid_ref
             >
                 <button
                     on:mousedown=handle_main_button_mousedown
                     on:keydown=handle_main_button_key_activate
-                    class=CssClasses::McsMainBtn.to_string()
+                    class=CssClasses::McsMainBtn.as_str()
                     node_ref=main_button_ref
                     disabled=disabled
                 >
                     {move || { mcs_data.with(|mcs_data| mcs_data.main_button_label.clone()) }}
                 </button>
                 <div
-                    class=CssClasses::McsCtnr.to_string()
+                    class=CssClasses::McsCtnr.as_str()
                     class:hidden=move || menu_is_hidden.get()
                     style=format!("grid-template-columns: {}", "1fr ".repeat(column_count))
                 >

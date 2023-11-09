@@ -3,8 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
-use leptos::{component, view, IntoView};
+use leptos::IntoView;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -18,12 +21,15 @@ pub fn AppComponent() -> impl IntoView {
     crate::log_component!("`AppComponent`");
     // α <fn app_component>
 
+    use super::error_display_component::AppError;
+    use super::error_display_component::ErrorDisplayComponent;
     use crate::AppCenterComponent;
     use crate::AppContext;
     use crate::AppNavBar;
     use crate::AppSideBar;
     use leptos::create_rw_signal;
     use leptos::provide_context;
+    use leptos_dom::Errors;
     use leptos_meta::provide_meta_context;
     use leptos_meta::Stylesheet;
     use leptos_meta::Title;
@@ -53,7 +59,11 @@ pub fn AppComponent() -> impl IntoView {
 
             <Stylesheet id="leptos" href="/pkg/plus_client.css"/>
             <Title text="Auric Components"/>
-            <Router>
+            <Router fallback=|| {
+                let mut outside_errors = Errors::default();
+                outside_errors.insert_with_default_key(AppError::NotFound);
+                view! { <ErrorDisplayComponent outside_errors/> }.into_view()
+            }>
                 <main>
                     <Routes>
                         <Route

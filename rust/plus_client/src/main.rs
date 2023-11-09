@@ -1,34 +1,41 @@
 #[cfg(feature = "ssr")]
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    use actix_files::Files;
-    use actix_web::*;
+#[tokio::main]
+async fn main() {
+    use axum::{routing::post, Router};
     use leptos::*;
-    use leptos_actix::{generate_route_list, LeptosRoutes};
     use plus_client::AppComponent;
 
+    use std::{fs::File, sync::Arc};
+
+    use leptos_axum::{generate_route_list, LeptosRoutes};
+    use plus_client::file_serve::file_and_error_handler;
+    use tracing_subscriber::{filter, prelude::*};
+
+    simple_logger::init_with_level(log::Level::Info).expect("couldn't initialize logging");
+
+    // Setting get_configuration(None) means we'll be using cargo-leptos's env values
+    // For deployment these variables are:
+    // <https://github.com/leptos-rs/start-axum#executing-a-server-on-a-remote-machine-without-the-toolchain>
+    // Alternately a file can be specified such as Some("Cargo.toml")
+    // The file would need to be included with the executable when moved to deployment
     let conf = get_configuration(None).await.unwrap();
-    let addr = conf.leptos_options.site_addr;
-    // Generate the list of routes in your Leptos App
-    let routes = generate_route_list(|| view! { <AppComponent/> });
+    let leptos_options = conf.leptos_options;
+    let addr = leptos_options.site_addr;
+    let routes = generate_route_list(AppComponent);
 
-    HttpServer::new(move || {
-        let leptos_options = &conf.leptos_options;
-        let site_root = &leptos_options.site_root;
+    // build our application with a route
+    let app = Router::new()
+        .leptos_routes(&leptos_options, routes, AppComponent)
+        .fallback(file_and_error_handler)
+        .with_state(leptos_options);
 
-        App::new()
-            .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
-            .leptos_routes(
-                leptos_options.to_owned(),
-                routes.to_owned(),
-                || view! { <AppComponent/> },
-            )
-            .service(Files::new("/", site_root))
-        //.wrap(middleware::Compress::default())
-    })
-    .bind(&addr)?
-    .run()
-    .await
+    // run our app with hyper
+    // `axum::Server` is a re-export of `hyper::Server`
+    log::info!("listening on http://{}", &addr);
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
 
 #[cfg(not(feature = "ssr"))]

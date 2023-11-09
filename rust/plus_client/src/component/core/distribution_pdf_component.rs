@@ -3,8 +3,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
+use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
-use leptos::{component, view, IntoView};
 use plus_modeled::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -23,14 +27,14 @@ pub fn DistributionPdfComponent(
     #[prop(default = false)]
     disabled: bool,
 ) -> impl IntoView {
+    pub const SELF_CLASS: &str = "plus-dist-pdf-comp";
     crate::log_component!("`DistributionPdfComponent`");
     // α <fn distribution_pdf_component>
 
     use crate::DistributionPdf;
-    use leptos::IntoAttribute;
     use leptos::SignalGet;
 
-    let plot = move || {
+    let _plot = move || {
         let normal_spec = normal_spec.get();
         if !disabled {
             normal_spec.get_pdf_chart(200)
@@ -39,9 +43,12 @@ pub fn DistributionPdfComponent(
         }
     };
 
-    view! { <div style="display: flex; justify-content: center;" inner_html=plot></div> }
-
     // ω <fn distribution_pdf_component>
+    view! {
+        <div class=SELF_CLASS inner_html=_plot>
+
+        </div>
+    }
 }
 
 // α <mod-def distribution_pdf_component>

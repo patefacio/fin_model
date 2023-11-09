@@ -3,7 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use leptos::{component, view, IntoView};
+use leptos::component;
+use leptos::view;
+use leptos::IntoView;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -27,10 +29,10 @@ pub fn DisposeTest() -> impl IntoView {
         );
     */
     let do_stuff = move || {
-        tracing::info!("Doing stuff");
+        tracing::debug!("Doing stuff");
     };
 
-    let do_stuff = leptos::store_value(do_stuff);
+    let _do_stuff = leptos::store_value(do_stuff);
 
     // leptos_dom::console_log(&format!(
     //     "Size of read signal is {}, size of write signal is {}",
@@ -38,12 +40,12 @@ pub fn DisposeTest() -> impl IntoView {
     //     std::mem::size_of_val(&some_data_write),
     // ));
 
-    tracing::info!("DisposeTest");
+    tracing::debug!("DisposeTest");
     let log_dispose_item = crate::utils::log_dispose::LogDispose::new("dIsPoSe".into());
 
     let on_click = leptos::store_value(move |_| {
         println!("{log_dispose_item:?}");
-        tracing::info!("Clicked Bam Button");
+        tracing::debug!("Clicked Bam Button");
         // leptos_dom::console_log(&format!(
         //     "Clicked on {:?} -> {:?}({}) size({sz})",
         //     cloned,
@@ -74,8 +76,8 @@ struct SomeData {
 
 impl SomeData {
     fn new(message: &str) -> Self {
-        tracing::info!("Creating SomeData(`{message}`)");
-        tracing::info!("Creating some data again!");
+        tracing::debug!("Creating SomeData(`{message}`)");
+        tracing::debug!("Creating some data again!");
         Self {
             data: message.to_string(),
             pad: [1; 1024 * 16],
@@ -85,7 +87,11 @@ impl SomeData {
 
 impl Drop for SomeData {
     fn drop(&mut self) {
-        tracing::info!("Dropping SomeData(`{}`)", self.data);
+        tracing::debug!(
+            "Dropping SomeData(`{}`) with pad size {}",
+            self.data,
+            self.pad.len()
+        );
     }
 }
 

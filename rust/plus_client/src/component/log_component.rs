@@ -16,14 +16,15 @@ macro_rules! log_component {
                 COUNTER
             };
 
-            tracing::info!(concat!("Initializing: ", $component, "({})"), count);
+            tracing::warn!(concat!("Initializing: ", $component, "({})"), count);
             leptos::on_cleanup(move || {
-                tracing::info!(concat!("Cleanup:", $component, "({})"), count)
+                tracing::warn!(concat!("Cleanup:", $component, "({})"), count)
             });
         }
         // ω <log_component(component:expr)>
     };
 }
+#[allow(unused_imports)]
 pub(crate) use log_component;
 
 // α <mod-def log_component>

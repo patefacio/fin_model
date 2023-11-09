@@ -5,10 +5,13 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::IntegerClamp;
 use crate::Updatable;
+use leptos::component;
+use leptos::view;
+#[allow(unused_imports)]
 use leptos::IntoAttribute;
+use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::ReadSignal;
-use leptos::{component, view, IntoView};
 use leptos_dom::html::Input;
 use plus_modeled::core::YearRange;
 
@@ -70,10 +73,14 @@ pub fn YearInput(
     use crate::CssClasses;
     use crate::ParsedNum;
     use leptos::create_effect;
+    use leptos::create_node_ref;
     use leptos::create_rw_signal;
     use leptos::create_signal;
+    use leptos::IntoClass;
+    use leptos::IntoStyle;
     use leptos::SignalGet;
-    use leptos::*;
+    use leptos::SignalSet;
+    use leptos::SignalUpdate;
     use web_sys::KeyboardEvent;
 
     // Determine if year is in the provided range
@@ -180,7 +187,7 @@ pub fn YearInput(
 
             <input
                 node_ref=node_ref
-                class=CssClasses::YiInput.to_string()
+                class=CssClasses::YiInput.as_str()
                 class=input_class
                 class:invalid=move || { !is_in_range_read.get() }
                 on:input=move |_| update_value.update(|update_value| update_value())
