@@ -89,10 +89,10 @@ pub fn NormalLossComponent(
                 key=|item| { format!("{item:?}") }
                 children=move |cdf_input| {
                     view! {
-                        <div class=CssClasses::TxtRightPadLeft.as_str()>
-                            {move || { format!("{:.2}%", scale_by(cdf_input, 2)) }}
-                        </div>
-                        <div class=CssClasses::TxtRightPadLeft.as_str()>
+                        <div class=CssClasses::TxtRightPadLeft
+                            .as_str()>{move || { format!("{:.2}%", scale_by(cdf_input, 2)) }}</div>
+                        <div class=CssClasses::TxtRightPadLeft
+                            .as_str()>
                             {move || {
                                 normal_spec
                                     .with(|normal_spec| {
@@ -129,7 +129,8 @@ pub fn NormalLossComponent(
                     max_len=14
                 />
             </div>
-            <div class=CssClasses::TxtRightPadLeft.as_str()>
+            <div class=CssClasses::TxtRightPadLeft
+                .as_str()>
                 {move || {
                     normal_spec
                         .with(move |normal_spec| {

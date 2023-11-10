@@ -57,14 +57,16 @@ pub fn HistoricRiskReturnComponent(
                     children=move |hrr| {
                         view! {
                             <div class=CssClasses::HrrcCtnr.as_str()>
-                                <div 
-                                class=CssClasses::HrrcDot.as_str() 
-                                style=format!(
-                                    "background-color: rgb({}, {}, {});",
-                                    hrr.color.0, hrr.color.1, hrr.color.2
-                                )></div>
+                                <div
+                                    class=CssClasses::HrrcDot.as_str()
+                                    style=format!(
+                                        "background-color: rgb({}, {}, {});", hrr.color.0, hrr.color
+                                        .1, hrr.color.2
+                                    )
+                                ></div>
                                 <div class=CssClasses::HrrcLblCtnr.as_str()>
-                                    <div class=CssClasses::HrrcLbl.as_str()>
+                                    <div class=CssClasses::HrrcLbl
+                                        .as_str()>
                                         {move || {
                                             format!(
                                                 "{} - {}", hrr.label.clone(), NormalSpec { mean : hrr

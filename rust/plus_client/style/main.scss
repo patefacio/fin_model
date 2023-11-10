@@ -2,6 +2,8 @@
 	box-sizing: border-box;
 	--plus-btn-color: hsl(120, 50%, 86%);
 	--plus-btn-hover-color: hsla(120, 50%, 73%, 1.0);
+	--plus-lbl-color: blue;
+	--plus-tb-color: whitesmoke;
 	--plus-btn-padding: 0.1rem 0.3rem 0.1rem 0.3rem;
 	--plus-txt-padding: 4px 4px 4px 4px;
 	--plus-lbl-color: blue;
@@ -9,7 +11,7 @@
 	--plus-sm-fnt: 0.74rem;
 	--plus-lbl-sz: 0.9rem;
 	--plus-title-sz: 1.1rem;
-	--plus-max-width: 1200px;
+	--plus-max-width: 100%;
 }
 
 *,
@@ -226,7 +228,7 @@ input {
 	justify-content: center;
 	// This pushes the button to the top
 	align-items: first;
-	background-color: rgb(225, 243, 191);
+	background-color: var(--plus-tb-color);
 	// ω <btn_tb_top>
 }
 
@@ -240,9 +242,7 @@ input {
 	flex-direction: column;
 	justify-content: center;
 
-	// This pushes the button to the top
-	background-color: rgb(225, 243, 191);
-
+	background-color: var(--plus-tb-color);
 	// ω <btn_tb_right>
 }
 
@@ -273,8 +273,7 @@ input {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	// This pushes the button to the top
-	background-color: rgb(225, 243, 191);
+	background-color: var(--plus-tb-color);
 
 	// ω <btn_tb_left>
 }
@@ -570,13 +569,10 @@ input {
 .mbs-view {
 	// α <mbs_view>
 
-	// display: flex;
-	// flex-grow: 1;
 	min-width: 100px;
 	min-height: 100px;
-	background-color: peachpuff;
+	background-color: rgb(246, 220, 197);
 	overflow-x: scroll;
-
 
 	// ω <mbs_view>
 }
@@ -1116,6 +1112,7 @@ input {
 .ooc-ctnr {
 	// α <ooc_ctnr>
 	row-gap: 1rem;
+	column-gap: 1rem;
 	// ω <ooc_ctnr>
 }
 
@@ -1160,55 +1157,6 @@ input {
 }
 
 /*
-  CoreComponentDisplay container below the top notify section
-*/
-.ccd-ctnr {
-	// α <ccd_ctnr>
-
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	column-gap: 2rem;
-
-	// ω <ccd_ctnr>
-}
-
-/*
-  CoreComponentDisplay top section for update announcements
-*/
-.ccd-top-notify {
-	// α <ccd_top_notify>
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
-	right: 0;
-	width: 1140px;
-	background-color: #bbb;
-	padding: 6px;
-	border-style: inset solid;
-	border-color: green;
-	border-width: 6px;
-	z-index: 2;
-	max-height: 250px;
-	overflow-y: scroll;
-	// ω <ccd_top_notify>
-}
-
-/*
-  CoreComponentDisplay number section
-*/
-.ccd-numbers {
-	// α <ccd_numbers>
-
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	border: 3px solid;
-	border-radius: 5px;
-	width: 550px;
-
-	// ω <ccd_numbers>
-}
-
-/*
   CoreComponentDisplay years and dates
 */
 .ccd-time {
@@ -1216,80 +1164,8 @@ input {
 
 	display: grid;
 	grid-template-columns: 2fr 1.5fr;
-	border: 3px solid;
-	border-radius: 5px;
-	width: 550px;
 
 	// ω <ccd_time>
-}
-
-/*
-  CoreComponentDisplay multi column select, enums, currency select
-*/
-.ccd-selects {
-	// α <ccd_selects>
-	display: grid;
-	grid-auto-flow: row;
-	grid-template-columns: 3fr 1fr;
-	border: 3px solid;
-	border-radius: 5px;
-	width: 550px;
-	// ω <ccd_selects>
-}
-
-/*
-  CoreComponentDisplay ok/cancel
-*/
-.ccd-ok-cancel {
-	// α <ccd_ok_cancel>
-	// display: grid;
-	// grid-auto-flow: column;
-	// grid-template-columns: auto;
-	border: 3px solid;
-	border-radius: 5px;
-	width: 550px;
-	// ω <ccd_ok_cancel>
-}
-
-/*
-  CoreComponentDisplay sliders
-*/
-.ccd-sliders {
-	// α <ccd_sliders>
-
-	//background-color: yellow;
-	input[type="range"] {
-		width: 90px;
-	}
-
-	// ω <ccd_sliders>
-}
-
-/*
-  CoreComponentDisplay rate curve
-*/
-.ccd-rate-curve {
-	// α <ccd_rate_curve>
-	display: grid;
-	grid-auto-flow: column;
-	grid-template-columns: auto;
-	border: 3px solid;
-	border-radius: 5px;
-	width: 550px;
-	// ω <ccd_rate_curve>
-}
-
-/*
-  CoreComponentDisplay normal spec section
-*/
-.ccd-normal-spec {
-	// α <ccd_normal_spec>
-	display: grid;
-	grid-template-columns: 1fr;
-	border: 3px solid;
-	border-radius: 5px;
-	width: 550px;
-	// ω <ccd_normal_spec>
 }
 
 /*
@@ -1376,7 +1252,7 @@ input {
 .plus-acc {
 	max-width: var(--plus-max-width);
 	// α <app_center_component>
-	width: 1150px;
+	//width: 1150px;
 	height: 100vh;
 	display: grid;
 	grid-template-columns: 10px 1fr;
@@ -1409,7 +1285,7 @@ input {
 
 	//box-sizing: border-box;
 	width: 100%;
-	width: 800px;
+	//width: 800px;
 	background-color: #0ff;
 	flex-grow: 1;
 	//grid-row: 1;
@@ -1467,12 +1343,9 @@ input {
 .plus-ccd {
 	max-width: var(--plus-max-width);
 	// α <core_component_display>
-	width: 100%;
-
-	.title {
-		color: blue;
-		font-size: large;
-	}
+	//width: 100%;
+	position: absolute;
+	width: 95vw;
 
 	// ω <core_component_display>
 }
@@ -1610,6 +1483,7 @@ input {
 	// α <numeric_input>
 
 	display: inline;
+	align-items: end;
 	// ω <numeric_input>
 }
 
@@ -1629,7 +1503,8 @@ input {
 .plus-ooc {
 	max-width: var(--plus-max-width);
 	// α <one_of_component>
-	margin: 2px;
+	margin: 5px;
+	padding: 10px;
 	// ω <one_of_component>
 }
 
@@ -1705,6 +1580,8 @@ input {
 	max-width: var(--plus-max-width);
 	// α <year_input>
 	display: inline;
+	text-align: right;
+
 	// ω <year_input>
 }
 
@@ -1725,6 +1602,8 @@ input {
 	max-width: var(--plus-max-width);
 	// α <year_value_input>
 	display: inline-flex;
+	text-align: right;
+
 	// ω <year_value_input>
 }
 
@@ -1736,8 +1615,14 @@ input {
 	// α <year_value_series_component>
 
 	display: block;
-	align-items: center;
-	width: 10rem;
+//	width: 12rem;
+
+	.plus-yi, .plus-ni {
+		text-align: right;
+		input {
+			width: 100%;
+		}
+	}
 
 	// ω <year_value_series_component>
 }
@@ -2212,3 +2097,176 @@ input {
 	// α <dossier_bundle_component>
 	// ω <dossier_bundle_component>
 }
+
+// α <component-display>
+
+
+/*
+  CoreComponentDisplay top section for update announcements
+*/
+.ccd-top-notify {
+	// α <ccd_top_notify>
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+	right: 0;
+	width: 98vw;
+	background-color: #bbb;
+	padding: 6px;
+	border-style: inset solid;
+	border-color: green;
+	border-width: 6px;
+	z-index: 2;
+	max-height: 250px;
+	overflow-y: scroll;
+	// ω <ccd_top_notify>
+}
+
+
+.ccd-section-2col {
+	.title {
+		color: red;
+		font-size: 1.2rem;
+	}
+
+	display: grid;
+	min-width: 600;
+	max-width: vw;
+	border: 3px solid;
+	border-radius: 5px;
+	grid-column: 1 / span 2;
+}
+
+
+/*
+  CoreComponentDisplay container below the top notify section
+*/
+.ccd-ctnr {
+	// α <ccd_ctnr>
+
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 2rem;
+	row-gap: 1rem;
+	width: 98vw;
+
+	// ω <ccd_ctnr>
+}
+
+
+.ccd-section {
+	.title {
+		color: navy;
+		font-size: 1.5rem;
+		padding: 1rem;
+	}
+
+	min-width: 600;
+	border: 3px solid;
+	border-radius: 5px;
+
+	.ccd-one-of-ctnr {
+		.plus-ooc {
+			display: grid;
+			font-size: 0.7rem;
+		}
+	}
+
+
+	/*
+		CoreComponentDisplay number section
+	*/
+	.ccd-numbers {
+		// α <ccd_numbers>
+
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+
+		// ω <ccd_numbers>
+	}
+
+	/*
+  		CoreComponentDisplay years and dates
+	*/
+	.ccd-time {
+		// α <ccd_time>
+
+		display: grid;
+		grid-template-columns: 2fr 1.5fr;
+
+		// ω <ccd_time>
+	}
+
+	/*
+  		CoreComponentDisplay multi column select, enums, currency select
+	*/
+	.ccd-selects {
+		// α <ccd_selects>
+		display: grid;
+		grid-auto-flow: row;
+		grid-template-columns: 3fr 1fr;
+		// ω <ccd_selects>
+	}
+
+
+	/*
+	CoreComponentDisplay normal spec section
+	*/
+	.ccd-normal-spec {
+		// α <ccd_normal_spec>
+		display: grid;
+		grid-template-columns: 1fr;
+
+		// ω <ccd_normal_spec>
+	}
+
+
+	/*
+	CoreComponentDisplay ok/cancel
+	*/
+	.ccd-ok-cancel {
+		// α <ccd_ok_cancel>
+
+		margin: 1rem;
+		width: 100%;
+
+		// ω <ccd_ok_cancel>
+	}
+
+	/*
+	CoreComponentDisplay sliders
+	*/
+	.ccd-sliders {
+		// α <ccd_sliders>
+
+		input[type="range"] {
+			width: 90px;
+		}
+
+		margin: 1rem;
+
+		// ω <ccd_sliders>
+	}
+
+
+	/*
+	CoreComponentDisplay rate curve
+	*/
+	.ccd-rate-curve {
+		// α <ccd_rate_curve>
+
+		display: grid;
+		grid-column-gap: 0.75rem;
+		grid-auto-flow: column;
+		grid-template-columns: auto;
+		margin: 1rem;
+
+		// ω <ccd_rate_curve>
+	}
+
+
+}
+
+
+
+// ω <component-display>

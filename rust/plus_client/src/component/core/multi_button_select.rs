@@ -94,18 +94,22 @@ pub fn MultiButtonSelect(
     );
     let (state_changed_read, state_changed_write) = create_signal(());
 
+    // derived signal indicating if the button's view is shown
     let button_view_is_shown = move |i: usize| {
         state_changed_read.track();
         button_data_stored_value.with_value(|toggle_state| toggle_state[i] == ToggleState::Selected)
     };
 
     let toggle_view = move |i: usize, new_state: ToggleState| {
-        button_data_stored_value.update_value(|toggle_states| toggle_states[i] = new_state)
+        button_data_stored_value.update_value(|toggle_states| {
+            tracing::warn!("Toggling {i} from {:?} to {new_state:?}", toggle_states[i]);
+            toggle_states[i] = new_state;
+        })
     };
 
-    // Before moving the button data into leptos store, swap out the views provided with
-    // an empty view to provide ownership to the container view below.
-    let mut button_data = button_data;
+    // Before moving the button data into leptos store, *take* the views provided
+    // by swapping with an empty view to provide ownership to the container view below.
+    //let mut button_data = button_data;
     let (button_views, content_views): (Vec<_>, Vec<_>) = button_data
         .into_iter()
         .enumerate()
@@ -138,57 +142,6 @@ pub fn MultiButtonSelect(
             (button_view, content_view)
         })
         .unzip();
-
-    /////////////////////
-    use leptos::create_resource;
-    use leptos::IntoClass;
-    use leptos::SignalGet;
-    use leptos::Transition;
-    let (tab, set_tab) = create_signal(0);
-
-    // this will reload every time `tab` changes
-    // let user_data = create_resource(move || tab.get(), |tab| async move { important_api_call(tab).await });
-
-    // let tab_button_example = view! {
-    //     <div class="buttons">
-    //         <button
-    //             on:click=move |_| set_tab.set(0)
-    //             class:selected=move || tab.get() == 0
-    //         >
-    //             "Tab A"
-    //         </button>
-    //         <button
-    //             on:click=move |_| set_tab.set(1)
-    //             class:selected=move || tab.get() == 1
-    //         >
-    //             "Tab B"
-    //         </button>
-    //         <button
-    //             on:click=move |_| set_tab.set(2)
-    //             class:selected=move || tab.get() == 2
-    //         >
-    //             "Tab C"
-    //         </button>
-    //         {move || if user_data.loading().get() {
-    //             "Loading..."
-    //         } else {
-    //             ""
-    //         }}
-    //     </div>
-    //     <Transition
-    //         // the fallback will show initially
-    //         // on subsequent reloads, the current child will
-    //         // continue showing
-    //         fallback=move || view! { <p>"Loading..."</p> }
-    //     >
-    //         <p>
-    //             {move || user_data.get()}
-    //         </p>
-    //     </Transition>
-    // }
-    // .into_view();
-
-
 
     // ω <fn multi_button_select>
     view! {
@@ -227,32 +180,5 @@ impl MultiButtonData {
 }
 
 // α <mod-def multi_button_select>
-
-
-async fn important_api_call(id: usize) -> String {
-    use cfg_if::cfg_if;
-
-    cfg_if! {
-        if #[cfg(feature = "ssr")] {
-            tracing::warn!("SERVER SLEEPING 1,000 millis");
-            std::thread::sleep(std::time::Duration::from_millis(1_000));
-        }
-        else
-        {
-            tracing::warn!("CLIENT SLEEPING 1,000 millis");
-
-            use gloo_timers::future::TimeoutFuture;
-            TimeoutFuture::new(1_000).await;
-        }
-    }
-
-    match id {
-        0 => "Alice",
-        1 => "Bob",
-        2 => "Carol",
-        _ => "User not found",
-    }
-    .to_string()
-}
 
 // ω <mod-def multi_button_select>
