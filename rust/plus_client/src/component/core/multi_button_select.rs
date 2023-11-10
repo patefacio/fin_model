@@ -127,6 +127,8 @@ pub fn MultiButtonSelect(
             }
             .into_view();
 
+            tracing::warn!("MBS -> {button_selection:?} -> {content_view:?}");
+
             let button_view = view! {
                 <ToggleImageButton updatable=Updatable::new(
                     button_selection,
