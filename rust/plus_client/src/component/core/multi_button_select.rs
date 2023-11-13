@@ -51,17 +51,18 @@ pub fn MultiButtonSelect(
     // α <fn multi_button_select>
 
     use crate::CssClasses;
+    use crate::CssShow;
     use crate::ToggleState;
     use crate::Updatable;
     use leptos::create_signal;
     use leptos::store_value;
-    use leptos::Show;
+    use leptos::Signal;
     use leptos::SignalSet;
     use leptos::SignalWith;
 
     let (mbs_grid_style, toolbar_span_style, view_span, toolbar_class) = match button_bar_side {
         ViewSide::Top => (
-            "display: grid; grid-template-rows: 1fr auto; grid-template-columns: 1fr auto;",
+            "display: grid; grid-template-rows: auto 1fr; grid-template-columns: 1fr auto;",
             "grid-row: 1; grid-column: 1 / span 2;",
             "grid-row: 2; grid-column: 1 / span 2",
             CssClasses::BtnTbTop.as_str(),
@@ -121,9 +122,12 @@ pub fn MultiButtonSelect(
             swap(&mut button_selection, &mut button_data.button_selection);
 
             let content_view = view! {
-                <Show when=move || button_view_is_shown(i) fallback=|| ()>
+                <CssShow
+                    when=Signal::derive(move || button_view_is_shown(i))
+                    display_type="block".into()
+                >
                     {displayed_view.clone()}
-                </Show>
+                </CssShow>
             }
             .into_view();
 
@@ -150,7 +154,7 @@ pub fn MultiButtonSelect(
         <div class=SELF_CLASS>
             // α <plus-mbs-view>
 
-            <div style=mbs_grid_style>
+            <div class=CssClasses::MbsInterior.as_str() style=mbs_grid_style>
                 <div class=toolbar_class style=toolbar_span_style>
                     {button_views}
                 </div>

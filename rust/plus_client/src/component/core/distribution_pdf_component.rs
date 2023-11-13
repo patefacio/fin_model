@@ -46,6 +46,7 @@ pub fn DistributionPdfComponent(
     // ω <fn distribution_pdf_component>
     view! {
         <div class=SELF_CLASS inner_html=_plot>
+
         </div>
     }
 }

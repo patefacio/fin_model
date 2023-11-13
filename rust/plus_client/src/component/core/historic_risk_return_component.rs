@@ -63,7 +63,8 @@ pub fn HistoricRiskReturnComponent(
                                         "background-color: rgb({}, {}, {});", hrr.color.0, hrr.color
                                         .1, hrr.color.2
                                     )
-                                ></div>
+                                >
+                                </div>
                                 <div class=CssClasses::HrrcLblCtnr.as_str()>
                                     <div class=CssClasses::HrrcLbl
                                         .as_str()>

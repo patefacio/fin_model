@@ -58,7 +58,7 @@ pub fn AppComponent() -> impl IntoView {
             // α <plus-app-component-view>
 
             <Stylesheet id="leptos" href="/pkg/plus_client.css"/>
-            <Title text="Auric Components"/>
+            <Title text="FinModel Components"/>
             <Router fallback=|| {
                 let mut outside_errors = Errors::default();
                 outside_errors.insert_with_default_key(AppError::NotFound);

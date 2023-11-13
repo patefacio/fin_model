@@ -73,6 +73,8 @@ pub enum CssClasses {
     AcHoldings,
     /// Styles the view portion of the MultiButtonSelect
     MbsView,
+    /// Style the interior div that has grid which is dynamically styled
+    MbsInterior,
     /// Style of bar under ToggleImageButton when selected (ie on)
     TibOn,
     /// Style of bar under ToggleImageButton when selected (ie on)
@@ -168,24 +170,6 @@ pub enum CssClasses {
     YiInput,
     /// The slider inside SliderWithNumericInput
     SwniSlider,
-    /// CoreComponentDisplay container below the top notify section
-    CcdCtnr,
-    /// CoreComponentDisplay top section for update announcements
-    CcdTopNotify,
-    /// CoreComponentDisplay number section
-    CcdNumbers,
-    /// CoreComponentDisplay years and dates
-    CcdTime,
-    /// CoreComponentDisplay multi column select, enums, currency select
-    CcdSelects,
-    /// CoreComponentDisplay ok/cancel
-    CcdOkCancel,
-    /// CoreComponentDisplay sliders
-    CcdSliders,
-    /// CoreComponentDisplay rate curve
-    CcdRateCurve,
-    /// CoreComponentDisplay normal spec section
-    CcdNormalSpec,
     /// HistoricRiskReturn container
     HrrcCtnr,
     /// HistoricRiskReturn dot
@@ -238,6 +222,7 @@ impl CssClasses {
             CssClasses::InfoLbl => "info-lbl",
             CssClasses::AcHoldings => "ac-holdings",
             CssClasses::MbsView => "mbs-view",
+            CssClasses::MbsInterior => "mbs-interior",
             CssClasses::TibOn => "tib-on",
             CssClasses::TibOff => "tib-off",
             CssClasses::DossierToolbar => "dossier-toolbar",
@@ -285,15 +270,6 @@ impl CssClasses {
             CssClasses::OocRbTtb => "ooc-rb-ttb",
             CssClasses::YiInput => "yi-input",
             CssClasses::SwniSlider => "swni-slider",
-            CssClasses::CcdCtnr => "ccd-ctnr",
-            CssClasses::CcdTopNotify => "ccd-top-notify",
-            CssClasses::CcdNumbers => "ccd-numbers",
-            CssClasses::CcdTime => "ccd-time",
-            CssClasses::CcdSelects => "ccd-selects",
-            CssClasses::CcdOkCancel => "ccd-ok-cancel",
-            CssClasses::CcdSliders => "ccd-sliders",
-            CssClasses::CcdRateCurve => "ccd-rate-curve",
-            CssClasses::CcdNormalSpec => "ccd-normal-spec",
             CssClasses::HrrcCtnr => "hrrc-ctnr",
             CssClasses::HrrcDot => "hrrc-dot",
             CssClasses::HrrcLblCtnr => "hrrc-lbl-ctnr",

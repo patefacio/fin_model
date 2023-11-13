@@ -72,7 +72,6 @@ where
     };
 
     let radio_buttons = move || {
-        // TODO: lang_selector.track();
         E::iter()
             .enumerate()
             .map(|(i, e)| {

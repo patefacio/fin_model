@@ -3,15 +3,14 @@
 	--plus-btn-color: hsl(120, 50%, 86%);
 	--plus-btn-hover-color: hsla(120, 50%, 73%, 1.0);
 	--plus-lbl-color: blue;
-	--plus-tb-color: whitesmoke;
+	--plus-tb-color: rgb(226, 220, 220);
 	--plus-btn-padding: 0.1rem 0.3rem 0.1rem 0.3rem;
 	--plus-txt-padding: 4px 4px 4px 4px;
-	--plus-lbl-color: blue;
 	--plus-lbl-margin: 0.3rem 0.3rem 0.3rem 0.3rem;
 	--plus-sm-fnt: 0.74rem;
 	--plus-lbl-sz: 0.9rem;
 	--plus-title-sz: 1.1rem;
-	--plus-max-width: 100%;
+	--plus-max-width: 1200px;
 }
 
 *,
@@ -255,7 +254,7 @@ input {
 	display: flex;
 	justify-content: center;
 	align-items: first;
-	background-color: lightblue;
+	background-color: var(--plus-tb-color);
 	position: sticky;
 	bottom: 0;
 	left: 0;
@@ -571,10 +570,17 @@ input {
 
 	min-width: 100px;
 	min-height: 100px;
-	background-color: rgb(246, 220, 197);
 	overflow-x: scroll;
 
 	// ω <mbs_view>
+}
+
+/*
+  Style the interior div that has grid which is dynamically styled
+*/
+.mbs-interior {
+	// α <mbs_interior>
+	// ω <mbs_interior>
 }
 
 /*
@@ -1157,18 +1163,6 @@ input {
 }
 
 /*
-  CoreComponentDisplay years and dates
-*/
-.ccd-time {
-	// α <ccd_time>
-
-	display: grid;
-	grid-template-columns: 2fr 1.5fr;
-
-	// ω <ccd_time>
-}
-
-/*
   HistoricRiskReturn container
 */
 .hrrc-ctnr {
@@ -1351,6 +1345,15 @@ input {
 }
 
 /*
+  CssShow
+*/
+.plus-css-show {
+	max-width: var(--plus-max-width);
+	// α <css_show>
+	// ω <css_show>
+}
+
+/*
   CurrencySelect
 */
 .plus-cs {
@@ -1440,8 +1443,13 @@ input {
 	// α <multi_button_select>
 
 	border: #000;
-	border-width: 3px;
-	border-style: dashed;
+
+	height: 500px;
+	background-color: whitesmoke;
+
+	.mbs-interior {
+		height: 100%;
+	}
 
 	// ω <multi_button_select>
 }
@@ -1453,6 +1461,7 @@ input {
 	max-width: var(--plus-max-width);
 	// α <multi_column_select>
 	display: inline;
+	height: 100%;
 	// ω <multi_column_select>
 }
 
@@ -1615,16 +1624,72 @@ input {
 	// α <year_value_series_component>
 
 	display: block;
-//	width: 12rem;
+	//	width: 12rem;
 
-	.plus-yi, .plus-ni {
+	.plus-yi,
+	.plus-ni {
 		text-align: right;
+
 		input {
 			width: 100%;
 		}
 	}
 
 	// ω <year_value_series_component>
+}
+
+/*
+  CcdMultiButton
+*/
+.plus-cmb {
+	max-width: var(--plus-max-width);
+	// α <ccd_multi_button>
+	// ω <ccd_multi_button>
+}
+
+/*
+  CcdOneOf
+*/
+.plus-coo {
+	max-width: var(--plus-max-width);
+	// α <ccd_one_of>
+	// ω <ccd_one_of>
+}
+
+/*
+  CcdYearsAndDate
+*/
+.plus-cyad {
+	max-width: var(--plus-max-width);
+	// α <ccd_years_and_date>
+	// ω <ccd_years_and_date>
+}
+
+/*
+  CcdNumbers
+*/
+.plus-cn {
+	max-width: var(--plus-max-width);
+	// α <ccd_numbers>
+	// ω <ccd_numbers>
+}
+
+/*
+  CcdSelectLists
+*/
+.plus-csl {
+	max-width: var(--plus-max-width);
+	// α <ccd_select_lists>
+	// ω <ccd_select_lists>
+}
+
+/*
+  CcdMisc
+*/
+.plus-cm {
+	max-width: var(--plus-max-width);
+	// α <ccd_misc>
+	// ω <ccd_misc>
 }
 
 /*
@@ -2125,8 +2190,8 @@ input {
 
 .ccd-section-2col {
 	.title {
-		color: red;
-		font-size: 1.2rem;
+		color: navy;
+		font-size: 1.3rem;
 	}
 
 	display: grid;
@@ -2157,7 +2222,7 @@ input {
 .ccd-section {
 	.title {
 		color: navy;
-		font-size: 1.5rem;
+		font-size: 1.3rem;
 		padding: 1rem;
 	}
 
