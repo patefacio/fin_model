@@ -14,38 +14,31 @@ use leptos::IntoView;
 use leptos::View;
 
 ////////////////////////////////////////////////////////////////////////////////////
-// --- structs ---
-////////////////////////////////////////////////////////////////////////////////////
-/// Data for a single button including its state which is managed by the
-/// [MultiButtonSelect](crate::MultiButtonSelect) and its corresponding view
-#[derive(Debug, Clone, Default)]
-pub struct MultiButtonData {
-    /// The image and state of the button
-    pub button_selection: ButtonSelection,
-    /// The view to display when the button is _selected_.
-    pub view: View,
-}
-
-////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// Provides selection of view from a list of toggle-buttons to present
 /// from a list of views.
 ///
-///   * **button_data** - The buttons data to display in the managed toolbar
+///   * **button_selections** - Initial display state for each button. Determines the number of buttons and views.
+///   * **content_maker** - Creates the content view for entry `i`
 ///   * **button_bar_side** - Side of view the buttons appear.
 /// Top and bottom orient buttons horizontally.
 /// Left and right orient buttons vertically.
 ///   * _return_ - View for multi_button_select
 #[component]
-pub fn MultiButtonSelect(
-    /// The buttons data to display in the managed toolbar
-    button_data: Vec<MultiButtonData>,
+pub fn MultiButtonSelect<CM>(
+    /// Initial display state for each button. Determines the number of buttons and views.
+    button_selections: Vec<ButtonSelection>,
+    /// Creates the content view for entry `i`
+    content_maker: CM,
     /// Side of view the buttons appear.
     /// Top and bottom orient buttons horizontally.
     /// Left and right orient buttons vertically.
     button_bar_side: ViewSide,
-) -> impl IntoView {
+) -> impl IntoView
+where
+    CM: Fn(usize) -> View + Clone + 'static,
+{
     pub const SELF_CLASS: &str = "plus-mbs";
     crate::log_component!("`MultiButtonSelect`");
     // α <fn multi_button_select>
@@ -87,67 +80,63 @@ pub fn MultiButtonSelect(
         ),
     };
 
-    let button_data_stored_value = store_value(
-        button_data
+    let button_count = button_selections.len();
+    let (state_changed_read, state_changed_write) = create_signal(());
+    let toggle_states_stored_value = store_value(
+        button_selections
             .iter()
-            .map(|button_data| button_data.button_selection.toggle_state)
+            .map(|button_selection| button_selection.toggle_state)
             .collect::<Vec<_>>(),
     );
-    let (state_changed_read, state_changed_write) = create_signal(());
 
-    // derived signal indicating if the button's view is shown
-    let button_view_is_shown = move |i: usize| {
-        state_changed_read.track();
-        button_data_stored_value.with_value(|toggle_state| toggle_state[i] == ToggleState::Selected)
-    };
-
-    let toggle_view = move |i: usize, new_state: ToggleState| {
-        button_data_stored_value.update_value(|toggle_states| {
-            tracing::warn!("Toggling {i} from {:?} to {new_state:?}", toggle_states[i]);
-            toggle_states[i] = new_state;
-        })
-    };
-
-    // Before moving the button data into leptos store, *take* the views provided
-    // by swapping with an empty view to provide ownership to the container view below.
-    //let mut button_data = button_data;
-    let (button_views, content_views): (Vec<_>, Vec<_>) = button_data
+    let button_views = button_selections
         .into_iter()
         .enumerate()
-        .map(|(i, mut button_data)| {
-            use std::mem::swap;
-            let mut displayed_view = ().into_view();
-            swap(&mut displayed_view, &mut button_data.view);
-            let mut button_selection = ButtonSelection::default();
-            swap(&mut button_selection, &mut button_data.button_selection);
-
-            let content_view = view! {
-                <CssShow
-                    when=Signal::derive(move || button_view_is_shown(i))
-                    display_type="block".into()
-                >
-                    {displayed_view.clone()}
-                </CssShow>
-            }
-            .into_view();
-
-            tracing::warn!("MBS -> {button_selection:?} -> {content_view:?}");
-
-            let button_view = view! {
+        .map(|(i, button_selection)| {
+            view! {
                 <ToggleImageButton updatable=Updatable::new(
                     button_selection,
                     move |button_selection| {
-                        tracing::warn!("Button {button_data:?} toggled to {button_selection:?}");
-                        toggle_view(i, button_selection.toggle_state);
+                        tracing::warn!(
+                            "Button {button_selection:?} toggled to {button_selection:?}"
+                        );
+                        toggle_states_stored_value
+                            .update_value(|toggle_states| {
+                                toggle_states[i] = button_selection.toggle_state;
+                            });
                         state_changed_write.set(());
                     },
                 )/>
             }
-            .into_view();
-
-            (button_view, content_view)
+            .into_view()
         })
-        .unzip();
+        .collect::<Vec<_>>();
+
+    // derived signal indicating if the button's view is shown
+    let button_view_is_shown = move |i: usize| {
+        state_changed_read.track();
+        toggle_states_stored_value
+            .with_value(|toggle_state| toggle_state[i] == ToggleState::Selected)
+    };
+
+    let content_maker_stored_value = store_value(content_maker);
+
+    let content_views = (0..button_count)
+        .into_iter()
+        .map(|i| {
+            view! {
+                <CssShow
+                    when=Signal::derive(move || button_view_is_shown(i))
+                    display_type="block".into()
+                >
+                    {move || {
+                        content_maker_stored_value.with_value(|content_maker| content_maker(i))
+                    }}
+
+                </CssShow>
+            }
+        })
+        .collect::<Vec<_>>();
 
     // ω <fn multi_button_select>
     view! {
@@ -165,23 +154,6 @@ pub fn MultiButtonSelect(
 
         // ω <plus-mbs-view>
         </div>
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-// --- type impls ---
-////////////////////////////////////////////////////////////////////////////////////
-impl MultiButtonData {
-    /// Create new instance of MultiButtonData
-    ///
-    ///   * **button_selection** - The image and state of the button
-    ///   * **view** - The view to display when the button is _selected_.
-    ///   * _return_ - The new instance
-    pub fn new(button_selection: ButtonSelection, view: View) -> MultiButtonData {
-        MultiButtonData {
-            button_selection,
-            view,
-        }
     }
 }
 

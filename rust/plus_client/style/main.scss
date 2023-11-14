@@ -2237,6 +2237,21 @@ input {
 		}
 	}
 
+	.cmb-valuables {
+		label {
+			font-size: 1.7rem;
+			color: green;
+			font-weight: bold;
+		}
+		.mcs-main-btn {
+			vertical-align: middle;
+			font-size: 1rem;
+		}
+
+		.mcs-select-btn {
+			font-size: 1rem;
+		}
+	}
 
 	/*
 		CoreComponentDisplay number section

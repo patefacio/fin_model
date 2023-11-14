@@ -38,7 +38,6 @@ pub use self::component::core::distribution_pdf_component::DistributionPdfCompon
 pub use self::component::core::enum_select::EnumSelect;
 pub use self::component::core::historic_risk_return_component::HistoricRiskReturnComponent;
 pub use self::component::core::integer_input::IntegerInput;
-pub use self::component::core::multi_button_select::MultiButtonData;
 pub use self::component::core::multi_button_select::MultiButtonSelect;
 pub use self::component::core::multi_column_select::InitialValue;
 pub use self::component::core::multi_column_select::MultiColumnSelect;

@@ -44,13 +44,7 @@ pub fn CssShow(
     };
 
     // ω <fn css_show>
-    view! {
-          // α <plus-css-show-view>
-
-          <div style=style>{children}</div> 
-
-          // ω <plus-css-show-view>
-    }
+    view! { <div style=style>{children}</div> }
 }
 
 // α <mod-def css_show>
