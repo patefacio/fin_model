@@ -468,6 +468,7 @@ where
                         user_fields.insert(0, make_edit_button(&key));
                         user_fields.into_view()
                     };
+                    tracing::warn!("The user fields: {:#?}", user_fields());
                     view! {
                         {move || user_fields()}
                         <Show when=move || { is_this_row_edit() } fallback=|| ()>
@@ -484,7 +485,7 @@ where
                     on:click=move |_| { set_new_item_edit() }
                 >
 
-                    <strong>{add_item_label()}</strong>
+                    {add_item_label()}
                 </button>
             </Show>
             {show_new_row_editor}

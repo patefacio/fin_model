@@ -22,6 +22,7 @@ pub fn CoreComponentDisplay() -> impl IntoView {
     crate::log_component!("`CoreComponentDisplay`");
     // α <fn core_component_display>
 
+    use crate::CcdCollectionGrid;
     use crate::CcdMisc;
     use crate::CcdMultiButton;
     use crate::CcdNumbers;
@@ -48,6 +49,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
 
                 <CcdOneOf show_update=last_update_write/>
 
+                <CcdCollectionGrid show_update=last_update_write/>
+
                 <CcdYearsAndDate show_update=last_update_write/>
 
                 <CcdNumbers show_update=last_update_write/>
@@ -55,6 +58,7 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                 <CcdSelectLists show_update=last_update_write/>
 
                 <CcdMisc show_update=last_update_write/>
+
             </div>
 
         // ω <plus-ccd-view>

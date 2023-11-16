@@ -36,10 +36,7 @@ pub fn DistributionCdfComponent(
     };
 
     // ω <fn distribution_cdf_component>
-    view! {
-        <div class=SELF_CLASS inner_html=_plot>
-        </div>
-    }
+    view! { <div class=SELF_CLASS inner_html=_plot></div> }
 }
 
 // α <mod-def distribution_cdf_component>

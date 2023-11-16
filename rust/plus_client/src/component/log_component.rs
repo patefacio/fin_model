@@ -16,9 +16,9 @@ macro_rules! log_component {
                 COUNTER
             };
 
-            tracing::warn!(concat!("Initializing: ", $component, "({})"), count);
+            tracing::debug!(concat!("Initializing: ", $component, "({})"), count);
             leptos::on_cleanup(move || {
-                tracing::warn!(concat!("Cleanup:", $component, "({})"), count)
+                tracing::debug!(concat!("Cleanup:", $component, "({})"), count)
             });
         }
         // ω <log_component(component:expr)>

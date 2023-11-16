@@ -3,12 +3,12 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
-use crate::Updatable;
 use leptos::component;
 use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
 use leptos::IntoView;
+use leptos::RwSignal;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -30,13 +30,11 @@ pub enum ToggleState {
 /// Includes the reference to the image and manages the selected/deselected
 /// state of the button.
 #[derive(Debug, Default, Clone)]
-pub struct ButtonSelection {
+pub struct ButtonData {
     /// Reference to the image
     pub image_ref: String,
     /// Label for the button
     pub label: String,
-    /// The toggle state of the button
-    pub toggle_state: ToggleState,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -44,63 +42,70 @@ pub struct ButtonSelection {
 ////////////////////////////////////////////////////////////////////////////////////
 /// Button with an image and label that as selected/deselected state
 ///
-///   * **updatable** - Models the button to display and contains the state
+///   * **button_data** - Models the button to display and contains the state
+///   * **writer** - Writer for click driven change
+///   * **reader** - Reader for current state managed in parent
+///   * **rw_signal** - Signal indicating new read required
 ///   * _return_ - View for toggle_image_button
 #[component]
-pub fn ToggleImageButton(
+pub fn ToggleImageButton<W, R>(
     /// Models the button to display and contains the state
-    updatable: Updatable<ButtonSelection>,
-) -> impl IntoView {
+    button_data: ButtonData,
+    /// Writer for click driven change
+    writer: W,
+    /// Reader for current state managed in parent
+    reader: R,
+    /// Signal indicating new read required
+    rw_signal: RwSignal<()>,
+) -> impl IntoView
+where
+    W: FnMut(ToggleState) + 'static,
+    R: Fn() -> ToggleState + Clone + 'static,
+{
     pub const SELF_CLASS: &str = "plus-tib";
     crate::log_component!("`ToggleImageButton`");
     // α <fn toggle_image_button>
 
     use crate::CssClasses;
     use crate::ToggleState;
-    use leptos::create_signal;
-    use leptos::SignalUpdate;
+    use leptos::SignalSet;
     use leptos::SignalWith;
+    use std::rc::Rc;
 
-    let img = updatable.value.image_ref.clone();
-    let label = updatable.value.label.clone();
-    let (state_read, state_write) = create_signal(updatable);
+    let mut writer = writer;
+    let label = Rc::new(button_data.label.clone());
+    let img_ref = button_data.image_ref.clone();
+    let label = move || label.clone();
 
+    let state_indicator_reader = reader.clone();
     let state_indicator = move || {
-        {
-            state_read.with(|updatable| {
-                if updatable.value.toggle_state == ToggleState::Deselected {
-                    CssClasses::TibOff
-                } else {
-                    CssClasses::TibOn
-                }
-            })
+        rw_signal.track();
+        let indicator_class = match state_indicator_reader() {
+            ToggleState::Deselected => CssClasses::TibOff,
+            ToggleState::Selected => CssClasses::TibOn,
         }
-        .to_string()
+        .to_string();
+        indicator_class
     };
 
     let click_handler = move |_| {
-        state_write.update(|updatable| {
-            updatable.update_and_then_signal(|button_selection| {
-                button_selection.toggle_state =
-                    if button_selection.toggle_state == ToggleState::Selected {
-                        ToggleState::Deselected
-                    } else {
-                        ToggleState::Selected
-                    }
-            })
-        })
+        let mut current = reader();
+        current.toggle();
+        writer(current);
+        rw_signal.set(());
     };
 
+    let view_label = label().as_ref().clone();
     // ω <fn toggle_image_button>
     view! {
         <div class=SELF_CLASS>
             // α <plus-tib-view>
 
             <button on:click=click_handler>
-                <img class=CssClasses::TibImg.as_str() src=img/>
+                <img class=CssClasses::TibImg.as_str() src=img_ref/>
             </button>
             <div class=state_indicator></div>
-            <label class=CssClasses::TibLbl.as_str()>{label}</label>
+            <label class=CssClasses::TibLbl.as_str()>{view_label}</label>
 
         // ω <plus-tib-view>
         </div>
@@ -110,19 +115,16 @@ pub fn ToggleImageButton(
 ////////////////////////////////////////////////////////////////////////////////////
 // --- type impls ---
 ////////////////////////////////////////////////////////////////////////////////////
-impl ButtonSelection {
+impl ButtonData {
     /// Initializer
     ///
     ///   * **image_ref** - Reference to the image
     ///   * **label** - Label for the button
-    ///   * **toggle_state** - The toggle state of the button
     ///   * _return_ - The constructed instance
-    pub fn new(image_ref: String, label: String, toggle_state: ToggleState) -> Self {
-        Self {
-            image_ref,
-            label,
-            toggle_state,
-        }
+    pub fn new(image_ref: String, label: String) -> Self {
+        // α <new initialization>
+        // ω <new initialization>
+        Self { image_ref, label }
     }
 }
 

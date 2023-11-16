@@ -27,8 +27,9 @@ pub fn CcdMultiButton(
 
     use super::prefix_lang_flag;
     use crate::AppContext;
-    use crate::ButtonSelection;
+    use crate::ButtonData;
     use crate::CurrencySelect;
+    use crate::MbsGroupingConstraint;
     use crate::MultiButtonSelect;
     use crate::ToggleState;
     use crate::Updatable;
@@ -42,26 +43,22 @@ pub fn CcdMultiButton(
 
     let prefix_lang = move |s| prefix_lang_flag(lang_selector.get(), s);
 
-    let multi_button_example = move |side: ViewSide| {
-
+    let multi_button_example = move |side: ViewSide, grouping_constraint: MbsGroupingConstraint| {
         let button_selections = vec![
-            ButtonSelection::new(
-                "persons_button.png".into(),
-                prefix_lang("People"),
+            (
+                ButtonData::new("persons_button.png".into(), prefix_lang("People")),
                 ToggleState::Selected,
             ),
-            ButtonSelection::new(
-                "worths_button.png".into(),
-                prefix_lang("Valuables"),
+            (
+                ButtonData::new("worths_button.png".into(), prefix_lang("Valuables")),
                 ToggleState::Deselected,
             ),
-            ButtonSelection::new(
-                "accounts_button.png".into(),
-                prefix_lang("Accounts"),
-                ToggleState::Selected,
+            (
+                ButtonData::new("accounts_button.png".into(), prefix_lang("Accounts")),
+                ToggleState::Deselected,
             ),
         ];
-        
+
         let content_maker = move |i| match i {
             0 => view! {
                 <div>
@@ -99,11 +96,14 @@ pub fn CcdMultiButton(
         };
 
         view! {
-            <div class="title">{move || format!("Multi-Button Select ({side:?})")}</div>
+            <div class="title">
+                {format!("Multi-Button Select ({side:?}) ({grouping_constraint:?})")}
+            </div>
             <MultiButtonSelect
                 button_selections
                 content_maker
                 button_bar_side=side
+                grouping_constraint
             />
         }
         .into_view()
@@ -111,10 +111,18 @@ pub fn CcdMultiButton(
 
     // ω <fn ccd_multi_button>
     view! {
-        <div class="ccd-section">{move || multi_button_example(ViewSide::Top)}</div>
-        <div class="ccd-section">{move || multi_button_example(ViewSide::Left)}</div>
-        <div class="ccd-section">{move || multi_button_example(ViewSide::Bottom)}</div>
-        <div class="ccd-section">{move || multi_button_example(ViewSide::Right)}</div>
+        <div class="ccd-section">
+            {move || multi_button_example(ViewSide::Top, MbsGroupingConstraint::NoConstraint)}
+        </div>
+        <div class="ccd-section">
+            {move || multi_button_example(ViewSide::Left, MbsGroupingConstraint::NoConstraint)}
+        </div>
+        <div class="ccd-section">
+            {move || multi_button_example(ViewSide::Bottom, MbsGroupingConstraint::OneOrNone)}
+        </div>
+        <div class="ccd-section">
+            {move || multi_button_example(ViewSide::Right, MbsGroupingConstraint::ExactlyOne)}
+        </div>
     }
 }
 
