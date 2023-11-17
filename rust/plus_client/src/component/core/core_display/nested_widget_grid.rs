@@ -1,4 +1,4 @@
-//! Module for sample_widget_grid leptos function/component
+//! Module for nested_widget_grid leptos function/component
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
@@ -15,33 +15,37 @@ use leptos_dom::View;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// Supported colors
+/// Supported items
 #[derive(Debug, Copy, Clone)]
-pub enum Color {
-    /// Red
-    Red,
-    /// Green
-    Green,
-    /// Blue
-    Blue,
+pub enum RustItem {
+    /// A function
+    Function,
+    /// A struct
+    Struct,
+    /// An enum
+    Enumeration,
+    /// A closure
+    Closure,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// Shared context for [SampleWidgetGrid]
+/// Shared context for [NestedWidgetGrid]
 #[derive(Debug, Clone)]
-pub struct SwgSharedContext {}
+pub struct NwgSharedContext {}
 
-/// Sample widget
+/// Nested widget
 #[derive(Debug, Clone)]
-pub struct SampleWidget {
+pub struct NestedWidget {
     /// Name of widget
     pub name: String,
-    /// Color
-    pub color: Color,
-    /// Years in use
-    pub years: Option<u32>,
+    /// Address
+    pub address: String,
+    /// Favorite movie
+    pub favorite_movie: String,
+    /// Favorite item
+    pub favorite_item: RustItem,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -51,16 +55,16 @@ pub struct SampleWidget {
 ///
 ///   * **updatable** - Widgets to edit
 ///   * **shared_context_updatable** - The shared context
-///   * _return_ - View for sample_widget_grid
+///   * _return_ - View for nested_widget_grid
 #[component]
-pub fn SampleWidgetGrid(
+pub fn NestedWidgetGrid(
     /// Widgets to edit
-    updatable: Updatable<Vec<SampleWidget>>,
+    updatable: Updatable<Vec<NestedWidget>>,
     /// The shared context
-    shared_context_updatable: Updatable<SwgSharedContext>,
+    shared_context_updatable: Updatable<NwgSharedContext>,
 ) -> impl IntoView {
-    crate::log_component!("`SampleWidgetGrid`");
-    // α <fn sample_widget_grid>
+    crate::log_component!("`NestedWidgetGrid`");
+    // α <fn nested_widget_grid>
 
     use crate::AppContext;
     use crate::CollectionGridComponent;
@@ -82,84 +86,91 @@ pub fn SampleWidgetGrid(
         </div>
     }
 
-    // ω <fn sample_widget_grid>
+    // ω <fn nested_widget_grid>
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
-impl CollectionGrid for SampleWidget {
-    type SharedContext = SwgSharedContext;
+impl CollectionGrid for NestedWidget {
+    type SharedContext = NwgSharedContext;
     /// Get number of fields provided by `get_fields` to be displayed.
     /// Used to build the `grid-template-columns` style. Two additional fields
     /// are added (_edit button_, _delete button_).
     ///
     ///   * _return_ - Number of fields
     fn get_fields_len() -> usize {
-        // α <fn CollectionGrid::get_fields_len for SampleWidget>
-        3
-        // ω <fn CollectionGrid::get_fields_len for SampleWidget>
+        // α <fn CollectionGrid::get_fields_len for NestedWidget>
+        4
+        // ω <fn CollectionGrid::get_fields_len for NestedWidget>
     }
 
     /// Get the display fields for the element.
     ///
     ///   * _return_ - The fields as elements
     fn get_fields(&self) -> Vec<View> {
-        // α <fn CollectionGrid::get_fields for SampleWidget>
-
+        // α <fn CollectionGrid::get_fields for NestedWidget>
         use crate::CssClasses;
         use leptos::IntoAttribute;
 
-        let color = format!("{:?}", self.color);
-        let years = format!("{}", self.years.unwrap_or_default());
+        let favorite_item = format!("{:?}", self.favorite_item);
 
         vec![
             view! { <div class=CssClasses::CgcCell.as_str()>{self.name.clone()}</div> }.into_view(),
-            view! { <div class=CssClasses::CgcCell.as_str()>{color}</div> }.into_view(),
-            view! { <div class=CssClasses::CgcCell.as_str()>{years}</div> }.into_view(),
+            view! { <div class=CssClasses::CgcCell.as_str()>{self.address.clone()}</div> }
+                .into_view(),
+            view! { <div class=CssClasses::CgcCell.as_str()>{self.favorite_movie.clone()}</div> }
+                .into_view(),
+            view! { <div class=CssClasses::CgcCell.as_str()>{favorite_item}</div> }.into_view(),
         ]
 
-        // ω <fn CollectionGrid::get_fields for SampleWidget>
+        // ω <fn CollectionGrid::get_fields for NestedWidget>
     }
 
     /// Get the header for the rows.
     ///
     ///   * _return_ - The header
     fn get_header() -> Vec<String> {
-        // α <fn CollectionGrid::get_header for SampleWidget>
-        vec!["Name".to_string(), "Color".to_string(), "Years".to_string()]
-        // ω <fn CollectionGrid::get_header for SampleWidget>
+        // α <fn CollectionGrid::get_header for NestedWidget>
+        vec![
+            "Name".to_string(),
+            "Address".to_string(),
+            "Favorite Movie".to_string(),
+            "Favorite Item".to_string(),
+        ]
+        // ω <fn CollectionGrid::get_header for NestedWidget>
     }
 
     /// Get the text for `Add New Item`.
     ///
     ///   * _return_ - The add item label
     fn get_add_item_label() -> String {
-        // α <fn CollectionGrid::get_add_item_label for SampleWidget>
-        "Add New Widget".into()
-        // ω <fn CollectionGrid::get_add_item_label for SampleWidget>
+        // α <fn CollectionGrid::get_add_item_label for NestedWidget>
+        "Add New Nested Widget".into()
+        // ω <fn CollectionGrid::get_add_item_label for NestedWidget>
     }
 
     /// Get key that uniquely identifies the element.
     ///
     ///   * _return_ - The key for the element
     fn get_key(&self) -> String {
-        // α <fn CollectionGrid::get_key for SampleWidget>
+        // α <fn CollectionGrid::get_key for NestedWidget>
         self.name.clone()
-        // ω <fn CollectionGrid::get_key for SampleWidget>
+        // ω <fn CollectionGrid::get_key for NestedWidget>
     }
 
     /// Create new element to edit
     ///
     ///   * _return_ - New element
     fn new() -> Self {
-        // α <fn CollectionGrid::new for SampleWidget>
-        SampleWidget {
-            name: "Some Sample".into(),
-            color: Color::Blue,
-            years: Some(42),
+        // α <fn CollectionGrid::new for NestedWidget>
+        NestedWidget {
+            name: "Some Nested Widget".into(),
+            address: "23 Widget Way".into(),
+            favorite_movie: "The Fugitive".into(),
+            favorite_item: RustItem::Enumeration,
         }
-        // ω <fn CollectionGrid::new for SampleWidget>
+        // ω <fn CollectionGrid::new for NestedWidget>
     }
 
     /// Create a view to edit the row
@@ -173,16 +184,18 @@ impl CollectionGrid for SampleWidget {
         row_stored_value: StoredValue<Self>,
         #[allow(unused)] shared_context_stored_value: StoredValue<Self::SharedContext>,
     ) -> View {
-        // α <fn CollectionGrid::edit_row for SampleWidget>
+        // α <fn CollectionGrid::edit_row for NestedWidget>
         view! {
             <div>
 
-                {format!("Edit Sample Widget {edit_type:?} {:?}", row_stored_value.get_value())}
+                {format!(
+                    "Edit Nested Sample Widget {edit_type:?} {:?}", row_stored_value.get_value()
+                )}
 
             </div>
         }
         .into_view()
-        // ω <fn CollectionGrid::edit_row for SampleWidget>
+        // ω <fn CollectionGrid::edit_row for NestedWidget>
     }
 
     /// Return true if row edit satisfies any shared context constraints
@@ -194,7 +207,7 @@ impl CollectionGrid for SampleWidget {
         edited_row: &Self,
         shared_context: &mut Self::SharedContext,
     ) -> Option<String> {
-        // α <fn CollectionGrid::accept_row_edit for SampleWidget>
+        // α <fn CollectionGrid::accept_row_edit for NestedWidget>
 
         // TODO: Use the edit_type
         tracing::warn!("TODO: Use {edited_row:?}");
@@ -203,9 +216,9 @@ impl CollectionGrid for SampleWidget {
 
         todo!("Implement `accept_row_edit`")
 
-        // ω <fn CollectionGrid::accept_row_edit for SampleWidget>
+        // ω <fn CollectionGrid::accept_row_edit for NestedWidget>
     }
 }
 
-// α <mod-def sample_widget_grid>
-// ω <mod-def sample_widget_grid>
+// α <mod-def nested_widget_grid>
+// ω <mod-def nested_widget_grid>

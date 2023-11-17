@@ -14,7 +14,6 @@ use leptos::view;
 use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::SignalGet;
-use plus_lookup::I18nNormalSpecComponent;
 use plus_modeled::core::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -33,12 +32,11 @@ pub fn NormalSpecComponent(
     #[prop(default = false)]
     non_negative_mean: bool,
 ) -> impl IntoView {
+    use plus_lookup::i18n::normal_spec_component::*;
     pub const SELF_CLASS: &str = "plus-nsc";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_mean_placeholder =
-        move || I18nNormalSpecComponent::MeanPlaceholder(lang_selector.get()).to_string();
-    let i18n_std_dev_placeholder =
-        move || I18nNormalSpecComponent::StdDevPlaceholder(lang_selector.get()).to_string();
+    let i18n_mean_placeholder = move || i18n_mean_placeholder(lang_selector.get());
+    let i18n_std_dev_placeholder = move || i18n_std_dev_placeholder(lang_selector.get());
     crate::log_component!("`NormalSpecComponent`");
     // α <fn normal_spec_component>
 

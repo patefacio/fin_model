@@ -381,7 +381,7 @@ persons_grid = persons_grid
     .new_person = Add New Person
     .grid_help =
         In this section enter the people involved in the financial plan.
-        There must be one <strong>{common_strings.primary_owner}<strong>.
+        There must be one <strong>{common_strings.primary_owner}</strong>.
 sales_plan_view = sales_plan_view
     .name = {common_strings.name}
     .value = {common_strings.value}

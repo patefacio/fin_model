@@ -12,7 +12,6 @@ use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
-use plus_lookup::I18nNormalLossComponent;
 use plus_modeled::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -31,18 +30,15 @@ pub fn NormalLossComponent(
     #[prop(default=MaybeSignal::Static(vec![0.7, 0.3, 0.1, 0.05, 0.01, 0.0, -0.01, -0.05, -0.1, -0.3, -0.7]))]
     loss_vec: MaybeSignal<Vec<f64>>,
 ) -> impl IntoView {
+    use plus_lookup::i18n::normal_loss_component::*;
     pub const SELF_CLASS: &str = "plus-nlc";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_gain_pct = move || I18nNormalLossComponent::GainPct(lang_selector.get()).to_string();
-    let i18n_prob_pct = move || I18nNormalLossComponent::ProbPct(lang_selector.get()).to_string();
-    let i18n_prob_abbrev =
-        move || I18nNormalLossComponent::ProbAbbrev(lang_selector.get()).to_string();
-    let i18n_cdf_sample =
-        move || I18nNormalLossComponent::CdfSample(lang_selector.get()).to_string();
-    let i18n_gain_prefix =
-        move || I18nNormalLossComponent::GainPrefix(lang_selector.get()).to_string();
-    let i18n_loss_table =
-        move || I18nNormalLossComponent::LossTable(lang_selector.get()).to_string();
+    let i18n_gain_pct = move || i18n_gain_pct(lang_selector.get());
+    let i18n_prob_pct = move || i18n_prob_pct(lang_selector.get());
+    let i18n_prob_abbrev = move || i18n_prob_abbrev(lang_selector.get());
+    let i18n_cdf_sample = move || i18n_cdf_sample(lang_selector.get());
+    let i18n_gain_prefix = move || i18n_gain_prefix(lang_selector.get());
+    let i18n_loss_table = move || i18n_loss_table(lang_selector.get());
     crate::log_component!("`NormalLossComponent`");
     // α <fn normal_loss_component>
 

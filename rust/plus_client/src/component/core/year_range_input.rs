@@ -12,7 +12,6 @@ use leptos::view;
 use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::SignalGet;
-use plus_lookup::I18nYearRangeInput;
 use plus_modeled::YearRange;
 use std::ops::RangeInclusive;
 
@@ -36,12 +35,11 @@ pub fn YearRangeInput(
     #[prop(default = false)]
     align_left: bool,
 ) -> impl IntoView {
+    use plus_lookup::i18n::year_range_input::*;
     pub const SELF_CLASS: &str = "plus-yri";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_start_placeholder =
-        move || I18nYearRangeInput::StartPlaceholder(lang_selector.get()).to_string();
-    let i18n_end_placeholder =
-        move || I18nYearRangeInput::EndPlaceholder(lang_selector.get()).to_string();
+    let i18n_start_placeholder = move || i18n_start_placeholder(lang_selector.get());
+    let i18n_end_placeholder = move || i18n_end_placeholder(lang_selector.get());
     crate::log_component!("`YearRangeInput`");
     // α <fn year_range_input>
 

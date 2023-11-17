@@ -10,6 +10,7 @@ pub mod ccd_numbers;
 pub mod ccd_one_of;
 pub mod ccd_select_lists;
 pub mod ccd_years_and_date;
+pub mod nested_widget_grid;
 pub mod sample_widget_grid;
 
 // α <mod-def core_display>

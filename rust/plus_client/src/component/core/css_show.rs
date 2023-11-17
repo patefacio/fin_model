@@ -6,8 +6,6 @@
 use leptos::component;
 use leptos::view;
 use leptos::ChildrenFn;
-#[allow(unused_imports)]
-use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::MaybeSignal;
 
@@ -33,6 +31,7 @@ pub fn CssShow(
     crate::log_component!("`CssShow`");
     // α <fn css_show>
 
+    use leptos::IntoAttribute;
     use leptos::SignalGet;
 
     let style = move || {
@@ -43,8 +42,9 @@ pub fn CssShow(
         }
     };
 
-    // ω <fn css_show>
     view! { <div style=style>{children}</div> }
+
+    // ω <fn css_show>
 }
 
 // α <mod-def css_show>

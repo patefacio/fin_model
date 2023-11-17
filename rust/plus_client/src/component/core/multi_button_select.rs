@@ -219,7 +219,7 @@ impl ConstrainedToggleStates {
                         } else {
                             *toggle_state = ToggleState::Selected;
                         }
-                        tracing::warn!(
+                        tracing::debug!(
                             "Selecting {:?}: entry({j}) set to {toggle_state:?}",
                             self.constraint
                         );
@@ -233,7 +233,7 @@ impl ConstrainedToggleStates {
                 MbsGroupingConstraint::ExactlyOne => {
                     for (j, toggle_state) in self.toggle_states.iter_mut().enumerate() {
                         *toggle_state = ToggleState::Deselected;
-                        tracing::warn!(
+                        tracing::debug!(
                             "Deselecting {:?}: entry({j}) set to {toggle_state:?}",
                             self.constraint
                         );

@@ -8,6 +8,7 @@ use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
 use leptos::IntoView;
+use leptos::MaybeSignal;
 use leptos::RwSignal;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +35,7 @@ pub struct ButtonData {
     /// Reference to the image
     pub image_ref: String,
     /// Label for the button
-    pub label: String,
+    pub label: MaybeSignal<String>,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -70,12 +71,9 @@ where
     use crate::ToggleState;
     use leptos::SignalSet;
     use leptos::SignalWith;
-    use std::rc::Rc;
 
     let mut writer = writer;
-    let label = Rc::new(button_data.label.clone());
     let img_ref = button_data.image_ref.clone();
-    let label = move || label.clone();
 
     let state_indicator_reader = reader.clone();
     let state_indicator = move || {
@@ -95,7 +93,6 @@ where
         rw_signal.set(());
     };
 
-    let view_label = label().as_ref().clone();
     // ω <fn toggle_image_button>
     view! {
         <div class=SELF_CLASS>
@@ -105,7 +102,7 @@ where
                 <img class=CssClasses::TibImg.as_str() src=img_ref/>
             </button>
             <div class=state_indicator></div>
-            <label class=CssClasses::TibLbl.as_str()>{view_label}</label>
+            <label class=CssClasses::TibLbl.as_str()>{button_data.label}</label>
 
         // ω <plus-tib-view>
         </div>
@@ -121,7 +118,7 @@ impl ButtonData {
     ///   * **image_ref** - Reference to the image
     ///   * **label** - Label for the button
     ///   * _return_ - The constructed instance
-    pub fn new(image_ref: String, label: String) -> Self {
+    pub fn new(image_ref: String, label: MaybeSignal<String>) -> Self {
         // α <new initialization>
         // ω <new initialization>
         Self { image_ref, label }

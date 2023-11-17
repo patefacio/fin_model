@@ -65,6 +65,13 @@ pub trait CollectionGrid: Sized {
     /// Data shared among all edited items.
     type SharedContext: Debug;
 
+    /// Get number of fields provided by `get_fields` to be displayed.
+    /// Used to build the `grid-template-columns` style. Two additional fields
+    /// are added (_edit button_, _delete button_).
+    ///
+    ///   * _return_ - Number of fields
+    fn get_fields_len() -> usize;
+
     /// Get the display fields for the element.
     ///
     ///   * _return_ - The fields as elements
@@ -279,6 +286,8 @@ where
         state_change_signal.set(());
     };
 
+    let header_len = <T as CollectionGrid>::get_fields_len() + 2;
+
     // A header for the component, including empty fields for our `Edit` and `Delete` buttons,
     // so the shape matches that of the displayed rows
     let header_reactive = move || {
@@ -295,12 +304,10 @@ where
             .collect::<Vec<HtmlElement<Div>>>()
     };
 
-    let initial_header = header_reactive();
-
     // The line ending the grid is 3 (2 for the two buttons and 1 for indexing) plus number columns
-    let grid_column_end = 1 + initial_header.len();
+    let grid_column_end = 1 + header_len;
     // The number of columns is 2 for edit and delete buttons and one for each cell in the header
-    let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", initial_header.len() - 2);
+    let grid_template_columns = format!("1.8rem 1.8rem repeat({}, 1fr)", header_len - 2);
 
     let editable_style =
         move || format!("grid-column-start: 1; grid-column-end: {grid_column_end}");
@@ -456,21 +463,20 @@ where
                         let key = nth_key(index);
                         cgc_data_stored_value.with_value(|cgc_data| cgc_data.is_active_key(&key))
                     };
-                    let user_fields = move || {
-                        let index = key_index_signal.get();
-                        let key = nth_key(index);
-                        let mut user_fields = cgc_data_stored_value
-                            .with_value(|cgc_data| {
-                                let row = cgc_data.rows_updatable.value.get(index).unwrap();
-                                row.get_fields()
-                            });
-                        user_fields.insert(0, make_delete_button(&key));
-                        user_fields.insert(0, make_edit_button(&key));
-                        user_fields.into_view()
-                    };
-                    tracing::warn!("The user fields: {:#?}", user_fields());
                     view! {
-                        {move || user_fields()}
+                        {move || {
+                            let index = key_index_signal.get();
+                            let key = nth_key(index);
+                            let mut user_fields = cgc_data_stored_value
+                                .with_value(|cgc_data| {
+                                    let row = cgc_data.rows_updatable.value.get(index).unwrap();
+                                    row.get_fields()
+                                });
+                            user_fields.insert(0, make_delete_button(&key));
+                            user_fields.insert(0, make_edit_button(&key));
+                            user_fields.into_view()
+                        }}
+
                         <Show when=move || { is_this_row_edit() } fallback=|| ()>
                             {edit_row_view}
                         </Show>

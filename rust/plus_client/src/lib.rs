@@ -28,6 +28,7 @@ pub use self::component::core::core_display::ccd_numbers::CcdNumbers;
 pub use self::component::core::core_display::ccd_one_of::CcdOneOf;
 pub use self::component::core::core_display::ccd_select_lists::CcdSelectLists;
 pub use self::component::core::core_display::ccd_years_and_date::CcdYearsAndDate;
+pub use self::component::core::core_display::nested_widget_grid::NestedWidgetGrid;
 pub use self::component::core::core_display::sample_widget_grid::SampleWidgetGrid;
 pub use self::component::core::css_show::CssShow;
 pub use self::component::core::currency_select::currency_from_symbol;
@@ -115,7 +116,12 @@ if #[cfg(feature = "hydrate")] {
       use tracing_subscriber::util::SubscriberInitExt;
 
       console_error_panic_hook::set_once();
-      tracing_wasm::set_as_global_default();
+      let mut tracing_config =
+      tracing_wasm::set_as_global_default_with_config(
+        tracing_wasm::WASMLayerConfigBuilder::new()
+        .set_max_level(tracing::Level::INFO)
+        .build()
+      );
 
       leptos::mount_to_body(move || {
           view! { <AppComponent/> }

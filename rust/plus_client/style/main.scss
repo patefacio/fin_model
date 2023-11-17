@@ -3,7 +3,7 @@
 	--plus-btn-color: hsl(120, 50%, 86%);
 	--plus-btn-hover-color: hsla(120, 50%, 73%, 1.0);
 	--plus-lbl-color: blue;
-	--plus-tb-color: rgb(226, 220, 220);
+	--plus-tb-color: whitesmoke;
 	--plus-btn-padding: 0.1rem 0.3rem 0.1rem 0.3rem;
 	--plus-txt-padding: 4px 4px 4px 4px;
 	--plus-lbl-margin: 0.3rem 0.3rem 0.3rem 0.3rem;
@@ -93,6 +93,9 @@ fieldset {
 	border-radius: 5px;
 	margin: 1rem;
 	margin-bottom: 15px;
+	//max-width: var(--plus-max-width);
+	max-width: 95%;
+	//width: 100%;
 	// ω <elm-fieldset>
 }
 
@@ -598,7 +601,7 @@ input {
 	border-width: 3px;
 	border-radius: 4px;
 	background-color: rgb(20, 20, 161);
-	animation: grow-width 0.5s ease-in-out;
+	animation: grow-width 0.15s ease-in-out;
 
 	// ω <tib_on>
 }
@@ -615,11 +618,11 @@ input {
 	margin-top: 7px;
 	height: 7px;
 	border-style: solid;
-	border-width: 3px;
+	border-width: 1.5px;
 	border-radius: 4px;
 	// This is transparent
 	background-color: rgba(255, 255, 255, 0.5);
-	animation: shrink-width 0.5s ease-in-out;
+	animation: shrink-width 0.15s ease-in-out;
 
 	// ω <tib_off>
 }
@@ -644,7 +647,7 @@ input {
 .dossier-show {
 	// α <dossier_show>
 	min-height: 10px;
-	background-color: hsl(120, 50%, 90%);
+	//background-color: hsl(120, 50%, 90%);
 	// ω <dossier_show>
 }
 
@@ -1443,13 +1446,8 @@ input {
 	// α <multi_button_select>
 
 	border: #000;
-
-	height: 500px;
-	background-color: whitesmoke;
-
-	.mbs-interior {
-		height: 100%;
-	}
+	border-width: 3px;
+	//border-style: dashed;
 
 	// ω <multi_button_select>
 }
@@ -1461,7 +1459,6 @@ input {
 	max-width: var(--plus-max-width);
 	// α <multi_column_select>
 	display: inline;
-	height: 100%;
 	// ω <multi_column_select>
 }
 
@@ -1639,6 +1636,15 @@ input {
 }
 
 /*
+  CcdCollectionGrid
+*/
+.plus-ccg {
+	max-width: var(--plus-max-width);
+	// α <ccd_collection_grid>
+	// ω <ccd_collection_grid>
+}
+
+/*
   CcdMultiButton
 */
 .plus-cmb {
@@ -1690,6 +1696,15 @@ input {
 	max-width: var(--plus-max-width);
 	// α <ccd_misc>
 	// ω <ccd_misc>
+}
+
+/*
+  SampleWidgetGrid
+*/
+.plus-swg {
+	max-width: var(--plus-max-width);
+	// α <sample_widget_grid>
+	// ω <sample_widget_grid>
 }
 
 /*
@@ -1847,11 +1862,14 @@ input {
 .plus-de {
 	max-width: var(--plus-max-width);
 	// α <dossier_editor>
-	background-color: wheat;
+	//background-color: wheat;
 	//border: solid 2px;
 	//border-radius: 4px 4px;
 	padding: 5px;
 	margin-bottom: 10px;
+	//width: 1200;
+	width: 100%;
+	min-width: 650;
 	// ω <dossier_editor>
 }
 
@@ -1998,7 +2016,14 @@ input {
 .plus-fc {
 	max-width: var(--plus-max-width);
 	// α <forecaster_component>
-	width: 1150;
+
+	fieldset {
+		//width: 100%;
+	}
+
+	/// *NOTE* This has no width impact
+	//width: 100vh;
+	//width: 0%;
 	// ω <forecaster_component>
 }
 
@@ -2160,6 +2185,7 @@ input {
 .plus-dbc {
 	max-width: var(--plus-max-width);
 	// α <dossier_bundle_component>
+	width: 100vw;
 	// ω <dossier_bundle_component>
 }
 
@@ -2237,21 +2263,6 @@ input {
 		}
 	}
 
-	.cmb-valuables {
-		label {
-			font-size: 1.7rem;
-			color: green;
-			font-weight: bold;
-		}
-		.mcs-main-btn {
-			vertical-align: middle;
-			font-size: 1rem;
-		}
-
-		.mcs-select-btn {
-			font-size: 1rem;
-		}
-	}
 
 	/*
 		CoreComponentDisplay number section

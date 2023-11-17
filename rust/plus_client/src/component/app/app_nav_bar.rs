@@ -40,7 +40,7 @@ pub fn AppNavBar() -> impl IntoView {
 
     let lang_selector_updatable =
         Updatable::new(lang_selector.get_untracked(), move |new_lang_selector| {
-            lang_selector.set(new_lang_selector.clone())
+            lang_selector.set(new_lang_selector.clone());
         });
 
     let display_currency_updatable =

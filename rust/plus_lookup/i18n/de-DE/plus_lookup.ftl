@@ -308,7 +308,7 @@ holding_component = 🇩🇪holding_component
     .mv = { common_strings.mv }
     .price = { common_strings.price }
     .price_placeholder = { common_strings.price_placeholder }
-    .qty_placeholder = { common_strings.qty }
+    .qty_placeholder = { common_strings.qty_placeholder }
     .quantity = { common_strings.quantity }
     .symbol = { common_strings.symbol }
     .ugl = { common_strings.ugl }
@@ -410,7 +410,7 @@ person_type = 🇩🇪Person Type
 persons_grid = 🇩🇪persons_grid
     .grid_help =
         🇩🇪In this section enter the people involved in the financial plan.
-        There must be one <strong>{ common_strings.primary_owner }🇩🇪<strong>.
+        There must be one <strong>{ common_strings.primary_owner }🇩🇪</strong>.
     .name = { common_strings.name }
     .new_person = 🇩🇪Add New Person
     .people = { common_strings.people }

@@ -14,7 +14,6 @@ use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::ReadSignal;
 use leptos::SignalGet;
-use plus_lookup::I18nYearValueSeriesComponent;
 use plus_modeled::YearRange;
 use plus_modeled::YearValue;
 
@@ -57,22 +56,17 @@ pub fn YearValueSeriesComponent(
     #[prop(default=YearValueSeriesType::RateCurve)]
     series_type: YearValueSeriesType,
 ) -> impl IntoView {
+    use plus_lookup::i18n::year_value_series_component::*;
     pub const SELF_CLASS: &str = "plus-yvsc";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_show_rate_curve =
-        move || I18nYearValueSeriesComponent::ShowRateCurve(lang_selector.get()).to_string();
-    let i18n_hide_rate_curve =
-        move || I18nYearValueSeriesComponent::HideRateCurve(lang_selector.get()).to_string();
-    let i18n_rate_placeholder =
-        move || I18nYearValueSeriesComponent::RatePlaceholder(lang_selector.get()).to_string();
-    let i18n_rate_percent =
-        move || I18nYearValueSeriesComponent::RatePercent(lang_selector.get()).to_string();
-    let i18n_value = move || I18nYearValueSeriesComponent::Value(lang_selector.get()).to_string();
-    let i18n_year = move || I18nYearValueSeriesComponent::Year(lang_selector.get()).to_string();
-    let i18n_value_placeholder =
-        move || I18nYearValueSeriesComponent::ValuePlaceholder(lang_selector.get()).to_string();
-    let i18n_year_placeholder =
-        move || I18nYearValueSeriesComponent::YearPlaceholder(lang_selector.get()).to_string();
+    let i18n_show_rate_curve = move || i18n_show_rate_curve(lang_selector.get());
+    let i18n_hide_rate_curve = move || i18n_hide_rate_curve(lang_selector.get());
+    let i18n_rate_placeholder = move || i18n_rate_placeholder(lang_selector.get());
+    let i18n_rate_percent = move || i18n_rate_percent(lang_selector.get());
+    let i18n_value = move || i18n_value(lang_selector.get());
+    let i18n_year = move || i18n_year(lang_selector.get());
+    let i18n_value_placeholder = move || i18n_value_placeholder(lang_selector.get());
+    let i18n_year_placeholder = move || i18n_year_placeholder(lang_selector.get());
     crate::log_component!("`YearValueSeriesComponent`");
     // α <fn year_value_series_component>
     use crate::utils::plot_data::PlotData;

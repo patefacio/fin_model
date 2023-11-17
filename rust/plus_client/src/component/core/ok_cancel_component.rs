@@ -11,7 +11,6 @@ use leptos::view;
 use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::SignalGet;
-use plus_lookup::I18nOkCancelComponent;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -40,10 +39,11 @@ pub fn OkCancelComponent<F>(
 where
     F: FnMut(OkCancel) + 'static,
 {
+    use plus_lookup::i18n::ok_cancel_component::*;
     pub const SELF_CLASS: &str = "plus-occ";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_ok = move || I18nOkCancelComponent::Ok(lang_selector.get()).to_string();
-    let i18n_cancel = move || I18nOkCancelComponent::Cancel(lang_selector.get()).to_string();
+    let i18n_ok = move || i18n_ok(lang_selector.get());
+    let i18n_cancel = move || i18n_cancel(lang_selector.get());
     crate::log_component!("`OkCancelComponent`");
     // α <fn ok_cancel_component>
 

@@ -5,8 +5,6 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use leptos::component;
 use leptos::view;
-#[allow(unused_imports)]
-use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::WriteSignal;
 
@@ -35,26 +33,35 @@ pub fn CcdMultiButton(
     use crate::Updatable;
     use crate::ViewSide;
     use leptos::use_context;
+    use leptos::MaybeSignal;
+    use leptos::Signal;
     use leptos::SignalGet;
     use leptos::SignalSet;
     use plus_modeled::Currency;
 
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-
     let prefix_lang = move |s| prefix_lang_flag(lang_selector.get(), s);
-
     let multi_button_example = move |side: ViewSide, grouping_constraint: MbsGroupingConstraint| {
         let button_selections = vec![
             (
-                ButtonData::new("persons_button.png".into(), prefix_lang("People")),
+                ButtonData::new(
+                    "persons_button.png".into(),
+                    MaybeSignal::Dynamic(Signal::derive(move || prefix_lang("People"))),
+                ),
                 ToggleState::Selected,
             ),
             (
-                ButtonData::new("worths_button.png".into(), prefix_lang("Valuables")),
+                ButtonData::new(
+                    "worths_button.png".into(),
+                    MaybeSignal::Dynamic(Signal::derive(move || prefix_lang("Valuables"))),
+                ),
                 ToggleState::Deselected,
             ),
             (
-                ButtonData::new("accounts_button.png".into(), prefix_lang("Accounts")),
+                ButtonData::new(
+                    "accounts_button.png".into(),
+                    MaybeSignal::Dynamic(Signal::derive(move || prefix_lang("Accounts"))),
+                ),
                 ToggleState::Deselected,
             ),
         ];
@@ -83,15 +90,12 @@ pub fn CcdMultiButton(
                 </div>
             }
             .into_view(),
-            2 => {
-                tracing::warn!("Recreating accounts view!!");
-                view! {
-                    <div>
-                        <h1>{prefix_lang("Accounts")}</h1>
-                    </div>
-                }
-                .into_view()
+            2 => view! {
+                <div>
+                    <h1>{prefix_lang("Accounts")}</h1>
+                </div>
             }
+            .into_view(),
             _ => panic!("Invalid view index"),
         };
 
@@ -109,7 +113,6 @@ pub fn CcdMultiButton(
         .into_view()
     };
 
-    // ω <fn ccd_multi_button>
     view! {
         <div class="ccd-section">
             {move || multi_button_example(ViewSide::Top, MbsGroupingConstraint::NoConstraint)}
@@ -124,6 +127,8 @@ pub fn CcdMultiButton(
             {move || multi_button_example(ViewSide::Right, MbsGroupingConstraint::ExactlyOne)}
         </div>
     }
+
+    // ω <fn ccd_multi_button>
 }
 
 // α <mod-def ccd_multi_button>

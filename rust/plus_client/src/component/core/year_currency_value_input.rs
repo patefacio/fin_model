@@ -13,7 +13,6 @@ use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
-use plus_lookup::I18nYearCurrencyValueInput;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -40,9 +39,10 @@ pub fn YearCurrencyValueInput(
     #[prop(default=MaybeSignal::Static(String::from("value")), into)]
     value_placeholder: MaybeSignal<String>,
 ) -> impl IntoView {
+    use plus_lookup::i18n::year_currency_value_input::*;
     pub const SELF_CLASS: &str = "plus-ycvi";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_as_of = move || I18nYearCurrencyValueInput::AsOf(lang_selector.get()).to_string();
+    let i18n_as_of = move || i18n_as_of(lang_selector.get());
     crate::log_component!("`YearCurrencyValueInput`");
     // α <fn year_currency_value_input>
 

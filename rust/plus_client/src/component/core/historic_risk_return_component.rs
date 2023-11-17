@@ -12,7 +12,6 @@ use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
-use plus_lookup::I18nHistoricRiskReturnComponent;
 use plus_modeled::NormalSpec;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -28,10 +27,10 @@ pub fn HistoricRiskReturnComponent(
     /// The normal to plot
     normal_spec: MaybeSignal<NormalSpec>,
 ) -> impl IntoView {
+    use plus_lookup::i18n::historic_risk_return_component::*;
     pub const SELF_CLASS: &str = "plus-hrrc";
     let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let i18n_holding_type =
-        move || I18nHistoricRiskReturnComponent::HoldingType(lang_selector.get()).to_string();
+    let i18n_holding_type = move || i18n_holding_type(lang_selector.get());
     crate::log_component!("`HistoricRiskReturnComponent`");
     // α <fn historic_risk_return_component>
 
