@@ -4,6 +4,7 @@
 // --- mod decls ---
 ////////////////////////////////////////////////////////////////////////////////////
 pub mod ccd_collection_grid;
+pub mod ccd_histogram;
 pub mod ccd_misc;
 pub mod ccd_multi_button;
 pub mod ccd_numbers;

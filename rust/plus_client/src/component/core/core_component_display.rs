@@ -23,6 +23,7 @@ pub fn CoreComponentDisplay() -> impl IntoView {
     // α <fn core_component_display>
 
     use crate::CcdCollectionGrid;
+    use crate::CcdHistogram;
     use crate::CcdMisc;
     use crate::CcdMultiButton;
     use crate::CcdNumbers;
@@ -58,6 +59,8 @@ pub fn CoreComponentDisplay() -> impl IntoView {
                 <CcdSelectLists show_update=last_update_write/>
 
                 <CcdMisc show_update=last_update_write/>
+
+                <CcdHistogram show_update=last_update_write/>
 
             </div>
 

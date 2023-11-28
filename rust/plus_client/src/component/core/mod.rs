@@ -14,6 +14,7 @@ pub mod dispose_test;
 pub mod distribution_cdf_component;
 pub mod distribution_pdf_component;
 pub mod enum_select;
+pub mod histogram_component;
 pub mod historic_risk_return_component;
 pub mod integer_input;
 pub mod multi_button_select;

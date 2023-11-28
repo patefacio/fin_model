@@ -22,6 +22,7 @@ pub use self::component::core::collection_grid_component::CollectionGridEditType
 pub use self::component::core::collection_grid_component::CollectionGridState;
 pub use self::component::core::core_component_display::CoreComponentDisplay;
 pub use self::component::core::core_display::ccd_collection_grid::CcdCollectionGrid;
+pub use self::component::core::core_display::ccd_histogram::CcdHistogram;
 pub use self::component::core::core_display::ccd_misc::CcdMisc;
 pub use self::component::core::core_display::ccd_multi_button::CcdMultiButton;
 pub use self::component::core::core_display::ccd_numbers::CcdNumbers;
@@ -39,6 +40,7 @@ pub use self::component::core::dispose_test::DisposeTest;
 pub use self::component::core::distribution_cdf_component::DistributionCdfComponent;
 pub use self::component::core::distribution_pdf_component::DistributionPdfComponent;
 pub use self::component::core::enum_select::EnumSelect;
+pub use self::component::core::histogram_component::HistogramComponent;
 pub use self::component::core::historic_risk_return_component::HistoricRiskReturnComponent;
 pub use self::component::core::integer_input::IntegerInput;
 pub use self::component::core::multi_button_select::ConstrainedToggleStates;

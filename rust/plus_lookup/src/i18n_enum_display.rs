@@ -48,6 +48,8 @@ pub enum CommonStrings {
     Assumptions,
     /// i18n value for `balance_sheet`
     BalanceSheet,
+    /// i18n value for `borrowed_funds`
+    BorrowedFunds,
     /// i18n value for `capital_gain`
     CapitalGain,
     /// i18n value for `capital_gain_distributions`
@@ -78,6 +80,8 @@ pub enum CommonStrings {
     DistributionsReinvested,
     /// i18n value for `distributions_spendable`
     DistributionsSpendable,
+    /// i18n value for `dossier`
+    Dossier,
     /// i18n value for `dossier_name`
     DossierName,
     /// i18n value for `earned_income`
@@ -160,6 +164,8 @@ pub enum CommonStrings {
     RatePlaceholder,
     /// i18n value for `random`
     Random,
+    /// i18n value for `repaid_borrowed_funds`
+    RepaidBorrowedFunds,
     /// i18n value for `retirement_age`
     RetirementAge,
     /// i18n value for `rmd_sales`
@@ -1071,6 +1077,12 @@ impl<'a> Display for I18nEnums<'a> {
                             "common_strings.balance_sheet"
                         )
                         .unwrap_or_default(),
+                    CommonStrings::BorrowedFunds => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.borrowed_funds"
+                        )
+                        .unwrap_or_default(),
                     CommonStrings::CapitalGain => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
@@ -1159,6 +1171,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.distributions_spendable"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Dossier => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.dossier"
                         )
                         .unwrap_or_default(),
                     CommonStrings::DossierName => LOCALES
@@ -1405,6 +1423,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.random"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::RepaidBorrowedFunds => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.repaid_borrowed_funds"
                         )
                         .unwrap_or_default(),
                     CommonStrings::RetirementAge => LOCALES

@@ -184,6 +184,30 @@ pub enum CssClasses {
     NlcLblCtnr,
     /// HoldingComponent container for growth and distributions
     HcExtrasCtnr,
+    /// Histogram selected row
+    HistSelectedRow,
+    /// MonteSimulationSummaryComponent distribution plot
+    MsscDist,
+    /// MonteSimulationSummaryComponent distribution plot falling circles 1
+    MsscCircle1,
+    /// MonteSimulationSummaryComponent distribution plot falling circles 2
+    MsscCircle2,
+    /// MonteSimulationSummaryComponent distribution plot falling circles 3
+    MsscCircle3,
+    /// MonteSimulationSummaryComponent distribution plot falling circles 4
+    MsscCircle4,
+    /// MonteSimulationSummaryComponent distribution median
+    MsscMedian,
+    /// MonteSimulationSummaryComponent distribution mean
+    MsscMean,
+    /// MonteSimulationSummaryComponent distribution `geometric_mean_forecast`
+    MsscGmf,
+    /// CcdHistogram histograms div
+    ChHists,
+    /// CcdHistogram normal div
+    ChNormal,
+    /// CcdHistogram normal div
+    ChLognormal,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -277,6 +301,18 @@ impl CssClasses {
             CssClasses::HrrcPlot => "hrrc-plot",
             CssClasses::NlcLblCtnr => "nlc-lbl-ctnr",
             CssClasses::HcExtrasCtnr => "hc-extras-ctnr",
+            CssClasses::HistSelectedRow => "hist-selected-row",
+            CssClasses::MsscDist => "mssc-dist",
+            CssClasses::MsscCircle1 => "mssc-circle-1",
+            CssClasses::MsscCircle2 => "mssc-circle-2",
+            CssClasses::MsscCircle3 => "mssc-circle-3",
+            CssClasses::MsscCircle4 => "mssc-circle-4",
+            CssClasses::MsscMedian => "mssc-median",
+            CssClasses::MsscMean => "mssc-mean",
+            CssClasses::MsscGmf => "mssc-gmf",
+            CssClasses::ChHists => "ch-hists",
+            CssClasses::ChNormal => "ch-normal",
+            CssClasses::ChLognormal => "ch-lognormal",
         }
     }
 }

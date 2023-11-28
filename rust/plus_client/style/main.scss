@@ -45,6 +45,37 @@
 	}
 }
 
+// falling-circles
+@keyframes falling-circle-left {
+	from {
+		transform: translate(5%, 5px) scale(0.005);
+	}
+
+	to {}
+}
+
+@keyframes falling-circle-center {
+	from {
+		transform: translate(50%, 5px) scale(0.005);
+	}
+
+	to {}
+}
+
+@keyframes falling-circle-right {
+	from {
+		transform: translate(75%, 5px) scale(0.005);
+	}
+
+	to {}
+}
+
+// TODO: Temporary removal of extras, to eventually become new
+// `Reconciled` component
+.year-extras {
+	display: none;
+}
+
 // ω <custom_use_sparingly>
 
 body {
@@ -274,7 +305,7 @@ input {
 
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: start;
 	background-color: var(--plus-tb-color);
 
 	// ω <btn_tb_left>
@@ -1244,6 +1275,131 @@ input {
 }
 
 /*
+  Histogram selected row
+*/
+.hist-selected-row {
+	// α <hist_selected_row>
+	border-top: solid 2px;
+	// ω <hist_selected_row>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution plot
+*/
+.mssc-dist {
+	// α <mssc_dist>
+
+	width: 500px;
+
+	// ω <mssc_dist>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution plot falling circles 1
+*/
+.mssc-circle-1 {
+	// α <mssc_circle_1>
+	animation: falling-circle-right 1.2s ease-in-out;
+	fill: rgba(179, 37, 8, 0.651);
+	// ω <mssc_circle_1>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution plot falling circles 2
+*/
+.mssc-circle-2 {
+	// α <mssc_circle_2>
+	animation: falling-circle-center 1.2s ease-in-out;
+	fill: rgba(255, 115, 0, 0.823);
+	//fill: white;
+	//fill: "none";
+	// stroke: rgb(255, 69, 0);
+	// stroke-width: 0.3px;
+	//display: none;
+	// ω <mssc_circle_2>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution plot falling circles 3
+*/
+.mssc-circle-3 {
+	// α <mssc_circle_3>
+	animation: falling-circle-right 1.2s ease-in-out;
+	fill: rgba(255, 179, 0, 0.891);
+
+	// ω <mssc_circle_3>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution plot falling circles 4
+*/
+.mssc-circle-4 {
+	// α <mssc_circle_4>
+	animation: falling-circle-left 1.2s ease-in-out;
+	fill: rgb(255, 215, 0);
+
+	// ω <mssc_circle_4>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution median
+*/
+.mssc-median {
+	// α <mssc_median>
+	fill: black;
+	// ω <mssc_median>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution mean
+*/
+.mssc-mean {
+	// α <mssc_mean>
+	fill: olive;
+	// ω <mssc_mean>
+}
+
+/*
+  MonteSimulationSummaryComponent distribution `geometric_mean_forecast`
+*/
+.mssc-gmf {
+	// α <mssc_gmf>
+	fill: blue;
+	// ω <mssc_gmf>
+}
+
+/*
+  CcdHistogram histograms div
+*/
+.ch-hists {
+	// α <ch_hists>
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	// ω <ch_hists>
+}
+
+/*
+  CcdHistogram normal div
+*/
+.ch-normal {
+	// α <ch_normal>
+
+	width: 300px;
+	// ω <ch_normal>
+}
+
+/*
+  CcdHistogram normal div
+*/
+.ch-lognormal {
+	// α <ch_lognormal>
+	
+	width: 300px;
+
+	// ω <ch_lognormal>
+}
+
+/*
   AppCenterComponent
 */
 .plus-acc {
@@ -1427,6 +1583,16 @@ input {
 	grid-template-rows: 1fr 3fr 1fr;
 	grid-template-columns: 1fr;
 	max-width: 600px // ω <historic_risk_return_component>
+}
+
+/*
+  HistogramComponent
+*/
+.plus-hist {
+	max-width: var(--plus-max-width);
+	// α <histogram_component>
+	width: 300;
+	// ω <histogram_component>
 }
 
 /*
@@ -1654,6 +1820,15 @@ input {
 }
 
 /*
+  CcdHistogram
+*/
+.plus-ch {
+	max-width: var(--plus-max-width);
+	// α <ccd_histogram>
+	// ω <ccd_histogram>
+}
+
+/*
   CcdOneOf
 */
 .plus-coo {
@@ -1705,6 +1880,15 @@ input {
 	max-width: var(--plus-max-width);
 	// α <sample_widget_grid>
 	// ω <sample_widget_grid>
+}
+
+/*
+  NestedWidgetGrid
+*/
+.plus-nwg {
+	max-width: var(--plus-max-width);
+	// α <nested_widget_grid>
+	// ω <nested_widget_grid>
 }
 
 /*
@@ -1988,7 +2172,7 @@ input {
 	max-width: var(--plus-max-width);
 	// α <forecast_config_component>
 
-	display: none;
+	//display: none;
 
 	label {
 		white-space: nowrap;
@@ -2054,7 +2238,7 @@ input {
 
 	display: grid;
 	column-gap: 0.5rem;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr 2fr;
 
 	// ω <timeline_group_component>
 }
@@ -2119,7 +2303,7 @@ input {
 .plus-alt {
 	max-width: var(--plus-max-width);
 	// α <asset_liability_timeline>
-	width: 400px;
+	width: 300px;
 	// ω <asset_liability_timeline>
 }
 
@@ -2129,7 +2313,7 @@ input {
 .plus-cft {
 	max-width: var(--plus-max-width);
 	// α <cash_flow_timeline>
-	width: 400px;
+	width: 300px;
 	// ω <cash_flow_timeline>
 }
 
@@ -2168,6 +2352,15 @@ input {
 	max-width: var(--plus-max-width);
 	// α <monte_simulation_summary_component>
 	// ω <monte_simulation_summary_component>
+}
+
+/*
+  AssumptionsComponent
+*/
+.plus-ass {
+	max-width: var(--plus-max-width);
+	// α <assumptions_component>
+	// ω <assumptions_component>
 }
 
 /*
@@ -2217,7 +2410,7 @@ input {
 .ccd-section-2col {
 	.title {
 		color: navy;
-		font-size: 1.3rem;
+		font-size: 1.0rem;
 	}
 
 	display: grid;
@@ -2248,7 +2441,7 @@ input {
 .ccd-section {
 	.title {
 		color: navy;
-		font-size: 1.3rem;
+		font-size: 1.1rem;
 		padding: 1rem;
 	}
 

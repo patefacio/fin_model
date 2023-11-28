@@ -182,8 +182,6 @@ pub fn SliderWithNumericInput(
                 />
             </label>
 
-        // parent_override=Some(child_input_signal)
-
         // ω <plus-swni-view>
         </div>
     }

@@ -220,6 +220,59 @@ pub mod asset_liability_timeline {
     // ω <mod-def asset_liability_timeline>
 }
 
+/// Functions for i18n strings in AssumptionsComponent
+pub mod assumptions_component {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- module uses ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    use super::*;
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- functions ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// I18n for inputs
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_inputs(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "assumptions_component.inputs",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for growth
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_growth(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "assumptions_component.growth",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for correlation
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_correlation(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "assumptions_component.correlation",
+            )
+            .unwrap_or_default()
+    }
+
+    // α <mod-def assumptions_component>
+    // ω <mod-def assumptions_component>
+}
+
 /// Functions for i18n strings in BalanceSheetStatement
 pub mod balance_sheet_statement {
     ////////////////////////////////////////////////////////////////////////////////////
@@ -616,6 +669,72 @@ pub mod distribution_spec_component {
     // ω <mod-def distribution_spec_component>
 }
 
+/// Functions for i18n strings in DossierBundleComponent
+pub mod dossier_bundle_component {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- module uses ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    use super::*;
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- functions ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// I18n for dossier
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_dossier(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "dossier_bundle_component.dossier",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for assumptions
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_assumptions(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "dossier_bundle_component.assumptions",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for forecaster
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_forecaster(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "dossier_bundle_component.forecaster",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for transforms
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_transforms(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "dossier_bundle_component.transforms",
+            )
+            .unwrap_or_default()
+    }
+
+    // α <mod-def dossier_bundle_component>
+    // ω <mod-def dossier_bundle_component>
+}
+
 /// Functions for i18n strings in DossierEditor
 pub mod dossier_editor {
     ////////////////////////////////////////////////////////////////////////////////////
@@ -713,19 +832,6 @@ pub mod dossier_editor {
             .lookup(
                 lang_selector_to_language_id(&lang_selector),
                 "dossier_editor.taxes",
-            )
-            .unwrap_or_default()
-    }
-
-    /// I18n for assumptions
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_assumptions(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "dossier_editor.assumptions",
             )
             .unwrap_or_default()
     }
@@ -1162,6 +1268,71 @@ pub mod forecaster_component {
             .lookup(
                 lang_selector_to_language_id(&lang_selector),
                 "forecaster_component.forecaster",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for assets
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_assets(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "forecaster_component.assets",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for balance_sheet
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_balance_sheet(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "forecaster_component.balance_sheet",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for cash_flows
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_cash_flows(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "forecaster_component.cash_flows",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for reconciled
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_reconciled(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "forecaster_component.reconciled",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for monte_carlo
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_monte_carlo(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "forecaster_component.monte_carlo",
             )
             .unwrap_or_default()
     }

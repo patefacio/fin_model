@@ -31,9 +31,10 @@ cfg_if! {
 
         impl Drop for BlockTime {
             fn drop(&mut self) {
-                let duration = instant::now() - self.start;
-                let message = format!("`{}`: Duration {:?}ms", self.label, duration);
-                tracing::debug!("{message}");
+                let current = instant::now();
+                let duration = current - self.start;
+                let message = format!("`{}`: {:?} to {current:?} Duration {:?}ms", self.label, self.start, duration);
+                tracing::info!("{message}");
             }
         }
     } else {
@@ -58,7 +59,7 @@ cfg_if! {
             fn drop(&mut self) {
                 let duration = self.start.elapsed();
                 let message = format!("`{}`: Duration {:?}", self.label, duration);
-                tracing::debug!("{message}");
+                tracing::info!("{message}");
             }
         }
     }
