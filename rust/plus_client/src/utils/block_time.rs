@@ -33,8 +33,8 @@ cfg_if! {
             fn drop(&mut self) {
                 let current = instant::now();
                 let duration = current - self.start;
-                let message = format!("`{}`: {:?} to {current:?} Duration {:?}ms", self.label, self.start, duration);
-                tracing::info!("{message}");
+                let message = format!("`{}`: start({:?}) to end({current:?}) Duration {:?}ms", self.label, self.start, duration);
+                tracing::warn!("{message}");
             }
         }
     } else {
