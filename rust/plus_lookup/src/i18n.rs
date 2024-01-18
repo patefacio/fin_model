@@ -110,6 +110,32 @@ pub mod accounts_grid {
             .unwrap_or_default()
     }
 
+    /// I18n for cost_basis
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_cost_basis(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "accounts_grid.cost_basis",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for ugl
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_ugl(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "accounts_grid.ugl",
+            )
+            .unwrap_or_default()
+    }
+
     /// I18n for type
     ///
     ///   * **lang_selector** - Language selector
@@ -191,6 +217,177 @@ pub mod age_assumptions_component {
 
     // α <mod-def age_assumptions_component>
     // ω <mod-def age_assumptions_component>
+}
+
+/// Functions for i18n strings in AppNavBar
+pub mod app_nav_bar {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- module uses ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    use super::*;
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- functions ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// I18n for dossiers
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_dossiers(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "app_nav_bar.dossiers",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for display_currency
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_display_currency(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "app_nav_bar.display_currency",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for my_dossier
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_my_dossier(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "app_nav_bar.my_dossier",
+            )
+            .unwrap_or_default()
+    }
+
+    // α <mod-def app_nav_bar>
+    // ω <mod-def app_nav_bar>
+}
+
+/// Functions for i18n strings in AssetLiabilityComponent
+pub mod asset_liability_component {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- module uses ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    use super::*;
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- functions ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// I18n for assets_accounts
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_assets_accounts(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.assets_accounts",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for assets_holdings
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_assets_holdings(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.assets_holdings",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for cash_flows
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_cash_flows(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.cash_flows",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for cost
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_cost(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.cost",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for unrealized
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_unrealized(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.unrealized",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for mixed
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_mixed(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.mixed",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for present_value
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_present_value(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.present_value",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for name
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_name(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "asset_liability_component.name",
+            )
+            .unwrap_or_default()
+    }
+
+    // α <mod-def asset_liability_component>
+    // ω <mod-def asset_liability_component>
 }
 
 /// Functions for i18n strings in AssetLiabilityTimeline
@@ -309,6 +506,19 @@ pub mod balance_sheet_statement {
             .unwrap_or_default()
     }
 
+    /// I18n for borrowed_balance
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_borrowed_balance(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "balance_sheet_statement.borrowed_balance",
+            )
+            .unwrap_or_default()
+    }
+
     /// I18n for start_value
     ///
     ///   * **lang_selector** - Language selector
@@ -318,6 +528,19 @@ pub mod balance_sheet_statement {
             .lookup(
                 lang_selector_to_language_id(&lang_selector),
                 "balance_sheet_statement.start_value",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for totals
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_totals(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "balance_sheet_statement.totals",
             )
             .unwrap_or_default()
     }
@@ -1182,73 +1405,6 @@ pub mod forecast_config_component {
     // ω <mod-def forecast_config_component>
 }
 
-/// Functions for i18n strings in ForecastIdSelector
-pub mod forecast_id_selector {
-    ////////////////////////////////////////////////////////////////////////////////////
-    // --- module uses ---
-    ////////////////////////////////////////////////////////////////////////////////////
-    use super::*;
-
-    ////////////////////////////////////////////////////////////////////////////////////
-    // --- functions ---
-    ////////////////////////////////////////////////////////////////////////////////////
-    /// I18n for geometric_mean_forecast
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_geometric_mean_forecast(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "forecast_id_selector.geometric_mean_forecast",
-            )
-            .unwrap_or_default()
-    }
-
-    /// I18n for random_forecast_id
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_random_forecast_id(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "forecast_id_selector.random_forecast_id",
-            )
-            .unwrap_or_default()
-    }
-
-    // α <mod-def forecast_id_selector>
-    // ω <mod-def forecast_id_selector>
-}
-
-/// Functions for i18n strings in ForecastSummaryComponent
-pub mod forecast_summary_component {
-    ////////////////////////////////////////////////////////////////////////////////////
-    // --- module uses ---
-    ////////////////////////////////////////////////////////////////////////////////////
-    use super::*;
-
-    ////////////////////////////////////////////////////////////////////////////////////
-    // --- functions ---
-    ////////////////////////////////////////////////////////////////////////////////////
-    /// I18n for forecast_summary
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_forecast_summary(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "forecast_summary_component.forecast_summary",
-            )
-            .unwrap_or_default()
-    }
-
-    // α <mod-def forecast_summary_component>
-    // ω <mod-def forecast_summary_component>
-}
-
 /// Functions for i18n strings in ForecasterComponent
 pub mod forecaster_component {
     ////////////////////////////////////////////////////////////////////////////////////
@@ -1268,19 +1424,6 @@ pub mod forecaster_component {
             .lookup(
                 lang_selector_to_language_id(&lang_selector),
                 "forecaster_component.forecaster",
-            )
-            .unwrap_or_default()
-    }
-
-    /// I18n for assets
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_assets(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "forecaster_component.assets",
             )
             .unwrap_or_default()
     }
@@ -1333,6 +1476,32 @@ pub mod forecaster_component {
             .lookup(
                 lang_selector_to_language_id(&lang_selector),
                 "forecaster_component.monte_carlo",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for forecast_id
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_forecast_id(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "forecaster_component.forecast_id",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for year
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_year(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "forecaster_component.year",
             )
             .unwrap_or_default()
     }
@@ -1781,6 +1950,19 @@ pub mod investment_plan_view {
             .lookup(
                 lang_selector_to_language_id(&lang_selector),
                 "investment_plan_view.current",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for totals
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_totals(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "investment_plan_view.totals",
             )
             .unwrap_or_default()
     }
@@ -2332,6 +2514,111 @@ pub mod persons_grid {
     // ω <mod-def persons_grid>
 }
 
+/// Functions for i18n strings in ReconciledView
+pub mod reconciled_view {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- module uses ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    use super::*;
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    // --- functions ---
+    ////////////////////////////////////////////////////////////////////////////////////
+    /// I18n for appreciation
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_appreciation(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "reconciled_view.appreciation",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for assets
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_assets(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "reconciled_view.assets",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for distributions
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_distributions(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "reconciled_view.distributions",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for surplus
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_surplus(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "reconciled_view.surplus",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for deficit
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_deficit(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "reconciled_view.deficit",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for incomes
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_incomes(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "reconciled_view.incomes",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for expenses
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_expenses(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "reconciled_view.expenses",
+            )
+            .unwrap_or_default()
+    }
+
+    // α <mod-def reconciled_view>
+    // ω <mod-def reconciled_view>
+}
+
 /// Functions for i18n strings in SalesPlanView
 pub mod sales_plan_view {
     ////////////////////////////////////////////////////////////////////////////////////
@@ -2364,6 +2651,32 @@ pub mod sales_plan_view {
             .lookup(
                 lang_selector_to_language_id(&lang_selector),
                 "sales_plan_view.value",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for sold
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_sold(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "sales_plan_view.sold",
+            )
+            .unwrap_or_default()
+    }
+
+    /// I18n for totals
+    ///
+    ///   * **lang_selector** - Language selector
+    ///   * _return_ - The string for language
+    pub fn i18n_totals(lang_selector: LangSelector) -> String {
+        LOCALES
+            .lookup(
+                lang_selector_to_language_id(&lang_selector),
+                "sales_plan_view.totals",
             )
             .unwrap_or_default()
     }
@@ -2528,72 +2841,6 @@ pub mod tax_determinants_component {
 
     // α <mod-def tax_determinants_component>
     // ω <mod-def tax_determinants_component>
-}
-
-/// Functions for i18n strings in TimelineGroupComponent
-pub mod timeline_group_component {
-    ////////////////////////////////////////////////////////////////////////////////////
-    // --- module uses ---
-    ////////////////////////////////////////////////////////////////////////////////////
-    use super::*;
-
-    ////////////////////////////////////////////////////////////////////////////////////
-    // --- functions ---
-    ////////////////////////////////////////////////////////////////////////////////////
-    /// I18n for deterministic
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_deterministic(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "timeline_group_component.deterministic",
-            )
-            .unwrap_or_default()
-    }
-
-    /// I18n for random
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_random(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "timeline_group_component.random",
-            )
-            .unwrap_or_default()
-    }
-
-    /// I18n for year
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_year(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "timeline_group_component.year",
-            )
-            .unwrap_or_default()
-    }
-
-    /// I18n for forecast
-    ///
-    ///   * **lang_selector** - Language selector
-    ///   * _return_ - The string for language
-    pub fn i18n_forecast(lang_selector: LangSelector) -> String {
-        LOCALES
-            .lookup(
-                lang_selector_to_language_id(&lang_selector),
-                "timeline_group_component.forecast",
-            )
-            .unwrap_or_default()
-    }
-
-    // α <mod-def timeline_group_component>
-    // ω <mod-def timeline_group_component>
 }
 
 /// Functions for i18n strings in UsTaxStatementView

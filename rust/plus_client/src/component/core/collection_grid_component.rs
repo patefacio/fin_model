@@ -175,16 +175,18 @@ where
     T: 'static + Clone + Debug + CollectionGrid<SharedContext = S>,
     S: 'static + Clone + Debug,
 {
-    crate::log_component!("`CollectionGridComponent`");
+    let component_id = crate::component_id!("`CollectionGridComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn collection_grid_component>
 
     use crate::AppContext;
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::OkCancel;
     use crate::OkCancelComponent;
     use leptos::create_rw_signal;
+    use leptos::expect_context;
     use leptos::store_value;
-    use leptos::use_context;
     use leptos::For;
     #[allow(unused)]
     use leptos::IntoAttribute;
@@ -194,16 +196,20 @@ where
     use leptos::SignalGetUntracked;
     use leptos::SignalSet;
     use leptos::SignalUpdate;
+    use leptos::SignalWith;
     use leptos_dom::html::Div;
     use leptos_dom::HtmlElement;
+    use std::rc::Rc;
 
     // This is used to ensure only one collection has an ok/cancel enabled at a time.
     // Because grids nest (e.g. AccountsGrid has AccountComponents each of which has
     // HoldingsGrid). When user opens an account and then a holding within it, without
     // this logic there would be to <Ok/Cancel> bars showing which could be quite confusing.
     // This ensures only the innermost <Ok/Cancel> bar is shown.
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
-    let grid_edit_active_count = use_context::<AppContext>().unwrap().grid_edit_active_count;
+    let app_context = expect_context::<Rc<AppContext>>();
+    let lang_selector = app_context.lang_selector;
+    let display_currency = app_context.display_currency;
+    let grid_edit_active_count = app_context.grid_edit_active_count;
 
     let add_to_active_count = move || {
         grid_edit_active_count.update(|count| {
@@ -220,6 +226,9 @@ where
     };
 
     let initial_grid_edit_active_count = grid_edit_active_count.get_untracked() + 1;
+    tracing::debug!(
+        "CollectionGrid creation with initial active count {initial_grid_edit_active_count}"
+    );
     let ok_cancel_enabled = move || grid_edit_active_count.get() == initial_grid_edit_active_count;
 
     let add_item_label = move || {
@@ -249,6 +258,7 @@ where
 
     // Signals update of row count - called when adding/deleting rows
     let row_count_updated = move || {
+        tracing::debug!("Row count update on CGC");
         let new_row_count =
             cgc_data_stored_value.with_value(|cgc_data| cgc_data.rows_updatable.value.len());
         tracing::debug!("Row count updated to {new_row_count}");
@@ -299,7 +309,7 @@ where
         fields
             .into_iter()
             .map(|column_header| {
-                view! { <div class=CssClasses::HeaderRight.as_str()>{column_header}</div> }
+                view! { <div class=ClientCssClasses::HeaderRight.as_str()>{column_header}</div> }
             })
             .collect::<Vec<HtmlElement<Div>>>()
     };
@@ -384,6 +394,7 @@ where
         let mut edit_complete_result = EditCompleteResult::Accepted;
         // Try to complete the edit. Save the edit completion result
         let mut active_signal = None;
+
         cgc_data_stored_value.update_value(|cgc_data| {
             active_signal = cgc_data.active_signal();
             edit_complete_result = cgc_data.edit_complete(ok_cancel);
@@ -418,7 +429,7 @@ where
             });
 
         view! {
-            <div class=CssClasses::CgcEditable.as_str() style=editable_style>
+            <div class=ClientCssClasses::CgcEditable.as_str() style=editable_style>
                 {<T as CollectionGrid>::edit_row(
                     CollectionGridEditType::RowEdit,
                     row_stored_value,
@@ -426,7 +437,7 @@ where
                 )}
 
                 <Show when=move || ok_cancel_enabled() fallback=|| ()>
-                    <div class=CssClasses::OkCancelBar.as_str()>
+                    <div class=ClientCssClasses::OkCancelBar.as_str()>
                         <OkCancelComponent on_ok_cancel=on_ok_cancel/>
                     </div>
                 </Show>
@@ -448,7 +459,7 @@ where
 
     view! {
         <div
-            class=CssClasses::CollectionGrid.as_str()
+            class=ClientCssClasses::CollectionGrid.as_str()
             style=format!("grid-template-columns: {grid_template_columns}")
         >
             {header_reactive}
@@ -465,6 +476,8 @@ where
                     };
                     view! {
                         {move || {
+                            lang_selector.track();
+                            display_currency.track();
                             let index = key_index_signal.get();
                             let key = nth_key(index);
                             let mut user_fields = cgc_data_stored_value
@@ -486,7 +499,7 @@ where
 
             <Show when=move || !is_disabled_reactive() fallback=|| ()>
                 <button
-                    class=CssClasses::CgcAddRow.as_str()
+                    class=ClientCssClasses::CgcAddRow.as_str()
                     style=format!("grid-column-end: {grid_column_end};")
                     on:click=move |_| { set_new_item_edit() }
                 >
@@ -734,7 +747,9 @@ where
                     }
                 };
             }
-            OkCancel::Cancel => {}
+            OkCancel::Cancel => {
+                tracing::debug!("OkCancel::Cancel received!")
+            }
         };
 
         if result == EditCompleteResult::Accepted {

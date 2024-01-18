@@ -7,12 +7,10 @@ use crate::MeasuredStats;
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// Tracks small set of statistics in one pass
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct IncrementalStats {
     /// Count of values
     count: usize,
-    /// Mean of values before last push
-    prior_mean: f64,
     /// Mean of values
     mean: f64,
     /// Sum of squared diff of values
@@ -63,7 +61,6 @@ impl IncrementalStats {
 
         let delta = value - self.mean;
         let delta_n = delta / n;
-        self.prior_mean = self.mean;
         self.mean += delta_n;
         self.sum_squared_diff += delta * delta_n * prior_n;
         if value < self.min {
@@ -186,7 +183,7 @@ impl IncrementalStats {
 
     /// Create a new instance of [IncrementalStats]
     ///
-    ///   * **median_capacity** - If non-0 will track median and initialize vector with specified capacity.
+    ///   * **median_capacity** - Cardinality of forecasts to size vector for medians, or 0 to not track medians.
     ///   * _return_ - A new [IncrementalStats] instance.
     pub fn new(median_capacity: usize) -> IncrementalStats {
         // α <fn IncrementalStats::new>
@@ -281,7 +278,6 @@ impl Default for IncrementalStats {
 
         IncrementalStats {
             count: 0,
-            prior_mean: 0.0,
             mean: 0.0,
             sum_squared_diff: 0.0,
             min: std::f64::MAX,

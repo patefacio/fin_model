@@ -23,10 +23,12 @@ use plus_modeled::HoldingType;
 use plus_modeled::LangSelector;
 use plus_modeled::NamedRateCurve;
 use plus_modeled::PersonType;
+use plus_modeled::ReturnStatsType;
 use plus_modeled::TaxTreatment;
 use plus_modeled::TaxUsCategory;
 use plus_modeled::TaxUsFilingStatus;
 use plus_modeled::WorthType;
+use plus_modeled::YearEndpoint;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -44,6 +46,8 @@ pub enum CommonStrings {
     AnnualPctPlaceholder,
     /// i18n value for `as_of`
     AsOf,
+    /// i18n value for `assets`
+    Assets,
     /// i18n value for `assumptions`
     Assumptions,
     /// i18n value for `balance_sheet`
@@ -62,6 +66,8 @@ pub enum CommonStrings {
     Category,
     /// i18n value for `cost`
     Cost,
+    /// i18n value for `cost_basis`
+    CostBasis,
     /// i18n value for `current`
     Current,
     /// i18n value for `current_price`
@@ -90,10 +96,14 @@ pub enum CommonStrings {
     EndPlaceholder,
     /// i18n value for `end_value`
     EndValue,
+    /// i18n value for `expense`
+    Expense,
     /// i18n value for `expenses`
     Expenses,
     /// i18n value for `forecast`
     Forecast,
+    /// i18n value for `forecast_id`
+    ForecastId,
     /// i18n value for `from`
     From,
     /// i18n value for `geometric_mean_forecast`
@@ -108,16 +118,26 @@ pub enum CommonStrings {
     Holdings,
     /// i18n value for `in_flow`
     InFlow,
+    /// i18n value for `income`
+    Income,
     /// i18n value for `incomes`
     Incomes,
     /// i18n value for `interest`
     Interest,
     /// i18n value for `investments`
     Investments,
+    /// i18n value for `liability`
+    Liability,
+    /// i18n value for `linked`
+    Linked,
+    /// i18n value for `linked_income`
+    LinkedIncome,
     /// i18n value for `linked_investments`
     LinkedInvestments,
     /// i18n value for `linked_sales`
     LinkedSales,
+    /// i18n value for `linked_expense`
+    LinkedExpense,
     /// i18n value for `long_term_capital_gain`
     LongTermCapitalGain,
     /// i18n value for `mean_placeholder`
@@ -164,6 +184,8 @@ pub enum CommonStrings {
     RatePlaceholder,
     /// i18n value for `random`
     Random,
+    /// i18n value for `real_asset`
+    RealAsset,
     /// i18n value for `repaid_borrowed_funds`
     RepaidBorrowedFunds,
     /// i18n value for `retirement_age`
@@ -178,6 +200,8 @@ pub enum CommonStrings {
     StartValue,
     /// i18n value for `social_security`
     SocialSecurity,
+    /// i18n value for `sold`
+    Sold,
     /// i18n value for `standard_deduction`
     StandardDeduction,
     /// i18n value for `std_dev_placeholder`
@@ -200,6 +224,8 @@ pub enum CommonStrings {
     Taxes,
     /// i18n value for `total`
     Total,
+    /// i18n value for `totals`
+    Totals,
     /// i18n value for `toward`
     Toward,
     /// i18n value for `type`
@@ -234,43 +260,47 @@ pub enum CommonStrings {
 #[derive(Debug, Copy, Clone)]
 pub enum I18nEnums<'a> {
     /// Enumerates supported enums and implements display to dispatch on language and value
-    LangSelector(LangSelector, &'a LangSelector),
-    /// Enumerates supported enums and implements display to dispatch on language and value
     AccountType(LangSelector, &'a AccountType),
     /// Enumerates supported enums and implements display to dispatch on language and value
     BasicAllocationType(LangSelector, &'a BasicAllocationType),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    Country(LangSelector, &'a Country),
     /// Enumerates supported enums and implements display to dispatch on language and value
     DistributionInstrument(LangSelector, &'a DistributionInstrument),
     /// Enumerates supported enums and implements display to dispatch on language and value
     DistributionInstrumentType(LangSelector, &'a DistributionInstrumentType),
     /// Enumerates supported enums and implements display to dispatch on language and value
-    ForecastTaxTreatment(LangSelector, &'a ForecastTaxTreatment),
+    DossierItemType(LangSelector, &'a DossierItemType),
     /// Enumerates supported enums and implements display to dispatch on language and value
     FlowDirection(LangSelector, &'a FlowDirection),
     /// Enumerates supported enums and implements display to dispatch on language and value
-    PersonType(LangSelector, &'a PersonType),
-    /// Enumerates supported enums and implements display to dispatch on language and value
-    DossierItemType(LangSelector, &'a DossierItemType),
-    /// Enumerates supported enums and implements display to dispatch on language and value
-    ForecastYearMarkerType(LangSelector, &'a ForecastYearMarkerType),
-    /// Enumerates supported enums and implements display to dispatch on language and value
-    TaxUsFilingStatus(LangSelector, &'a TaxUsFilingStatus),
-    /// Enumerates supported enums and implements display to dispatch on language and value
-    TaxUsCategory(LangSelector, &'a TaxUsCategory),
-    /// Enumerates supported enums and implements display to dispatch on language and value
-    TaxTreatment(LangSelector, &'a TaxTreatment),
+    FlowType(LangSelector, &'a FlowType),
     /// Enumerates supported enums and implements display to dispatch on language and value
     ForecastSortCriteria(LangSelector, &'a ForecastSortCriteria),
     /// Enumerates supported enums and implements display to dispatch on language and value
-    Country(LangSelector, &'a Country),
+    ForecastTaxTreatment(LangSelector, &'a ForecastTaxTreatment),
     /// Enumerates supported enums and implements display to dispatch on language and value
-    NamedRateCurve(LangSelector, &'a NamedRateCurve),
-    /// Enumerates supported enums and implements display to dispatch on language and value
-    WorthType(LangSelector, &'a WorthType),
+    ForecastYearMarkerType(LangSelector, &'a ForecastYearMarkerType),
     /// Enumerates supported enums and implements display to dispatch on language and value
     HoldingType(LangSelector, &'a HoldingType),
     /// Enumerates supported enums and implements display to dispatch on language and value
-    FlowType(LangSelector, &'a FlowType),
+    LangSelector(LangSelector, &'a LangSelector),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    NamedRateCurve(LangSelector, &'a NamedRateCurve),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    PersonType(LangSelector, &'a PersonType),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    ReturnStatsType(LangSelector, &'a ReturnStatsType),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    TaxTreatment(LangSelector, &'a TaxTreatment),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    TaxUsCategory(LangSelector, &'a TaxUsCategory),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    TaxUsFilingStatus(LangSelector, &'a TaxUsFilingStatus),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    WorthType(LangSelector, &'a WorthType),
+    /// Enumerates supported enums and implements display to dispatch on language and value
+    YearEndpoint(LangSelector, &'a YearEndpoint),
     /// Enumerates supported enums and implements display to dispatch on language and value
     CommonStrings(LangSelector, &'a CommonStrings),
 }
@@ -288,26 +318,6 @@ impl<'a> Display for I18nEnums<'a> {
             f,
             "{}",
             match self {
-                I18nEnums::LangSelector(lang_selector, e) => match e {
-                    LangSelector::UsEnglish => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "lang_selector.us_english"
-                        )
-                        .unwrap_or_default(),
-                    LangSelector::French => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "lang_selector.french"
-                        )
-                        .unwrap_or_default(),
-                    LangSelector::German => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "lang_selector.german"
-                        )
-                        .unwrap_or_default(),
-                },
                 I18nEnums::AccountType(lang_selector, e) => match e {
                     AccountType::Taxable => LOCALES
                         .lookup(
@@ -384,6 +394,26 @@ impl<'a> Display for I18nEnums<'a> {
                         )
                         .unwrap_or_default(),
                 },
+                I18nEnums::Country(lang_selector, e) => match e {
+                    Country::UnitedStates => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "country.united_states"
+                        )
+                        .unwrap_or_default(),
+                    Country::France => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "country.france"
+                        )
+                        .unwrap_or_default(),
+                    Country::UnitedKingdom => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "country.united_kingdom"
+                        )
+                        .unwrap_or_default(),
+                },
                 I18nEnums::DistributionInstrument(lang_selector, e) => match e {
                     DistributionInstrument::Equity => LOCALES
                         .lookup(
@@ -430,29 +460,23 @@ impl<'a> Display for I18nEnums<'a> {
                         )
                         .unwrap_or_default(),
                 },
-                I18nEnums::ForecastTaxTreatment(lang_selector, e) => match e {
-                    ForecastTaxTreatment::AsModeled => LOCALES
+                I18nEnums::DossierItemType(lang_selector, e) => match e {
+                    DossierItemType::Worth => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "forecast_tax_treatment.as_modeled"
+                            "dossier_item_type.worth"
                         )
                         .unwrap_or_default(),
-                    ForecastTaxTreatment::AsTaxable => LOCALES
+                    DossierItemType::Holding => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "forecast_tax_treatment.as_taxable"
+                            "dossier_item_type.holding"
                         )
                         .unwrap_or_default(),
-                    ForecastTaxTreatment::AsTaxDeferred => LOCALES
+                    DossierItemType::Flow => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "forecast_tax_treatment.as_tax_deferred"
-                        )
-                        .unwrap_or_default(),
-                    ForecastTaxTreatment::AsTaxExempt => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "forecast_tax_treatment.as_tax_exempt"
+                            "dossier_item_type.flow"
                         )
                         .unwrap_or_default(),
                 },
@@ -482,49 +506,165 @@ impl<'a> Display for I18nEnums<'a> {
                         )
                         .unwrap_or_default(),
                 },
-                I18nEnums::PersonType(lang_selector, e) => match e {
-                    PersonType::PrimaryOwner => LOCALES
+                I18nEnums::FlowType(lang_selector, e) => match e {
+                    FlowType::EarnedIncome => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "person_type.primary_owner"
+                            "flow_type.earned_income"
                         )
                         .unwrap_or_default(),
-                    PersonType::SecondaryOwner => LOCALES
+                    FlowType::PensionIncome => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "person_type.secondary_owner"
+                            "flow_type.pension_income"
                         )
                         .unwrap_or_default(),
-                    PersonType::Dependent => LOCALES
+                    FlowType::SocialSecurityIncome => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "person_type.dependent"
+                            "flow_type.social_security_income"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::RentalIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.rental_income"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::RoyaltyIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.royalty_income"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::InternetAdvertisingIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.internet_advertising_income"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::PassiveBusinessIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.passive_business_income"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::OrdinaryIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.ordinary_income"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::LivingExpense => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.living_expense"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::HealthCareExpense => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.health_care_expense"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::CollegeExpense => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.college_expense"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::PropertyTaxes => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.property_taxes"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::MortgageInterest => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.mortgage_interest"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::StateTaxesPaid => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.state_taxes_paid"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::CharitableDonations => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.charitable_donations"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::MedicalExpenses => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.medical_expenses"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::RetirementCredits => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.retirement_credits"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::IraContributions => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.ira_contributions"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::OtherInFlow => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.other_in_flow"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::OtherOutFlow => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.other_out_flow"
+                        )
+                        .unwrap_or_default(),
+                    FlowType::CustomFlow => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "flow_type.custom_flow"
                         )
                         .unwrap_or_default(),
                 },
-                I18nEnums::DossierItemType(lang_selector, e) => match e {
-                    DossierItemType::Worth => LOCALES
+                I18nEnums::ForecastSortCriteria(lang_selector, e) => match e {
+                    ForecastSortCriteria::ByFinalEndBalance => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "dossier_item_type.worth"
+                            "forecast_sort_criteria.by_final_end_balance"
                         )
                         .unwrap_or_default(),
-                    DossierItemType::Holding => LOCALES
+                },
+                I18nEnums::ForecastTaxTreatment(lang_selector, e) => match e {
+                    ForecastTaxTreatment::AsModeled => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "dossier_item_type.holding"
+                            "forecast_tax_treatment.as_modeled"
                         )
                         .unwrap_or_default(),
-                    DossierItemType::Instrument => LOCALES
+                    ForecastTaxTreatment::AsTaxable => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "dossier_item_type.instrument"
+                            "forecast_tax_treatment.as_taxable"
                         )
                         .unwrap_or_default(),
-                    DossierItemType::Flow => LOCALES
+                    ForecastTaxTreatment::AsTaxDeferred => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "dossier_item_type.flow"
+                            "forecast_tax_treatment.as_tax_deferred"
+                        )
+                        .unwrap_or_default(),
+                    ForecastTaxTreatment::AsTaxExempt => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "forecast_tax_treatment.as_tax_exempt"
                         )
                         .unwrap_or_default(),
                 },
@@ -545,206 +685,6 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "forecast_year_marker_type.death"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::TaxUsFilingStatus(lang_selector, e) => match e {
-                    TaxUsFilingStatus::MarriedJoint => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_filing_status.married_joint"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsFilingStatus::MarriedSeparate => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_filing_status.married_separate"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsFilingStatus::Single => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_filing_status.single"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsFilingStatus::HeadOfHousehold => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_filing_status.head_of_household"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::TaxUsCategory(lang_selector, e) => match e {
-                    TaxUsCategory::UsSocialSecurity => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_category.us_social_security"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsCategory::UsMedicare => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_category.us_medicare"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsCategory::UsQualifiedDividend => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_category.us_qualified_dividend"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsCategory::UsLongTermCapitalGain => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_category.us_long_term_capital_gain"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsCategory::UsPassiveIncome => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_category.us_passive_income"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsCategory::UsEarnedIncome => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_category.us_earned_income"
-                        )
-                        .unwrap_or_default(),
-                    TaxUsCategory::UsOrdinaryIncome => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_us_category.us_ordinary_income"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::TaxTreatment(lang_selector, e) => match e {
-                    TaxTreatment::TaxableAccount => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_treatment.taxable_account"
-                        )
-                        .unwrap_or_default(),
-                    TaxTreatment::TaxDeferredAccount => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_treatment.tax_deferred_account"
-                        )
-                        .unwrap_or_default(),
-                    TaxTreatment::TaxExemptAccount => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "tax_treatment.tax_exempt_account"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::ForecastSortCriteria(lang_selector, e) => match e {
-                    ForecastSortCriteria::ByFinalEndBalance => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "forecast_sort_criteria.by_final_end_balance"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::Country(lang_selector, e) => match e {
-                    Country::UnitedStates => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "country.united_states"
-                        )
-                        .unwrap_or_default(),
-                    Country::France => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "country.france"
-                        )
-                        .unwrap_or_default(),
-                    Country::UnitedKingdom => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "country.united_kingdom"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::NamedRateCurve(lang_selector, e) => match e {
-                    NamedRateCurve::NoGrowthCurve => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "named_rate_curve.no_growth_curve"
-                        )
-                        .unwrap_or_default(),
-                    NamedRateCurve::ReportInflation => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "named_rate_curve.report_inflation"
-                        )
-                        .unwrap_or_default(),
-                    NamedRateCurve::CostOfCapital => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "named_rate_curve.cost_of_capital"
-                        )
-                        .unwrap_or_default(),
-                },
-                I18nEnums::WorthType(lang_selector, e) => match e {
-                    WorthType::ResidentialRealEstate => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.residential_real_estate"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::CommercialRealEstate => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.commercial_real_estate"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::FamilyFarm => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.family_farm"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::Automobile => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.automobile"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::ClassicCar => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.classic_car"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::AntiqueCar => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.antique_car"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::VintageCar => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.vintage_car"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::Boat => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.boat"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::Toys => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.toys"
-                        )
-                        .unwrap_or_default(),
-                    WorthType::OtherWorth => LOCALES
-                        .lookup(
-                            lang_selector_to_language_id(lang_selector),
-                            "worth_type.other_worth"
                         )
                         .unwrap_or_default(),
                 },
@@ -906,131 +846,249 @@ impl<'a> Display for I18nEnums<'a> {
                         )
                         .unwrap_or_default(),
                 },
-                I18nEnums::FlowType(lang_selector, e) => match e {
-                    FlowType::EarnedIncome => LOCALES
+                I18nEnums::LangSelector(lang_selector, e) => match e {
+                    LangSelector::UsEnglish => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.earned_income"
+                            "lang_selector.us_english"
                         )
                         .unwrap_or_default(),
-                    FlowType::PensionIncome => LOCALES
+                    LangSelector::French => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.pension_income"
+                            "lang_selector.french"
                         )
                         .unwrap_or_default(),
-                    FlowType::SocialSecurityIncome => LOCALES
+                    LangSelector::German => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.social_security_income"
+                            "lang_selector.german"
                         )
                         .unwrap_or_default(),
-                    FlowType::RentalIncome => LOCALES
+                },
+                I18nEnums::NamedRateCurve(lang_selector, e) => match e {
+                    NamedRateCurve::NoGrowthCurve => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.rental_income"
+                            "named_rate_curve.no_growth_curve"
                         )
                         .unwrap_or_default(),
-                    FlowType::RoyaltyIncome => LOCALES
+                    NamedRateCurve::ReportInflation => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.royalty_income"
+                            "named_rate_curve.report_inflation"
                         )
                         .unwrap_or_default(),
-                    FlowType::InternetAdvertisingIncome => LOCALES
+                    NamedRateCurve::CostOfCapital => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.internet_advertising_income"
+                            "named_rate_curve.cost_of_capital"
                         )
                         .unwrap_or_default(),
-                    FlowType::PassiveBusinessIncome => LOCALES
+                },
+                I18nEnums::PersonType(lang_selector, e) => match e {
+                    PersonType::PrimaryOwner => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.passive_business_income"
+                            "person_type.primary_owner"
                         )
                         .unwrap_or_default(),
-                    FlowType::OrdinaryIncome => LOCALES
+                    PersonType::SecondaryOwner => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.ordinary_income"
+                            "person_type.secondary_owner"
                         )
                         .unwrap_or_default(),
-                    FlowType::LivingExpense => LOCALES
+                    PersonType::Dependent => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.living_expense"
+                            "person_type.dependent"
                         )
                         .unwrap_or_default(),
-                    FlowType::HealthCareExpense => LOCALES
+                },
+                I18nEnums::ReturnStatsType(lang_selector, e) => match e {
+                    ReturnStatsType::NoTracking => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.health_care_expense"
+                            "return_stats_type.no_tracking"
                         )
                         .unwrap_or_default(),
-                    FlowType::CollegeExpense => LOCALES
+                    ReturnStatsType::CorrelationsAndReturn => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.college_expense"
+                            "return_stats_type.correlations_and_return"
                         )
                         .unwrap_or_default(),
-                    FlowType::PropertyTaxes => LOCALES
+                    ReturnStatsType::ReturnOnly => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.property_taxes"
+                            "return_stats_type.return_only"
                         )
                         .unwrap_or_default(),
-                    FlowType::MortgageInterest => LOCALES
+                },
+                I18nEnums::TaxTreatment(lang_selector, e) => match e {
+                    TaxTreatment::TaxableAccount => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.mortgage_interest"
+                            "tax_treatment.taxable_account"
                         )
                         .unwrap_or_default(),
-                    FlowType::StateTaxesPaid => LOCALES
+                    TaxTreatment::TaxDeferredAccount => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.state_taxes_paid"
+                            "tax_treatment.tax_deferred_account"
                         )
                         .unwrap_or_default(),
-                    FlowType::CharitableDonations => LOCALES
+                    TaxTreatment::TaxExemptAccount => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.charitable_donations"
+                            "tax_treatment.tax_exempt_account"
                         )
                         .unwrap_or_default(),
-                    FlowType::MedicalExpenses => LOCALES
+                },
+                I18nEnums::TaxUsCategory(lang_selector, e) => match e {
+                    TaxUsCategory::UsSocialSecurity => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.medical_expenses"
+                            "tax_us_category.us_social_security"
                         )
                         .unwrap_or_default(),
-                    FlowType::RetirementCredits => LOCALES
+                    TaxUsCategory::UsMedicare => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.retirement_credits"
+                            "tax_us_category.us_medicare"
                         )
                         .unwrap_or_default(),
-                    FlowType::IraContributions => LOCALES
+                    TaxUsCategory::UsQualifiedDividend => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.ira_contributions"
+                            "tax_us_category.us_qualified_dividend"
                         )
                         .unwrap_or_default(),
-                    FlowType::OtherInFlow => LOCALES
+                    TaxUsCategory::UsLongTermCapitalGain => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.other_in_flow"
+                            "tax_us_category.us_long_term_capital_gain"
                         )
                         .unwrap_or_default(),
-                    FlowType::OtherOutFlow => LOCALES
+                    TaxUsCategory::UsPassiveIncome => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.other_out_flow"
+                            "tax_us_category.us_passive_income"
                         )
                         .unwrap_or_default(),
-                    FlowType::CustomFlow => LOCALES
+                    TaxUsCategory::UsEarnedIncome => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
-                            "flow_type.custom_flow"
+                            "tax_us_category.us_earned_income"
+                        )
+                        .unwrap_or_default(),
+                    TaxUsCategory::UsOrdinaryIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "tax_us_category.us_ordinary_income"
+                        )
+                        .unwrap_or_default(),
+                },
+                I18nEnums::TaxUsFilingStatus(lang_selector, e) => match e {
+                    TaxUsFilingStatus::MarriedJoint => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "tax_us_filing_status.married_joint"
+                        )
+                        .unwrap_or_default(),
+                    TaxUsFilingStatus::MarriedSeparate => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "tax_us_filing_status.married_separate"
+                        )
+                        .unwrap_or_default(),
+                    TaxUsFilingStatus::Single => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "tax_us_filing_status.single"
+                        )
+                        .unwrap_or_default(),
+                    TaxUsFilingStatus::HeadOfHousehold => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "tax_us_filing_status.head_of_household"
+                        )
+                        .unwrap_or_default(),
+                },
+                I18nEnums::WorthType(lang_selector, e) => match e {
+                    WorthType::ResidentialRealEstate => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.residential_real_estate"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::CommercialRealEstate => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.commercial_real_estate"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::FamilyFarm => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.family_farm"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::Automobile => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.automobile"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::ClassicCar => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.classic_car"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::AntiqueCar => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.antique_car"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::VintageCar => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.vintage_car"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::Boat => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.boat"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::Toys => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.toys"
+                        )
+                        .unwrap_or_default(),
+                    WorthType::OtherWorth => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "worth_type.other_worth"
+                        )
+                        .unwrap_or_default(),
+                },
+                I18nEnums::YearEndpoint(lang_selector, e) => match e {
+                    YearEndpoint::StartYear => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "year_endpoint.start_year"
+                        )
+                        .unwrap_or_default(),
+                    YearEndpoint::EndYear => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "year_endpoint.end_year"
                         )
                         .unwrap_or_default(),
                 },
@@ -1063,6 +1121,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.as_of"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Assets => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.assets"
                         )
                         .unwrap_or_default(),
                     CommonStrings::Assumptions => LOCALES
@@ -1117,6 +1181,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.cost"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::CostBasis => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.cost_basis"
                         )
                         .unwrap_or_default(),
                     CommonStrings::Current => LOCALES
@@ -1203,6 +1273,12 @@ impl<'a> Display for I18nEnums<'a> {
                             "common_strings.end_value"
                         )
                         .unwrap_or_default(),
+                    CommonStrings::Expense => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.expense"
+                        )
+                        .unwrap_or_default(),
                     CommonStrings::Expenses => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
@@ -1213,6 +1289,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.forecast"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::ForecastId => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.forecast_id"
                         )
                         .unwrap_or_default(),
                     CommonStrings::From => LOCALES
@@ -1257,6 +1339,12 @@ impl<'a> Display for I18nEnums<'a> {
                             "common_strings.in_flow"
                         )
                         .unwrap_or_default(),
+                    CommonStrings::Income => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.income"
+                        )
+                        .unwrap_or_default(),
                     CommonStrings::Incomes => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
@@ -1275,6 +1363,24 @@ impl<'a> Display for I18nEnums<'a> {
                             "common_strings.investments"
                         )
                         .unwrap_or_default(),
+                    CommonStrings::Liability => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.liability"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Linked => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.linked"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::LinkedIncome => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.linked_income"
+                        )
+                        .unwrap_or_default(),
                     CommonStrings::LinkedInvestments => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
@@ -1285,6 +1391,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.linked_sales"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::LinkedExpense => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.linked_expense"
                         )
                         .unwrap_or_default(),
                     CommonStrings::LongTermCapitalGain => LOCALES
@@ -1425,6 +1537,12 @@ impl<'a> Display for I18nEnums<'a> {
                             "common_strings.random"
                         )
                         .unwrap_or_default(),
+                    CommonStrings::RealAsset => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.real_asset"
+                        )
+                        .unwrap_or_default(),
                     CommonStrings::RepaidBorrowedFunds => LOCALES
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
@@ -1465,6 +1583,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.social_security"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Sold => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.sold"
                         )
                         .unwrap_or_default(),
                     CommonStrings::StandardDeduction => LOCALES
@@ -1531,6 +1655,12 @@ impl<'a> Display for I18nEnums<'a> {
                         .lookup(
                             lang_selector_to_language_id(lang_selector),
                             "common_strings.total"
+                        )
+                        .unwrap_or_default(),
+                    CommonStrings::Totals => LOCALES
+                        .lookup(
+                            lang_selector_to_language_id(lang_selector),
+                            "common_strings.totals"
                         )
                         .unwrap_or_default(),
                     CommonStrings::Toward => LOCALES

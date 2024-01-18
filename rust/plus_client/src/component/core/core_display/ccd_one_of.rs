@@ -23,7 +23,9 @@ pub fn CcdOneOf(
     show_update: WriteSignal<String>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-coo; ccd-section-2col";
-    crate::log_component!("`CcdOneOf`");
+    let component_id = crate::component_id!("`CcdOneOf`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn ccd_one_of>
 
     use super::prefix_lang_flag;
@@ -31,11 +33,12 @@ pub fn CcdOneOf(
     use crate::OneOfComponent;
     use crate::SelectDirection;
     use crate::Updatable;
-    use leptos::use_context;
+    use leptos::expect_context;
     use leptos::SignalGet;
     use leptos::SignalSet;
+    use std::rc::Rc;
 
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
 
     #[derive(Debug, Clone, Copy, PartialEq, EnumVariantNames, EnumIter)]
     enum LostInSpace {

@@ -18,7 +18,9 @@ use leptos::IntoView;
 #[component]
 pub fn AppSideBar() -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-asb";
-    crate::log_component!("`AppSideBar`");
+    let component_id = crate::component_id!("`AppSideBar`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn app_side_bar>
 
     // ω <fn app_side_bar>

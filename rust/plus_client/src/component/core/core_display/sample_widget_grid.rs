@@ -59,22 +59,25 @@ pub fn SampleWidgetGrid(
     /// The shared context
     shared_context_updatable: Updatable<SwgSharedContext>,
 ) -> impl IntoView {
-    crate::log_component!("`SampleWidgetGrid`");
+    let component_id = crate::component_id!("`SampleWidgetGrid`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn sample_widget_grid>
 
     use crate::AppContext;
+    use crate::ClientCssClasses;
     use crate::CollectionGridComponent;
-    use crate::CssClasses;
-    use leptos::use_context;
+    use leptos::expect_context;
     use leptos::IntoAttribute;
     use leptos::SignalGet;
+    use std::rc::Rc;
 
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
     let i18n_worths = move || plus_lookup::i18n::worths_grid::i18n_worths(lang_selector.get());
 
     view! {
         <div>
-            <div class=CssClasses::GridLbl.as_str()>{i18n_worths}</div>
+            <div class=ClientCssClasses::GridLbl.as_str()>{i18n_worths}</div>
             <CollectionGridComponent
                 rows_updatable=updatable
                 shared_context_updatable=shared_context_updatable
@@ -107,16 +110,17 @@ impl CollectionGrid for SampleWidget {
     fn get_fields(&self) -> Vec<View> {
         // α <fn CollectionGrid::get_fields for SampleWidget>
 
-        use crate::CssClasses;
+        use crate::ClientCssClasses;
         use leptos::IntoAttribute;
 
         let color = format!("{:?}", self.color);
         let years = format!("{}", self.years.unwrap_or_default());
 
         vec![
-            view! { <div class=CssClasses::CgcCell.as_str()>{self.name.clone()}</div> }.into_view(),
-            view! { <div class=CssClasses::CgcCell.as_str()>{color}</div> }.into_view(),
-            view! { <div class=CssClasses::CgcCell.as_str()>{years}</div> }.into_view(),
+            view! { <div class=ClientCssClasses::CgcCell.as_str()>{self.name.clone()}</div> }
+                .into_view(),
+            view! { <div class=ClientCssClasses::CgcCell.as_str()>{color}</div> }.into_view(),
+            view! { <div class=ClientCssClasses::CgcCell.as_str()>{years}</div> }.into_view(),
         ]
 
         // ω <fn CollectionGrid::get_fields for SampleWidget>

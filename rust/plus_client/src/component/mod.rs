@@ -16,8 +16,8 @@ pub mod log_component;
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
 ////////////////////////////////////////////////////////////////////////////////////
-/// All css classes not directly associated with a component.
-pub enum CssClasses {
+/// `plus_client` css classes.
+pub enum ClientCssClasses {
     /// Adds `text-align=right;`
     TxtRight,
     /// Adds `text-align=right; padding-left=1rem;`
@@ -66,6 +66,8 @@ pub enum CssClasses {
     Form,
     /// Style form row
     FormRow,
+    /// Style form row 2 cols
+    FormRow2Col,
     /// Styles dynamic labels such as HoldingComponent's _market value_
     /// and _unrealized gain/loss_ and ItemGrowthSelect display of the NormalSpec
     InfoLbl,
@@ -186,6 +188,8 @@ pub enum CssClasses {
     HcExtrasCtnr,
     /// Histogram selected row
     HistSelectedRow,
+    /// Histogram pair of svg and table
+    HistPair,
     /// MonteSimulationSummaryComponent distribution plot
     MsscDist,
     /// MonteSimulationSummaryComponent distribution plot falling circles 1
@@ -208,111 +212,164 @@ pub enum CssClasses {
     ChNormal,
     /// CcdHistogram normal div
     ChLognormal,
+    /// ReconciledView grid to hold the equation
+    RvGrid,
+    /// ReconciledView income term
+    RvIncome,
+    /// ReconciledView expense term
+    RvExpense,
+    /// ReconciledView assets term
+    RvAssets,
+    /// ReconciledView equation term label
+    RvGridTerm,
+    /// ReconciledView operator (ie `plus` `equals`)
+    RvGridOp,
+    /// ReconciledView numeric value
+    RvGridVal,
+    /// ReconciledView _holding plan table_ and _tax table_
+    RvTables,
+    /// Balance Sheet Statement caption - which includes detail toggle button
+    BssCaption,
+    /// AssetLiabilityComponent inner content, inside the OneOfComponent
+    AlcInner,
+    /// AssetLiabilityComponent svg with balance beam
+    AlcSvg,
+    /// AssetLiabilityComponent svg container
+    AlcSvgCtnr,
+    /// AssetLiabilityComponent asset and liability tables
+    AlcTables,
+    /// AssetLiabilityComponent Asset table
+    AlcAssetTbl,
+    /// AssetLiabilityComponent Liability table
+    AlcLiabilityTbl,
+    /// Monte Carlo distribution summary
+    McDistSvg,
+    /// AppNavBar Plusauri Dossiers
+    AnbPlusDossiers,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- type impls ---
 ////////////////////////////////////////////////////////////////////////////////////
-impl CssClasses {
+impl ClientCssClasses {
     /// Get the class name
     ///
     ///   * _return_ - The class name
     #[inline]
     pub fn as_str(&self) -> &'static str {
         match self {
-            CssClasses::TxtRight => "txt-right",
-            CssClasses::TxtRightPadLeft => "txt-right-pad-left",
-            CssClasses::PlLeft1 => "pl-left-1",
-            CssClasses::Title => "title",
-            CssClasses::Invalid => "invalid",
-            CssClasses::TblCaption => "tbl-caption",
-            CssClasses::InFlow => "in-flow",
-            CssClasses::OutFlow => "out-flow",
-            CssClasses::BtnTbTop => "btn-tb-top",
-            CssClasses::BtnTbRight => "btn-tb-right",
-            CssClasses::BtnTbBottom => "btn-tb-bottom",
-            CssClasses::BtnTbLeft => "btn-tb-left",
-            CssClasses::LblBtn => "lbl-btn",
-            CssClasses::TibImg => "tib-img",
-            CssClasses::TibLbl => "tib-lbl",
-            CssClasses::GridLbl => "grid-lbl",
-            CssClasses::HeaderLeft => "header-left",
-            CssClasses::HeaderRight => "header-right",
-            CssClasses::ContentTable => "content-table",
-            CssClasses::Numeric => "numeric",
-            CssClasses::TaxBillTr => "tax-bill-tr",
-            CssClasses::Form => "form",
-            CssClasses::FormRow => "form-row",
-            CssClasses::InfoLbl => "info-lbl",
-            CssClasses::AcHoldings => "ac-holdings",
-            CssClasses::MbsView => "mbs-view",
-            CssClasses::MbsInterior => "mbs-interior",
-            CssClasses::TibOn => "tib-on",
-            CssClasses::TibOff => "tib-off",
-            CssClasses::DossierToolbar => "dossier-toolbar",
-            CssClasses::DossierShow => "dossier-show",
-            CssClasses::DossierNameInput => "dossier-name-input",
-            CssClasses::AppLangSelect => "app-lang-select",
-            CssClasses::AppLangSelectInner => "app-lang-select-inner",
-            CssClasses::AppCurrencySelect => "app-currency-select",
-            CssClasses::CollapsibleHeader => "collapsible-header",
-            CssClasses::CollapseButton => "collapse-button",
-            CssClasses::CollectionGrid => "collection-grid",
-            CssClasses::CgcEditable => "cgc-editable",
-            CssClasses::CgcCell => "cgc-cell",
-            CssClasses::CgcAddRow => "cgc-add-row",
-            CssClasses::CftZoom => "cft-zoom",
-            CssClasses::OkCancelBar => "ok-cancel-bar",
-            CssClasses::FscCtnr => "fsc-ctnr",
-            CssClasses::FscNameInput => "fsc-name-input",
-            CssClasses::FscType => "fsc-type",
-            CssClasses::FscDirectionRbs => "fsc-direction-rbs",
-            CssClasses::YriStart => "yri-start",
-            CssClasses::YriEnd => "yri-end",
-            CssClasses::McsLabel => "mcs-label",
-            CssClasses::McsSelectLabel => "mcs-select-label",
-            CssClasses::McsIconLabel => "mcs-icon-label",
-            CssClasses::McsIcon => "mcs-icon",
-            CssClasses::NscFieldset => "nsc-fieldset",
-            CssClasses::NscExplore => "nsc-explore",
-            CssClasses::VfscContainer => "vfsc-container",
-            CssClasses::VfscCategory => "vfsc-category",
-            CssClasses::VfscCurrency => "vfsc-currency",
-            CssClasses::VfscFlows => "vfsc-flows",
-            CssClasses::YcvCurrency => "ycv-currency",
-            CssClasses::YcvValue => "ycv-value",
-            CssClasses::YcvAsOf => "ycv-as-of",
-            CssClasses::YcvYear => "ycv-year",
-            CssClasses::McsGrid => "mcs-grid",
-            CssClasses::McsMainBtn => "mcs-main-btn",
-            CssClasses::McsSelectBtn => "mcs-select-btn",
-            CssClasses::McsCtnr => "mcs-ctnr",
-            CssClasses::OccOkBtn => "occ-ok-btn",
-            CssClasses::OccCancelBtn => "occ-cancel-btn",
-            CssClasses::OocCtnr => "ooc-ctnr",
-            CssClasses::OocRbLtr => "ooc-rb-ltr",
-            CssClasses::OocRbTtb => "ooc-rb-ttb",
-            CssClasses::YiInput => "yi-input",
-            CssClasses::SwniSlider => "swni-slider",
-            CssClasses::HrrcCtnr => "hrrc-ctnr",
-            CssClasses::HrrcDot => "hrrc-dot",
-            CssClasses::HrrcLblCtnr => "hrrc-lbl-ctnr",
-            CssClasses::HrrcLbl => "hrrc-lbl",
-            CssClasses::HrrcPlot => "hrrc-plot",
-            CssClasses::NlcLblCtnr => "nlc-lbl-ctnr",
-            CssClasses::HcExtrasCtnr => "hc-extras-ctnr",
-            CssClasses::HistSelectedRow => "hist-selected-row",
-            CssClasses::MsscDist => "mssc-dist",
-            CssClasses::MsscCircle1 => "mssc-circle-1",
-            CssClasses::MsscCircle2 => "mssc-circle-2",
-            CssClasses::MsscCircle3 => "mssc-circle-3",
-            CssClasses::MsscCircle4 => "mssc-circle-4",
-            CssClasses::MsscMedian => "mssc-median",
-            CssClasses::MsscMean => "mssc-mean",
-            CssClasses::MsscGmf => "mssc-gmf",
-            CssClasses::ChHists => "ch-hists",
-            CssClasses::ChNormal => "ch-normal",
-            CssClasses::ChLognormal => "ch-lognormal",
+            ClientCssClasses::TxtRight => "txt-right",
+            ClientCssClasses::TxtRightPadLeft => "txt-right-pad-left",
+            ClientCssClasses::PlLeft1 => "pl-left-1",
+            ClientCssClasses::Title => "title",
+            ClientCssClasses::Invalid => "invalid",
+            ClientCssClasses::TblCaption => "tbl-caption",
+            ClientCssClasses::InFlow => "in-flow",
+            ClientCssClasses::OutFlow => "out-flow",
+            ClientCssClasses::BtnTbTop => "btn-tb-top",
+            ClientCssClasses::BtnTbRight => "btn-tb-right",
+            ClientCssClasses::BtnTbBottom => "btn-tb-bottom",
+            ClientCssClasses::BtnTbLeft => "btn-tb-left",
+            ClientCssClasses::LblBtn => "lbl-btn",
+            ClientCssClasses::TibImg => "tib-img",
+            ClientCssClasses::TibLbl => "tib-lbl",
+            ClientCssClasses::GridLbl => "grid-lbl",
+            ClientCssClasses::HeaderLeft => "header-left",
+            ClientCssClasses::HeaderRight => "header-right",
+            ClientCssClasses::ContentTable => "content-table",
+            ClientCssClasses::Numeric => "numeric",
+            ClientCssClasses::TaxBillTr => "tax-bill-tr",
+            ClientCssClasses::Form => "form",
+            ClientCssClasses::FormRow => "form-row",
+            ClientCssClasses::FormRow2Col => "form-row-2-col",
+            ClientCssClasses::InfoLbl => "info-lbl",
+            ClientCssClasses::AcHoldings => "ac-holdings",
+            ClientCssClasses::MbsView => "mbs-view",
+            ClientCssClasses::MbsInterior => "mbs-interior",
+            ClientCssClasses::TibOn => "tib-on",
+            ClientCssClasses::TibOff => "tib-off",
+            ClientCssClasses::DossierToolbar => "dossier-toolbar",
+            ClientCssClasses::DossierShow => "dossier-show",
+            ClientCssClasses::DossierNameInput => "dossier-name-input",
+            ClientCssClasses::AppLangSelect => "app-lang-select",
+            ClientCssClasses::AppLangSelectInner => "app-lang-select-inner",
+            ClientCssClasses::AppCurrencySelect => "app-currency-select",
+            ClientCssClasses::CollapsibleHeader => "collapsible-header",
+            ClientCssClasses::CollapseButton => "collapse-button",
+            ClientCssClasses::CollectionGrid => "collection-grid",
+            ClientCssClasses::CgcEditable => "cgc-editable",
+            ClientCssClasses::CgcCell => "cgc-cell",
+            ClientCssClasses::CgcAddRow => "cgc-add-row",
+            ClientCssClasses::CftZoom => "cft-zoom",
+            ClientCssClasses::OkCancelBar => "ok-cancel-bar",
+            ClientCssClasses::FscCtnr => "fsc-ctnr",
+            ClientCssClasses::FscNameInput => "fsc-name-input",
+            ClientCssClasses::FscType => "fsc-type",
+            ClientCssClasses::FscDirectionRbs => "fsc-direction-rbs",
+            ClientCssClasses::YriStart => "yri-start",
+            ClientCssClasses::YriEnd => "yri-end",
+            ClientCssClasses::McsLabel => "mcs-label",
+            ClientCssClasses::McsSelectLabel => "mcs-select-label",
+            ClientCssClasses::McsIconLabel => "mcs-icon-label",
+            ClientCssClasses::McsIcon => "mcs-icon",
+            ClientCssClasses::NscFieldset => "nsc-fieldset",
+            ClientCssClasses::NscExplore => "nsc-explore",
+            ClientCssClasses::VfscContainer => "vfsc-container",
+            ClientCssClasses::VfscCategory => "vfsc-category",
+            ClientCssClasses::VfscCurrency => "vfsc-currency",
+            ClientCssClasses::VfscFlows => "vfsc-flows",
+            ClientCssClasses::YcvCurrency => "ycv-currency",
+            ClientCssClasses::YcvValue => "ycv-value",
+            ClientCssClasses::YcvAsOf => "ycv-as-of",
+            ClientCssClasses::YcvYear => "ycv-year",
+            ClientCssClasses::McsGrid => "mcs-grid",
+            ClientCssClasses::McsMainBtn => "mcs-main-btn",
+            ClientCssClasses::McsSelectBtn => "mcs-select-btn",
+            ClientCssClasses::McsCtnr => "mcs-ctnr",
+            ClientCssClasses::OccOkBtn => "occ-ok-btn",
+            ClientCssClasses::OccCancelBtn => "occ-cancel-btn",
+            ClientCssClasses::OocCtnr => "ooc-ctnr",
+            ClientCssClasses::OocRbLtr => "ooc-rb-ltr",
+            ClientCssClasses::OocRbTtb => "ooc-rb-ttb",
+            ClientCssClasses::YiInput => "yi-input",
+            ClientCssClasses::SwniSlider => "swni-slider",
+            ClientCssClasses::HrrcCtnr => "hrrc-ctnr",
+            ClientCssClasses::HrrcDot => "hrrc-dot",
+            ClientCssClasses::HrrcLblCtnr => "hrrc-lbl-ctnr",
+            ClientCssClasses::HrrcLbl => "hrrc-lbl",
+            ClientCssClasses::HrrcPlot => "hrrc-plot",
+            ClientCssClasses::NlcLblCtnr => "nlc-lbl-ctnr",
+            ClientCssClasses::HcExtrasCtnr => "hc-extras-ctnr",
+            ClientCssClasses::HistSelectedRow => "hist-selected-row",
+            ClientCssClasses::HistPair => "hist-pair",
+            ClientCssClasses::MsscDist => "mssc-dist",
+            ClientCssClasses::MsscCircle1 => "mssc-circle-1",
+            ClientCssClasses::MsscCircle2 => "mssc-circle-2",
+            ClientCssClasses::MsscCircle3 => "mssc-circle-3",
+            ClientCssClasses::MsscCircle4 => "mssc-circle-4",
+            ClientCssClasses::MsscMedian => "mssc-median",
+            ClientCssClasses::MsscMean => "mssc-mean",
+            ClientCssClasses::MsscGmf => "mssc-gmf",
+            ClientCssClasses::ChHists => "ch-hists",
+            ClientCssClasses::ChNormal => "ch-normal",
+            ClientCssClasses::ChLognormal => "ch-lognormal",
+            ClientCssClasses::RvGrid => "rv-grid",
+            ClientCssClasses::RvIncome => "rv-income",
+            ClientCssClasses::RvExpense => "rv-expense",
+            ClientCssClasses::RvAssets => "rv-assets",
+            ClientCssClasses::RvGridTerm => "rv-grid-term",
+            ClientCssClasses::RvGridOp => "rv-grid-op",
+            ClientCssClasses::RvGridVal => "rv-grid-val",
+            ClientCssClasses::RvTables => "rv-tables",
+            ClientCssClasses::BssCaption => "bss-caption",
+            ClientCssClasses::AlcInner => "alc-inner",
+            ClientCssClasses::AlcSvg => "alc-svg",
+            ClientCssClasses::AlcSvgCtnr => "alc-svg-ctnr",
+            ClientCssClasses::AlcTables => "alc-tables",
+            ClientCssClasses::AlcAssetTbl => "alc-asset-tbl",
+            ClientCssClasses::AlcLiabilityTbl => "alc-liability-tbl",
+            ClientCssClasses::McDistSvg => "mc-dist-svg",
+            ClientCssClasses::AnbPlusDossiers => "anb-plus-dossiers",
         }
     }
 }
@@ -320,7 +377,7 @@ impl CssClasses {
 ////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
-impl Display for CssClasses {
+impl Display for ClientCssClasses {
     /// Format the instance.
     ///
     ///   * **f** - Formatter to push formatted item to.

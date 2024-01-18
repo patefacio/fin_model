@@ -382,8 +382,6 @@ impl SvgPoint {
     ///   * **y** - Y value
     ///   * _return_ - The constructed instance
     pub fn new(x: f64, y: f64) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self { x, y }
     }
 }
@@ -395,8 +393,6 @@ impl SvgDim {
     ///   * **height** - Height
     ///   * _return_ - The constructed instance
     pub fn new(width: f64, height: f64) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self { width, height }
     }
 }
@@ -408,8 +404,6 @@ impl SvgArea {
     ///   * **dim** - Dimensions of the area
     ///   * _return_ - The constructed instance
     pub fn new(origin: SvgPoint, dim: SvgDim) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self { origin, dim }
     }
 }
@@ -422,8 +416,6 @@ impl RgbColor {
     ///   * **b** - Blue component
     ///   * _return_ - The constructed instance
     pub fn new(r: u8, g: u8, b: u8) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self { r, g, b }
     }
 }
@@ -437,8 +429,6 @@ impl RgbaColor {
     ///   * **alpha** - Alpha channel for transparency
     ///   * _return_ - The constructed instance
     pub fn new(r: u8, g: u8, b: u8, alpha: f64) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self { r, g, b, alpha }
     }
 }

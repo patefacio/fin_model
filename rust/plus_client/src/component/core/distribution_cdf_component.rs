@@ -24,7 +24,9 @@ pub fn DistributionCdfComponent(
     normal_spec: MaybeSignal<NormalSpec>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-dcc";
-    crate::log_component!("`DistributionCdfComponent`");
+    let component_id = crate::component_id!("`DistributionCdfComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn distribution_cdf_component>
 
     use crate::DistributionCdf;

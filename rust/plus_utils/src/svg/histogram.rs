@@ -34,7 +34,7 @@ pub enum DescriptivePoint {
 // --- structs ---
 ////////////////////////////////////////////////////////////////////////////////////
 /// An histogram value to be incorporated into a histogram
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HistogramEntry {
     /// Id of the value
     pub id: u32,
@@ -145,8 +145,6 @@ impl HistogramEntry {
     ///   * **value** - Value to be plotted
     ///   * _return_ - The constructed instance
     pub fn new(id: u32, value: f64) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self { id, value }
     }
 }
@@ -164,13 +162,13 @@ impl HistogramSpans {
         let inner_pad_pct = 1.5;
         let pad_y_pct = 2.0;
         let max_circle_r_pct = 10.0;
-        // α <with_defaults initialization>
+        // α <HistogramSpans::with_defaults initialization>
         let first_bin_x_start_pct = pad_x_pct + inner_pad_pct;
         // Entire width, less left side up to start of bin 0, less right padding
         let plot_width_pct = 100.0 - first_bin_x_start_pct - pad_x_pct - inner_pad_pct;
         let plot_base_y_pct = 100.0 - pad_y_pct - axis_line_width_pct;
         let plot_height_pct = plot_base_y_pct - pad_y_pct - inner_pad_pct;
-        // ω <with_defaults initialization>
+        // ω <HistogramSpans::with_defaults initialization>
         Self {
             axis_line_width_pct,
             grid_line_width_pct,
@@ -206,8 +204,6 @@ impl PlotPoint {
         percentile: f64,
         location: SvgPoint,
     ) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self {
             id,
             value,

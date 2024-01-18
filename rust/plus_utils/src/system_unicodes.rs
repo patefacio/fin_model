@@ -7,17 +7,25 @@
 pub enum SystemUnicodes {
     /// Character(🎲) - Game die
     GameDie,
+    /// Character(🏦) - Bank
+    Bank,
+    /// Character(🧠) - Brain
+    Brain,
+    /// Character(💡) - Light bulb
+    LightBulb,
     /// Character(🎲) - Game die representing single instrument, as opposed to category
     Instrument,
     /// Character(🗃) - Card file box
     CardFileBox,
     /// Character(🗄) - File cabinet, candidate for account
     FileCabinet,
+    /// Character(🌌) - Galaxy, indicating complexity
+    Galaxy,
     /// Character(🧮) - Abacus, candidate for account
     Abacus,
     /// Character(📋) - Clipboard, candidate for account
     Clipboard,
-    /// Character(🗄) - Abacus, for accounts
+    /// Character(🗄) - File cabinet, for accounts
     Account,
     /// Character(📗) - Indicates data came from the dossier (e.g. embedded growth).
     DossierFolderSourced,
@@ -111,9 +119,13 @@ impl SystemUnicodes {
     pub fn as_unicode(&self) -> &'static str {
         match self {
             SystemUnicodes::GameDie => "🎲",
+            SystemUnicodes::Bank => "🏦",
+            SystemUnicodes::Brain => "🧠",
+            SystemUnicodes::LightBulb => "💡",
             SystemUnicodes::Instrument => "🎲",
             SystemUnicodes::CardFileBox => "🗃",
             SystemUnicodes::FileCabinet => "🗄",
+            SystemUnicodes::Galaxy => "🌌",
             SystemUnicodes::Abacus => "🧮",
             SystemUnicodes::Clipboard => "📋",
             SystemUnicodes::Account => "🗄",

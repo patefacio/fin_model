@@ -37,7 +37,9 @@ pub fn YearValueInput(
     value_placeholder: MaybeSignal<String>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-yvi";
-    crate::log_component!("`YearValueInput`");
+    let component_id = crate::component_id!("`YearValueInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn year_value_input>
 
     use crate::Modification;

@@ -18,7 +18,9 @@ use leptos::IntoView;
 #[component]
 pub fn AppCenterComponent() -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-acc";
-    crate::log_component!("`AppCenterComponent`");
+    let component_id = crate::component_id!("`AppCenterComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn app_center_component>
 
     use crate::CoreComponentDisplay;

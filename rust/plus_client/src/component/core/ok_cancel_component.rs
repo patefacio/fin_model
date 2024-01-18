@@ -5,12 +5,13 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
 use leptos::component;
-use leptos::use_context;
+use leptos::expect_context;
 use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::SignalGet;
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- enums ---
@@ -41,13 +42,15 @@ where
 {
     use plus_lookup::i18n::ok_cancel_component::*;
     pub const SELF_CLASS: &str = "plus-occ";
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
     let i18n_ok = move || i18n_ok(lang_selector.get());
     let i18n_cancel = move || i18n_cancel(lang_selector.get());
-    crate::log_component!("`OkCancelComponent`");
+    let component_id = crate::component_id!("`OkCancelComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn ok_cancel_component>
 
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use leptos::store_value;
     let on_ok_cancel_stored_value = store_value(on_ok_cancel);
 
@@ -56,13 +59,13 @@ where
         <div class=SELF_CLASS>
             // α <plus-occ-view>
             <button
-                class=CssClasses::OccOkBtn.as_str()
+                class=ClientCssClasses::OccOkBtn.as_str()
                 on:click=move |_| { on_ok_cancel_stored_value.update_value(|f| f(OkCancel::Ok)) }
             >
                 {i18n_ok}
             </button>
             <button
-                class=CssClasses::OccCancelBtn.as_str()
+                class=ClientCssClasses::OccCancelBtn.as_str()
                 on:click=move |_| {
                     on_ok_cancel_stored_value.update_value(|f| f(OkCancel::Cancel))
                 }

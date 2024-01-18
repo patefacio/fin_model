@@ -20,46 +20,50 @@ pub fn CcdMultiButton(
     /// Function to display state updates
     show_update: WriteSignal<String>,
 ) -> impl IntoView {
-    crate::log_component!("`CcdMultiButton`");
+    let component_id = crate::component_id!("`CcdMultiButton`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn ccd_multi_button>
 
     use super::prefix_lang_flag;
     use crate::AppContext;
     use crate::ButtonData;
+    use crate::ButtonImage;
     use crate::CurrencySelect;
     use crate::MbsGroupingConstraint;
     use crate::MultiButtonSelect;
     use crate::ToggleState;
     use crate::Updatable;
     use crate::ViewSide;
-    use leptos::use_context;
+    use leptos::expect_context;
     use leptos::MaybeSignal;
     use leptos::Signal;
     use leptos::SignalGet;
     use leptos::SignalSet;
     use plus_modeled::Currency;
+    use std::rc::Rc;
 
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
     let prefix_lang = move |s| prefix_lang_flag(lang_selector.get(), s);
     let multi_button_example = move |side: ViewSide, grouping_constraint: MbsGroupingConstraint| {
         let button_selections = vec![
             (
                 ButtonData::new(
-                    "persons_button.png".into(),
+                    ButtonImage::from_image_ref("Family.png"),
                     MaybeSignal::Dynamic(Signal::derive(move || prefix_lang("People"))),
                 ),
                 ToggleState::Selected,
             ),
             (
                 ButtonData::new(
-                    "worths_button.png".into(),
+                    ButtonImage::from_image_ref("Real-assets.png"),
                     MaybeSignal::Dynamic(Signal::derive(move || prefix_lang("Valuables"))),
                 ),
                 ToggleState::Deselected,
             ),
             (
                 ButtonData::new(
-                    "accounts_button.png".into(),
+                    ButtonImage::from_image_ref("Financial-accounts.png"),
                     MaybeSignal::Dynamic(Signal::derive(move || prefix_lang("Accounts"))),
                 ),
                 ToggleState::Deselected,

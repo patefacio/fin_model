@@ -3,7 +3,10 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::ToggleState;
+use leptos::ReadSignal;
 use leptos::RwSignal;
+use leptos::WriteSignal;
 use plus_lookup::CurrencyExchange;
 use plus_modeled::Currency;
 use plus_modeled::LangSelector;
@@ -57,4 +60,8 @@ impl AppContext {
 }
 
 // α <mod-def app_context>
+
+pub struct DossierResolved{}
+pub struct ResolutionSpec{}
+
 // ω <mod-def app_context>

@@ -66,11 +66,13 @@ pub fn YearInput(
     align_left: bool,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-yi";
-    crate::log_component!("`YearInput`");
+    let component_id = crate::component_id!("`YearInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn year_input>
 
     use crate::utils::constants::{DOWN_KEY, UP_KEY};
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::ParsedNum;
     use leptos::create_effect;
     use leptos::create_node_ref;
@@ -187,7 +189,7 @@ pub fn YearInput(
 
             <input
                 node_ref=node_ref
-                class=CssClasses::YiInput.as_str()
+                class=ClientCssClasses::YiInput.as_str()
                 class=input_class
                 class:invalid=move || { !is_in_range_read.get() }
                 on:input=move |_| update_value.update(|update_value| update_value())

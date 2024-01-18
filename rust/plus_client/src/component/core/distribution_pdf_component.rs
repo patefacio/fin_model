@@ -28,7 +28,9 @@ pub fn DistributionPdfComponent(
     disabled: bool,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-dist-pdf-comp";
-    crate::log_component!("`DistributionPdfComponent`");
+    let component_id = crate::component_id!("`DistributionPdfComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn distribution_pdf_component>
 
     use crate::DistributionPdf;

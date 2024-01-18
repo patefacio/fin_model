@@ -1,16 +1,29 @@
 :root {
 	box-sizing: border-box;
-	--plus-btn-color: hsl(120, 50%, 86%);
-	--plus-btn-hover-color: hsla(120, 50%, 73%, 1.0);
-	--plus-lbl-color: blue;
-	--plus-tb-color: whitesmoke;
+	--plus-btn-color: rgba(254, 251, 246, 1.0);
+	--plus-btn-color-disabled: rgba(244, 221, 184, 1.0);
+	--plus-btn-hover-color: rgba(215, 228, 249, 1.0);
+	--plus-lbl-color: #4489e2;
+	--plus-lbl-color-dark: rgba(22, 74, 141, 1.0);
+	--plus-tb-color: #E1E7EF;
+	--plus-underline-color: rgba(244, 209, 37, 1.0);
+	--plus-cgc-add-btn: rgba(249, 236, 215, 1.0);
+	--plus-cgc-header: #f5d642;
+	--plus-mid-gold: rgba(238, 200, 140, 1.0);
+	--plus-dark-gold: rgba(222, 145, 43, 1.0);
+	--plus-darker-gold: rgba(203, 129, 32, 1.0);
+	--plus-darkest-gold: rgba(181, 115, 28, 1.0);
+	--plus-asset-start: #4489e2;
+	--plus-asset-end: rgba(14, 46, 88, 1.0);
+	--plus-liability-start: rgb(240, 124, 143);
+	--plus-liability-end: rgb(175, 6, 40);
 	--plus-btn-padding: 0.1rem 0.3rem 0.1rem 0.3rem;
 	--plus-txt-padding: 4px 4px 4px 4px;
 	--plus-lbl-margin: 0.3rem 0.3rem 0.3rem 0.3rem;
 	--plus-sm-fnt: 0.74rem;
 	--plus-lbl-sz: 0.9rem;
 	--plus-title-sz: 1.1rem;
-	--plus-max-width: 1200px;
+	--plus-max-width: 1300px;
 }
 
 *,
@@ -19,7 +32,15 @@
 	box-sizing: inherit;
 }
 
+* {
+	//min-width: 0;
+}
+
 // α <custom_use_sparingly>
+
+.gold-gradient {
+	fill: linear-gradient(to bottom, var(--plus-mid-gold), var(--plus-dark-gold));
+}
 
 @keyframes grow-width {
 	0% {
@@ -80,7 +101,6 @@
 
 body {
 	// α <elm-body>
-	// background-color: #709b90;
 	font-family: Helvetica, Arial, sans-serif;
 	font-family: sans-serif;
 	font-size: 14px;
@@ -95,13 +115,15 @@ button {
 	border: 1px solid;
 	font-size: var(--plus-sm-fnt);
 	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+	padding: var(--plus-btn-padding);
+	margin-top: var(--plus-btn-margin);
 
 	&:hover {
 		background-color: var(--plus-btn-hover-color);
 	}
 
 	&:disabled {
-		background-color: lightgray;
+		background-color: var(--plus-btn-color-disabled);
 	}
 
 	// ω <elm-button>
@@ -134,9 +156,10 @@ label {
 	// α <elm-label>
 	//display: inline-block;
 	white-space: nowrap;
-	color: blue;
+	color: var(--plus-lbl-color-dark);
 	font-size: var(--plus-lbl-sz);
 	vertical-align: text-bottom;
+	//font-weight: 600;
 
 	* {
 		margin-left: 3px;
@@ -258,10 +281,27 @@ input {
 .btn-tb-top {
 	// α <btn_tb_top>
 	display: flex;
+	//display: grid;
+	//grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	//grid-template-rows: 1fr;
 	justify-content: center;
 	// This pushes the button to the top
 	align-items: first;
-	background-color: var(--plus-tb-color);
+	background-color: var(--plus-btn-color);
+	gap: 1rem;
+	padding-left: 15%;
+	padding-right: 15%;
+
+	div {
+		flex: 1;
+		min-width: 0;
+	}
+
+	// For horizontal toolbar make bottom margin small
+	.plus-tibc {
+		margin: 3 0.12rem 0.5rem 0.12rem;
+	}
+
 	// ω <btn_tb_top>
 }
 
@@ -273,9 +313,9 @@ input {
 
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: start;
 
-	background-color: var(--plus-tb-color);
+	background-color: var(--plus-btn-color);
 	// ω <btn_tb_right>
 }
 
@@ -288,7 +328,7 @@ input {
 	display: flex;
 	justify-content: center;
 	align-items: first;
-	background-color: var(--plus-tb-color);
+	background-color: var(--plus-btn-color);
 	position: sticky;
 	bottom: 0;
 	left: 0;
@@ -306,7 +346,7 @@ input {
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	background-color: var(--plus-tb-color);
+	background-color: var(--plus-btn-color);
 
 	// ω <btn_tb_left>
 }
@@ -340,6 +380,9 @@ input {
 	// α <tib_img>
 
 	background-color: white;
+	width: 2.8rem;
+	height: 2.8rem;
+
 	// ω <tib_img>
 }
 
@@ -370,8 +413,8 @@ input {
 */
 .header-left {
 	// α <header_left>
-	background-color: #009879;
-	color: #ffffff;
+	background-color: var(--plus-cgc-header);
+	//color: var(--plus-underline-color);
 	text-align: left;
 	font-weight: bold;
 	padding: var(--plus-txt-padding);
@@ -383,11 +426,14 @@ input {
 */
 .header-right {
 	// α <header_right>
-	background-color: #009879;
-	color: #ffffff;
+	//background-color: var(--plus-cgc-header);
+	background-image: linear-gradient(to bottom, var(--plus-mid-gold), var(--plus-dark-gold));
+
+	//color: var(--plus-underline-color);
 	text-align: right;
 	font-weight: bold;
 	padding: var(--plus-txt-padding);
+	//border-radius: 3px;
 
 	// ω <header_right>
 }
@@ -400,7 +446,7 @@ input {
 .content-table {
 	// α <content_table>
 	border-collapse: collapse;
-	margin: 10px 5px;
+	margin: 1rem;
 	font-size: 0.9em;
 	min-width: 250px;
 	overflow: scroll;
@@ -413,13 +459,14 @@ input {
 	}
 
 	.numeric-summary-row {
-		border-top: solid 1.3px;
+		border-top: solid 2px;
 		border-bottom: solid 2px;
 	}
 
 	.numeric-summary-row-stark {
 		border-top: solid 2px;
 		border-bottom: solid 2px;
+		font-weight: bold;
 	}
 
 	.numeric-summary-row-2 {
@@ -462,11 +509,30 @@ input {
 		text-align: right;
 	}
 
-	thead tr {
-		background-color: #009879;
-		color: #ffffff;
-		text-align: left;
-		font-weight: bold;
+	thead {
+		tr {
+			background-image: linear-gradient(to bottom, var(--plus-lbl-color), var(--plus-lbl-color-dark));
+
+			color: #ffffff;
+			text-align: left;
+			font-weight: bold;
+		}
+	}
+
+	thead.alc-asset-tbl {
+		tr {
+			//			background-image: linear-gradient(to bottom, lightblue, navy);
+			background-image: linear-gradient(to bottom, var(--plus-lbl-color), var(--plus-lbl-color-dark));
+
+			//background-image: linear-gradient(to bottom, rgb(39, 164, 39), rgb(2, 58, 2));
+
+		}
+	}
+
+	thead.alc-liability-tbl {
+		tr {
+			background-image: linear-gradient(to bottom, rgb(240, 124, 143), rgb(175, 6, 40));
+		}
 	}
 
 	tbody tr {
@@ -478,12 +544,12 @@ input {
 	}
 
 	tbody tr:last-of-type {
-		border-bottom: 4px solid #009879;
+		border-bottom: 4px solid #4489e2;
 	}
 
 	tbody tr.active-row {
 		font-weight: bold;
-		color: #009879;
+		color: #78A5EB;
 	}
 
 
@@ -505,12 +571,8 @@ input {
 	// α <tax_bill_tr>
 
 	border-top: 2px solid;
-	background-color: peru;
+	background-color: rgb(247, 177, 192);
 	font-weight: bold;
-
-	td {
-		color: darkgreen;
-	}
 
 	// ω <tax_bill_tr>
 }
@@ -549,7 +611,7 @@ input {
 	// α <form_row>
 
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr;
 	margin-left: 1rem;
 
 	@media (max-width: 600px) {
@@ -571,6 +633,36 @@ input {
 
 
 	// ω <form_row>
+}
+
+/*
+  Style form row 2 cols
+*/
+.form-row-2-col {
+	// α <form_row_2_col>
+
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin-left: 1rem;
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+
+	label {
+		margin-top: 0.5rem;
+		margin-bottom: 0.5rem;
+
+		// The goal with this is to make all labeled items
+		// have the label and content in one line. Doing this
+		// messes up the mcs select buttons because the entire
+		// content is inside the label
+		// input {
+		// 	display: inline-block;
+		// }
+	}
+
+	// ω <form_row_2_col>
 }
 
 /*
@@ -624,15 +716,19 @@ input {
 	// α <tib_on>
 
 	position: relative;
-	width: 80%;
+	width: 100%;
 	margin-bottom: 3px;
 	margin-top: 7px;
 	height: 7px;
 	border-style: solid;
-	border-width: 3px;
+	border-width: 1.5px;
 	border-radius: 4px;
-	background-color: rgb(20, 20, 161);
+	//background-color: var(--plus-underline-color);
 	animation: grow-width 0.15s ease-in-out;
+
+	//background-image: linear-gradient(to right, var(--plus-btn-color), var(--plus-cgc-header), var(--plus-btn-color));
+	//	background-image: linear-gradient(to right, var(--plus-btn-color), var(--plus-cgc-header));
+	background-image: linear-gradient(to right, var(--plus-mid-gold), var(--plus-dark-gold));
 
 	// ω <tib_on>
 }
@@ -644,7 +740,7 @@ input {
 	// α <tib_off>
 
 	position: relative;
-	width: 80%;
+	width: 100%;
 	margin-bottom: 3px;
 	margin-top: 7px;
 	height: 7px;
@@ -678,7 +774,6 @@ input {
 .dossier-show {
 	// α <dossier_show>
 	min-height: 10px;
-	//background-color: hsl(120, 50%, 90%);
 	// ω <dossier_show>
 }
 
@@ -699,6 +794,7 @@ input {
 	margin-left: auto;
 	position: relative;
 	display: inline-flex;
+	gap: 3rem;
 	//align-items: baseline;
 	//right: 2rem;
 	// ω <app_lang_select>
@@ -712,6 +808,8 @@ input {
 	display: flex;
 	align-items: baseline;
 	width: 7rem;
+	gap: 1rem;
+
 	// ω <app_lang_select_inner>
 }
 
@@ -796,7 +894,7 @@ input {
 	// α <cgc_add_row>
 
 	display: grid;
-	background-color: hsl(120, 50%, 95%);
+	background-color: var(--plus-btn-color);
 	border: solid 1.5px;
 	border-radius: 3px;
 	grid-column-start: 1;
@@ -806,6 +904,10 @@ input {
 	margin-bottom: 8px;
 	font-size: 0.85rem;
 	padding: 3px;
+
+	&:hover {
+		background-color: var(--plus-btn-hover-color);
+	}
 
 	// ω <cgc_add_row>
 }
@@ -830,7 +932,6 @@ input {
 	display: flex;
 	margin: 7px;
 	justify-content: center;
-	//background-color: hsl(120, 50%, 95%);
 	border: 1px solid green;
 	border-radius: 3px;
 	margin-inline-start: 2px;
@@ -1065,10 +1166,11 @@ input {
 	padding: var(--plus-btn-padding);
 	margin-top: var(--plus-btn-margin);
 	white-space: nowrap;
+	padding-block: 3px;
+	padding-inline: 3px;
+	font-size: var(--plus-sm-fnt);
+	box-sizing: content-box;
 
-	&:hover {
-		background-color: "purple";
-	}
 
 	// ω <mcs_main_btn>
 }
@@ -1078,7 +1180,6 @@ input {
 */
 .mcs-select-btn {
 	// α <mcs_select_btn>
-	background-color: hsl(120, 50%, 98%);
 	white-space: nowrap;
 	font-size: 0.8em;
 	border: none;
@@ -1086,15 +1187,14 @@ input {
 	padding: var(--plus-btn-padding);
 
 	&:focus {
-		background-color: hsl(120, 50%, 90%);
+		background-color: var(--plus-btn-hover-color);
 	}
 
 	&.using-mouse:hover {
-		background-color: hsl(120, 50%, 90%);
+		background-color: var(--plus-btn-hover-color);
 	}
 
 	&:not(.using-mouse) {
-		//background-color: lightyellow;
 		cursor: none;
 		margin-left: 0.3rem;
 	}
@@ -1191,8 +1291,9 @@ input {
 	// α <swni_slider>
 	display: inline-block;
 	vertical-align: sub;
-	color: "green";
+	color: red;
 	width: 6rem;
+	background-color: green;
 	// ω <swni_slider>
 }
 
@@ -1281,6 +1382,25 @@ input {
 	// α <hist_selected_row>
 	border-top: solid 2px;
 	// ω <hist_selected_row>
+}
+
+/*
+  Histogram pair of svg and table
+*/
+.hist-pair {
+	// α <hist_pair>
+	display: grid;
+	//grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+
+	// svg {
+	// 	background-color: var(--plus-btn-color);
+	// 	border-radius: 0.5rem;
+	// 	border: solid 1px;
+	// 	border-color: var(--plus-dark-gold);
+	// 	transform: translateX(108%) scale(2.5, 1.0);
+	// }
+	// ω <hist_pair>
 }
 
 /*
@@ -1384,7 +1504,7 @@ input {
 .ch-normal {
 	// α <ch_normal>
 
-	width: 300px;
+	//width: 300px;
 	// ω <ch_normal>
 }
 
@@ -1393,10 +1513,307 @@ input {
 */
 .ch-lognormal {
 	// α <ch_lognormal>
-	
-	width: 300px;
+	//width: 300px;
 
 	// ω <ch_lognormal>
+}
+
+/*
+  ReconciledView grid to hold the equation
+*/
+.rv-grid {
+	// α <rv_grid>
+	display: inline-flex;
+	//display: grid;
+	//grid-template-columns: 3fr 0.5fr 3fr 0.5fr 3fr 0.5fr 3fr;
+	align-content: center;
+	column-gap: 1rem;
+	// ω <rv_grid>
+}
+
+/*
+  ReconciledView income term
+*/
+.rv-income {
+	// α <rv_income>
+
+	// ω <rv_income>
+}
+
+/*
+  ReconciledView expense term
+*/
+.rv-expense {
+	// α <rv_expense>
+	// ω <rv_expense>
+}
+
+/*
+  ReconciledView assets term
+*/
+.rv-assets {
+	// α <rv_assets>
+	// ω <rv_assets>
+}
+
+/*
+  ReconciledView equation term label
+*/
+.rv-grid-term {
+	// α <rv_grid_term>
+
+	display: grid;
+	font-size: 1.0rem; //var(--plus-title-sz);
+	text-align: center;
+	align-items: center;
+	// NO EFFECT: vertical-align: bottom;
+	background-color: whitesmoke;
+	border: 1px solid;
+	border-radius: 7px;
+	padding: 0.2rem;
+	margin: 0.3rem;
+
+	&.rv-income {
+		background-color: rgb(190, 236, 190);
+		;
+	}
+
+	&.rv-expense {
+		background-color: rgb(247, 177, 192);
+	}
+
+	&.rv-assets {
+		background-color: rgb(241, 235, 168);
+	}
+
+	// ω <rv_grid_term>
+}
+
+/*
+  ReconciledView operator (ie `plus` `equals`)
+*/
+.rv-grid-op {
+	// α <rv_grid_op>
+
+	display: grid;
+	font-size: 2.0rem;
+	font-weight: bold;
+	align-items: center;
+	text-align: center;
+
+	// ω <rv_grid_op>
+}
+
+/*
+  ReconciledView numeric value
+*/
+.rv-grid-val {
+	// α <rv_grid_val>
+
+	font-size: var(--plus-title-sz);
+	text-align: center;
+
+	// ω <rv_grid_val>
+}
+
+/*
+  ReconciledView _holding plan table_ and _tax table_
+*/
+.rv-tables {
+	// α <rv_tables>
+
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	// ω <rv_tables>
+}
+
+/*
+  Balance Sheet Statement caption - which includes detail toggle button
+*/
+.bss-caption {
+	// α <bss_caption>
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	column-gap: 0;
+	row-gap: 0;
+
+	.plus-tib {
+		.plus-tibc {
+			margin: 5px 4px 3px 4px;
+		}
+	}
+
+	// ω <bss_caption>
+}
+
+/*
+  AssetLiabilityComponent inner content, inside the OneOfComponent
+*/
+.alc-inner {
+	// α <alc_inner>
+
+	// display: flex;
+	// flex-direction: column;
+	//display: grid;
+	display: flexbox;
+	//grid-template-rows: 0.35fr 3fr;
+	//grid-template-columns: 1fr 1fr;
+	//grid-template-rows: 1fr 1fr;
+	// ω <alc_inner>
+}
+
+/*
+  AssetLiabilityComponent svg with balance beam
+*/
+.alc-svg {
+	// α <alc_svg>
+	background-color: var(--plus-btn-color);
+	border-radius: 0.5rem;
+	border: solid 1px;
+	border-color: var(--plus-dark-gold);
+	transform: translateX(108%) scale(2.5, 1.0);
+
+	// ω <alc_svg>
+}
+
+/*
+  AssetLiabilityComponent svg container
+*/
+.alc-svg-ctnr {
+	// α <alc_svg_ctnr>
+
+	height: 150px;
+
+	// ω <alc_svg_ctnr>
+}
+
+/*
+  AssetLiabilityComponent asset and liability tables
+*/
+.alc-tables {
+	// α <alc_tables>
+
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	// ω <alc_tables>
+}
+
+/*
+  AssetLiabilityComponent Asset table
+*/
+.alc-asset-tbl {
+	// α <alc_asset_tbl>
+
+	// tr {
+	// 	background-image: linear-gradient(to bottom, yellow, green);
+	// }
+
+	// ω <alc_asset_tbl>
+}
+
+/*
+  AssetLiabilityComponent Liability table
+*/
+.alc-liability-tbl {
+	// α <alc_liability_tbl>
+	// ω <alc_liability_tbl>
+}
+
+/*
+  Monte Carlo distribution summary
+*/
+.mc-dist-svg {
+	// α <mc_dist_svg>
+
+	background-color: var(--plus-btn-color);
+	border-radius: 0.5rem;
+	border: solid 1px;
+	border-color: var(--plus-dark-gold);
+	transform: translateX(108%) scale(2.5, 1.0);
+
+	// ω <mc_dist_svg>
+}
+
+/*
+  AppNavBar Plusauri Dossiers
+*/
+.anb-plus-dossiers {
+	// α <anb_plus_dossiers>
+
+	display: flex;
+
+	// ω <anb_plus_dossiers>
+}
+
+/*
+  Table summary row
+*/
+.tbl-numeric-summary-row {
+	// α <tbl_numeric_summary_row>
+	border-top: solid 2px;
+	border-bottom: solid 2px;
+	// ω <tbl_numeric_summary_row>
+}
+
+/*
+  Table summary row stark
+*/
+.tbl-numeric-summary-row-stark {
+	// α <tbl_numeric_summary_row_stark>
+	border-top: solid 2px;
+	border-bottom: solid 2px;
+	font-weight: bold;
+	// ω <tbl_numeric_summary_row_stark>
+}
+
+/*
+  Borrowed funds row
+*/
+.tbl-borrowed {
+	// α <tbl_borrowed>
+	background-color: rgb(247, 177, 192);
+	// ω <tbl_borrowed>
+}
+
+/*
+  TimeLine components selected year rectangle
+*/
+.tl-year-rect {
+	// α <tl_year_rect>
+
+	opacity: 0.55;
+	fill: var(--plus-mid-gold);
+
+	// ω <tl_year_rect>
+}
+
+/*
+  AssetLiabilityComponent beam
+*/
+.alc-beam {
+	// α <alc_beam>
+
+	border: 3px solid;
+	stroke: black;
+	stroke-width: 0.5px;
+
+	// ω <alc_beam>
+}
+
+/*
+  AssetLiabilityComponent fulcrum
+*/
+.alc-fulcrum {
+	// α <alc_fulcrum>
+
+	stroke: black;
+	stroke-width: 0.5px;
+
+	// ω <alc_fulcrum>
 }
 
 /*
@@ -1429,7 +1846,6 @@ input {
 	max-width: 100%;
 	// α <app_nav_bar>
 	// width: 100%;
-	// background-color: cyan;
 	// grid-row: 1;
 	// display: flex;
 	// flex-direction: row;
@@ -1439,7 +1855,7 @@ input {
 	//box-sizing: border-box;
 	width: 100%;
 	//width: 800px;
-	background-color: #0ff;
+	background-color: var(--plus-btn-color);
 	flex-grow: 1;
 	//grid-row: 1;
 	//display: flex;
@@ -1591,7 +2007,7 @@ input {
 .plus-hist {
 	max-width: var(--plus-max-width);
 	// α <histogram_component>
-	width: 300;
+	width: 700;
 	// ω <histogram_component>
 }
 
@@ -1625,7 +2041,7 @@ input {
 	max-width: var(--plus-max-width);
 	// α <multi_column_select>
 	display: inline;
-	// ω <multi_column_select>
+	padding: var(--plus-btn-padding) // ω <multi_column_select>
 }
 
 /*
@@ -1700,9 +2116,36 @@ input {
 	vertical-align: text-bottom;
 
 	input[type="range"] {
+		-webkit-appearance: none;
 		width: 90px;
+		background: linear-gradient(to right, var(--plus-mid-gold), var(--plus-darkest-gold));
+		border-radius: 1rem;
+		height: 8px;
 	}
 
+	/* Set the thumb color based on value */
+	input[type="range"]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		width: 15px;
+		height: 15px;
+		//background-color: linear-gradient(to right, var(--plus-mid-gold), var(--plus-darkest-gold));
+
+		background-color: var(--plus-darker-gold);
+		border-radius: 50%;
+		//border: 2px solid #2980b9;
+	}
+
+	//   /* Change thumb color when the range input is active */
+	//   input[type="range"]:active::-webkit-slider-thumb {
+	// 	background-color: purple;
+	// 	border-color: #1b659e;
+	//   }
+
+	//   /* Change thumb color when the range input is hovered */
+	//   input[type="range"]:hover::-webkit-slider-thumb {
+	// 	background-color: red;
+	// 	border-color: #1b659e;
+	//   }
 	//width: 60;
 	// ω <slider_with_numeric_input>
 }
@@ -1716,17 +2159,37 @@ input {
 
 	display: flex;
 	flex-direction: column;
-
-	margin: 0.2rem;
-	padding: 0.5rem;
 	align-items: center;
 
 	button {
-		border: 3px solid;
+		border: 1.5px solid;
 		border-radius: 6px;
 	}
 
 	// ω <toggle_image_button>
+}
+
+/*
+  ToggleImageButtonControl
+*/
+.plus-tibc {
+	max-width: var(--plus-max-width);
+	// α <toggle_image_button_control>
+
+
+	display: flex;
+	flex-direction: column;
+
+	margin: 1rem 0.12rem 1rem 0.12rem;
+	padding: 2 0.25rem 0 0.25rem;
+	align-items: center;
+
+	button {
+		border: 1.5px solid;
+		border-radius: 6px;
+	}
+
+	// ω <toggle_image_button_control>
 }
 
 /*
@@ -2054,6 +2517,8 @@ input {
 	//width: 1200;
 	width: 100%;
 	min-width: 650;
+	max-width: 850px;
+
 	// ω <dossier_editor>
 }
 
@@ -2139,15 +2604,6 @@ input {
 }
 
 /*
-  DossierViewer
-*/
-.plus-dv {
-	max-width: var(--plus-max-width);
-	// α <dossier_viewer>
-	// ω <dossier_viewer>
-}
-
-/*
   AssetLiabilityComponent
 */
 .plus-alc {
@@ -2172,7 +2628,7 @@ input {
 	max-width: var(--plus-max-width);
 	// α <forecast_config_component>
 
-	//display: none;
+	display: none;
 
 	label {
 		white-space: nowrap;
@@ -2180,18 +2636,6 @@ input {
 	}
 
 	// ω <forecast_config_component>
-}
-
-/*
-  ForecastIdSelector
-*/
-.plus-fis {
-	max-width: var(--plus-max-width);
-	// α <forecast_id_selector>
-
-	width: 1500px;
-
-	// ω <forecast_id_selector>
 }
 
 /*
@@ -2221,29 +2665,6 @@ input {
 }
 
 /*
-  ForecastSummaryComponent
-*/
-.plus-forecast-summary {
-	max-width: var(--plus-max-width);
-	// α <forecast_summary_component>
-	// ω <forecast_summary_component>
-}
-
-/*
-  TimelineGroupComponent
-*/
-.plus-tgc {
-	max-width: var(--plus-max-width);
-	// α <timeline_group_component>
-
-	display: grid;
-	column-gap: 0.5rem;
-	grid-template-columns: 1fr 2fr;
-
-	// ω <timeline_group_component>
-}
-
-/*
   BalanceSheetStatement
 */
 .plus-bss {
@@ -2259,6 +2680,15 @@ input {
 	max-width: var(--plus-max-width);
 	// α <investment_plan_view>
 	// ω <investment_plan_view>
+}
+
+/*
+  ReconciledView
+*/
+.plus-rv {
+	max-width: var(--plus-max-width);
+	// α <reconciled_view>
+	// ω <reconciled_view>
 }
 
 /*
@@ -2303,7 +2733,7 @@ input {
 .plus-alt {
 	max-width: var(--plus-max-width);
 	// α <asset_liability_timeline>
-	width: 300px;
+	width: 350px;
 	// ω <asset_liability_timeline>
 }
 
@@ -2313,17 +2743,8 @@ input {
 .plus-cft {
 	max-width: var(--plus-max-width);
 	// α <cash_flow_timeline>
-	width: 300px;
+	width: 350px;
 	// ω <cash_flow_timeline>
-}
-
-/*
-  SelectedYearGroupComponent
-*/
-.plus-sygc {
-	max-width: var(--plus-max-width);
-	// α <selected_year_group_component>
-	// ω <selected_year_group_component>
 }
 
 /*
@@ -2332,6 +2753,7 @@ input {
 .plus-mcc {
 	max-width: var(--plus-max-width);
 	// α <monte_config_component>
+	//display: none;
 	// ω <monte_config_component>
 }
 

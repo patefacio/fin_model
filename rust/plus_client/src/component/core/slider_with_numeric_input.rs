@@ -99,10 +99,12 @@ pub fn SliderWithNumericInput(
     validator: Option<Box<dyn FnMut(f64) -> bool>>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-swni";
-    crate::log_component!("`SliderWithNumericInput`");
+    let component_id = crate::component_id!("`SliderWithNumericInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn slider_with_numeric_input>
 
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::NumericInput;
     use leptos::create_node_ref;
     use leptos::create_signal;
@@ -125,7 +127,7 @@ pub fn SliderWithNumericInput(
             <label>
                 <input
                     node_ref=slider_input_node_ref
-                    class=CssClasses::SwniSlider.as_str()
+                    class=ClientCssClasses::SwniSlider.as_str()
                     class=slider_input_class
                     type="range"
                     id=slider_id.clone()

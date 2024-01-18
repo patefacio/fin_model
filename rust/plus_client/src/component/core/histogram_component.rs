@@ -14,7 +14,6 @@ use leptos::View;
 use plus_utils::HistogramEntry;
 use plus_utils::HistogramPlot;
 use plus_utils::HistogramSpans;
-use std::ops::RangeInclusive;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -62,10 +61,12 @@ where
     TLM: Fn(f64) -> View + Copy + 'static,
 {
     pub const SELF_CLASS: &str = "plus-hist";
-    crate::log_component!("`HistogramComponent`");
+    let component_id = crate::component_id!("`HistogramComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn histogram_component>
 
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::SliderWithNumericInput;
     use crate::Updatable;
     use leptos::create_signal;
@@ -105,19 +106,19 @@ where
                 .map(|plot_point| {
                     let percentile = (100.0 * plot_point.percentile) as u32;
                     let quartile = match percentile {
-                        _ if plot_point.id == 0 => CssClasses::MsscGmf.as_str(),
+                        _ if plot_point.id == 0 => ClientCssClasses::MsscGmf.as_str(),
                         _ if !mean_found && plot_point.value > calculated_mean => {
                             mean_found = true;
-                            CssClasses::MsscMean.as_str()
+                            ClientCssClasses::MsscMean.as_str()
                         }
-                        percentile if percentile <= 25 => CssClasses::MsscCircle1.as_str(),
-                        percentile if percentile < 50 => CssClasses::MsscCircle2.as_str(),
+                        percentile if percentile <= 25 => ClientCssClasses::MsscCircle1.as_str(),
+                        percentile if percentile < 50 => ClientCssClasses::MsscCircle2.as_str(),
                         _ if !median_found => {
                             median_found = true;
-                            CssClasses::MsscMedian.as_str()
+                            ClientCssClasses::MsscMedian.as_str()
                         }
-                        percentile if percentile <= 75 => CssClasses::MsscCircle3.as_str(),
-                        _ => CssClasses::MsscCircle4.as_str(),
+                        percentile if percentile <= 75 => ClientCssClasses::MsscCircle3.as_str(),
+                        _ => ClientCssClasses::MsscCircle4.as_str(),
                     };
 
                     view! {
@@ -158,7 +159,7 @@ where
                     .unwrap();
 
                 view! {
-                    <tr class=CssClasses::HistSelectedRow.as_str()>
+                    <tr class=ClientCssClasses::HistSelectedRow.as_str()>
                         <td>"Selected"</td>
                         <td class="numeric">{plot_point.id}</td>
                         <td class="numeric">{selected_point_index}</td>
@@ -264,7 +265,7 @@ where
         <div class=SELF_CLASS>
             // α <plus-hist-view>
 
-            <div class=CssClasses::Title.as_str()>{plot_label}</div>
+            <div class=ClientCssClasses::Title.as_str()>{plot_label}</div>
 
             <SliderWithNumericInput
                 updatable=Updatable::new(
@@ -288,16 +289,19 @@ where
                 no_decimal=true
             />
 
-            <svg viewBox="0 0 100 100">
-                {histogram_plot_points}
-                <g
-                    transform=pointer_transform
-                    inner_html=histogram_plot_stored_value
-                        .with_value(|histogram_plot| histogram_plot.get_pointer_element())
-                ></g>
-            </svg>
-
-            <div>{descriptive_table}</div>
+            <div class=ClientCssClasses::HistPair.as_str()>
+                <div>
+                    <svg viewBox="0 0 100 100">
+                        {histogram_plot_points}
+                        <g
+                            transform=pointer_transform
+                            inner_html=histogram_plot_stored_value
+                                .with_value(|histogram_plot| histogram_plot.get_pointer_element())
+                        ></g>
+                    </svg>
+                </div>
+                <div>{descriptive_table}</div>
+            </div>
 
         // ω <plus-hist-view>
         </div>

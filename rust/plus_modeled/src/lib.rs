@@ -46,11 +46,13 @@ pub use crate::core_enums::HoldingType;
 pub use crate::core_enums::LangSelector;
 pub use crate::core_enums::NamedRateCurve;
 pub use crate::core_enums::PersonType;
+pub use crate::core_enums::ReturnStatsType;
 pub use crate::core_enums::StateOfResidence;
 pub use crate::core_enums::TaxTreatment;
 pub use crate::core_enums::TaxUsCategory;
 pub use crate::core_enums::TaxUsFilingStatus;
 pub use crate::core_enums::WorthType;
+pub use crate::core_enums::YearEndpoint;
 pub use plus_utils::SystemUnicodes;
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -63,4 +65,7 @@ pub mod core_enums;
 pub mod currency_impl;
 
 // α <mod-def lib>
+
+pub struct Dossier{}
+
 // ω <mod-def lib>

@@ -4,7 +4,7 @@
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::ButtonData;
-use crate::ToggleImageButton;
+use crate::ToggleImageButtonControl;
 use crate::ToggleState;
 use crate::ViewSide;
 use leptos::component;
@@ -73,10 +73,12 @@ where
     CM: Fn(usize) -> View + Clone + 'static,
 {
     pub const SELF_CLASS: &str = "plus-mbs";
-    crate::log_component!("`MultiButtonSelect`");
+    let component_id = crate::component_id!("`MultiButtonSelect`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn multi_button_select>
 
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::CssShow;
     use crate::ToggleState;
     use leptos::create_rw_signal;
@@ -89,25 +91,25 @@ where
             "display: grid; grid-template-rows: auto 1fr; grid-template-columns: 1fr auto;",
             "grid-row: 1; grid-column: 1 / span 2;",
             "grid-row: 2; grid-column: 1 / span 2",
-            CssClasses::BtnTbTop.as_str(),
+            ClientCssClasses::BtnTbTop.as_str(),
         ),
         ViewSide::Right => (
             "display: grid; grid-template-rows: 1fr auto; grid-template-columns: 1fr auto;",
             "grid-column: 2; grid-row: 1 / span 2;",
             "grid-column: 1; grid-row: 1 / span 2;",
-            CssClasses::BtnTbRight.as_str(),
+            ClientCssClasses::BtnTbRight.as_str(),
         ),
         ViewSide::Bottom => (
             "display: grid; grid-template-rows: 1fr auto; grid-template-columns: 1fr auto;",
             "grid-row: 2; grid-column: 1 / span 2;",
             "grid-row: 1; grid-column: 1 / span 2",
-            CssClasses::BtnTbBottom.as_str(),
+            ClientCssClasses::BtnTbBottom.as_str(),
         ),
         ViewSide::Left => (
             "display: grid; grid-template-rows: 1fr auto; grid-template-columns: auto 1fr;",
             "grid-column: 1; grid-row: 1 / span 2;",
             "grid-column: 2; grid-row: 1 / span 2;",
-            CssClasses::BtnTbLeft.as_str(),
+            ClientCssClasses::BtnTbLeft.as_str(),
         ),
     };
 
@@ -130,7 +132,7 @@ where
             let button_data = take(&mut button_selection.0);
 
             view! {
-                <ToggleImageButton
+                <ToggleImageButtonControl
                     button_data
                     writer=move |new_toggle_state| {
                         constrained_toggle_states_store_value
@@ -149,7 +151,6 @@ where
                     rw_signal
                 />
             }
-            .into_view()
         })
         .collect::<Vec<_>>();
 
@@ -185,11 +186,11 @@ where
         <div class=SELF_CLASS>
             // α <plus-mbs-view>
 
-            <div class=CssClasses::MbsInterior.as_str() style=mbs_grid_style>
+            <div class=ClientCssClasses::MbsInterior.as_str() style=mbs_grid_style>
                 <div class=toolbar_class style=toolbar_span_style>
                     {button_views}
                 </div>
-                <div class=CssClasses::MbsView.as_str() style=view_span>
+                <div class=ClientCssClasses::MbsView.as_str() style=view_span>
                     {content_views}
                 </div>
             </div>
@@ -255,8 +256,6 @@ impl ConstrainedToggleStates {
     ///   * **constraint** - The constraints on the [ToggleState] entries
     ///   * _return_ - The constructed instance
     pub fn new(toggle_states: Vec<ToggleState>, constraint: MbsGroupingConstraint) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self {
             toggle_states,
             constraint,
@@ -281,15 +280,82 @@ pub mod unit_tests {
         #[test]
         fn update() {
             // α <fn test ConstrainedToggleStates::update>
-            todo!("Test update")
+
+            use crate::ToggleState;
+
+            let toggle_states = move || vec![ToggleState::Selected, ToggleState::Deselected];
+            let update = |mut cts: ConstrainedToggleStates, i, toggle_state| {
+                cts.update(i, toggle_state);
+                cts
+            };
+
+            assert_eq!(
+                vec![ToggleState::Selected, ToggleState::Deselected,],
+                update(
+                    ConstrainedToggleStates::new(
+                        toggle_states(),
+                        MbsGroupingConstraint::ExactlyOne
+                    ),
+                    0,
+                    ToggleState::Selected
+                )
+                .toggle_states
+            );
+
+            // Exactly one has first selected if no others are
+            assert_eq!(
+                vec![ToggleState::Selected, ToggleState::Deselected,],
+                update(
+                    ConstrainedToggleStates::new(
+                        toggle_states(),
+                        MbsGroupingConstraint::ExactlyOne
+                    ),
+                    0,
+                    ToggleState::Deselected
+                )
+                .toggle_states
+            );
+
+            assert_eq!(
+                vec![ToggleState::Selected, ToggleState::Deselected,],
+                update(
+                    ConstrainedToggleStates::new(toggle_states(), MbsGroupingConstraint::OneOrNone),
+                    0,
+                    ToggleState::Selected
+                )
+                .toggle_states
+            );
+
+            assert_eq!(
+                vec![ToggleState::Deselected, ToggleState::Deselected,],
+                update(
+                    ConstrainedToggleStates::new(toggle_states(), MbsGroupingConstraint::OneOrNone),
+                    0,
+                    ToggleState::Deselected
+                )
+                .toggle_states
+            );
+
+            assert_eq!(
+                vec![ToggleState::Deselected, ToggleState::Selected,],
+                update(
+                    ConstrainedToggleStates::new(toggle_states(), MbsGroupingConstraint::OneOrNone),
+                    1,
+                    ToggleState::Selected
+                )
+                .toggle_states
+            );
+
             // ω <fn test ConstrainedToggleStates::update>
         }
 
         // α <mod-def test_constrained_toggle_states>
+        use super::*;
         // ω <mod-def test_constrained_toggle_states>
     }
 
     // α <mod-def unit_tests>
+    use super::*;
     // ω <mod-def unit_tests>
 }
 

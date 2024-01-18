@@ -6,7 +6,7 @@
 use crate::AppContext;
 use crate::Updatable;
 use leptos::component;
-use leptos::use_context;
+use leptos::expect_context;
 use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
@@ -14,6 +14,7 @@ use leptos::IntoView;
 use leptos::SignalGet;
 use plus_modeled::YearRange;
 use std::ops::RangeInclusive;
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -37,13 +38,15 @@ pub fn YearRangeInput(
 ) -> impl IntoView {
     use plus_lookup::i18n::year_range_input::*;
     pub const SELF_CLASS: &str = "plus-yri";
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
     let i18n_start_placeholder = move || i18n_start_placeholder(lang_selector.get());
     let i18n_end_placeholder = move || i18n_end_placeholder(lang_selector.get());
-    crate::log_component!("`YearRangeInput`");
+    let component_id = crate::component_id!("`YearRangeInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn year_range_input>
 
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::Year;
     use crate::YearInput;
     use leptos::store_value;
@@ -128,7 +131,7 @@ pub fn YearRangeInput(
             // α <plus-yri-view>
 
             <YearInput
-                input_class=Some(CssClasses::YriStart.to_string())
+                input_class=Some(ClientCssClasses::YriStart.to_string())
                 placeholder=Signal::derive(move || i18n_start_placeholder())
                 updatable=start_year_updatable
                 year_range=year_range
@@ -136,7 +139,7 @@ pub fn YearRangeInput(
                 align_left=align_left
             />
             <YearInput
-                input_class=Some(CssClasses::YriEnd.to_string())
+                input_class=Some(ClientCssClasses::YriEnd.to_string())
                 placeholder=Signal::derive(move || i18n_end_placeholder())
                 updatable=end_year_updatable
                 year_range=year_range

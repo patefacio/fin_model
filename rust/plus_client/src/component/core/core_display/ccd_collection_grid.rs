@@ -23,7 +23,9 @@ pub fn CcdCollectionGrid(
     show_update: WriteSignal<String>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-ccg; ccd-section-2col";
-    crate::log_component!("`CcdCollectionGrid`");
+    let component_id = crate::component_id!("`CcdCollectionGrid`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn ccd_collection_grid>
 
     use super::nested_widget_grid::NestedWidget;

@@ -3,11 +3,15 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // --- module uses ---
 ////////////////////////////////////////////////////////////////////////////////////
+use crate::AppContext;
 use leptos::component;
+use leptos::expect_context;
 use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
 use leptos::IntoView;
+use leptos::SignalGet;
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -17,22 +21,30 @@ use leptos::IntoView;
 ///   * _return_ - View for app_nav_bar
 #[component]
 pub fn AppNavBar() -> impl IntoView {
+    use plus_lookup::i18n::app_nav_bar::*;
     pub const SELF_CLASS: &str = "plus-anb";
-    crate::log_component!("`AppNavBar`");
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
+    let i18n_dossiers = move || i18n_dossiers(lang_selector.get());
+    let i18n_display_currency = move || i18n_display_currency(lang_selector.get());
+    let i18n_my_dossier = move || i18n_my_dossier(lang_selector.get());
+    let component_id = crate::component_id!("`AppNavBar`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn app_nav_bar>
 
-    use crate::AppContext;
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::CurrencySelect;
     use crate::EnumSelect;
     use crate::Updatable;
-    use leptos::use_context;
     use leptos::Signal;
-    use leptos::SignalGet;
     use leptos::SignalGetUntracked;
     use leptos::SignalSet;
+    use leptos::SignalWithUntracked;
     use plus_lookup::I18nEnums;
-    let app_context = use_context::<AppContext>().unwrap();
+    use plus_lookup::SystemUnicodes;
+
+    let app_context = expect_context::<Rc<AppContext>>();
+
     let lang_selector = app_context.lang_selector;
     let display_currency = app_context.display_currency;
     let grid_edit_active_count = app_context.grid_edit_active_count;
@@ -53,14 +65,14 @@ pub fn AppNavBar() -> impl IntoView {
         <div class=SELF_CLASS>
             // α <plus-anb-view>
 
-            <div class=CssClasses::AppLangSelect.as_str()>
-                <div class=CssClasses::AppCurrencySelect.as_str()>
+            <div class=ClientCssClasses::AppLangSelect.as_str()>
+                <div class=ClientCssClasses::AppCurrencySelect.as_str()>
                     <label>
                         <CurrencySelect updatable=display_currency_updatable/>
-                        "Display Currency"
+                        {i18n_display_currency}
                     </label>
                 </div>
-                <div class=CssClasses::AppLangSelectInner.as_str()>
+                <div class=ClientCssClasses::AppLangSelectInner.as_str()>
                     <EnumSelect
                         updatable=lang_selector_updatable
                         column_count=1
@@ -73,7 +85,9 @@ pub fn AppNavBar() -> impl IntoView {
 
                         disabled=Signal::derive(lang_select_disabled)
                     />
+
                 </div>
+
             </div>
 
         // ω <plus-anb-view>

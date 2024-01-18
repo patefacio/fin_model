@@ -60,7 +60,9 @@ pub fn PercentInput(
     #[prop(into, optional)]
     disabled: MaybeSignal<bool>,
 ) -> impl IntoView {
-    crate::log_component!("`PercentInput`");
+    let component_id = crate::component_id!("`PercentInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn percent_input>
 
     use crate::scale_by;

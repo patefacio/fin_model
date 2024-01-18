@@ -23,7 +23,9 @@ pub fn CcdYearsAndDate(
     show_update: WriteSignal<String>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-cyad; ccd-section";
-    crate::log_component!("`CcdYearsAndDate`");
+    let component_id = crate::component_id!("`CcdYearsAndDate`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn ccd_years_and_date>
 
     use crate::DateInput;

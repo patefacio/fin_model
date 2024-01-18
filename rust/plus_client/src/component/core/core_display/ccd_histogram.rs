@@ -11,7 +11,6 @@ use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::WriteSignal;
 use rand::rngs::ThreadRng;
-use rand::Rng;
 use rand_distr::Distribution;
 use rand_distr::LogNormal;
 use rand_distr::Normal;
@@ -57,11 +56,13 @@ pub fn CcdHistogram(
     show_update: WriteSignal<String>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-ch; ccd-section";
-    crate::log_component!("`CcdHistogram`");
+    let component_id = crate::component_id!("`CcdHistogram`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn ccd_histogram>
 
     use crate::utils::block_time::BlockTime;
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::HistogramComponent;
     use crate::SliderWithNumericInput;
     use leptos::create_local_resource;
@@ -85,95 +86,66 @@ pub fn CcdHistogram(
             .into_view()
     };
 
+    let (add_entries_read, add_entries_write) = create_signal(1);
     let (reset_read, reset_write) = create_signal(());
     let (delay_millis_read, delay_millis_write) = create_signal(0.0);
 
-    let normal_label = move || format!("Normal N(10%, 20%) 1,000");
-    let lognormal_label = move || format!("Lognormal N(10%, 20%) 1,000");
+    let normal_label = move || format!("Normal N(10%, 20%) {}", add_entries_read.get() * 1000);
+    let lognormal_label =
+        move || format!("Lognormal N(10%, 20%) {}", add_entries_read.get() * 1000);
 
-    let normal_entries = move || {
+    let normal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
-        tracing::warn!("Getting normal entries with {delay_millis:?}");
-        let _timing = BlockTime::new(&format!("Adding normal points delay({delay_millis}ms)"));
-        let mut normal_generator = NormalSeries::new(
-            NormalBasedDist::NormalDist {
-                distribution: Normal::new(0.1, 0.2).unwrap(),
-            },
-            rand::thread_rng(),
-        );
-        (0..1_000)
-            .map(move |i| {
-                HistogramEntry::new(i, 100_000.0 * normal_generator.next_value(delay_millis))
-            })
-            .collect::<Vec<_>>()
+        let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
+        let mut lognormal_entries = LognormalEntries::spawner().spawn("...");
+        lognormal_entries.run(delay_millis).await
     };
 
-    let lognormal_entries = move || {
+    let lognormal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
-        let _timing = BlockTime::new(&format!("Adding lognormal points delay({delay_millis}ms)"));
-        let mut lognormal_generator = NormalSeries::new(
-            NormalBasedDist::LognormalDist {
-                distribution: LogNormal::new(0.1, 0.2).unwrap(),
-            },
-            rand::thread_rng(),
-        );
-        (0..1_000)
-            .map(move |i| {
-                HistogramEntry::new(i, 100_000.0 * lognormal_generator.next_value(delay_millis))
-            })
-            .collect::<Vec<_>>()
+        let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
+        let mut normal_entries = NormalEntries::spawner().spawn("...");
+        normal_entries.run(delay_millis).await
     };
 
     let normal_id_rw = create_rw_signal(0u32);
     let lognormal_id_rw = create_rw_signal(0u32);
 
-    let all_entries_async = move |i: u32| async move { (normal_entries(), lognormal_entries()) };
-
-    let views = move |normal_entries: Vec<HistogramEntry>,
-                      lognormal_entries: Vec<HistogramEntry>| {
-        reset_read.track();
-
-        view! {
-            <div class=CssClasses::ChHists.as_str()>
-                <div class=CssClasses::ChNormal.as_str()>
-                    <HistogramComponent
-                        plot_label=MaybeSignal::Dynamic(Signal::derive(normal_label))
-                        entries=MaybeSignal::Static(normal_entries)
-                        legend_label_maker=label_maker
-                        table_label_maker=label_maker
-                        selected_id=Some(normal_id_rw)
-                    />
-                </div>
-
-                <div class=CssClasses::ChLognormal.as_str()>
-                    <HistogramComponent
-                        plot_label=MaybeSignal::Dynamic(Signal::derive(lognormal_label))
-                        entries=MaybeSignal::Static(lognormal_entries)
-                        legend_label_maker=label_maker
-                        table_label_maker=label_maker
-                        selected_id=Some(lognormal_id_rw)
-                    />
-                </div>
-            </div>
-        }
-    };
-
-    let (source_reader, source_writer) = create_signal(0);
-
-    let all_entries_resource = create_local_resource(
-        move || source_reader.get(),
-        move |i| async move { all_entries_async(i).await },
+    let calc_resource = create_local_resource(
+        move || add_entries_read.get(),
+        move |read_count| async move { (normal_entries().await, lognormal_entries().await) },
     );
 
-    let async_views = move || {
-        tracing::warn!("CALLING ASYNC VIEWS");
+    let views = move || {
+        reset_read.track();
+        add_entries_write.set(1);
+        if let Some((normal_entries, lognormal_entries)) = calc_resource.get() {
+            view! {
+                <div class=ClientCssClasses::ChHists.as_str()>
+                    <div class=ClientCssClasses::ChNormal.as_str()>
+                        <HistogramComponent
+                            plot_label=MaybeSignal::Dynamic(Signal::derive(normal_label))
+                            entries=MaybeSignal::Static(normal_entries)
+                            legend_label_maker=label_maker
+                            table_label_maker=label_maker
+                            selected_id=Some(normal_id_rw)
+                        />
+                    </div>
 
-        match all_entries_resource.get() {
-            None => view! { <h3>"Loading..."</h3>}.into_view(),
-            Some((normal_entries, lognormal_entries)) => {
-                tracing::warn!("Data gathered");
-                views(normal_entries, lognormal_entries).into_view()
+                    <div class=ClientCssClasses::ChLognormal.as_str()>
+                        <HistogramComponent
+                            plot_label=MaybeSignal::Dynamic(Signal::derive(lognormal_label))
+                            entries=MaybeSignal::Static(lognormal_entries)
+                            legend_label_maker=label_maker
+                            table_label_maker=label_maker
+                            selected_id=Some(lognormal_id_rw)
+                        />
+                    </div>
+                </div>
             }
+            .into_view()
+        } else {
+            view! { <h3>"Running simulation..."</h3> }.into_view()
         }
     };
 
@@ -197,13 +169,9 @@ pub fn CcdHistogram(
                 step=1.0
             />
 
-            <button on:click=move |_| {
-                source_writer.update(|u| *u += 1);
-            }
-            >"Reset To 1,000"
-            </button>
+            <button on:click=move |_| reset_write.set(())>"Reset To 1,000"</button>
 
-            {async_views}
+            {views}
 
         // ω <plus-ch-view>
         </div>
@@ -223,6 +191,7 @@ impl NormalSeries {
 
         cfg_if::cfg_if! {
             if #[cfg(any(feature = "csr", feature = "hydrate"))] {
+                use rand::Rng;
                 let start_time = instant::now();
                 let mut elapsed = 0.0;
 
@@ -239,6 +208,8 @@ impl NormalSeries {
                 }
 
                 tracing::debug!("Simulated delay -> {elapsed:?} in {loop_count} iterations");
+            } else {
+                let _ = delay_millis;
             }
         }
 
@@ -260,8 +231,6 @@ impl NormalSeries {
     ///   * **thread_rng** - Random number generator
     ///   * _return_ - The constructed instance
     pub fn new(distribution: NormalBasedDist, thread_rng: ThreadRng) -> Self {
-        // α <new initialization>
-        // ω <new initialization>
         Self {
             distribution,
             thread_rng,
@@ -269,34 +238,85 @@ impl NormalSeries {
     }
 }
 
-/// Unit tests for `ccd_histogram`
-#[cfg(test)]
-pub mod unit_tests {
+////////////////////////////////////////////////////////////////////////////////////
+// --- trait impls ---
+////////////////////////////////////////////////////////////////////////////////////
+impl Worker for NormalSeries {
+    type Message = i32;
 
-    /// Test type NormalSeries
-    mod test_normal_series {
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- module uses ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        use test_log::test;
+    type Input = i32;
 
-        ////////////////////////////////////////////////////////////////////////////////////
-        // --- functions ---
-        ////////////////////////////////////////////////////////////////////////////////////
-        #[test]
-        fn next_value() {
-            // α <fn test NormalSeries::next_value>
-            todo!("Test next_value")
-            // ω <fn test NormalSeries::next_value>
-        }
-
-        // α <mod-def test_normal_series>
-        // ω <mod-def test_normal_series>
+    type Output = Vec<HistogramEntry>;
+    /// Create the worker
+    ///
+    ///   * **scope** - The scope of the worker
+    ///   * _return_ - The created worker
+    fn create(scope: &WorkerScope<Self>) -> Self {
+        // α <fn Worker::create for NormalSeries>
+        todo!("Implement `create`")
+        // ω <fn Worker::create for NormalSeries>
     }
 
-    // α <mod-def unit_tests>
-    // ω <mod-def unit_tests>
+    /// Worker receives an update
+    ///
+    ///   * **scope** - The scope of the worker
+    ///   * **msg** - TODO Document Param(msg)
+    fn update(&mut self, scope: &WorkerScope<Self>, msg: Self::Message) {
+        // α <fn Worker::update for NormalSeries>
+        todo!("Implement `update`")
+        // ω <fn Worker::update for NormalSeries>
+    }
+
+    /// Receives an input from a connected bridge
+    ///
+    ///   * **scope** - The scope of the worker
+    ///   * **msg** - TODO Document Param(msg)
+    ///   * **id** - The handler id
+    fn received(&mut self, scope: &WorkerScope<Self>, msg: Self::Input, id: HandlerId) {
+        // α <fn Worker::received for NormalSeries>
+        todo!("Implement `received`")
+        // ω <fn Worker::received for NormalSeries>
+    }
 }
 
 // α <mod-def ccd_histogram>
+
+use crate::utils::block_time::BlockTime;
+use gloo_worker::oneshot::oneshot;
+use gloo_worker::Spawnable;
+use gloo_worker::{HandlerId, Worker, WorkerScope};
+pub use plus_utils::HistogramEntry;
+
+#[oneshot]
+async fn LognormalEntries(delay_millis: f64) -> Vec<HistogramEntry> {
+    tracing::warn!("RUNNING LOGNORMAL ENTRIES delay({delay_millis})");
+    let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
+    let mut lognormal_generator = NormalSeries::new(
+        NormalBasedDist::LognormalDist {
+            distribution: LogNormal::new(0.1, 0.2).unwrap(),
+        },
+        rand::thread_rng(),
+    );
+    (0..1_000)
+        .map(move |i| {
+            HistogramEntry::new(i, 100_000.0 * lognormal_generator.next_value(delay_millis))
+        })
+        .collect::<Vec<_>>()
+}
+
+#[oneshot]
+async fn NormalEntries(delay_millis: f64) -> Vec<HistogramEntry> {
+    tracing::warn!("RUNNING NORMAL ENTRIES delay({delay_millis})");
+    let _timing = BlockTime::new(&format!("Adding normal points delay -> {delay_millis}"));
+    let mut normal_generator = NormalSeries::new(
+        NormalBasedDist::NormalDist {
+            distribution: Normal::new(0.1, 0.2).unwrap(),
+        },
+        rand::thread_rng(),
+    );
+    (0..1_000)
+        .map(move |i| HistogramEntry::new(i, 100_000.0 * normal_generator.next_value(delay_millis)))
+        .collect::<Vec<_>>()
+}
+
 // ω <mod-def ccd_histogram>

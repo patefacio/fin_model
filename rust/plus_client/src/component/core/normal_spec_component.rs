@@ -8,13 +8,14 @@ use crate::Modification;
 use crate::NumericInput;
 use crate::Updatable;
 use leptos::component;
-use leptos::use_context;
+use leptos::expect_context;
 use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
 use leptos::IntoView;
 use leptos::SignalGet;
 use plus_modeled::core::NormalSpec;
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -34,15 +35,17 @@ pub fn NormalSpecComponent(
 ) -> impl IntoView {
     use plus_lookup::i18n::normal_spec_component::*;
     pub const SELF_CLASS: &str = "plus-nsc";
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
     let i18n_mean_placeholder = move || i18n_mean_placeholder(lang_selector.get());
     let i18n_std_dev_placeholder = move || i18n_std_dev_placeholder(lang_selector.get());
-    crate::log_component!("`NormalSpecComponent`");
+    let component_id = crate::component_id!("`NormalSpecComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn normal_spec_component>
 
     use crate::scale_by;
+    use crate::ClientCssClasses;
     use crate::CollapsibleComponent;
-    use crate::CssClasses;
     use crate::DistributionCdfComponent;
     use crate::DistributionPdfComponent;
     use crate::HistoricRiskReturnComponent;
@@ -143,7 +146,7 @@ pub fn NormalSpecComponent(
         <div class=SELF_CLASS>
             // α <plus-nsc-view>
 
-            <fieldset class=CssClasses::NscFieldset.as_str()>
+            <fieldset class=ClientCssClasses::NscFieldset.as_str()>
                 <div style="display: flex;">
                     <div style="display: inline;">
                         <span>"N("</span>
@@ -173,7 +176,7 @@ pub fn NormalSpecComponent(
                             max_len=INPUT_SIZE
                         />
                         <span>")"</span>
-                        <div class=CssClasses::NscExplore.as_str()>
+                        <div class=ClientCssClasses::NscExplore.as_str()>
                             <CollapsibleComponent
                                 collapsed_header="Explore Normal Detail".to_string()
                                 expanded_header=Some("Hide Normal Detail".to_string())

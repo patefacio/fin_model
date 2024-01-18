@@ -15,7 +15,9 @@ use leptos::IntoView;
 ///   * _return_ - View for dispose_test
 #[component]
 pub fn DisposeTest() -> impl IntoView {
-    crate::log_component!("`DisposeTest`");
+    let component_id = crate::component_id!("`DisposeTest`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn dispose_test>
 
     use leptos::*;

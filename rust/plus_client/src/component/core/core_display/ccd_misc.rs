@@ -24,7 +24,9 @@ pub fn CcdMisc(
     show_update: WriteSignal<String>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-cm; ccd-section";
-    crate::log_component!("`CcdMisc`");
+    let component_id = crate::component_id!("`CcdMisc`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn ccd_misc>
 
     use crate::AppContext;
@@ -35,14 +37,15 @@ pub fn CcdMisc(
     use crate::YearValueSeriesComponent;
     use crate::YearValueSeriesType;
     use leptos::create_signal;
-    use leptos::use_context;
+    use leptos::expect_context;
     use leptos::MaybeSignal;
     use leptos::SignalGetUntracked;
     use leptos::SignalSet;
     use plus_modeled::NormalSpec;
     use plus_modeled::YearValue;
+    use std::rc::Rc;
 
-    let display_currency = use_context::<AppContext>().unwrap().display_currency;
+    let display_currency = expect_context::<Rc<AppContext>>().display_currency;
 
     let (currency_read, _currency_write) = create_signal(
         display_currency

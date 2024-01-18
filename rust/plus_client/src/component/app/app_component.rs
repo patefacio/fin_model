@@ -18,7 +18,9 @@ use leptos::IntoView;
 #[component]
 pub fn AppComponent() -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-app-component";
-    crate::log_component!("`AppComponent`");
+    let component_id = crate::component_id!("`AppComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn app_component>
 
     use super::error_display_component::AppError;
@@ -39,16 +41,17 @@ pub fn AppComponent() -> impl IntoView {
     use plus_lookup::WEB_CURRENCY_EXCHANGE;
     use plus_modeled::Currency;
     use plus_modeled::LangSelector;
+    use std::rc::Rc;
 
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    let app_context = AppContext::new(
+    let app_context = Rc::new(AppContext::new(
         create_rw_signal(LangSelector::UsEnglish),
         create_rw_signal(Currency::Usd),
         create_rw_signal(0),
         create_rw_signal(WEB_CURRENCY_EXCHANGE.clone()),
-    );
+    ));
 
     provide_context(app_context);
 

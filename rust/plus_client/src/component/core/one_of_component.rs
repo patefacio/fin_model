@@ -46,10 +46,12 @@ where
     CM: Fn(E) -> View + Clone + 'static,
 {
     pub const SELF_CLASS: &str = "plus-ooc";
-    crate::log_component!("`OneOfComponent`");
+    let component_id = crate::component_id!("`OneOfComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn one_of_component>
 
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use leptos::create_rw_signal;
     use leptos::SignalUpdate;
     use leptos::SignalWith;
@@ -81,11 +83,11 @@ where
                 // The class and location are dynamically created
                 let (class, location) = match direction {
                     SelectDirection::LeftToRight => (
-                        CssClasses::OocRbLtr.as_str(),
+                        ClientCssClasses::OocRbLtr.as_str(),
                         format!("grid-column: {} / {};", i + 1, i + 2),
                     ),
                     SelectDirection::TopToBottom => (
-                        CssClasses::OocRbTtb.as_str(),
+                        ClientCssClasses::OocRbTtb.as_str(),
                         format!("grid-row: {} / {};", i + 1, i + 2),
                     ),
                 };
@@ -134,7 +136,7 @@ where
     view! {
         <div class=SELF_CLASS>
             // α <plus-ooc-view>
-            <div class=CssClasses::OocCtnr.as_str() style=container_style>
+            <div class=ClientCssClasses::OocCtnr.as_str() style=container_style>
                 {radio_buttons}
                 <hr/>
                 <div style=content_location>{content_view}</div>

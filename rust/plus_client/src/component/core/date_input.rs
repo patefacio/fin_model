@@ -38,7 +38,9 @@ pub fn DateInput(
     class: String,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-di";
-    crate::log_component!("`DateInput`");
+    let component_id = crate::component_id!("`DateInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn date_input>
 
     use crate::utils::constants::{LEFT_KEY, RIGHT_KEY, TAB_KEY};

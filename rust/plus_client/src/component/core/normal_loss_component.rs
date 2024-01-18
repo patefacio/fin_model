@@ -5,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 use crate::AppContext;
 use leptos::component;
-use leptos::use_context;
+use leptos::expect_context;
 use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
@@ -13,6 +13,7 @@ use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
 use plus_modeled::NormalSpec;
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -32,18 +33,20 @@ pub fn NormalLossComponent(
 ) -> impl IntoView {
     use plus_lookup::i18n::normal_loss_component::*;
     pub const SELF_CLASS: &str = "plus-nlc";
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
     let i18n_gain_pct = move || i18n_gain_pct(lang_selector.get());
     let i18n_prob_pct = move || i18n_prob_pct(lang_selector.get());
     let i18n_prob_abbrev = move || i18n_prob_abbrev(lang_selector.get());
     let i18n_cdf_sample = move || i18n_cdf_sample(lang_selector.get());
     let i18n_gain_prefix = move || i18n_gain_prefix(lang_selector.get());
     let i18n_loss_table = move || i18n_loss_table(lang_selector.get());
-    crate::log_component!("`NormalLossComponent`");
+    let component_id = crate::component_id!("`NormalLossComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn normal_loss_component>
 
     use crate::scale_by;
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::DistributionCdf;
     use crate::Modification;
     use crate::NumericInput;
@@ -67,7 +70,7 @@ pub fn NormalLossComponent(
         <div class=SELF_CLASS>
             // α <plus-nlc-view>
 
-            <div class=CssClasses::NlcLblCtnr.as_str()>
+            <div class=ClientCssClasses::NlcLblCtnr.as_str()>
                 <h4>
                     {move || {
                         normal_spec
@@ -78,16 +81,16 @@ pub fn NormalLossComponent(
 
                 </h4>
             </div>
-            <div class=CssClasses::HeaderRight.as_str()>{i18n_gain_pct}</div>
-            <div class=CssClasses::HeaderRight.as_str()>{i18n_prob_pct}</div>
+            <div class=ClientCssClasses::HeaderRight.as_str()>{i18n_gain_pct}</div>
+            <div class=ClientCssClasses::HeaderRight.as_str()>{i18n_prob_pct}</div>
             <For
                 each=move || loss_vec.get()
                 key=|item| { format!("{item:?}") }
                 children=move |cdf_input| {
                     view! {
-                        <div class=CssClasses::TxtRightPadLeft
+                        <div class=ClientCssClasses::TxtRightPadLeft
                             .as_str()>{move || { format!("{:.2}%", scale_by(cdf_input, 2)) }}</div>
-                        <div class=CssClasses::TxtRightPadLeft
+                        <div class=ClientCssClasses::TxtRightPadLeft
                             .as_str()>
                             {move || {
                                 normal_spec
@@ -112,7 +115,7 @@ pub fn NormalLossComponent(
             <div>
                 <hr/>
             </div>
-            <div class=CssClasses::TxtRightPadLeft.as_str()>
+            <div class=ClientCssClasses::TxtRightPadLeft.as_str()>
                 <NumericInput
                     placeholder=Signal::derive(i18n_cdf_sample)
                     modification=Some(Modification::PrefixAndSuffix {
@@ -125,7 +128,7 @@ pub fn NormalLossComponent(
                     max_len=14
                 />
             </div>
-            <div class=CssClasses::TxtRightPadLeft
+            <div class=ClientCssClasses::TxtRightPadLeft
                 .as_str()>
                 {move || {
                     normal_spec

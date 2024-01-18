@@ -6,7 +6,7 @@
 use crate::AppContext;
 use crate::Updatable;
 use leptos::component;
-use leptos::use_context;
+use leptos::expect_context;
 use leptos::view;
 #[allow(unused_imports)]
 use leptos::IntoAttribute;
@@ -14,6 +14,7 @@ use leptos::IntoView;
 use leptos::MaybeSignal;
 use leptos::SignalGet;
 use plus_modeled::core::{YearCurrencyValue, YearRange};
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////////////////////////
 // --- functions ---
@@ -41,13 +42,15 @@ pub fn YearCurrencyValueInput(
 ) -> impl IntoView {
     use plus_lookup::i18n::year_currency_value_input::*;
     pub const SELF_CLASS: &str = "plus-ycvi";
-    let lang_selector = use_context::<AppContext>().unwrap().lang_selector;
+    let lang_selector = expect_context::<Rc<AppContext>>().lang_selector;
     let i18n_as_of = move || i18n_as_of(lang_selector.get());
-    crate::log_component!("`YearCurrencyValueInput`");
+    let component_id = crate::component_id!("`YearCurrencyValueInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn year_currency_value_input>
 
     use crate::to_currency_symbol;
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use crate::CurrencySelect;
     use crate::Modification;
     use crate::NumericInput;
@@ -143,18 +146,18 @@ pub fn YearCurrencyValueInput(
         <div class=SELF_CLASS>
             // α <plus-ycvi-view>
 
-            <div class=CssClasses::YcvCurrency.as_str()>
+            <div class=ClientCssClasses::YcvCurrency.as_str()>
                 <CurrencySelect updatable=currency_select_updatable/>
             </div>
             <NumericInput
-                input_class=Some(CssClasses::YcvCurrency.to_string())
+                input_class=Some(ClientCssClasses::YcvCurrency.to_string())
                 updatable=value_updatable
                 placeholder=value_placeholder
                 modification=modification
             />
-            <div class=CssClasses::YcvAsOf.as_str()>{i18n_as_of}</div>
+            <div class=ClientCssClasses::YcvAsOf.as_str()>{i18n_as_of}</div>
             <YearInput
-                input_class=Some(CssClasses::YcvYear.to_string())
+                input_class=Some(ClientCssClasses::YcvYear.to_string())
                 updatable=year_updatable
                 year_range=year_range
                 placeholder=year_placeholder

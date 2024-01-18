@@ -29,7 +29,9 @@ pub fn ErrorDisplayComponent(
     #[prop(optional)]
     errors: Option<RwSignal<Errors>>,
 ) -> impl IntoView {
-    crate::log_component!("`ErrorDisplayComponent`");
+    let component_id = crate::component_id!("`ErrorDisplayComponent`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn error_display_component>
 
     use leptos::create_rw_signal;

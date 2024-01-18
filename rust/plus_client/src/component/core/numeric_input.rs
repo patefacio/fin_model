@@ -114,7 +114,9 @@ pub fn NumericInput(
     parent_override: Option<ReadSignal<f64>>,
 ) -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-ni";
-    crate::log_component!("`NumericInput`");
+    let component_id = crate::component_id!("`NumericInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn numeric_input>
 
     use crate::LenientFormatted;

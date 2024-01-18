@@ -12,6 +12,9 @@ extern crate serde_derive;
 ////////////////////////////////////////////////////////////////////////////////////
 pub use self::date_utils::next_year;
 pub use self::date_utils::this_year;
+pub use self::math::incremental_pearson::IncrementalPearson;
+pub use self::math::incremental_pearson::PearsonRowEntry;
+pub use self::math::incremental_pearson::PearsonTriangularEntry;
 pub use self::math::incremental_stats::IncrementalStats;
 pub use self::math::measured_stats::MeasuredStats;
 pub use self::scale_by::scale_by;

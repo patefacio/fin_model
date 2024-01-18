@@ -74,7 +74,9 @@ pub fn IntegerInput(
     #[prop(default=None)]
     parent_override: Option<ReadSignal<f64>>,
 ) -> impl IntoView {
-    crate::log_component!("`IntegerInput`");
+    let component_id = crate::component_id!("`IntegerInput`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn integer_input>
 
     let float_value = updatable.value.map(|value| value as f64);

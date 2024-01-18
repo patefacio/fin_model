@@ -19,7 +19,9 @@ use leptos::IntoView;
 #[component]
 pub fn CoreComponentDisplay() -> impl IntoView {
     pub const SELF_CLASS: &str = "plus-ccd";
-    crate::log_component!("`CoreComponentDisplay`");
+    let component_id = crate::component_id!("`CoreComponentDisplay`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn core_component_display>
 
     use crate::CcdCollectionGrid;

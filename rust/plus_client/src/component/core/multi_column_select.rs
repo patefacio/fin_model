@@ -116,10 +116,12 @@ where
     F: FnMut(String) + 'static,
 {
     pub const SELF_CLASS: &str = "plus-mcs";
-    crate::log_component!("`MultiColumnSelect`");
+    let component_id = crate::component_id!("`MultiColumnSelect`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn multi_column_select>
 
-    use crate::CssClasses;
+    use crate::ClientCssClasses;
     use leptos::create_node_ref;
     use leptos::create_rw_signal;
     use leptos::ev::{focusin, mousedown};
@@ -307,15 +309,16 @@ where
                     let (value, button_content) = match select_option {
                         SelectOption::Label(label) => (
                             label,
-                            view! { <div class=CssClasses::McsLabel.as_str()>{label}</div> }
+                            view! { <div class=ClientCssClasses::McsLabel.as_str()>{label}</div> }
                                 .into_view(),
                         ),
                         SelectOption::KeyLabel { key, label } => (
                             key,
                             view! {
-                                <div class=CssClasses::McsIconLabel.as_str()>
-                                    <div class=CssClasses::McsIcon.as_str()>{key}</div>
-                                    <div class=CssClasses::McsSelectLabel.as_str()>{label}</div>
+                                <div class=ClientCssClasses::McsIconLabel.as_str()>
+                                    <div class=ClientCssClasses::McsIcon.as_str()>{key}</div>
+                                    <div class=ClientCssClasses::McsSelectLabel
+                                        .as_str()>{label}</div>
                                 </div>
                             }
                             .into_view(),
@@ -330,7 +333,7 @@ where
 
                     view! {
                         <button
-                            class=CssClasses::McsSelectBtn.as_str()
+                            class=ClientCssClasses::McsSelectBtn.as_str()
                             on:click=wrapped_handle_click
                             on:mouseover=handle_mouseover
                             on:mousemove=handle_mousemove
@@ -388,21 +391,21 @@ where
             // α <plus-mcs-view>
 
             <div
-                class=CssClasses::McsGrid.as_str()
+                class=ClientCssClasses::McsGrid.as_str()
                 disabled=move || { !menu_is_hidden.get() }
                 node_ref=mcs_grid_ref
             >
                 <button
                     on:mousedown=handle_main_button_mousedown
                     on:keydown=handle_main_button_key_activate
-                    class=CssClasses::McsMainBtn.as_str()
+                    class=ClientCssClasses::McsMainBtn.as_str()
                     node_ref=main_button_ref
                     disabled=disabled
                 >
                     {move || { mcs_data.with(|mcs_data| mcs_data.main_button_label.clone()) }}
                 </button>
                 <div
-                    class=CssClasses::McsCtnr.as_str()
+                    class=ClientCssClasses::McsCtnr.as_str()
                     class:hidden=move || menu_is_hidden.get()
                     style=format!("grid-template-columns: {}", "1fr ".repeat(column_count))
                 >

@@ -28,7 +28,9 @@ pub fn CssShow(
     /// Style display type when not hidden
     display_type: String,
 ) -> impl IntoView {
-    crate::log_component!("`CssShow`");
+    let component_id = crate::component_id!("`CssShow`");
+    #[cfg(debug_assertions)]
+    crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
     // α <fn css_show>
 
     use leptos::IntoAttribute;

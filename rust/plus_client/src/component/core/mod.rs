@@ -27,6 +27,7 @@ pub mod one_of_component;
 pub mod percent_input;
 pub mod slider_with_numeric_input;
 pub mod toggle_image_button;
+pub mod toggle_image_button_control;
 pub mod year_currency_value_input;
 pub mod year_input;
 pub mod year_range_input;
