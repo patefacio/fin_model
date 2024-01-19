@@ -2685,6 +2685,8 @@ dependencies = [
  "plus_utils",
  "rand",
  "rand_distr",
+ "serde",
+ "serde_derive",
  "simple_logger",
  "strum",
  "strum_macros",

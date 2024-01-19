@@ -137,5 +137,7 @@ if #[cfg(feature = "hydrate")] {
 pub use context::app_context::DossierResolved;
 pub use context::app_context::ResolutionSpec;
 pub use component::log_component::COMPONENT_LOG_LEVEL;
+pub use component::core::core_display::ccd_histogram::NormalEntries;
+pub use component::core::core_display::ccd_histogram::NormalEntriesInput;
 
 // ω <mod-def lib>

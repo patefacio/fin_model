@@ -97,15 +97,15 @@ pub fn CcdHistogram(
     let normal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
         let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
-        let mut lognormal_entries = LognormalEntries::spawner().spawn("/worker.js");
-        lognormal_entries.run(delay_millis).await
+        let mut lognormal_entries = NormalEntries::spawner().spawn("/normal_entries.js");
+        lognormal_entries.run(NormalEntriesInput { delay_millis, is_log_normal: false }).await
     };
 
     let lognormal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
         let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
-        let mut normal_entries = NormalEntries::spawner().spawn("/worker.js");
-        normal_entries.run(delay_millis).await
+        let mut normal_entries = NormalEntries::spawner().spawn("/normal_entries.js");
+        normal_entries.run(NormalEntriesInput { delay_millis, is_log_normal: true }).await
     };
 
     let normal_id_rw = create_rw_signal(0u32);
@@ -286,36 +286,37 @@ use gloo_worker::oneshot::oneshot;
 use gloo_worker::Spawnable;
 use gloo_worker::{HandlerId, Worker, WorkerScope};
 pub use plus_utils::HistogramEntry;
+use serde_derive::{Serialize, Deserialize};
 
-#[oneshot]
-async fn LognormalEntries(delay_millis: f64) -> Vec<HistogramEntry> {
-    tracing::warn!("RUNNING LOGNORMAL ENTRIES delay({delay_millis})");
-    let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
-    let mut lognormal_generator = NormalSeries::new(
-        NormalBasedDist::LognormalDist {
-            distribution: LogNormal::new(0.1, 0.2).unwrap(),
-        },
-        rand::thread_rng(),
-    );
-    (0..1_000)
-        .map(move |i| {
-            HistogramEntry::new(i, 100_000.0 * lognormal_generator.next_value(delay_millis))
-        })
-        .collect::<Vec<_>>()
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NormalEntriesInput {
+    delay_millis: f64,
+    is_log_normal: bool,
 }
 
 #[oneshot]
-async fn NormalEntries(delay_millis: f64) -> Vec<HistogramEntry> {
-    tracing::warn!("RUNNING NORMAL ENTRIES delay({delay_millis})");
-    let _timing = BlockTime::new(&format!("Adding normal points delay -> {delay_millis}"));
-    let mut normal_generator = NormalSeries::new(
-        NormalBasedDist::NormalDist {
-            distribution: Normal::new(0.1, 0.2).unwrap(),
-        },
-        rand::thread_rng(),
-    );
+pub async fn NormalEntries(input: NormalEntriesInput) -> Vec<HistogramEntry> {
+    tracing::warn!("RUNNING LOGNORMAL ENTRIES delay({input:?})");
+    let _timing = BlockTime::new(&format!("Adding lognormal points -> {input:?}"));
+
+    let mut generator = if input.is_log_normal {
+        NormalSeries::new(
+            NormalBasedDist::LognormalDist {
+                distribution: LogNormal::new(0.1, 0.2).unwrap(),
+            },
+            rand::thread_rng(),
+        )
+    } else {
+        NormalSeries::new(
+            NormalBasedDist::LognormalDist {
+                distribution: LogNormal::new(0.1, 0.2).unwrap(),
+            },
+            rand::thread_rng(),
+        )
+    };
+
     (0..1_000)
-        .map(move |i| HistogramEntry::new(i, 100_000.0 * normal_generator.next_value(delay_millis)))
+        .map(move |i| HistogramEntry::new(i, 100_000.0 * generator.next_value(input.delay_millis)))
         .collect::<Vec<_>>()
 }
 
