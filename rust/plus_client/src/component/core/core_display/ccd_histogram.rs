@@ -97,14 +97,14 @@ pub fn CcdHistogram(
     let normal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
         let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
-        let mut lognormal_entries = LognormalEntries::spawner().spawn("...");
+        let mut lognormal_entries = LognormalEntries::spawner().spawn("/worker.js");
         lognormal_entries.run(delay_millis).await
     };
 
     let lognormal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
         let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
-        let mut normal_entries = NormalEntries::spawner().spawn("...");
+        let mut normal_entries = NormalEntries::spawner().spawn("/worker.js");
         normal_entries.run(delay_millis).await
     };
 
