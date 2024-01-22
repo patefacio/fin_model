@@ -66,6 +66,6 @@ pub mod currency_impl;
 
 // α <mod-def lib>
 
-pub struct Dossier{}
+pub struct Dossier {}
 
 // ω <mod-def lib>

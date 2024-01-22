@@ -61,7 +61,4 @@ impl AppContext {
 
 // α <mod-def app_context>
 
-pub struct DossierResolved{}
-pub struct ResolutionSpec{}
-
 // ω <mod-def app_context>

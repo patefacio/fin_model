@@ -55,7 +55,7 @@ pub fn CcdHistogram(
     /// Function to display state updates
     show_update: WriteSignal<String>,
 ) -> impl IntoView {
-    pub const SELF_CLASS: &str = "plus-ch; ccd-section";
+    pub const SELF_CLASS: &str = "plus-ch; ccd-section-2col";
     let component_id = crate::component_id!("`CcdHistogram`");
     #[cfg(debug_assertions)]
     crate::log_component!(crate::COMPONENT_LOG_LEVEL, component_id);
@@ -87,7 +87,6 @@ pub fn CcdHistogram(
     };
 
     let (add_entries_read, add_entries_write) = create_signal(1);
-    let (reset_read, reset_write) = create_signal(());
     let (delay_millis_read, delay_millis_write) = create_signal(0.0);
 
     let normal_label = move || format!("Normal N(10%, 20%) {}", add_entries_read.get() * 1000);
@@ -97,15 +96,21 @@ pub fn CcdHistogram(
     let normal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
         let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
-        let mut lognormal_entries = NormalEntries::spawner().spawn("/normal_entries.js");
-        lognormal_entries.run(NormalEntriesInput { delay_millis, is_log_normal: false }).await
+        normal_entries_worker(NormalEntriesInput {
+            delay_millis,
+            is_log_normal: false,
+        })
+        .await
     };
 
     let lognormal_entries = move || async move {
         let delay_millis = delay_millis_read.get_untracked();
         let _timing = BlockTime::new(&format!("Adding lognormal points delay -> {delay_millis}"));
-        let mut normal_entries = NormalEntries::spawner().spawn("/normal_entries.js");
-        normal_entries.run(NormalEntriesInput { delay_millis, is_log_normal: true }).await
+        normal_entries_worker(NormalEntriesInput {
+            delay_millis,
+            is_log_normal: true,
+        })
+        .await
     };
 
     let normal_id_rw = create_rw_signal(0u32);
@@ -117,9 +122,8 @@ pub fn CcdHistogram(
     );
 
     let views = move || {
-        reset_read.track();
-        add_entries_write.set(1);
-        if let Some((normal_entries, lognormal_entries)) = calc_resource.get() {
+        add_entries_read.track();
+        if let Some((Ok(normal_entries), Ok(lognormal_entries))) = calc_resource.get() {
             view! {
                 <div class=ClientCssClasses::ChHists.as_str()>
                     <div class=ClientCssClasses::ChNormal.as_str()>
@@ -154,22 +158,27 @@ pub fn CcdHistogram(
         <div class=SELF_CLASS>
             // α <plus-ch-view>
 
-            <SliderWithNumericInput
-                updatable=Updatable::new(
-                    0.0,
-                    move |new_value| {
-                        delay_millis_write.set(*new_value);
-                        show_update.set(format!("Point fn delay -> {new_value:?}"));
-                    },
-                )
+            <div>
+                <SliderWithNumericInput
+                    updatable=Updatable::new(
+                        0.0,
+                        move |new_value| {
+                            delay_millis_write.set(*new_value);
+                            show_update.set(format!("Point fn delay -> {new_value:?}"));
+                        },
+                    )
 
-                label=MaybeSignal::Static("Delay MS".into())
-                slider_id="ccd-sldr-delay".into()
-                range=0.0..=5.0
-                step=1.0
-            />
+                    label=MaybeSignal::Static("Delay MS".into())
+                    slider_id="ccd-sldr-delay".into()
+                    range=0.0..=5.0
+                    step=1.0
+                />
 
-            <button on:click=move |_| reset_write.set(())>"Reset To 1,000"</button>
+                <button on:click=move |_| {
+                    add_entries_write.update(|v| *v += 1);
+                }>"Reset To 1,000"</button>
+
+            </div>
 
             {views}
 
@@ -241,6 +250,7 @@ impl NormalSeries {
 ////////////////////////////////////////////////////////////////////////////////////
 // --- trait impls ---
 ////////////////////////////////////////////////////////////////////////////////////
+/*
 impl Worker for NormalSeries {
     type Message = i32;
 
@@ -278,15 +288,13 @@ impl Worker for NormalSeries {
         // ω <fn Worker::received for NormalSeries>
     }
 }
+*/
 
 // α <mod-def ccd_histogram>
 
 use crate::utils::block_time::BlockTime;
-use gloo_worker::oneshot::oneshot;
-use gloo_worker::Spawnable;
-use gloo_worker::{HandlerId, Worker, WorkerScope};
 pub use plus_utils::HistogramEntry;
-use serde_derive::{Serialize, Deserialize};
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NormalEntriesInput {
@@ -294,10 +302,10 @@ pub struct NormalEntriesInput {
     is_log_normal: bool,
 }
 
-#[oneshot]
-pub async fn NormalEntries(input: NormalEntriesInput) -> Vec<HistogramEntry> {
-    tracing::warn!("RUNNING LOGNORMAL ENTRIES delay({input:?})");
-    let _timing = BlockTime::new(&format!("Adding lognormal points -> {input:?}"));
+#[leptos_workers::worker(NormalEntriesWorker)]
+pub async fn normal_entries_worker(input: NormalEntriesInput) -> Vec<HistogramEntry> {
+    tracing::warn!("RUNNING NORMAL ENTRIES delay({input:?})");
+    let _timing = BlockTime::new(&format!("Adding normal points -> {input:?}"));
 
     let mut generator = if input.is_log_normal {
         NormalSeries::new(
